@@ -435,6 +435,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
+          </section>
 
             {/* Divider */}
             <div style={{ borderTop: "1px solid #21262d", margin: "2.5rem 0" }}></div>
@@ -529,6 +530,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
+          </section>
 
             {/* Divider */}
             <div style={{ borderTop: "1px solid #21262d", margin: "2.5rem 0" }}></div>
@@ -762,7 +764,6 @@ export default function Home() {
                           />
                         </div>
 
-                        {/* Availability */}
                         <div>
                           <p style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff", marginBottom: "0.75rem" }}>
                             Weekly availability

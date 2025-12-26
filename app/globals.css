@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -15,115 +17,89 @@ body {
 }
 
 /* Remove default white borders and backgrounds from inputs */
+:root {
+  --sage: #87A878;
+  --sage-dark: #6B8A5F;
+  --sage-light: #E8F0E4;
+  --teal: #4A9B9B;
+  --teal-dark: #3A7A7A;
+  --teal-light: #E6F4F4;
+  --seamist: #F7FAF8;
+  --slate: #1E293B;
+  --slate-light: #64748B;
+  --border: #E2E8F0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--slate);
+  background: var(--seamist);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Form inputs */
 input[type="time"],
 input[type="date"],
 input[type="number"],
 input[type="text"],
 select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: var(--slate);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* Specifically target date and time inputs to remove all white borders */
-input[type="date"],
-input[type="time"] {
-  color-scheme: dark;
-  background-color: transparent !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  outline: none !important;
-  cursor: text !important;
-  position: relative;
-  pointer-events: auto !important;
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px var(--teal-light);
 }
 
-/* Force remove inner borders that Chrome adds */
-input[type="date"]::-webkit-inner-spin-button,
-input[type="time"]::-webkit-inner-spin-button,
-input[type="date"]::-webkit-outer-spin-button,
-input[type="time"]::-webkit-outer-spin-button {
-  -webkit-appearance: none !important;
-  margin: 0 !important;
+input:hover:not(:focus),
+select:hover:not(:focus) {
+  border-color: #CBD5E1;
 }
 
-input[type="date"]::-webkit-clear-button,
-input[type="time"]::-webkit-clear-button {
-  display: none !important;
+input::placeholder {
+  color: var(--slate-light);
 }
 
-/* Remove all internal white backgrounds and borders */
-input[type="date"]::-webkit-datetime-edit-fields-wrapper,
-input[type="time"]::-webkit-datetime-edit-fields-wrapper {
-  background-color: transparent !important;
-  background: transparent !important;
-  border: none !important;
-  padding: 0 !important;
-}
-
-input[type="date"]::-webkit-datetime-edit,
-input[type="time"]::-webkit-datetime-edit {
-  background-color: transparent !important;
-  background: transparent !important;
-  border: none !important;
-  padding: 0 !important;
-}
-
-input[type="date"]::-webkit-datetime-edit-text,
-input[type="time"]::-webkit-datetime-edit-text {
-  color: #ffffff !important;
-  background: transparent !important;
-  padding: 0 2px !important;
-}
-
-input[type="date"]::-webkit-datetime-edit-month-field,
-input[type="date"]::-webkit-datetime-edit-day-field,
-input[type="date"]::-webkit-datetime-edit-year-field,
-input[type="time"]::-webkit-datetime-edit-hour-field,
-input[type="time"]::-webkit-datetime-edit-minute-field,
-input[type="time"]::-webkit-datetime-edit-ampm-field {
-  background-color: transparent !important;
-  background: transparent !important;
-  color: #ffffff !important;
-  border: none !important;
-  padding: 0 2px !important;
-}
-
-/* Remove focus states that might add borders */
-input[type="date"]::-webkit-datetime-edit-month-field:focus,
-input[type="date"]::-webkit-datetime-edit-day-field:focus,
-input[type="date"]::-webkit-datetime-edit-year-field:focus,
-input[type="time"]::-webkit-datetime-edit-hour-field:focus,
-input[type="time"]::-webkit-datetime-edit-minute-field:focus,
-input[type="time"]::-webkit-datetime-edit-ampm-field:focus {
-  background-color: transparent !important;
-  background: transparent !important;
-  color: #ffffff !important;
-  outline: none !important;
-  border: none !important;
-}
-
-input[type="time"]::-webkit-calendar-picker-indicator,
-input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(1);
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--teal);
   cursor: pointer;
-  background-color: transparent !important;
-  background: transparent !important;
-  border: none !important;
 }
 
-/* Remove autofill white background */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px #0d1117 inset !important;
-  -webkit-text-fill-color: #ffffff !important;
+/* Buttons */
+button {
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-/* Spinner animation for loading states */
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+button:active {
+  transform: scale(0.98);
+}
+
+/* Typography */
+h1, h2, h3 {
+  font-weight: 700;
+  color: var(--slate);
+  letter-spacing: -0.02em;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
 }
