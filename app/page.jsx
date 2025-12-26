@@ -435,7 +435,6 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </section>
 
             {/* Divider */}
             <div style={{ borderTop: "1px solid #21262d", margin: "2.5rem 0" }}></div>
@@ -530,7 +529,6 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </section>
 
             {/* Divider */}
             <div style={{ borderTop: "1px solid #21262d", margin: "2.5rem 0" }}></div>
