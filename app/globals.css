@@ -1,27 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  /* Make all input text bigger and darker for better visibility */
-  input[type="time"],
-  input[type="date"],
-  input[type="number"],
-  input[type="text"] {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #111827;
-  }
+:root {
+  --sage: #87A878;
+  --sage-dark: #6B8A5F;
+  --sage-light: #E8F0E4;
+  --teal: #4A9B9B;
+  --teal-dark: #3A7A7A;
+  --teal-light: #E6F4F4;
+  --seamist: #F7FAF8;
+  --slate: #1E293B;
+  --slate-light: #64748B;
+  --border: #E2E8F0;
+}
 
-  /* Better focus states */
-  input:focus {
-    outline: none;
-    border-color: #000000;
-    box-shadow: 0 0 0 2px #000000;
-  }
+* {
+  box-sizing: border-box;
+}
 
-  /* Checkbox styling */
-  input[type="checkbox"] {
-    cursor: pointer;
-  }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--slate);
+  background: var(--seamist);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Form inputs */
+input[type="time"],
+input[type="date"],
+input[type="number"],
+input[type="text"],
+select {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: var(--slate);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px var(--teal-light);
+}
+
+input:hover:not(:focus),
+select:hover:not(:focus) {
+  border-color: #CBD5E1;
+}
+
+input::placeholder {
+  color: var(--slate-light);
+}
+
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--teal);
+  cursor: pointer;
+}
+
+/* Buttons */
+button {
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* Typography */
+h1, h2, h3 {
+  font-weight: 700;
+  color: var(--slate);
+  letter-spacing: -0.02em;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
 }
