@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { generateSchedule } from "../lib/scheduler";
+import TimePicker from "./components/TimePicker";
+// import { exportToCSV, downloadCSV } from "../lib/utils/export"; // Archived for later
 
 // Predefined semester dates for US universities
 const SEMESTER_PRESETS = {
@@ -13,21 +15,6 @@ const SEMESTER_PRESETS = {
   "Fall 2027": { start: "2027-08-23", end: "2027-12-17" },
 };
 
-// Generate time options in 15-minute increments (12-hour format)
-const generateTimeOptions = () => {
-  const times = [];
-  for (let hour = 0; hour < 24; hour++) {
-    for (let minute = 0; minute < 60; minute += 15) {
-      const time24 = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-      const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-      const ampm = hour < 12 ? 'AM' : 'PM';
-      const time12 = `${hour12}:${String(minute).padStart(2, '0')} ${ampm}`;
-      times.push({ value: time24, label: time12 });
-    }
-  }
-  return times;
-};
-
 // Convert 24-hour time to 12-hour format
 const convertTo12Hour = (time24) => {
   if (!time24) return '';
@@ -36,123 +23,6 @@ const convertTo12Hour = (time24) => {
   const ampm = hours < 12 ? 'AM' : 'PM';
   return `${hour12}:${String(minutes).padStart(2, '0')} ${ampm}`;
 };
-
-// Helper function to convert time string to minutes since midnight
-const timeToMinutes = (timeString) => {
-  if (!timeString) return 0;
-  const [hours, minutes] = timeString.split(':').map(Number);
-  return hours * 60 + minutes;
-};
-
-// Custom Time Picker Component
-function TimePicker({ value, onChange, placeholder, positionAbove = false, minTime = null }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const allTimeOptions = generateTimeOptions();
-  const dropdownRef = useRef(null);
-  const selectedRef = useRef(null);
-
-  // Filter time options based on minTime
-  const timeOptions = minTime
-    ? allTimeOptions.filter(time => timeToMinutes(time.value) > timeToMinutes(minTime))
-    : allTimeOptions;
-
-  useEffect(() => {
-    if (isOpen && selectedRef.current) {
-      selectedRef.current.scrollIntoView({ block: 'center' });
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  return (
-    <div style={{ position: 'relative' }} ref={dropdownRef}>
-      <div
-        onClick={() => setIsOpen(!isOpen)}
-        style={{
-          padding: "0.5rem 0.75rem",
-          backgroundColor: "#0d1117",
-          border: "1px solid #414d5c",
-          borderRadius: "4px",
-          fontSize: "0.875rem",
-          color: value ? "#ffffff" : "#6b7280",
-          cursor: "pointer",
-          userSelect: "none",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between"
-        }}
-      >
-        <span>{value ? convertTo12Hour(value) : placeholder}</span>
-        <span style={{ fontSize: "0.7rem", color: "#6b7280" }}>▼</span>
-      </div>
-
-      {isOpen && (
-        <div
-          style={{
-            position: 'absolute',
-            ...(positionAbove ? { bottom: '100%', marginBottom: '0.25rem' } : { top: 0 }),
-            left: 0,
-            backgroundColor: "#16191f",
-            border: "1px solid #414d5c",
-            borderRadius: "4px",
-            maxHeight: "300px",
-            overflowY: "auto",
-            width: "100%",
-            minWidth: "180px",
-            zIndex: 1000,
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)"
-          }}
-        >
-          {timeOptions.map((time) => {
-            const isSelected = time.value === value;
-            return (
-              <div
-                key={time.value}
-                ref={isSelected ? selectedRef : null}
-                onClick={() => {
-                  onChange(time.value);
-                  setIsOpen(false);
-                }}
-                style={{
-                  padding: "0.625rem 0.875rem",
-                  fontSize: "0.875rem",
-                  color: isSelected ? "#ffffff" : "#d1d5db",
-                  backgroundColor: isSelected ? "#047857" : "transparent",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  transition: "background-color 0.1s"
-                }}
-                onMouseOver={(e) => {
-                  if (!isSelected) {
-                    e.currentTarget.style.backgroundColor = "#1f2937";
-                  }
-                }}
-                onMouseOut={(e) => {
-                  if (!isSelected) {
-                    e.currentTarget.style.backgroundColor = "transparent";
-                  }
-                }}
-              >
-                {isSelected && <span style={{ color: "#ffffff", fontSize: "0.75rem" }}>✓</span>}
-                <span>{time.label}</span>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function Home() {
   // Default form data
@@ -163,8 +33,8 @@ export default function Home() {
     scheduleEndDate: "",
     totalHoursPerWeek: "40",
     hoursPerWorkerPerWeek: "6",
-    minShiftLength: 2,
-    maxShiftLength: 8,
+    minShiftLength: "",
+    maxShiftLength: "",
     workers: [],
   };
 
@@ -185,9 +55,13 @@ export default function Home() {
         const savedData = JSON.parse(saved);
         // Merge saved data with defaults to ensure new fields are present
         const mergedData = { ...defaultFormData, ...savedData };
-        // Ensure numeric fields are valid numbers, not NaN
-        if (isNaN(mergedData.minShiftLength)) mergedData.minShiftLength = defaultFormData.minShiftLength;
-        if (isNaN(mergedData.maxShiftLength)) mergedData.maxShiftLength = defaultFormData.maxShiftLength;
+        // Ensure numeric fields are valid (allow empty strings for optional fields)
+        if (mergedData.minShiftLength !== "" && isNaN(mergedData.minShiftLength)) {
+          mergedData.minShiftLength = defaultFormData.minShiftLength;
+        }
+        if (mergedData.maxShiftLength !== "" && isNaN(mergedData.maxShiftLength)) {
+          mergedData.maxShiftLength = defaultFormData.maxShiftLength;
+        }
         setFormData(mergedData);
       } catch (e) {
         console.error('Failed to load saved data:', e);
@@ -409,7 +283,8 @@ export default function Home() {
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       color: "#ffffff",
-                      outline: "none"
+                      outline: "none",
+                      colorScheme: "dark"
                     }}
                   />
                 </div>
@@ -429,7 +304,8 @@ export default function Home() {
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       color: "#ffffff",
-                      outline: "none"
+                      outline: "none",
+                      colorScheme: "dark"
                     }}
                   />
                 </div>
@@ -500,7 +376,8 @@ export default function Home() {
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       color: "#ffffff",
-                      outline: "none"
+                      outline: "none",
+                      colorScheme: "dark"
                     }}
                   />
                 </div>
@@ -523,7 +400,8 @@ export default function Home() {
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       color: "#ffffff",
-                      outline: "none"
+                      outline: "none",
+                      colorScheme: "dark"
                     }}
                   />
                 </div>
@@ -540,7 +418,7 @@ export default function Home() {
                   Hours and shift constraints
                 </h3>
                 <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
-                  Set weekly hour targets and shift length limits
+                  Set weekly hour targets and optional shift length limits. Leave shift constraints empty to use automatic scheduling strategies.
                 </p>
               </div>
 
@@ -579,7 +457,8 @@ export default function Home() {
                   <input
                     type="number"
                     value={formData.minShiftLength}
-                    onChange={(e) => handleInputChange("minShiftLength", parseFloat(e.target.value))}
+                    onChange={(e) => handleInputChange("minShiftLength", e.target.value === "" ? "" : parseFloat(e.target.value))}
+                    placeholder="Auto"
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
@@ -595,7 +474,7 @@ export default function Home() {
                     step="0.5"
                   />
                   <p style={{ fontSize: "0.8125rem", color: "#6e7681", marginTop: "0.5rem", marginBottom: 0, lineHeight: "1.4" }}>
-                    Shortest allowed shift duration
+                    Optional: Shortest shift duration (leave empty for auto)
                   </p>
                 </div>
 
@@ -606,7 +485,8 @@ export default function Home() {
                   <input
                     type="number"
                     value={formData.maxShiftLength}
-                    onChange={(e) => handleInputChange("maxShiftLength", parseFloat(e.target.value))}
+                    onChange={(e) => handleInputChange("maxShiftLength", e.target.value === "" ? "" : parseFloat(e.target.value))}
+                    placeholder="Auto"
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
@@ -622,7 +502,7 @@ export default function Home() {
                     step="0.5"
                   />
                   <p style={{ fontSize: "0.8125rem", color: "#6e7681", marginTop: "0.5rem", marginBottom: 0, lineHeight: "1.4" }}>
-                    Longest allowed shift duration
+                    Optional: Longest shift duration (leave empty for auto)
                   </p>
                 </div>
               </div>
@@ -641,6 +521,7 @@ export default function Home() {
                 type="button"
                 onClick={addWorker}
                 disabled={formData.workers.length >= 10}
+                aria-label={`Add worker (${formData.workers.length}/10)`}
                 style={{
                   padding: "0.5rem 1rem",
                   backgroundColor: formData.workers.length >= 10 ? "#1a1f2e" : "#0972d3",
@@ -791,8 +672,8 @@ export default function Home() {
                                   <div
                                     style={{
                                       position: "relative",
-                                      width: "40px",
-                                      height: "20px",
+                                      width: "48px",
+                                      height: "24px",
                                       display: "flex",
                                       alignItems: "center",
                                       cursor: "pointer"
@@ -813,33 +694,34 @@ export default function Home() {
                                       }}
                                     />
                                     <div style={{
-                                      width: "40px",
-                                      height: "20px",
-                                      borderRadius: "10px",
-                                      backgroundColor: !worker.availability[day].available ? "#dc2626" : "#1a1f2e",
-                                      border: "1px solid",
-                                      borderColor: !worker.availability[day].available ? "#dc2626" : "#414d5c",
-                                      transition: "all 0.2s ease",
-                                      position: "relative"
+                                      width: "48px",
+                                      height: "24px",
+                                      borderRadius: "12px",
+                                      backgroundColor: !worker.availability[day].available ? "#dc2626" : "#047857",
+                                      border: "2px solid",
+                                      borderColor: !worker.availability[day].available ? "#b91c1c" : "#059669",
+                                      transition: "all 0.3s ease",
+                                      position: "relative",
+                                      boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.2)"
                                     }}>
                                       <div style={{
                                         position: "absolute",
                                         top: "2px",
-                                        left: !worker.availability[day].available ? "22px" : "2px",
-                                        width: "14px",
-                                        height: "14px",
+                                        left: !worker.availability[day].available ? "26px" : "2px",
+                                        width: "16px",
+                                        height: "16px",
                                         borderRadius: "50%",
                                         backgroundColor: "#ffffff",
-                                        transition: "all 0.2s ease",
-                                        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.3)"
+                                        transition: "all 0.3s ease",
+                                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.4)"
                                       }} />
                                     </div>
                                   </div>
                                   <span style={{
-                                    fontSize: "0.75rem",
-                                    color: !worker.availability[day].available ? "#ff6b6b" : "#6b7280",
+                                    fontSize: "0.8125rem",
+                                    color: !worker.availability[day].available ? "#ff6b6b" : "#10b981",
                                     fontWeight: "500",
-                                    minWidth: "80px"
+                                    minWidth: "100px"
                                   }}>
                                     {!worker.availability[day].available ? "Not available" : "Available"}
                                   </span>
@@ -900,6 +782,8 @@ export default function Home() {
           <button
             onClick={handleGenerateSchedule}
             disabled={isGenerating || formData.workers.length === 0}
+            aria-label="Generate work schedule based on provided information"
+            aria-busy={isGenerating}
             style={{
               padding: "0.625rem 1.5rem",
               backgroundColor: isGenerating || formData.workers.length === 0 ? "#1a1f2e" : "#ec7211",
@@ -964,14 +848,53 @@ export default function Home() {
                   border: "2px solid #0972d3",
                   borderRadius: "8px 8px 0 0",
                   padding: "1.5rem",
-                  borderBottom: "1px solid #30363d"
+                  borderBottom: "1px solid #30363d",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  gap: "1rem"
                 }}>
-                  <h3 style={{ fontSize: "1.25rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
-                    {currentSchedule.name}
-                  </h3>
-                  <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
-                    {currentSchedule.description}
-                  </p>
+                  <div style={{ flex: 1 }}>
+                    <h3 style={{ fontSize: "1.25rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
+                      {currentSchedule.name}
+                    </h3>
+                    <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
+                      {currentSchedule.description}
+                    </p>
+                  </div>
+                  {/* Export CSV button - Archived for later
+                  <button
+                    onClick={() => {
+                      const csv = exportToCSV(currentSchedule.schedule, currentSchedule.name);
+                      const filename = `schedule_${scheduleIndex + 1}_${currentSchedule.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.csv`;
+                      downloadCSV(csv, filename);
+                    }}
+                    aria-label={`Export ${currentSchedule.name} to CSV`}
+                    style={{
+                      padding: "0.625rem 1.25rem",
+                      backgroundColor: "#047857",
+                      color: "#ffffff",
+                      border: "1px solid #047857",
+                      borderRadius: "6px",
+                      fontSize: "0.875rem",
+                      fontWeight: "500",
+                      cursor: "pointer",
+                      transition: "all 0.15s ease",
+                      whiteSpace: "nowrap",
+                      letterSpacing: "0.01em"
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.backgroundColor = "#059669";
+                      e.currentTarget.style.borderColor = "#059669";
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.backgroundColor = "#047857";
+                      e.currentTarget.style.borderColor = "#047857";
+                    }}
+                  >
+                    Export CSV
+                  </button>
+                  */}
                 </div>
 
                 <div style={{

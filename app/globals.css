@@ -103,3 +103,15 @@ h1, h2, h3 {
 html {
   scroll-behavior: smooth;
 }
+
+/* Style calendar icons for date/time inputs to be visible on dark backgrounds */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+  filter: invert(0.9);
+}
