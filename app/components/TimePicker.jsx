@@ -2,11 +2,11 @@
 
 import { useState, useEffect, useRef } from "react";
 
-// Generate time options in 15-minute increments (12-hour format)
+// Generate time options in 30-minute increments only (:00 and :30)
 const generateTimeOptions = () => {
   const times = [];
   for (let hour = 0; hour < 24; hour++) {
-    for (let minute = 0; minute < 60; minute += 15) {
+    for (let minute = 0; minute < 60; minute += 30) {
       const time24 = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
       const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
       const ampm = hour < 12 ? 'AM' : 'PM';
