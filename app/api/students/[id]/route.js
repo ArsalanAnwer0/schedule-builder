@@ -1,0 +1,115 @@
+import { NextResponse } from 'next/server';
+import { requireAdmin } from '../../../../lib/auth/session';
+import dbConnect from '../../../../lib/db/connect';
+import User from '../../../../lib/db/models/User';
+
+// PUT update student
+export async function PUT(request, { params }) {
+  try {
+    const adminCheck = await requireAdmin();
+    if (adminCheck.error) {
+      return NextResponse.json(
+        { error: adminCheck.error },
+        { status: adminCheck.status }
+      );
+    }
+
+    const { id } = params;
+    const { email, name } = await request.json();
+
+    if (!email || !name) {
+      return NextResponse.json(
+        { error: 'Email and name are required' },
+        { status: 400 }
+      );
+    }
+
+    await dbConnect();
+
+    // Check if email is taken by another user
+    const existingUser = await User.findOne({
+      email: email.toLowerCase().trim(),
+      _id: { $ne: id },
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { error: 'Email is already taken by another user' },
+        { status: 400 }
+      );
+    }
+
+    const student = await User.findOneAndUpdate(
+      { _id: id, role: 'student' },
+      {
+        email: email.toLowerCase().trim(),
+        name: name.trim(),
+      },
+      { new: true }
+    );
+
+    if (!student) {
+      return NextResponse.json(
+        { error: 'Student not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      student: {
+        id: student._id.toString(),
+        email: student.email,
+        name: student.name,
+        createdAt: student.createdAt,
+      },
+    });
+
+  } catch (error) {
+    console.error('Update student error:', error);
+    return NextResponse.json(
+      { error: 'Failed to update student' },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE student
+export async function DELETE(request, { params }) {
+  try {
+    const adminCheck = await requireAdmin();
+    if (adminCheck.error) {
+      return NextResponse.json(
+        { error: adminCheck.error },
+        { status: adminCheck.status }
+      );
+    }
+
+    const { id } = params;
+
+    await dbConnect();
+
+    const student = await User.findOneAndDelete({
+      _id: id,
+      role: 'student',
+    });
+
+    if (!student) {
+      return NextResponse.json(
+        { error: 'Student not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Student deleted successfully',
+    });
+
+  } catch (error) {
+    console.error('Delete student error:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete student' },
+      { status: 500 }
+    );
+  }
+}

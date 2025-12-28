@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { generateSchedule } from "../lib/scheduler";
 import TimePicker from "./components/TimePicker";
 // import { exportToCSV, downloadCSV } from "../lib/utils/export"; // Archived for later
@@ -25,6 +26,21 @@ const convertTo12Hour = (time24) => {
 };
 
 export default function Home() {
+  const router = useRouter();
+
+  // Auth state
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  // Student management state
+  const [students, setStudents] = useState([]);
+  const [loadingStudents, setLoadingStudents] = useState(false);
+  const [showAddStudentModal, setShowAddStudentModal] = useState(false);
+  const [editingStudent, setEditingStudent] = useState(null);
+  const [studentFormData, setStudentFormData] = useState({ name: '', email: '' });
+  const [studentError, setStudentError] = useState('');
+  const [studentSuccess, setStudentSuccess] = useState('');
+
   // Default form data
   const defaultFormData = {
     officeStartTime: "08:00",
@@ -45,6 +61,116 @@ export default function Home() {
   const [selectedSemester, setSelectedSemester] = useState("");
   const [isHydrated, setIsHydrated] = useState(false);
   const [validationError, setValidationError] = useState(null);
+
+  // Check authentication
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then(res => res.json())
+      .then(data => {
+        if (data.user && data.user.role === 'admin') {
+          setUser(data.user);
+          loadStudents();
+        } else {
+          router.push('/login');
+        }
+      })
+      .catch(() => {
+        router.push('/login');
+      })
+      .finally(() => {
+        setAuthLoading(false);
+      });
+  }, [router]);
+
+  // Load students
+  const loadStudents = async () => {
+    setLoadingStudents(true);
+    try {
+      const res = await fetch('/api/students');
+      const data = await res.json();
+      if (res.ok) {
+        setStudents(data.students);
+      }
+    } catch (err) {
+      console.error('Failed to load students:', err);
+    } finally {
+      setLoadingStudents(false);
+    }
+  };
+
+  // Student management handlers
+  const handleAddStudent = () => {
+    setStudentFormData({ name: '', email: '' });
+    setEditingStudent(null);
+    setShowAddStudentModal(true);
+    setStudentError('');
+    setStudentSuccess('');
+  };
+
+  const handleEditStudent = (student) => {
+    setStudentFormData({ name: student.name, email: student.email });
+    setEditingStudent(student);
+    setShowAddStudentModal(true);
+    setStudentError('');
+    setStudentSuccess('');
+  };
+
+  const handleSubmitStudent = async (e) => {
+    e.preventDefault();
+    setStudentError('');
+    setStudentSuccess('');
+
+    try {
+      const url = editingStudent
+        ? `/api/students/${editingStudent.id}`
+        : '/api/students';
+      const method = editingStudent ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(studentFormData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setStudentError(data.error || 'Failed to save student');
+        return;
+      }
+
+      setStudentSuccess(editingStudent ? 'Student updated successfully' : 'Student added successfully');
+      setShowAddStudentModal(false);
+      loadStudents();
+      setTimeout(() => setStudentSuccess(''), 3000);
+    } catch (err) {
+      setStudentError('Something went wrong. Please try again.');
+    }
+  };
+
+  const handleDeleteStudent = async (id) => {
+    if (!confirm('Are you sure you want to delete this student?')) return;
+
+    try {
+      const res = await fetch(`/api/students/${id}`, { method: 'DELETE' });
+
+      if (res.ok) {
+        setStudentSuccess('Student deleted successfully');
+        loadStudents();
+        setTimeout(() => setStudentSuccess(''), 3000);
+      } else {
+        const data = await res.json();
+        setStudentError(data.error || 'Failed to delete student');
+      }
+    } catch (err) {
+      setStudentError('Something went wrong. Please try again.');
+    }
+  };
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    router.push('/login');
+  };
 
   // Load from localStorage after hydration
   useEffect(() => {
@@ -230,18 +356,176 @@ export default function Home() {
     }, 500);
   };
 
+  if (authLoading) {
+    return (
+      <div style={{ minHeight: "100vh", backgroundColor: "#0f1b2a", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <p style={{ color: "#aab7b8" }}>Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#0f1b2a", padding: "2rem 1.5rem" }}>
       <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
 
-        {/* Header */}
-        <div style={{ marginBottom: "1.5rem" }}>
-          <h1 style={{ fontSize: "1.875rem", fontWeight: "400", color: "#ffffff", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
-            Schedule Builder
-          </h1>
-          <p style={{ fontSize: "1rem", color: "#aab7b8", lineHeight: "1.6" }}>
-            Schedule Builder allows you to create work schedules for your office. Quickly get started by following the steps below.
-          </p>
+        {/* Header with User Info and Logout */}
+        <div style={{ marginBottom: "1.5rem", display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1rem" }}>
+          <div>
+            <h1 style={{ fontSize: "1.875rem", fontWeight: "400", color: "#ffffff", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
+              Schedule Builder
+            </h1>
+            <p style={{ fontSize: "1rem", color: "#aab7b8", lineHeight: "1.6" }}>
+              Welcome back, {user?.name}. Manage your office schedules and students below.
+            </p>
+          </div>
+          <button
+            onClick={handleLogout}
+            style={{
+              padding: "0.625rem 1.25rem",
+              backgroundColor: "#16191f",
+              color: "#ffffff",
+              border: "1px solid #414d5c",
+              borderRadius: "6px",
+              fontSize: "0.875rem",
+              fontWeight: "500",
+              cursor: "pointer",
+              transition: "all 0.15s ease"
+            }}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#252d3d"}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#16191f"}
+          >
+            Logout
+          </button>
+        </div>
+
+        {/* Student Success/Error Messages */}
+        {studentSuccess && (
+          <div style={{
+            padding: "1rem 1.5rem",
+            backgroundColor: "#0d1f17",
+            border: "1px solid #1e4d2b",
+            borderLeft: "4px solid #047857",
+            borderRadius: "6px",
+            marginBottom: "1.5rem"
+          }}>
+            <p style={{ color: "#10b981", margin: 0, fontSize: "0.875rem" }}>✓ {studentSuccess}</p>
+          </div>
+        )}
+
+        {studentError && (
+          <div style={{
+            padding: "1rem 1.5rem",
+            backgroundColor: "#2d1517",
+            border: "1px solid #5c2d30",
+            borderLeft: "4px solid #dc2626",
+            borderRadius: "6px",
+            marginBottom: "1.5rem"
+          }}>
+            <p style={{ color: "#ff6b6b", margin: 0, fontSize: "0.875rem" }}>{studentError}</p>
+          </div>
+        )}
+
+        {/* Student Management Section */}
+        <div style={{ backgroundColor: "#16191f", border: "1px solid #30363d", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
+          <div style={{ padding: "1.5rem", borderBottom: "1px solid #30363d", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+            <div>
+              <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
+                Students
+              </h2>
+              <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
+                Manage your student roster and their information
+              </p>
+            </div>
+            <button
+              onClick={handleAddStudent}
+              style={{
+                padding: "0.625rem 1.25rem",
+                backgroundColor: "#0972d3",
+                color: "#ffffff",
+                border: "1px solid #0972d3",
+                borderRadius: "6px",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+                cursor: "pointer",
+                transition: "all 0.15s ease"
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = "#0863bf";
+                e.currentTarget.style.borderColor = "#0863bf";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = "#0972d3";
+                e.currentTarget.style.borderColor = "#0972d3";
+              }}
+            >
+              + Add Student
+            </button>
+          </div>
+
+          <div style={{ padding: "2rem" }}>
+            {loadingStudents ? (
+              <p style={{ color: "#8b949e" }}>Loading students...</p>
+            ) : students.length === 0 ? (
+              <p style={{ color: "#8b949e" }}>No students yet. Add your first student to get started.</p>
+            ) : (
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                  <thead>
+                    <tr style={{ borderBottom: "1px solid #30363d" }}>
+                      <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Name</th>
+                      <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Email</th>
+                      <th style={{ padding: "0.875rem 1rem", textAlign: "right", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {students.map((student) => (
+                      <tr key={student.id} style={{ borderBottom: "1px solid #30363d" }}>
+                        <td style={{ padding: "1rem", color: "#ffffff", fontSize: "0.875rem" }}>{student.name}</td>
+                        <td style={{ padding: "1rem", color: "#c9d1d9", fontSize: "0.875rem" }}>{student.email}</td>
+                        <td style={{ padding: "1rem", textAlign: "right" }}>
+                          <button
+                            onClick={() => handleEditStudent(student)}
+                            style={{
+                              padding: "0.375rem 0.875rem",
+                              fontSize: "0.875rem",
+                              backgroundColor: "#0d1117",
+                              border: "1px solid #30363d",
+                              borderRadius: "4px",
+                              color: "#58a6ff",
+                              cursor: "pointer",
+                              marginRight: "0.5rem",
+                              transition: "all 0.15s"
+                            }}
+                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#252d3d"}
+                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#0d1117"}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteStudent(student.id)}
+                            style={{
+                              padding: "0.375rem 0.875rem",
+                              fontSize: "0.875rem",
+                              backgroundColor: "#2d1517",
+                              border: "1px solid #5c2d30",
+                              borderRadius: "4px",
+                              color: "#ff6b6b",
+                              cursor: "pointer",
+                              transition: "all 0.15s"
+                            }}
+                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#3d2527"}
+                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#2d1517"}
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Schedule Configuration Section */}
@@ -1181,6 +1465,140 @@ export default function Home() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Add/Edit Student Modal */}
+        {showAddStudentModal && (
+          <div style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+            padding: "1rem"
+          }}>
+            <div style={{
+              backgroundColor: "#16191f",
+              border: "1px solid #30363d",
+              borderRadius: "8px",
+              padding: "2rem",
+              maxWidth: "500px",
+              width: "100%"
+            }}>
+              <h3 style={{ fontSize: "1.25rem", fontWeight: "500", color: "#ffffff", marginBottom: "1.5rem" }}>
+                {editingStudent ? 'Edit Student' : 'Add New Student'}
+              </h3>
+
+              <form onSubmit={handleSubmitStudent}>
+                <div style={{ marginBottom: "1.5rem" }}>
+                  <label style={{
+                    display: "block",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    color: "#c9d1d9",
+                    marginBottom: "0.625rem"
+                  }}>
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    value={studentFormData.name}
+                    onChange={(e) => setStudentFormData({ ...studentFormData, name: e.target.value })}
+                    required
+                    style={{
+                      width: "100%",
+                      padding: "0.625rem 0.875rem",
+                      backgroundColor: "#0d1117",
+                      border: "1px solid #30363d",
+                      borderRadius: "6px",
+                      fontSize: "0.875rem",
+                      color: "#ffffff",
+                      outline: "none"
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: "1.5rem" }}>
+                  <label style={{
+                    display: "block",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    color: "#c9d1d9",
+                    marginBottom: "0.625rem"
+                  }}>
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={studentFormData.email}
+                    onChange={(e) => setStudentFormData({ ...studentFormData, email: e.target.value })}
+                    required
+                    style={{
+                      width: "100%",
+                      padding: "0.625rem 0.875rem",
+                      backgroundColor: "#0d1117",
+                      border: "1px solid #30363d",
+                      borderRadius: "6px",
+                      fontSize: "0.875rem",
+                      color: "#ffffff",
+                      outline: "none"
+                    }}
+                  />
+                </div>
+
+                <div style={{ display: "flex", gap: "1rem", justifyContent: "flex-end" }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowAddStudentModal(false)}
+                    style={{
+                      padding: "0.625rem 1.25rem",
+                      backgroundColor: "#0d1117",
+                      color: "#ffffff",
+                      border: "1px solid #30363d",
+                      borderRadius: "6px",
+                      fontSize: "0.875rem",
+                      fontWeight: "500",
+                      cursor: "pointer",
+                      transition: "all 0.15s ease"
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#252d3d"}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#0d1117"}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    style={{
+                      padding: "0.625rem 1.25rem",
+                      backgroundColor: "#0972d3",
+                      color: "#ffffff",
+                      border: "1px solid #0972d3",
+                      borderRadius: "6px",
+                      fontSize: "0.875rem",
+                      fontWeight: "500",
+                      cursor: "pointer",
+                      transition: "all 0.15s ease"
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.backgroundColor = "#0863bf";
+                      e.currentTarget.style.borderColor = "#0863bf";
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.backgroundColor = "#0972d3";
+                      e.currentTarget.style.borderColor = "#0972d3";
+                    }}
+                  >
+                    {editingStudent ? 'Update' : 'Add'} Student
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
       </div>
