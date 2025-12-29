@@ -61,6 +61,8 @@ export default function Home() {
   const [selectedSemester, setSelectedSemester] = useState("");
   const [isHydrated, setIsHydrated] = useState(false);
   const [validationError, setValidationError] = useState(null);
+  const [savedScheduleIds, setSavedScheduleIds] = useState([]); // Store schedule IDs after saving to DB
+  const [publishingScheduleId, setPublishingScheduleId] = useState(null); // Track which schedule is being published
 
   // Check authentication
   useEffect(() => {
@@ -395,15 +397,80 @@ export default function Home() {
     console.log('Schedule data being sent to generator:', scheduleData);
 
     setIsGenerating(true);
-    setTimeout(() => {
+    setTimeout(async () => {
       const result = generateSchedule(scheduleData);
       console.log('Schedule generation result:', result);
       setScheduleResult(result);
+
+      // Save schedules to database
+      if (result.success && result.schedules) {
+        try {
+          const saveResponse = await fetch('/api/schedules', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              schedules: result.schedules,
+              scheduleConfig: {
+                scheduleStartDate: formData.scheduleStartDate,
+                scheduleEndDate: formData.scheduleEndDate,
+                officeStartTime: formData.officeStartTime,
+                officeEndTime: formData.officeEndTime
+              }
+            }),
+          });
+
+          const saveData = await saveResponse.json();
+
+          if (saveData.success) {
+            // Store the schedule IDs so we can publish them later
+            setSavedScheduleIds(saveData.schedules.map(s => s.id));
+            console.log('Schedules saved to database:', saveData.schedules);
+          }
+        } catch (error) {
+          console.error('Error saving schedules:', error);
+        }
+      }
+
       setIsGenerating(false);
       setTimeout(() => {
         document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
       }, 100);
     }, 500);
+  };
+
+  const handlePublishSchedule = async (scheduleIndex) => {
+    const scheduleId = savedScheduleIds[scheduleIndex];
+
+    if (!scheduleId) {
+      setStudentError('Schedule not saved yet. Please regenerate the schedule.');
+      return;
+    }
+
+    setPublishingScheduleId(scheduleId);
+
+    try {
+      const response = await fetch(`/api/schedules/${scheduleId}/publish`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setStudentError(data.error || 'Failed to publish schedule');
+        return;
+      }
+
+      setStudentSuccess(data.message);
+      setTimeout(() => setStudentSuccess(''), 5000);
+
+      // Reload students to refresh the UI
+      await loadStudents();
+    } catch (err) {
+      setStudentError('Something went wrong. Please try again.');
+    } finally {
+      setPublishingScheduleId(null);
+    }
   };
 
   if (authLoading) {
@@ -1131,6 +1198,43 @@ export default function Home() {
                       {currentSchedule.description}
                     </p>
                   </div>
+
+                  {/* Publish Button */}
+                  <button
+                    onClick={() => handlePublishSchedule(scheduleIndex)}
+                    disabled={publishingScheduleId === savedScheduleIds[scheduleIndex]}
+                    aria-label={`Publish ${currentSchedule.name}`}
+                    style={{
+                      padding: "0.625rem 1.25rem",
+                      backgroundColor: publishingScheduleId === savedScheduleIds[scheduleIndex] ? "#374151" : "#10b981",
+                      color: "#ffffff",
+                      border: "1px solid",
+                      borderColor: publishingScheduleId === savedScheduleIds[scheduleIndex] ? "#374151" : "#10b981",
+                      borderRadius: "6px",
+                      fontSize: "0.875rem",
+                      fontWeight: "500",
+                      cursor: publishingScheduleId === savedScheduleIds[scheduleIndex] ? "not-allowed" : "pointer",
+                      transition: "all 0.15s ease",
+                      whiteSpace: "nowrap",
+                      letterSpacing: "0.01em",
+                      opacity: publishingScheduleId === savedScheduleIds[scheduleIndex] ? 0.6 : 1
+                    }}
+                    onMouseOver={(e) => {
+                      if (publishingScheduleId !== savedScheduleIds[scheduleIndex]) {
+                        e.currentTarget.style.backgroundColor = "#059669";
+                        e.currentTarget.style.borderColor = "#059669";
+                      }
+                    }}
+                    onMouseOut={(e) => {
+                      if (publishingScheduleId !== savedScheduleIds[scheduleIndex]) {
+                        e.currentTarget.style.backgroundColor = "#10b981";
+                        e.currentTarget.style.borderColor = "#10b981";
+                      }
+                    }}
+                  >
+                    {publishingScheduleId === savedScheduleIds[scheduleIndex] ? 'Publishing...' : 'Publish Schedule'}
+                  </button>
+
                   {/* Export CSV button - Archived for later
                   <button
                     onClick={() => {
