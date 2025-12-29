@@ -63,6 +63,8 @@ export default function Home() {
   const [validationError, setValidationError] = useState(null);
   const [savedScheduleIds, setSavedScheduleIds] = useState([]); // Store schedule IDs after saving to DB
   const [publishingScheduleId, setPublishingScheduleId] = useState(null); // Track which schedule is being published
+  const [editRequests, setEditRequests] = useState([]); // Pending edit requests
+  const [processingRequestId, setProcessingRequestId] = useState(null); // Track which request is being processed
 
   // Check authentication
   useEffect(() => {
@@ -72,6 +74,7 @@ export default function Home() {
         if (data.user && data.user.role === 'admin') {
           setUser(data.user);
           loadStudents();
+          loadEditRequests();
         } else {
           router.push('/login');
         }
@@ -97,6 +100,19 @@ export default function Home() {
       console.error('Failed to load students:', err);
     } finally {
       setLoadingStudents(false);
+    }
+  };
+
+  // Load edit requests
+  const loadEditRequests = async () => {
+    try {
+      const res = await fetch('/api/availability/edit-requests');
+      const data = await res.json();
+      if (res.ok && data.requests) {
+        setEditRequests(data.requests.filter(req => req.status === 'pending'));
+      }
+    } catch (err) {
+      console.error('Failed to load edit requests:', err);
     }
   };
 
@@ -470,6 +486,38 @@ export default function Home() {
       setStudentError('Something went wrong. Please try again.');
     } finally {
       setPublishingScheduleId(null);
+    }
+  };
+
+  const handleProcessEditRequest = async (requestId, action) => {
+    setProcessingRequestId(requestId);
+    setStudentError('');
+    setStudentSuccess('');
+
+    try {
+      const response = await fetch(`/api/availability/edit-requests/${requestId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action }) // 'approve' or 'reject'
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setStudentError(data.error || `Failed to ${action} request`);
+        return;
+      }
+
+      setStudentSuccess(data.message);
+      setTimeout(() => setStudentSuccess(''), 5000);
+
+      // Reload both students and edit requests
+      await loadStudents();
+      await loadEditRequests();
+    } catch (err) {
+      setStudentError('Something went wrong. Please try again.');
+    } finally {
+      setProcessingRequestId(null);
     }
   };
 
@@ -969,6 +1017,143 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        {/* Pending Edit Requests Section */}
+        {editRequests.length > 0 && (
+          <div style={{ backgroundColor: "#2d1f17", border: "1px solid #f59e0b", borderRadius: "8px", marginBottom: "1.5rem", overflow: "hidden" }}>
+            <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #f59e0b" }}>
+              <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "#f59e0b", margin: 0, marginBottom: "0.5rem" }}>
+                Pending Availability Edit Requests ({editRequests.length})
+              </h2>
+              <p style={{ fontSize: "0.875rem", color: "#e5e7eb", lineHeight: "1.5", margin: 0 }}>
+                Review and approve/reject student requests to update their availability
+              </p>
+            </div>
+            <div style={{ padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              {editRequests.map((request) => (
+                <div key={request.id} style={{ backgroundColor: "#16191f", border: "1px solid #30363d", borderRadius: "8px", overflow: "hidden" }}>
+                  {/* Request Header */}
+                  <div style={{ padding: "1rem 1.25rem", backgroundColor: "#1f2937", borderBottom: "1px solid #30363d", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+                    <div>
+                      <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.25rem" }}>
+                        {request.userName}
+                      </h3>
+                      <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0 }}>
+                        {request.userEmail}
+                      </p>
+                    </div>
+                    <div style={{ display: "flex", gap: "0.75rem" }}>
+                      <button
+                        onClick={() => handleProcessEditRequest(request.id, 'approve')}
+                        disabled={processingRequestId === request.id}
+                        style={{
+                          padding: "0.5rem 1rem",
+                          backgroundColor: processingRequestId === request.id ? "#374151" : "#10b981",
+                          color: "#ffffff",
+                          border: "none",
+                          borderRadius: "6px",
+                          fontSize: "0.875rem",
+                          fontWeight: "500",
+                          cursor: processingRequestId === request.id ? "not-allowed" : "pointer",
+                          transition: "all 0.15s ease"
+                        }}
+                        onMouseOver={(e) => {
+                          if (processingRequestId !== request.id) {
+                            e.currentTarget.style.backgroundColor = "#059669";
+                          }
+                        }}
+                        onMouseOut={(e) => {
+                          if (processingRequestId !== request.id) {
+                            e.currentTarget.style.backgroundColor = "#10b981";
+                          }
+                        }}
+                      >
+                        ✓ Approve
+                      </button>
+                      <button
+                        onClick={() => handleProcessEditRequest(request.id, 'reject')}
+                        disabled={processingRequestId === request.id}
+                        style={{
+                          padding: "0.5rem 1rem",
+                          backgroundColor: processingRequestId === request.id ? "#374151" : "#dc2626",
+                          color: "#ffffff",
+                          border: "none",
+                          borderRadius: "6px",
+                          fontSize: "0.875rem",
+                          fontWeight: "500",
+                          cursor: processingRequestId === request.id ? "not-allowed" : "pointer",
+                          transition: "all 0.15s ease"
+                        }}
+                        onMouseOver={(e) => {
+                          if (processingRequestId !== request.id) {
+                            e.currentTarget.style.backgroundColor = "#b91c1c";
+                          }
+                        }}
+                        onMouseOut={(e) => {
+                          if (processingRequestId !== request.id) {
+                            e.currentTarget.style.backgroundColor = "#dc2626";
+                          }
+                        }}
+                      >
+                        × Reject
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Request Content */}
+                  <div style={{ padding: "1.25rem" }}>
+                    {/* Reason */}
+                    <div style={{ marginBottom: "1.5rem" }}>
+                      <h4 style={{ fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", margin: 0, marginBottom: "0.5rem" }}>
+                        Reason for Edit:
+                      </h4>
+                      <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, padding: "0.75rem", backgroundColor: "#0d1117", borderRadius: "4px", border: "1px solid #30363d" }}>
+                        {request.reason}
+                      </p>
+                    </div>
+
+                    {/* Comparison */}
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                      {/* Old Availability */}
+                      <div>
+                        <h4 style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ef4444", margin: 0, marginBottom: "0.75rem" }}>
+                          Current Availability
+                        </h4>
+                        <div style={{ fontSize: "0.75rem", color: "#8b949e" }}>
+                          {Object.entries(request.oldAvailability).map(([day, slots]) => (
+                            slots.length > 0 && (
+                              <div key={day} style={{ marginBottom: "0.5rem" }}>
+                                <strong style={{ color: "#c9d1d9" }}>{day}:</strong> {slots.slice(0, 3).join(', ')}
+                                {slots.length > 3 && ` +${slots.length - 3} more`}
+                              </div>
+                            )
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* New Availability */}
+                      <div>
+                        <h4 style={{ fontSize: "0.875rem", fontWeight: "500", color: "#10b981", margin: 0, marginBottom: "0.75rem" }}>
+                          Requested Changes
+                        </h4>
+                        <div style={{ fontSize: "0.75rem", color: "#8b949e" }}>
+                          {Object.entries(request.newAvailability).map(([day, slots]) => (
+                            slots.length > 0 && (
+                              <div key={day} style={{ marginBottom: "0.5rem" }}>
+                                <strong style={{ color: "#c9d1d9" }}>{day}:</strong> {slots.slice(0, 3).join(', ')}
+                                {slots.length > 3 && ` +${slots.length - 3} more`}
+                              </div>
+                            )
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Student Workers Availability Section */}
         <div style={{ backgroundColor: "#16191f", border: "1px solid #414d5c", borderRadius: "8px", marginBottom: "1rem", overflow: "hidden" }}>
