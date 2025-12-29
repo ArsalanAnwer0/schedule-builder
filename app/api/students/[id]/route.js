@@ -27,27 +27,17 @@ export async function PUT(request, { params }) {
 
     await dbConnect();
 
-    // First check if the student exists
-    const currentStudent = await User.findById(id);
-    if (!currentStudent) {
+    // Check if email is taken by another user
+    const existingUser = await User.findOne({
+      email: email.toLowerCase().trim(),
+      _id: { $ne: id },
+    });
+
+    if (existingUser) {
       return NextResponse.json(
-        { error: 'Student not found' },
-        { status: 404 }
+        { error: 'Email is already taken by another user' },
+        { status: 400 }
       );
-    }
-
-    // Only check for email conflicts if the email is being changed
-    if (email.toLowerCase().trim() !== currentStudent.email.toLowerCase()) {
-      const existingUser = await User.findOne({
-        email: email.toLowerCase().trim(),
-      });
-
-      if (existingUser) {
-        return NextResponse.json(
-          { error: 'Email is already taken by another user' },
-          { status: 400 }
-        );
-      }
     }
 
     const student = await User.findOneAndUpdate(
