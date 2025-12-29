@@ -23,7 +23,18 @@ export default function StudentDashboard() {
   const [submitSuccess, setSubmitSuccess] = useState('');
   const [submitError, setSubmitError] = useState('');
 
-  useEffect(() => {
+  // Published schedule state
+  const [publishedSchedule, setPublishedSchedule] = useState(null);
+  const [loadingSchedule, setLoadingSchedule] = useState(true);
+
+  // Edit request state
+  const [editRequests, setEditRequests] = useState([]);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editReason, setEditReason] = useState('');
+  const [submittingEdit, setSubmittingEdit] = useState(false);
+
+  // Function to fetch user data
+  const fetchUserData = () => {
     fetch('/api/auth/me')
       .then(res => res.json())
       .then(data => {
@@ -39,7 +50,85 @@ export default function StudentDashboard() {
       .finally(() => {
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchUserData();
   }, [router]);
+
+  // Poll for user data updates every 5 seconds when availability not requested
+  useEffect(() => {
+    if (user && !user.availabilityRequested) {
+      const interval = setInterval(() => {
+        fetch('/api/auth/me')
+          .then(res => res.json())
+          .then(data => {
+            if (data.user && data.user.availabilityRequested) {
+              setUser(data.user);
+            }
+          })
+          .catch(err => console.error('Poll error:', err));
+      }, 5000); // Check every 5 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [user]);
+
+  // Fetch published schedule
+  useEffect(() => {
+    if (user) {
+      fetch('/api/schedules/published')
+        .then(res => res.json())
+        .then(data => {
+          if (data.schedule) {
+            setPublishedSchedule(data.schedule);
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching schedule:', err);
+        })
+        .finally(() => {
+          setLoadingSchedule(false);
+        });
+    }
+  }, [user]);
+
+  // State to track if student has submitted availability
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+
+  // Fetch current availability
+  useEffect(() => {
+    if (user) {
+      fetch('/api/availability')
+        .then(res => res.json())
+        .then(data => {
+          if (data.availability && data.availability.availability) {
+            setAvailability(data.availability.availability);
+            setAvailabilityNotes(data.availability.notes || '');
+            setHasSubmitted(true); // Mark as submitted if availability exists
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching availability:', err);
+        });
+    }
+  }, [user]);
+
+  // Fetch edit requests
+  useEffect(() => {
+    if (user) {
+      fetch('/api/availability/edit-requests')
+        .then(res => res.json())
+        .then(data => {
+          if (data.requests) {
+            setEditRequests(data.requests);
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching edit requests:', err);
+        });
+    }
+  }, [user]);
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
@@ -87,12 +176,62 @@ export default function StudentDashboard() {
       }
 
       setSubmitSuccess('Availability submitted successfully!');
+      setHasSubmitted(true); // Mark as submitted after successful submission
       setTimeout(() => setSubmitSuccess(''), 5000);
     } catch (err) {
       console.error('Submit error:', err);
       setSubmitError('Something went wrong. Please try again.');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleSubmitEditRequest = async (e) => {
+    e.preventDefault();
+    setSubmittingEdit(true);
+    setSubmitError('');
+    setSubmitSuccess('');
+
+    if (!editReason.trim()) {
+      setSubmitError('Please provide a reason for the edit');
+      setSubmittingEdit(false);
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/availability/edit-requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          newAvailability: availability,
+          newNotes: availabilityNotes,
+          reason: editReason
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setSubmitError(data.error || 'Failed to submit edit request');
+        return;
+      }
+
+      setSubmitSuccess(data.message);
+      setTimeout(() => setSubmitSuccess(''), 5000);
+      setShowEditForm(false);
+      setEditReason('');
+
+      // Refresh edit requests
+      const editRes = await fetch('/api/availability/edit-requests');
+      const editData = await editRes.json();
+      if (editData.requests) {
+        setEditRequests(editData.requests);
+      }
+    } catch (err) {
+      console.error('Submit edit error:', err);
+      setSubmitError('Something went wrong. Please try again.');
+    } finally {
+      setSubmittingEdit(false);
     }
   };
 
@@ -183,6 +322,179 @@ export default function StudentDashboard() {
           </button>
         </div>
 
+        {/* Published Schedule Section */}
+        {!loadingSchedule && publishedSchedule && (
+          <div style={{
+            backgroundColor: "#16191f",
+            border: "1px solid #0972d3",
+            borderRadius: "8px",
+            padding: "1.5rem",
+            marginBottom: "2rem"
+          }}>
+            <div style={{ marginBottom: "1.5rem" }}>
+              <h2 style={{
+                fontSize: "1.25rem",
+                fontWeight: "500",
+                color: "#ffffff",
+                marginBottom: "0.5rem"
+              }}>
+                Your Work Schedule
+              </h2>
+              {publishedSchedule.scheduleConfig && (
+                <p style={{
+                  fontSize: "0.875rem",
+                  color: "#8b949e",
+                  margin: 0
+                }}>
+                  {new Date(publishedSchedule.scheduleConfig.startDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                  {' - '}
+                  {new Date(publishedSchedule.scheduleConfig.endDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                </p>
+              )}
+            </div>
+
+            {/* Schedule Table */}
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ borderBottom: "2px solid #30363d" }}>
+                    <th style={{
+                      padding: "0.75rem",
+                      textAlign: "left",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      color: "#8b949e",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em"
+                    }}>Day</th>
+                    <th style={{
+                      padding: "0.75rem",
+                      textAlign: "left",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      color: "#8b949e",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em"
+                    }}>Worker</th>
+                    <th style={{
+                      padding: "0.75rem",
+                      textAlign: "left",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      color: "#8b949e",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em"
+                    }}>Shift Time</th>
+                    <th style={{
+                      padding: "0.75rem",
+                      textAlign: "left",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      color: "#8b949e",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em"
+                    }}>Hours</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].map((day) => {
+                    const dayShifts = publishedSchedule.shifts[day] || [];
+
+                    if (dayShifts.length === 0) {
+                      return (
+                        <tr key={day} style={{ borderBottom: "1px solid #30363d" }}>
+                          <td style={{
+                            padding: "1rem 0.75rem",
+                            color: "#c9d1d9",
+                            fontSize: "0.875rem",
+                            textTransform: "capitalize"
+                          }}>
+                            {day}
+                          </td>
+                          <td colSpan="3" style={{
+                            padding: "1rem 0.75rem",
+                            color: "#6e7681",
+                            fontSize: "0.875rem",
+                            fontStyle: "italic"
+                          }}>
+                            No shifts scheduled
+                          </td>
+                        </tr>
+                      );
+                    }
+
+                    return dayShifts.map((shift, index) => (
+                      <tr key={`${day}-${index}`} style={{ borderBottom: "1px solid #30363d" }}>
+                        {index === 0 && (
+                          <td
+                            rowSpan={dayShifts.length}
+                            style={{
+                              padding: "1rem 0.75rem",
+                              color: "#c9d1d9",
+                              fontSize: "0.875rem",
+                              textTransform: "capitalize",
+                              verticalAlign: "top"
+                            }}
+                          >
+                            {day}
+                          </td>
+                        )}
+                        <td style={{
+                          padding: "1rem 0.75rem",
+                          color: shift.studentId === user?.id ? "#58a6ff" : "#c9d1d9",
+                          fontSize: "0.875rem",
+                          fontWeight: shift.studentId === user?.id ? "600" : "400"
+                        }}>
+                          {shift.studentName}
+                          {shift.studentId === user?.id && (
+                            <span style={{
+                              marginLeft: "0.5rem",
+                              fontSize: "0.75rem",
+                              color: "#58a6ff",
+                              fontWeight: "400"
+                            }}>
+                              (You)
+                            </span>
+                          )}
+                        </td>
+                        <td style={{
+                          padding: "1rem 0.75rem",
+                          color: "#c9d1d9",
+                          fontSize: "0.875rem"
+                        }}>
+                          {shift.startTime} - {shift.endTime}
+                        </td>
+                        <td style={{
+                          padding: "1rem 0.75rem",
+                          color: "#c9d1d9",
+                          fontSize: "0.875rem"
+                        }}>
+                          {shift.hours}h
+                        </td>
+                      </tr>
+                    ));
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {!loadingSchedule && !publishedSchedule && (
+          <div style={{
+            backgroundColor: "#16191f",
+            border: "1px solid #30363d",
+            borderRadius: "8px",
+            padding: "1.5rem",
+            marginBottom: "2rem",
+            textAlign: "center"
+          }}>
+            <p style={{ color: "#8b949e", fontSize: "0.875rem", margin: 0 }}>
+              No schedule has been published yet. You'll see your work schedule here once it's published by your manager.
+            </p>
+          </div>
+        )}
+
         {/* Success/Error Messages */}
         {submitSuccess && (
           <div style={{
@@ -210,6 +522,30 @@ export default function StudentDashboard() {
           </div>
         )}
 
+        {/* Pending Edit Requests Section */}
+        {editRequests.filter(req => req.status === 'pending').length > 0 && (
+          <div style={{
+            backgroundColor: "#2d1f17",
+            border: "1px solid #f59e0b",
+            borderRadius: "8px",
+            padding: "1rem 1.5rem",
+            marginBottom: "1.5rem"
+          }}>
+            <h3 style={{
+              fontSize: "1rem",
+              fontWeight: "500",
+              color: "#f59e0b",
+              margin: 0,
+              marginBottom: "0.5rem"
+            }}>
+              Pending Edit Request
+            </h3>
+            <p style={{ color: "#e5e7eb", fontSize: "0.875rem", margin: 0 }}>
+              You have a pending availability edit request waiting for admin approval.
+            </p>
+          </div>
+        )}
+
         {/* Availability Submission Section */}
         <div style={{
           backgroundColor: "#16191f",
@@ -220,28 +556,113 @@ export default function StudentDashboard() {
         }}>
           <div style={{
             padding: "1.5rem",
-            borderBottom: "1px solid #30363d"
+            borderBottom: "1px solid #30363d",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            gap: "1rem",
+            flexWrap: "wrap"
           }}>
-            <h2 style={{
-              fontSize: "1.125rem",
-              fontWeight: "500",
-              color: "#ffffff",
-              margin: 0,
-              marginBottom: "0.5rem"
-            }}>
-              Submit Your Availability
-            </h2>
-            <p style={{
-              fontSize: "0.875rem",
-              color: "#8b949e",
-              margin: 0,
-              lineHeight: "1.5"
-            }}>
-              Select the hours you're available to work each day
-            </p>
+            <div style={{ flex: 1 }}>
+              <h2 style={{
+                fontSize: "1.125rem",
+                fontWeight: "500",
+                color: "#ffffff",
+                margin: 0,
+                marginBottom: "0.5rem"
+              }}>
+                {showEditForm ? 'Request Availability Edit' : 'Your Availability'}
+              </h2>
+              <p style={{
+                fontSize: "0.875rem",
+                color: "#8b949e",
+                margin: 0,
+                lineHeight: "1.5"
+              }}>
+                {showEditForm
+                  ? 'Make changes to your availability and submit for admin approval'
+                  : 'Select the hours you\'re available to work each day'}
+              </p>
+            </div>
+            {!showEditForm && hasSubmitted && editRequests.filter(req => req.status === 'pending').length === 0 && (
+              <button
+                onClick={() => setShowEditForm(true)}
+                style={{
+                  padding: "0.5rem 1rem",
+                  backgroundColor: "#0d9488",
+                  color: "#ffffff",
+                  border: "1px solid #0d9488",
+                  borderRadius: "6px",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  transition: "all 0.15s ease",
+                  whiteSpace: "nowrap"
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#0f766e"}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#0d9488"}
+              >
+                Request Edit
+              </button>
+            )}
+            {showEditForm && (
+              <button
+                onClick={() => {
+                  setShowEditForm(false);
+                  setEditReason('');
+                }}
+                style={{
+                  padding: "0.5rem 1rem",
+                  backgroundColor: "#374151",
+                  color: "#ffffff",
+                  border: "1px solid #4b5563",
+                  borderRadius: "6px",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  transition: "all 0.15s ease",
+                  whiteSpace: "nowrap"
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#4b5563"}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#374151"}
+              >
+                Cancel
+              </button>
+            )}
           </div>
 
-          <form onSubmit={handleSubmitAvailability} style={{ padding: "2rem" }}>
+          {/* Show message if availability hasn't been requested */}
+          {user && !user.availabilityRequested ? (
+            <div style={{ padding: "3rem 2rem", textAlign: "center" }}>
+              <div style={{
+                backgroundColor: "#0d1117",
+                border: "1px solid #21262d",
+                borderRadius: "8px",
+                padding: "3rem 2rem",
+                maxWidth: "600px",
+                margin: "0 auto"
+              }}>
+                <h3 style={{
+                  fontSize: "1.25rem",
+                  fontWeight: "500",
+                  color: "#ffffff",
+                  margin: 0,
+                  marginBottom: "1rem"
+                }}>
+                  Availability Not Requested Yet
+                </h3>
+                <p style={{
+                  fontSize: "0.9375rem",
+                  color: "#8b949e",
+                  lineHeight: "1.6",
+                  margin: 0
+                }}>
+                  Your manager will send an availability request when it's time to submit your work availability. Only then you will have access to submit your availability. You'll receive an email notification when the request has been made.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={showEditForm ? handleSubmitEditRequest : handleSubmitAvailability} style={{ padding: "2rem" }}>
             {/* Time Grid */}
             <div style={{ overflowX: "auto", marginBottom: "2rem" }}>
               <div style={{
@@ -285,11 +706,13 @@ export default function StudentDashboard() {
                     </div>
                     {DAYS_OF_WEEK.map(day => {
                       const isSelected = availability[day].includes(timeSlot);
+                      const isDisabled = hasSubmitted && !showEditForm;
                       return (
                         <button
                           key={`${day}-${timeSlot}`}
                           type="button"
-                          onClick={() => toggleTimeSlot(day, timeSlot)}
+                          onClick={() => !isDisabled && toggleTimeSlot(day, timeSlot)}
+                          disabled={isDisabled}
                           style={{
                             padding: "0.75rem",
                             backgroundColor: isSelected ? "#0d4a2d" : "#0d1117",
@@ -297,17 +720,18 @@ export default function StudentDashboard() {
                             borderRadius: "4px",
                             fontSize: "0.75rem",
                             color: isSelected ? "#86efac" : "#8b949e",
-                            cursor: "pointer",
+                            cursor: isDisabled ? "not-allowed" : "pointer",
                             transition: "all 0.15s",
-                            fontWeight: isSelected ? "500" : "400"
+                            fontWeight: isSelected ? "500" : "400",
+                            opacity: isDisabled ? 0.6 : 1
                           }}
                           onMouseOver={(e) => {
-                            if (!isSelected) {
+                            if (!isSelected && !isDisabled) {
                               e.currentTarget.style.backgroundColor = "#1c2128";
                             }
                           }}
                           onMouseOut={(e) => {
-                            if (!isSelected) {
+                            if (!isSelected && !isDisabled) {
                               e.currentTarget.style.backgroundColor = "#0d1117";
                             }
                           }}
@@ -320,6 +744,40 @@ export default function StudentDashboard() {
                 ))}
               </div>
             </div>
+
+            {/* Reason for Edit (only show in edit mode) */}
+            {showEditForm && (
+              <div style={{ marginBottom: "1.5rem" }}>
+                <label style={{
+                  display: "block",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  color: "#c9d1d9",
+                  marginBottom: "0.625rem"
+                }}>
+                  Reason for Edit Request <span style={{ color: "#f59e0b" }}>*</span>
+                </label>
+                <textarea
+                  value={editReason}
+                  onChange={(e) => setEditReason(e.target.value)}
+                  placeholder="Please explain why you need to change your availability..."
+                  rows={3}
+                  required
+                  style={{
+                    width: "100%",
+                    padding: "0.625rem 0.875rem",
+                    backgroundColor: "#0d1117",
+                    border: "1px solid #30363d",
+                    borderRadius: "6px",
+                    fontSize: "0.875rem",
+                    color: "#ffffff",
+                    outline: "none",
+                    resize: "vertical",
+                    fontFamily: "inherit"
+                  }}
+                />
+              </div>
+            )}
 
             {/* Notes Section */}
             <div style={{ marginBottom: "1.5rem" }}>
@@ -337,6 +795,7 @@ export default function StudentDashboard() {
                 onChange={(e) => setAvailabilityNotes(e.target.value)}
                 placeholder="Any schedule preferences, constraints, or notes for your office manager..."
                 rows={4}
+                disabled={hasSubmitted && !showEditForm}
                 style={{
                   width: "100%",
                   padding: "0.625rem 0.875rem",
@@ -347,42 +806,49 @@ export default function StudentDashboard() {
                   color: "#ffffff",
                   outline: "none",
                   resize: "vertical",
-                  fontFamily: "inherit"
+                  fontFamily: "inherit",
+                  opacity: (hasSubmitted && !showEditForm) ? 0.6 : 1,
+                  cursor: (hasSubmitted && !showEditForm) ? "not-allowed" : "text"
                 }}
               />
             </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={submitting}
-              style={{
-                padding: "0.625rem 1.25rem",
-                backgroundColor: submitting ? "#414d5c" : "#0972d3",
-                color: "#ffffff",
-                border: `1px solid ${submitting ? "#414d5c" : "#0972d3"}`,
-                borderRadius: "6px",
-                fontSize: "0.875rem",
-                fontWeight: "500",
-                cursor: submitting ? "not-allowed" : "pointer",
-                transition: "all 0.15s ease"
-              }}
-              onMouseOver={(e) => {
-                if (!submitting) {
-                  e.currentTarget.style.backgroundColor = "#0863bf";
-                  e.currentTarget.style.borderColor = "#0863bf";
-                }
-              }}
-              onMouseOut={(e) => {
-                if (!submitting) {
-                  e.currentTarget.style.backgroundColor = "#0972d3";
-                  e.currentTarget.style.borderColor = "#0972d3";
-                }
-              }}
-            >
-              {submitting ? 'Submitting...' : 'Submit Availability'}
-            </button>
+            {/* Submit Button - Only show if not submitted OR in edit mode */}
+            {(!hasSubmitted || showEditForm) && (
+              <button
+                type="submit"
+                disabled={showEditForm ? submittingEdit : submitting}
+                style={{
+                  padding: "0.625rem 1.25rem",
+                  backgroundColor: (showEditForm ? submittingEdit : submitting) ? "#414d5c" : showEditForm ? "#0d9488" : "#0972d3",
+                  color: "#ffffff",
+                  border: `1px solid ${(showEditForm ? submittingEdit : submitting) ? "#414d5c" : showEditForm ? "#0d9488" : "#0972d3"}`,
+                  borderRadius: "6px",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: (showEditForm ? submittingEdit : submitting) ? "not-allowed" : "pointer",
+                  transition: "all 0.15s ease"
+                }}
+                onMouseOver={(e) => {
+                  if (!(showEditForm ? submittingEdit : submitting)) {
+                    e.currentTarget.style.backgroundColor = showEditForm ? "#0f766e" : "#0863bf";
+                    e.currentTarget.style.borderColor = showEditForm ? "#0f766e" : "#0863bf";
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (!(showEditForm ? submittingEdit : submitting)) {
+                    e.currentTarget.style.backgroundColor = showEditForm ? "#0d9488" : "#0972d3";
+                    e.currentTarget.style.borderColor = showEditForm ? "#0d9488" : "#0972d3";
+                  }
+                }}
+              >
+                {showEditForm
+                  ? (submittingEdit ? 'Submitting...' : 'Submit Edit Request')
+                  : (submitting ? 'Submitting...' : 'Submit Availability')}
+              </button>
+            )}
           </form>
+          )}
         </div>
 
         {/* Schedule Section */}

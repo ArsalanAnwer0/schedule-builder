@@ -2,6 +2,19 @@ import { NextResponse } from 'next/server';
 import { requireAuth } from '../../../lib/auth/session';
 import dbConnect from '../../../lib/db/connect';
 import Availability from '../../../lib/db/models/Availability';
+import User from '../../../lib/db/models/User';
+
+// Helper function to send email notifications (will be imported from email/send.js)
+async function sendAvailabilitySubmittedNotification(adminEmail, studentName, studentEmail) {
+  // Import dynamically to avoid circular dependencies
+  const { sendAvailabilitySubmittedToAdmin } = await import('../../../lib/email/send');
+  return sendAvailabilitySubmittedToAdmin(adminEmail, studentName, studentEmail);
+}
+
+async function sendAllSubmittedNotification(adminEmail, totalStudents) {
+  const { sendAllAvailabilitySubmitted } = await import('../../../lib/email/send');
+  return sendAllAvailabilitySubmitted(adminEmail, totalStudents);
+}
 
 export async function POST(request) {
   try {
@@ -28,6 +41,19 @@ export async function POST(request) {
 
     await dbConnect();
 
+    // Check if availability was requested
+    const studentUser = await User.findById(user._id);
+    if (!studentUser.availabilityRequested) {
+      return NextResponse.json(
+        { error: 'Availability has not been requested yet. Please wait for your manager to request it.' },
+        { status: 403 }
+      );
+    }
+
+    // Check if this is a new submission (not an update)
+    const existingAvailability = await Availability.findOne({ userId: user._id });
+    const isNewSubmission = !existingAvailability;
+
     // Upsert availability (update if exists, create if not)
     const savedAvailability = await Availability.findOneAndUpdate(
       { userId: user._id },
@@ -42,6 +68,39 @@ export async function POST(request) {
         runValidators: true,
       }
     );
+
+    // Only send notifications for new submissions, not updates
+    if (isNewSubmission) {
+      try {
+        // Send email to admin about this submission
+        const adminUser = await User.findOne({ role: 'admin' });
+        if (adminUser) {
+          await sendAvailabilitySubmittedNotification(
+            adminUser.email,
+            user.name,
+            user.email
+          );
+
+          // Check if all students who were requested have now submitted
+          const requestedStudents = await User.find({
+            role: 'student',
+            availabilityRequested: true
+          });
+
+          const submittedCount = await Availability.countDocuments({
+            userId: { $in: requestedStudents.map(s => s._id) }
+          });
+
+          // If all requested students have submitted, send summary email
+          if (submittedCount === requestedStudents.length) {
+            await sendAllSubmittedNotification(adminUser.email, requestedStudents.length);
+          }
+        }
+      } catch (emailError) {
+        console.error('Failed to send email notifications:', emailError);
+        // Don't fail the request if email fails
+      }
+    }
 
     return NextResponse.json({
       success: true,

@@ -61,6 +61,10 @@ export default function Home() {
   const [selectedSemester, setSelectedSemester] = useState("");
   const [isHydrated, setIsHydrated] = useState(false);
   const [validationError, setValidationError] = useState(null);
+  const [savedScheduleIds, setSavedScheduleIds] = useState([]); // Store schedule IDs after saving to DB
+  const [publishingScheduleId, setPublishingScheduleId] = useState(null); // Track which schedule is being published
+  const [editRequests, setEditRequests] = useState([]); // Pending edit requests
+  const [processingRequestId, setProcessingRequestId] = useState(null); // Track which request is being processed
 
   // Check authentication
   useEffect(() => {
@@ -70,6 +74,7 @@ export default function Home() {
         if (data.user && data.user.role === 'admin') {
           setUser(data.user);
           loadStudents();
+          loadEditRequests();
         } else {
           router.push('/login');
         }
@@ -95,6 +100,19 @@ export default function Home() {
       console.error('Failed to load students:', err);
     } finally {
       setLoadingStudents(false);
+    }
+  };
+
+  // Load edit requests
+  const loadEditRequests = async () => {
+    try {
+      const res = await fetch('/api/availability/edit-requests');
+      const data = await res.json();
+      if (res.ok && data.requests) {
+        setEditRequests(data.requests.filter(req => req.status === 'pending'));
+      }
+    } catch (err) {
+      console.error('Failed to load edit requests:', err);
     }
   };
 
@@ -218,6 +236,76 @@ export default function Home() {
 
       setStudentSuccess(data.message);
       setTimeout(() => setStudentSuccess(''), 5000);
+    } catch (err) {
+      setStudentError('Something went wrong. Please try again.');
+    }
+  };
+
+  const handleResetSingleAvailability = async (studentId) => {
+    if (!confirm('Are you sure you want to reset this student\'s availability? This will delete their submitted availability and lock their access. You must request availability again for them to resubmit.')) {
+      return;
+    }
+
+    setStudentError('');
+    setStudentSuccess('');
+
+    try {
+      const res = await fetch('/api/availability/reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setStudentError(data.error || 'Failed to reset availability');
+        return;
+      }
+
+      setStudentSuccess(data.message);
+      setTimeout(() => setStudentSuccess(''), 5000);
+
+      // Refresh the students list to update the UI
+      fetchStudents();
+    } catch (err) {
+      setStudentError('Something went wrong. Please try again.');
+    }
+  };
+
+  const handleResetAllAvailability = async () => {
+    if (students.length === 0) {
+      setStudentError('No students available');
+      return;
+    }
+
+    if (!confirm(`Are you sure you want to reset availability for all ${students.length} student(s)? This will delete all submitted availability and lock their access. You must request availability again for them to resubmit.`)) {
+      return;
+    }
+
+    setStudentError('');
+    setStudentSuccess('');
+
+    try {
+      const allStudentIds = students.map(s => s.id);
+      const res = await fetch('/api/availability/reset-all', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentIds: allStudentIds }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setStudentError(data.error || 'Failed to reset availability');
+        return;
+      }
+
+      setStudentSuccess(data.message);
+      setTimeout(() => setStudentSuccess(''), 5000);
+
+      // Refresh the students list to update the UI
+      fetchStudents();
     } catch (err) {
       setStudentError('Something went wrong. Please try again.');
     }
@@ -395,15 +483,112 @@ export default function Home() {
     console.log('Schedule data being sent to generator:', scheduleData);
 
     setIsGenerating(true);
-    setTimeout(() => {
+    setTimeout(async () => {
       const result = generateSchedule(scheduleData);
       console.log('Schedule generation result:', result);
       setScheduleResult(result);
+
+      // Save schedules to database
+      if (result.success && result.schedules) {
+        try {
+          const saveResponse = await fetch('/api/schedules', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              schedules: result.schedules,
+              scheduleConfig: {
+                scheduleStartDate: formData.scheduleStartDate,
+                scheduleEndDate: formData.scheduleEndDate,
+                officeStartTime: formData.officeStartTime,
+                officeEndTime: formData.officeEndTime
+              }
+            }),
+          });
+
+          const saveData = await saveResponse.json();
+
+          if (saveData.success) {
+            // Store the schedule IDs so we can publish them later
+            setSavedScheduleIds(saveData.schedules.map(s => s.id));
+            console.log('Schedules saved to database:', saveData.schedules);
+          }
+        } catch (error) {
+          console.error('Error saving schedules:', error);
+        }
+      }
+
       setIsGenerating(false);
       setTimeout(() => {
         document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
       }, 100);
     }, 500);
+  };
+
+  const handlePublishSchedule = async (scheduleIndex) => {
+    const scheduleId = savedScheduleIds[scheduleIndex];
+
+    if (!scheduleId) {
+      setStudentError('Schedule not saved yet. Please regenerate the schedule.');
+      return;
+    }
+
+    setPublishingScheduleId(scheduleId);
+
+    try {
+      const response = await fetch(`/api/schedules/${scheduleId}/publish`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setStudentError(data.error || 'Failed to publish schedule');
+        return;
+      }
+
+      setStudentSuccess(data.message);
+      setTimeout(() => setStudentSuccess(''), 5000);
+
+      // Reload students to refresh the UI
+      await loadStudents();
+    } catch (err) {
+      setStudentError('Something went wrong. Please try again.');
+    } finally {
+      setPublishingScheduleId(null);
+    }
+  };
+
+  const handleProcessEditRequest = async (requestId, action) => {
+    setProcessingRequestId(requestId);
+    setStudentError('');
+    setStudentSuccess('');
+
+    try {
+      const response = await fetch(`/api/availability/edit-requests/${requestId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action }) // 'approve' or 'reject'
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setStudentError(data.error || `Failed to ${action} request`);
+        return;
+      }
+
+      setStudentSuccess(data.message);
+      setTimeout(() => setStudentSuccess(''), 5000);
+
+      // Reload both students and edit requests
+      await loadStudents();
+      await loadEditRequests();
+    } catch (err) {
+      setStudentError('Something went wrong. Please try again.');
+    } finally {
+      setProcessingRequestId(null);
+    }
   };
 
   if (authLoading) {
@@ -519,6 +704,37 @@ export default function Home() {
                 Request All Availability
               </button>
               <button
+                onClick={handleResetAllAvailability}
+                disabled={students.length === 0}
+                style={{
+                  padding: "0.625rem 1.25rem",
+                  backgroundColor: students.length === 0 ? "#414d5c" : "#ca8a04",
+                  color: "#ffffff",
+                  border: "1px solid",
+                  borderColor: students.length === 0 ? "#414d5c" : "#ca8a04",
+                  borderRadius: "6px",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: students.length === 0 ? "not-allowed" : "pointer",
+                  opacity: students.length === 0 ? 0.6 : 1,
+                  transition: "all 0.15s ease"
+                }}
+                onMouseOver={(e) => {
+                  if (students.length > 0) {
+                    e.currentTarget.style.backgroundColor = "#a16207";
+                    e.currentTarget.style.borderColor = "#a16207";
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (students.length > 0) {
+                    e.currentTarget.style.backgroundColor = "#ca8a04";
+                    e.currentTarget.style.borderColor = "#ca8a04";
+                  }
+                }}
+              >
+                Reset All Availability
+              </button>
+              <button
                 onClick={handleAddStudent}
                 style={{
                   padding: "0.625rem 1.25rem",
@@ -590,6 +806,31 @@ export default function Home() {
                                 }}
                               >
                                 Request Availability
+                              </button>
+                            )}
+                            {student.hasSubmitted && (
+                              <button
+                                onClick={() => handleResetSingleAvailability(student.id)}
+                                style={{
+                                  padding: "0.375rem 0.875rem",
+                                  fontSize: "0.875rem",
+                                  backgroundColor: "#854d0e",
+                                  border: "1px solid #854d0e",
+                                  borderRadius: "4px",
+                                  color: "#ffffff",
+                                  cursor: "pointer",
+                                  transition: "all 0.15s"
+                                }}
+                                onMouseOver={(e) => {
+                                  e.currentTarget.style.backgroundColor = "#a16207";
+                                  e.currentTarget.style.borderColor = "#a16207";
+                                }}
+                                onMouseOut={(e) => {
+                                  e.currentTarget.style.backgroundColor = "#854d0e";
+                                  e.currentTarget.style.borderColor = "#854d0e";
+                                }}
+                              >
+                                Reset Availability
                               </button>
                             )}
                             <button
@@ -903,6 +1144,239 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Pending Edit Requests Section */}
+        {editRequests.length > 0 && (
+          <div style={{ backgroundColor: "#2d1f17", border: "1px solid #f59e0b", borderRadius: "8px", marginBottom: "1.5rem", overflow: "hidden" }}>
+            <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #f59e0b" }}>
+              <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "#f59e0b", margin: 0, marginBottom: "0.5rem" }}>
+                Pending Availability Edit Requests ({editRequests.length})
+              </h2>
+              <p style={{ fontSize: "0.875rem", color: "#e5e7eb", lineHeight: "1.5", margin: 0 }}>
+                Review and approve/reject student requests to update their availability
+              </p>
+            </div>
+            <div style={{ padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              {editRequests.map((request) => (
+                <div key={request.id} style={{ backgroundColor: "#16191f", border: "1px solid #30363d", borderRadius: "8px", overflow: "hidden" }}>
+                  {/* Request Header */}
+                  <div style={{ padding: "1rem 1.25rem", backgroundColor: "#1f2937", borderBottom: "1px solid #30363d", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+                    <div>
+                      <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.25rem" }}>
+                        {request.userName}
+                      </h3>
+                      <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0 }}>
+                        {request.userEmail}
+                      </p>
+                    </div>
+                    <div style={{ display: "flex", gap: "0.75rem" }}>
+                      <button
+                        onClick={() => handleProcessEditRequest(request.id, 'approve')}
+                        disabled={processingRequestId === request.id}
+                        style={{
+                          padding: "0.5rem 1rem",
+                          backgroundColor: processingRequestId === request.id ? "#374151" : "#10b981",
+                          color: "#ffffff",
+                          border: "none",
+                          borderRadius: "6px",
+                          fontSize: "0.875rem",
+                          fontWeight: "500",
+                          cursor: processingRequestId === request.id ? "not-allowed" : "pointer",
+                          transition: "all 0.15s ease"
+                        }}
+                        onMouseOver={(e) => {
+                          if (processingRequestId !== request.id) {
+                            e.currentTarget.style.backgroundColor = "#059669";
+                          }
+                        }}
+                        onMouseOut={(e) => {
+                          if (processingRequestId !== request.id) {
+                            e.currentTarget.style.backgroundColor = "#10b981";
+                          }
+                        }}
+                      >
+                        ✓ Approve
+                      </button>
+                      <button
+                        onClick={() => handleProcessEditRequest(request.id, 'reject')}
+                        disabled={processingRequestId === request.id}
+                        style={{
+                          padding: "0.5rem 1rem",
+                          backgroundColor: processingRequestId === request.id ? "#374151" : "#dc2626",
+                          color: "#ffffff",
+                          border: "none",
+                          borderRadius: "6px",
+                          fontSize: "0.875rem",
+                          fontWeight: "500",
+                          cursor: processingRequestId === request.id ? "not-allowed" : "pointer",
+                          transition: "all 0.15s ease"
+                        }}
+                        onMouseOver={(e) => {
+                          if (processingRequestId !== request.id) {
+                            e.currentTarget.style.backgroundColor = "#b91c1c";
+                          }
+                        }}
+                        onMouseOut={(e) => {
+                          if (processingRequestId !== request.id) {
+                            e.currentTarget.style.backgroundColor = "#dc2626";
+                          }
+                        }}
+                      >
+                        × Reject
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Request Content */}
+                  <div style={{ padding: "1.25rem" }}>
+                    {/* Reason */}
+                    <div style={{ marginBottom: "1.5rem" }}>
+                      <h4 style={{ fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", margin: 0, marginBottom: "0.5rem" }}>
+                        Reason for Edit:
+                      </h4>
+                      <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, padding: "0.75rem", backgroundColor: "#0d1117", borderRadius: "4px", border: "1px solid #30363d" }}>
+                        {request.reason}
+                      </p>
+                    </div>
+
+                    {/* Comparison */}
+                    <div>
+                      <h4 style={{ fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", margin: 0, marginBottom: "0.75rem" }}>
+                        Changes by Day
+                      </h4>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                        {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map((day) => {
+                          const oldSlots = request.oldAvailability[day] || [];
+                          const newSlots = request.newAvailability[day] || [];
+
+                          // Check if there are changes for this day
+                          const hasChanges = JSON.stringify(oldSlots.sort()) !== JSON.stringify(newSlots.sort());
+
+                          // Only show days with changes
+                          if (!hasChanges) return null;
+
+                          // Find added and removed slots
+                          const removedSlots = oldSlots.filter(slot => !newSlots.includes(slot));
+                          const addedSlots = newSlots.filter(slot => !oldSlots.includes(slot));
+                          const unchangedSlots = oldSlots.filter(slot => newSlots.includes(slot));
+
+                          return (
+                            <div key={day} style={{
+                              backgroundColor: "#0d1117",
+                              border: "1px solid #30363d",
+                              borderRadius: "6px",
+                              padding: "0.75rem"
+                            }}>
+                              <div style={{
+                                fontSize: "0.75rem",
+                                fontWeight: "600",
+                                color: "#58a6ff",
+                                marginBottom: "0.5rem",
+                                textTransform: "uppercase",
+                                letterSpacing: "0.5px"
+                              }}>
+                                {day}
+                              </div>
+
+                              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                                {/* Removed slots */}
+                                {removedSlots.length > 0 && (
+                                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.25rem", alignItems: "center" }}>
+                                    <span style={{ fontSize: "0.75rem", color: "#ef4444", fontWeight: "500", marginRight: "0.25rem" }}>
+                                      Removed:
+                                    </span>
+                                    {removedSlots.map((slot, idx) => (
+                                      <span key={idx} style={{
+                                        fontSize: "0.7rem",
+                                        color: "#ef4444",
+                                        backgroundColor: "#2d1517",
+                                        padding: "0.125rem 0.375rem",
+                                        borderRadius: "3px",
+                                        border: "1px solid #5c2d30",
+                                        textDecoration: "line-through"
+                                      }}>
+                                        {slot}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* Added slots */}
+                                {addedSlots.length > 0 && (
+                                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.25rem", alignItems: "center" }}>
+                                    <span style={{ fontSize: "0.75rem", color: "#10b981", fontWeight: "500", marginRight: "0.25rem" }}>
+                                      Added:
+                                    </span>
+                                    {addedSlots.map((slot, idx) => (
+                                      <span key={idx} style={{
+                                        fontSize: "0.7rem",
+                                        color: "#10b981",
+                                        backgroundColor: "#0d1f17",
+                                        padding: "0.125rem 0.375rem",
+                                        borderRadius: "3px",
+                                        border: "1px solid #1e4d2b",
+                                        fontWeight: "600"
+                                      }}>
+                                        {slot}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* Unchanged slots (if any exist and we want to show them) */}
+                                {unchangedSlots.length > 0 && (addedSlots.length > 0 || removedSlots.length > 0) && (
+                                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.25rem", alignItems: "center" }}>
+                                    <span style={{ fontSize: "0.75rem", color: "#6e7681", fontWeight: "500", marginRight: "0.25rem" }}>
+                                      Unchanged:
+                                    </span>
+                                    {unchangedSlots.slice(0, 5).map((slot, idx) => (
+                                      <span key={idx} style={{
+                                        fontSize: "0.7rem",
+                                        color: "#6e7681",
+                                        backgroundColor: "#0d1117",
+                                        padding: "0.125rem 0.375rem",
+                                        borderRadius: "3px",
+                                        border: "1px solid #21262d"
+                                      }}>
+                                        {slot}
+                                      </span>
+                                    ))}
+                                    {unchangedSlots.length > 5 && (
+                                      <span style={{ fontSize: "0.7rem", color: "#6e7681" }}>
+                                        +{unchangedSlots.length - 5} more
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Show message if no days have changes */}
+                      {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].every((day) => {
+                        const oldSlots = request.oldAvailability[day] || [];
+                        const newSlots = request.newAvailability[day] || [];
+                        return JSON.stringify(oldSlots.sort()) === JSON.stringify(newSlots.sort());
+                      }) && (
+                        <div style={{
+                          padding: "1rem",
+                          textAlign: "center",
+                          color: "#6e7681",
+                          fontSize: "0.875rem",
+                          fontStyle: "italic"
+                        }}>
+                          No changes detected in availability
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Student Workers Availability Section */}
         <div style={{ backgroundColor: "#16191f", border: "1px solid #414d5c", borderRadius: "8px", marginBottom: "1rem", overflow: "hidden" }}>
           <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #414d5c" }}>
@@ -1131,6 +1605,43 @@ export default function Home() {
                       {currentSchedule.description}
                     </p>
                   </div>
+
+                  {/* Publish Button */}
+                  <button
+                    onClick={() => handlePublishSchedule(scheduleIndex)}
+                    disabled={publishingScheduleId === savedScheduleIds[scheduleIndex]}
+                    aria-label={`Publish ${currentSchedule.name}`}
+                    style={{
+                      padding: "0.625rem 1.25rem",
+                      backgroundColor: publishingScheduleId === savedScheduleIds[scheduleIndex] ? "#374151" : "#10b981",
+                      color: "#ffffff",
+                      border: "1px solid",
+                      borderColor: publishingScheduleId === savedScheduleIds[scheduleIndex] ? "#374151" : "#10b981",
+                      borderRadius: "6px",
+                      fontSize: "0.875rem",
+                      fontWeight: "500",
+                      cursor: publishingScheduleId === savedScheduleIds[scheduleIndex] ? "not-allowed" : "pointer",
+                      transition: "all 0.15s ease",
+                      whiteSpace: "nowrap",
+                      letterSpacing: "0.01em",
+                      opacity: publishingScheduleId === savedScheduleIds[scheduleIndex] ? 0.6 : 1
+                    }}
+                    onMouseOver={(e) => {
+                      if (publishingScheduleId !== savedScheduleIds[scheduleIndex]) {
+                        e.currentTarget.style.backgroundColor = "#059669";
+                        e.currentTarget.style.borderColor = "#059669";
+                      }
+                    }}
+                    onMouseOut={(e) => {
+                      if (publishingScheduleId !== savedScheduleIds[scheduleIndex]) {
+                        e.currentTarget.style.backgroundColor = "#10b981";
+                        e.currentTarget.style.borderColor = "#10b981";
+                      }
+                    }}
+                  >
+                    {publishingScheduleId === savedScheduleIds[scheduleIndex] ? 'Publishing...' : 'Publish Schedule'}
+                  </button>
+
                   {/* Export CSV button - Archived for later
                   <button
                     onClick={() => {

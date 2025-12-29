@@ -1,0 +1,43 @@
+import { NextResponse } from 'next/server';
+import { requireAdmin } from '../../../../lib/auth/session';
+import dbConnect from '../../../../lib/db/connect';
+import Availability from '../../../../lib/db/models/Availability';
+import User from '../../../../lib/db/models/User';
+
+// POST - Reset student availability (admin only)
+export async function POST(request) {
+  try {
+    let sessionData;
+    try {
+      sessionData = await requireAdmin();
+    } catch (error) {
+      return NextResponse.json({ error: 'Unauthorized - Admin access required' }, { status: 401 });
+    }
+
+    const { studentId } = await request.json();
+
+    if (!studentId) {
+      return NextResponse.json({ error: 'Student ID is required' }, { status: 400 });
+    }
+
+    await dbConnect();
+
+    // Delete the student's availability
+    await Availability.findOneAndDelete({ userId: studentId });
+
+    // Set availabilityRequested to FALSE to lock them out
+    // Admin must request availability again to unlock
+    await User.findByIdAndUpdate(studentId, {
+      $set: { availabilityRequested: false }
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: 'Availability reset successfully. You must request availability again for this student.'
+    });
+
+  } catch (error) {
+    console.error('Reset availability error:', error);
+    return NextResponse.json({ error: 'Failed to reset availability' }, { status: 500 });
+  }
+}
