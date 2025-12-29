@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { requireAdmin } from '../../../../lib/auth/session';
 import dbConnect from '../../../../lib/db/connect';
 import User from '../../../../lib/db/models/User';
+import Availability from '../../../../lib/db/models/Availability';
 
 // PUT update student
 export async function PUT(request, { params }) {
@@ -14,7 +15,7 @@ export async function PUT(request, { params }) {
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
     const { email, name } = await request.json();
 
     if (!email || !name) {
@@ -84,7 +85,7 @@ export async function DELETE(request, { params }) {
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     await dbConnect();
 
@@ -99,6 +100,9 @@ export async function DELETE(request, { params }) {
         { status: 404 }
       );
     }
+
+    // Also delete the student's availability when deleting the student
+    await Availability.deleteOne({ userId: id });
 
     return NextResponse.json({
       success: true,
