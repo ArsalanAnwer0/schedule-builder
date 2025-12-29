@@ -27,6 +27,12 @@ export default function StudentDashboard() {
   const [publishedSchedule, setPublishedSchedule] = useState(null);
   const [loadingSchedule, setLoadingSchedule] = useState(true);
 
+  // Edit request state
+  const [editRequests, setEditRequests] = useState([]);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editReason, setEditReason] = useState('');
+  const [submittingEdit, setSubmittingEdit] = useState(false);
+
   useEffect(() => {
     fetch('/api/auth/me')
       .then(res => res.json())
@@ -60,6 +66,22 @@ export default function StudentDashboard() {
         })
         .finally(() => {
           setLoadingSchedule(false);
+        });
+    }
+  }, [user]);
+
+  // Fetch edit requests
+  useEffect(() => {
+    if (user) {
+      fetch('/api/availability/edit-requests')
+        .then(res => res.json())
+        .then(data => {
+          if (data.requests) {
+            setEditRequests(data.requests);
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching edit requests:', err);
         });
     }
   }, [user]);
@@ -116,6 +138,55 @@ export default function StudentDashboard() {
       setSubmitError('Something went wrong. Please try again.');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleSubmitEditRequest = async (e) => {
+    e.preventDefault();
+    setSubmittingEdit(true);
+    setSubmitError('');
+    setSubmitSuccess('');
+
+    if (!editReason.trim()) {
+      setSubmitError('Please provide a reason for the edit');
+      setSubmittingEdit(false);
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/availability/edit-requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          newAvailability: availability,
+          newNotes: availabilityNotes,
+          reason: editReason
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setSubmitError(data.error || 'Failed to submit edit request');
+        return;
+      }
+
+      setSubmitSuccess(data.message);
+      setTimeout(() => setSubmitSuccess(''), 5000);
+      setShowEditForm(false);
+      setEditReason('');
+
+      // Refresh edit requests
+      const editRes = await fetch('/api/availability/edit-requests');
+      const editData = await editRes.json();
+      if (editData.requests) {
+        setEditRequests(editData.requests);
+      }
+    } catch (err) {
+      console.error('Submit edit error:', err);
+      setSubmitError('Something went wrong. Please try again.');
+    } finally {
+      setSubmittingEdit(false);
     }
   };
 
@@ -406,6 +477,30 @@ export default function StudentDashboard() {
           </div>
         )}
 
+        {/* Pending Edit Requests Section */}
+        {editRequests.filter(req => req.status === 'pending').length > 0 && (
+          <div style={{
+            backgroundColor: "#2d1f17",
+            border: "1px solid #f59e0b",
+            borderRadius: "8px",
+            padding: "1rem 1.5rem",
+            marginBottom: "1.5rem"
+          }}>
+            <h3 style={{
+              fontSize: "1rem",
+              fontWeight: "500",
+              color: "#f59e0b",
+              margin: 0,
+              marginBottom: "0.5rem"
+            }}>
+              Pending Edit Request
+            </h3>
+            <p style={{ color: "#e5e7eb", fontSize: "0.875rem", margin: 0 }}>
+              You have a pending availability edit request waiting for admin approval.
+            </p>
+          </div>
+        )}
+
         {/* Availability Submission Section */}
         <div style={{
           backgroundColor: "#16191f",
@@ -416,28 +511,82 @@ export default function StudentDashboard() {
         }}>
           <div style={{
             padding: "1.5rem",
-            borderBottom: "1px solid #30363d"
+            borderBottom: "1px solid #30363d",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            gap: "1rem",
+            flexWrap: "wrap"
           }}>
-            <h2 style={{
-              fontSize: "1.125rem",
-              fontWeight: "500",
-              color: "#ffffff",
-              margin: 0,
-              marginBottom: "0.5rem"
-            }}>
-              Submit Your Availability
-            </h2>
-            <p style={{
-              fontSize: "0.875rem",
-              color: "#8b949e",
-              margin: 0,
-              lineHeight: "1.5"
-            }}>
-              Select the hours you're available to work each day
-            </p>
+            <div style={{ flex: 1 }}>
+              <h2 style={{
+                fontSize: "1.125rem",
+                fontWeight: "500",
+                color: "#ffffff",
+                margin: 0,
+                marginBottom: "0.5rem"
+              }}>
+                {showEditForm ? 'Request Availability Edit' : 'Your Availability'}
+              </h2>
+              <p style={{
+                fontSize: "0.875rem",
+                color: "#8b949e",
+                margin: 0,
+                lineHeight: "1.5"
+              }}>
+                {showEditForm
+                  ? 'Make changes to your availability and submit for admin approval'
+                  : 'Select the hours you\'re available to work each day'}
+              </p>
+            </div>
+            {!showEditForm && editRequests.filter(req => req.status === 'pending').length === 0 && (
+              <button
+                onClick={() => setShowEditForm(true)}
+                style={{
+                  padding: "0.5rem 1rem",
+                  backgroundColor: "#0d9488",
+                  color: "#ffffff",
+                  border: "1px solid #0d9488",
+                  borderRadius: "6px",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  transition: "all 0.15s ease",
+                  whiteSpace: "nowrap"
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#0f766e"}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#0d9488"}
+              >
+                Request Edit
+              </button>
+            )}
+            {showEditForm && (
+              <button
+                onClick={() => {
+                  setShowEditForm(false);
+                  setEditReason('');
+                }}
+                style={{
+                  padding: "0.5rem 1rem",
+                  backgroundColor: "#374151",
+                  color: "#ffffff",
+                  border: "1px solid #4b5563",
+                  borderRadius: "6px",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  transition: "all 0.15s ease",
+                  whiteSpace: "nowrap"
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#4b5563"}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#374151"}
+              >
+                Cancel
+              </button>
+            )}
           </div>
 
-          <form onSubmit={handleSubmitAvailability} style={{ padding: "2rem" }}>
+          <form onSubmit={showEditForm ? handleSubmitEditRequest : handleSubmitAvailability} style={{ padding: "2rem" }}>
             {/* Time Grid */}
             <div style={{ overflowX: "auto", marginBottom: "2rem" }}>
               <div style={{
@@ -517,6 +666,40 @@ export default function StudentDashboard() {
               </div>
             </div>
 
+            {/* Reason for Edit (only show in edit mode) */}
+            {showEditForm && (
+              <div style={{ marginBottom: "1.5rem" }}>
+                <label style={{
+                  display: "block",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  color: "#c9d1d9",
+                  marginBottom: "0.625rem"
+                }}>
+                  Reason for Edit Request <span style={{ color: "#f59e0b" }}>*</span>
+                </label>
+                <textarea
+                  value={editReason}
+                  onChange={(e) => setEditReason(e.target.value)}
+                  placeholder="Please explain why you need to change your availability..."
+                  rows={3}
+                  required
+                  style={{
+                    width: "100%",
+                    padding: "0.625rem 0.875rem",
+                    backgroundColor: "#0d1117",
+                    border: "1px solid #30363d",
+                    borderRadius: "6px",
+                    fontSize: "0.875rem",
+                    color: "#ffffff",
+                    outline: "none",
+                    resize: "vertical",
+                    fontFamily: "inherit"
+                  }}
+                />
+              </div>
+            )}
+
             {/* Notes Section */}
             <div style={{ marginBottom: "1.5rem" }}>
               <label style={{
@@ -551,32 +734,34 @@ export default function StudentDashboard() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={submitting}
+              disabled={showEditForm ? submittingEdit : submitting}
               style={{
                 padding: "0.625rem 1.25rem",
-                backgroundColor: submitting ? "#414d5c" : "#0972d3",
+                backgroundColor: (showEditForm ? submittingEdit : submitting) ? "#414d5c" : showEditForm ? "#0d9488" : "#0972d3",
                 color: "#ffffff",
-                border: `1px solid ${submitting ? "#414d5c" : "#0972d3"}`,
+                border: `1px solid ${(showEditForm ? submittingEdit : submitting) ? "#414d5c" : showEditForm ? "#0d9488" : "#0972d3"}`,
                 borderRadius: "6px",
                 fontSize: "0.875rem",
                 fontWeight: "500",
-                cursor: submitting ? "not-allowed" : "pointer",
+                cursor: (showEditForm ? submittingEdit : submitting) ? "not-allowed" : "pointer",
                 transition: "all 0.15s ease"
               }}
               onMouseOver={(e) => {
-                if (!submitting) {
-                  e.currentTarget.style.backgroundColor = "#0863bf";
-                  e.currentTarget.style.borderColor = "#0863bf";
+                if (!(showEditForm ? submittingEdit : submitting)) {
+                  e.currentTarget.style.backgroundColor = showEditForm ? "#0f766e" : "#0863bf";
+                  e.currentTarget.style.borderColor = showEditForm ? "#0f766e" : "#0863bf";
                 }
               }}
               onMouseOut={(e) => {
-                if (!submitting) {
-                  e.currentTarget.style.backgroundColor = "#0972d3";
-                  e.currentTarget.style.borderColor = "#0972d3";
+                if (!(showEditForm ? submittingEdit : submitting)) {
+                  e.currentTarget.style.backgroundColor = showEditForm ? "#0d9488" : "#0972d3";
+                  e.currentTarget.style.borderColor = showEditForm ? "#0d9488" : "#0972d3";
                 }
               }}
             >
-              {submitting ? 'Submitting...' : 'Submit Availability'}
+              {showEditForm
+                ? (submittingEdit ? 'Submitting...' : 'Submit Edit Request')
+                : (submitting ? 'Submitting...' : 'Submit Availability')}
             </button>
           </form>
         </div>
