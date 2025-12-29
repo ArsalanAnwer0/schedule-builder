@@ -33,7 +33,8 @@ export default function StudentDashboard() {
   const [editReason, setEditReason] = useState('');
   const [submittingEdit, setSubmittingEdit] = useState(false);
 
-  useEffect(() => {
+  // Function to fetch user data
+  const fetchUserData = () => {
     fetch('/api/auth/me')
       .then(res => res.json())
       .then(data => {
@@ -49,7 +50,29 @@ export default function StudentDashboard() {
       .finally(() => {
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchUserData();
   }, [router]);
+
+  // Poll for user data updates every 5 seconds when availability not requested
+  useEffect(() => {
+    if (user && !user.availabilityRequested) {
+      const interval = setInterval(() => {
+        fetch('/api/auth/me')
+          .then(res => res.json())
+          .then(data => {
+            if (data.user && data.user.availabilityRequested) {
+              setUser(data.user);
+            }
+          })
+          .catch(err => console.error('Poll error:', err));
+      }, 5000); // Check every 5 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [user]);
 
   // Fetch published schedule
   useEffect(() => {
@@ -66,6 +89,27 @@ export default function StudentDashboard() {
         })
         .finally(() => {
           setLoadingSchedule(false);
+        });
+    }
+  }, [user]);
+
+  // State to track if student has submitted availability
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+
+  // Fetch current availability
+  useEffect(() => {
+    if (user) {
+      fetch('/api/availability')
+        .then(res => res.json())
+        .then(data => {
+          if (data.availability && data.availability.availability) {
+            setAvailability(data.availability.availability);
+            setAvailabilityNotes(data.availability.notes || '');
+            setHasSubmitted(true); // Mark as submitted if availability exists
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching availability:', err);
         });
     }
   }, [user]);
@@ -132,6 +176,7 @@ export default function StudentDashboard() {
       }
 
       setSubmitSuccess('Availability submitted successfully!');
+      setHasSubmitted(true); // Mark as submitted after successful submission
       setTimeout(() => setSubmitSuccess(''), 5000);
     } catch (err) {
       console.error('Submit error:', err);
@@ -539,7 +584,7 @@ export default function StudentDashboard() {
                   : 'Select the hours you\'re available to work each day'}
               </p>
             </div>
-            {!showEditForm && editRequests.filter(req => req.status === 'pending').length === 0 && (
+            {!showEditForm && hasSubmitted && editRequests.filter(req => req.status === 'pending').length === 0 && (
               <button
                 onClick={() => setShowEditForm(true)}
                 style={{
@@ -586,7 +631,38 @@ export default function StudentDashboard() {
             )}
           </div>
 
-          <form onSubmit={showEditForm ? handleSubmitEditRequest : handleSubmitAvailability} style={{ padding: "2rem" }}>
+          {/* Show message if availability hasn't been requested */}
+          {user && !user.availabilityRequested ? (
+            <div style={{ padding: "3rem 2rem", textAlign: "center" }}>
+              <div style={{
+                backgroundColor: "#0d1117",
+                border: "1px solid #21262d",
+                borderRadius: "8px",
+                padding: "3rem 2rem",
+                maxWidth: "600px",
+                margin: "0 auto"
+              }}>
+                <h3 style={{
+                  fontSize: "1.25rem",
+                  fontWeight: "500",
+                  color: "#ffffff",
+                  margin: 0,
+                  marginBottom: "1rem"
+                }}>
+                  Availability Not Requested Yet
+                </h3>
+                <p style={{
+                  fontSize: "0.9375rem",
+                  color: "#8b949e",
+                  lineHeight: "1.6",
+                  margin: 0
+                }}>
+                  Your manager will send an availability request when it's time to submit your work availability. Only then you will have access to submit your availability. You'll receive an email notification when the request has been made.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={showEditForm ? handleSubmitEditRequest : handleSubmitAvailability} style={{ padding: "2rem" }}>
             {/* Time Grid */}
             <div style={{ overflowX: "auto", marginBottom: "2rem" }}>
               <div style={{
@@ -630,11 +706,13 @@ export default function StudentDashboard() {
                     </div>
                     {DAYS_OF_WEEK.map(day => {
                       const isSelected = availability[day].includes(timeSlot);
+                      const isDisabled = hasSubmitted && !showEditForm;
                       return (
                         <button
                           key={`${day}-${timeSlot}`}
                           type="button"
-                          onClick={() => toggleTimeSlot(day, timeSlot)}
+                          onClick={() => !isDisabled && toggleTimeSlot(day, timeSlot)}
+                          disabled={isDisabled}
                           style={{
                             padding: "0.75rem",
                             backgroundColor: isSelected ? "#0d4a2d" : "#0d1117",
@@ -642,17 +720,18 @@ export default function StudentDashboard() {
                             borderRadius: "4px",
                             fontSize: "0.75rem",
                             color: isSelected ? "#86efac" : "#8b949e",
-                            cursor: "pointer",
+                            cursor: isDisabled ? "not-allowed" : "pointer",
                             transition: "all 0.15s",
-                            fontWeight: isSelected ? "500" : "400"
+                            fontWeight: isSelected ? "500" : "400",
+                            opacity: isDisabled ? 0.6 : 1
                           }}
                           onMouseOver={(e) => {
-                            if (!isSelected) {
+                            if (!isSelected && !isDisabled) {
                               e.currentTarget.style.backgroundColor = "#1c2128";
                             }
                           }}
                           onMouseOut={(e) => {
-                            if (!isSelected) {
+                            if (!isSelected && !isDisabled) {
                               e.currentTarget.style.backgroundColor = "#0d1117";
                             }
                           }}
@@ -716,6 +795,7 @@ export default function StudentDashboard() {
                 onChange={(e) => setAvailabilityNotes(e.target.value)}
                 placeholder="Any schedule preferences, constraints, or notes for your office manager..."
                 rows={4}
+                disabled={hasSubmitted && !showEditForm}
                 style={{
                   width: "100%",
                   padding: "0.625rem 0.875rem",
@@ -726,44 +806,49 @@ export default function StudentDashboard() {
                   color: "#ffffff",
                   outline: "none",
                   resize: "vertical",
-                  fontFamily: "inherit"
+                  fontFamily: "inherit",
+                  opacity: (hasSubmitted && !showEditForm) ? 0.6 : 1,
+                  cursor: (hasSubmitted && !showEditForm) ? "not-allowed" : "text"
                 }}
               />
             </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={showEditForm ? submittingEdit : submitting}
-              style={{
-                padding: "0.625rem 1.25rem",
-                backgroundColor: (showEditForm ? submittingEdit : submitting) ? "#414d5c" : showEditForm ? "#0d9488" : "#0972d3",
-                color: "#ffffff",
-                border: `1px solid ${(showEditForm ? submittingEdit : submitting) ? "#414d5c" : showEditForm ? "#0d9488" : "#0972d3"}`,
-                borderRadius: "6px",
-                fontSize: "0.875rem",
-                fontWeight: "500",
-                cursor: (showEditForm ? submittingEdit : submitting) ? "not-allowed" : "pointer",
-                transition: "all 0.15s ease"
-              }}
-              onMouseOver={(e) => {
-                if (!(showEditForm ? submittingEdit : submitting)) {
-                  e.currentTarget.style.backgroundColor = showEditForm ? "#0f766e" : "#0863bf";
-                  e.currentTarget.style.borderColor = showEditForm ? "#0f766e" : "#0863bf";
-                }
-              }}
-              onMouseOut={(e) => {
-                if (!(showEditForm ? submittingEdit : submitting)) {
-                  e.currentTarget.style.backgroundColor = showEditForm ? "#0d9488" : "#0972d3";
-                  e.currentTarget.style.borderColor = showEditForm ? "#0d9488" : "#0972d3";
-                }
-              }}
-            >
-              {showEditForm
-                ? (submittingEdit ? 'Submitting...' : 'Submit Edit Request')
-                : (submitting ? 'Submitting...' : 'Submit Availability')}
-            </button>
+            {/* Submit Button - Only show if not submitted OR in edit mode */}
+            {(!hasSubmitted || showEditForm) && (
+              <button
+                type="submit"
+                disabled={showEditForm ? submittingEdit : submitting}
+                style={{
+                  padding: "0.625rem 1.25rem",
+                  backgroundColor: (showEditForm ? submittingEdit : submitting) ? "#414d5c" : showEditForm ? "#0d9488" : "#0972d3",
+                  color: "#ffffff",
+                  border: `1px solid ${(showEditForm ? submittingEdit : submitting) ? "#414d5c" : showEditForm ? "#0d9488" : "#0972d3"}`,
+                  borderRadius: "6px",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: (showEditForm ? submittingEdit : submitting) ? "not-allowed" : "pointer",
+                  transition: "all 0.15s ease"
+                }}
+                onMouseOver={(e) => {
+                  if (!(showEditForm ? submittingEdit : submitting)) {
+                    e.currentTarget.style.backgroundColor = showEditForm ? "#0f766e" : "#0863bf";
+                    e.currentTarget.style.borderColor = showEditForm ? "#0f766e" : "#0863bf";
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (!(showEditForm ? submittingEdit : submitting)) {
+                    e.currentTarget.style.backgroundColor = showEditForm ? "#0d9488" : "#0972d3";
+                    e.currentTarget.style.borderColor = showEditForm ? "#0d9488" : "#0972d3";
+                  }
+                }}
+              >
+                {showEditForm
+                  ? (submittingEdit ? 'Submitting...' : 'Submit Edit Request')
+                  : (submitting ? 'Submitting...' : 'Submit Availability')}
+              </button>
+            )}
           </form>
+          )}
         </div>
 
         {/* Schedule Section */}

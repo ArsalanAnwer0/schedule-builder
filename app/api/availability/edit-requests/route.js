@@ -4,6 +4,7 @@ import dbConnect from '../../../../lib/db/connect';
 import AvailabilityEditRequest from '../../../../lib/db/models/AvailabilityEditRequest';
 import Availability from '../../../../lib/db/models/Availability';
 import User from '../../../../lib/db/models/User';
+import { sendAvailabilityEditRequestToAdmin } from '../../../../lib/email/send';
 
 // POST - Create a new edit request (student)
 export async function POST(request) {
@@ -56,6 +57,22 @@ export async function POST(request) {
       oldNotes: currentAvailability.notes || '',
       newNotes: newNotes || ''
     });
+
+    // Send email notification to admin
+    try {
+      const adminUser = await User.findOne({ role: 'admin' });
+      if (adminUser) {
+        await sendAvailabilityEditRequestToAdmin(
+          adminUser.email,
+          sessionData.user.name,
+          sessionData.user.email,
+          reason.trim()
+        );
+      }
+    } catch (emailError) {
+      console.error('Failed to send email notification to admin:', emailError);
+      // Don't fail the request if email fails
+    }
 
     return NextResponse.json({
       success: true,

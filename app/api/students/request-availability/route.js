@@ -40,6 +40,23 @@ export async function POST(request) {
       );
     }
 
+    // Mark availability as requested for these students
+    console.log('Updating availabilityRequested for students:', studentIds);
+    const updateResult = await User.updateMany(
+      { _id: { $in: studentIds } },
+      { $set: { availabilityRequested: true } }
+    );
+    console.log('Update result:', updateResult);
+
+    // Verify the update
+    const updatedStudents = await User.find({ _id: { $in: studentIds } });
+    console.log('Updated students:', updatedStudents.map(s => ({
+      id: s._id,
+      name: s.name,
+      email: s.email,
+      availabilityRequested: s.availabilityRequested
+    })));
+
     // Send availability request emails to all selected students
     const emailPromises = students.map(student =>
       sendAvailabilityRequest(student.email, student.name)

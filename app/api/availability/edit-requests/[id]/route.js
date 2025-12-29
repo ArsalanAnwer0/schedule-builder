@@ -3,6 +3,8 @@ import { requireAdmin } from '../../../../../lib/auth/session';
 import dbConnect from '../../../../../lib/db/connect';
 import AvailabilityEditRequest from '../../../../../lib/db/models/AvailabilityEditRequest';
 import Availability from '../../../../../lib/db/models/Availability';
+import User from '../../../../../lib/db/models/User';
+import { sendAvailabilityEditDecisionToStudent } from '../../../../../lib/email/send';
 
 // POST - Approve or reject edit request (admin only)
 export async function POST(request, { params }) {
@@ -51,6 +53,21 @@ export async function POST(request, { params }) {
           notes: editRequest.newNotes
         }
       );
+    }
+
+    // Send email notification to student
+    try {
+      const student = await User.findById(editRequest.userId);
+      if (student) {
+        await sendAvailabilityEditDecisionToStudent(
+          student.email,
+          student.name,
+          action === 'approve'
+        );
+      }
+    } catch (emailError) {
+      console.error('Failed to send email notification to student:', emailError);
+      // Don't fail the request if email fails
     }
 
     return NextResponse.json({

@@ -241,6 +241,76 @@ export default function Home() {
     }
   };
 
+  const handleResetSingleAvailability = async (studentId) => {
+    if (!confirm('Are you sure you want to reset this student\'s availability? This will delete their submitted availability and lock their access. You must request availability again for them to resubmit.')) {
+      return;
+    }
+
+    setStudentError('');
+    setStudentSuccess('');
+
+    try {
+      const res = await fetch('/api/availability/reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setStudentError(data.error || 'Failed to reset availability');
+        return;
+      }
+
+      setStudentSuccess(data.message);
+      setTimeout(() => setStudentSuccess(''), 5000);
+
+      // Refresh the students list to update the UI
+      fetchStudents();
+    } catch (err) {
+      setStudentError('Something went wrong. Please try again.');
+    }
+  };
+
+  const handleResetAllAvailability = async () => {
+    if (students.length === 0) {
+      setStudentError('No students available');
+      return;
+    }
+
+    if (!confirm(`Are you sure you want to reset availability for all ${students.length} student(s)? This will delete all submitted availability and lock their access. You must request availability again for them to resubmit.`)) {
+      return;
+    }
+
+    setStudentError('');
+    setStudentSuccess('');
+
+    try {
+      const allStudentIds = students.map(s => s.id);
+      const res = await fetch('/api/availability/reset-all', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentIds: allStudentIds }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setStudentError(data.error || 'Failed to reset availability');
+        return;
+      }
+
+      setStudentSuccess(data.message);
+      setTimeout(() => setStudentSuccess(''), 5000);
+
+      // Refresh the students list to update the UI
+      fetchStudents();
+    } catch (err) {
+      setStudentError('Something went wrong. Please try again.');
+    }
+  };
+
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
     router.push('/login');
@@ -634,6 +704,37 @@ export default function Home() {
                 Request All Availability
               </button>
               <button
+                onClick={handleResetAllAvailability}
+                disabled={students.length === 0}
+                style={{
+                  padding: "0.625rem 1.25rem",
+                  backgroundColor: students.length === 0 ? "#414d5c" : "#ca8a04",
+                  color: "#ffffff",
+                  border: "1px solid",
+                  borderColor: students.length === 0 ? "#414d5c" : "#ca8a04",
+                  borderRadius: "6px",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: students.length === 0 ? "not-allowed" : "pointer",
+                  opacity: students.length === 0 ? 0.6 : 1,
+                  transition: "all 0.15s ease"
+                }}
+                onMouseOver={(e) => {
+                  if (students.length > 0) {
+                    e.currentTarget.style.backgroundColor = "#a16207";
+                    e.currentTarget.style.borderColor = "#a16207";
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (students.length > 0) {
+                    e.currentTarget.style.backgroundColor = "#ca8a04";
+                    e.currentTarget.style.borderColor = "#ca8a04";
+                  }
+                }}
+              >
+                Reset All Availability
+              </button>
+              <button
                 onClick={handleAddStudent}
                 style={{
                   padding: "0.625rem 1.25rem",
@@ -705,6 +806,31 @@ export default function Home() {
                                 }}
                               >
                                 Request Availability
+                              </button>
+                            )}
+                            {student.hasSubmitted && (
+                              <button
+                                onClick={() => handleResetSingleAvailability(student.id)}
+                                style={{
+                                  padding: "0.375rem 0.875rem",
+                                  fontSize: "0.875rem",
+                                  backgroundColor: "#854d0e",
+                                  border: "1px solid #854d0e",
+                                  borderRadius: "4px",
+                                  color: "#ffffff",
+                                  cursor: "pointer",
+                                  transition: "all 0.15s"
+                                }}
+                                onMouseOver={(e) => {
+                                  e.currentTarget.style.backgroundColor = "#a16207";
+                                  e.currentTarget.style.borderColor = "#a16207";
+                                }}
+                                onMouseOut={(e) => {
+                                  e.currentTarget.style.backgroundColor = "#854d0e";
+                                  e.currentTarget.style.borderColor = "#854d0e";
+                                }}
+                              >
+                                Reset Availability
                               </button>
                             )}
                             <button
@@ -1113,40 +1239,136 @@ export default function Home() {
                     </div>
 
                     {/* Comparison */}
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                      {/* Old Availability */}
-                      <div>
-                        <h4 style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ef4444", margin: 0, marginBottom: "0.75rem" }}>
-                          Current Availability
-                        </h4>
-                        <div style={{ fontSize: "0.75rem", color: "#8b949e" }}>
-                          {Object.entries(request.oldAvailability).map(([day, slots]) => (
-                            slots.length > 0 && (
-                              <div key={day} style={{ marginBottom: "0.5rem" }}>
-                                <strong style={{ color: "#c9d1d9" }}>{day}:</strong> {slots.slice(0, 3).join(', ')}
-                                {slots.length > 3 && ` +${slots.length - 3} more`}
+                    <div>
+                      <h4 style={{ fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", margin: 0, marginBottom: "0.75rem" }}>
+                        Changes by Day
+                      </h4>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                        {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map((day) => {
+                          const oldSlots = request.oldAvailability[day] || [];
+                          const newSlots = request.newAvailability[day] || [];
+
+                          // Check if there are changes for this day
+                          const hasChanges = JSON.stringify(oldSlots.sort()) !== JSON.stringify(newSlots.sort());
+
+                          // Only show days with changes
+                          if (!hasChanges) return null;
+
+                          // Find added and removed slots
+                          const removedSlots = oldSlots.filter(slot => !newSlots.includes(slot));
+                          const addedSlots = newSlots.filter(slot => !oldSlots.includes(slot));
+                          const unchangedSlots = oldSlots.filter(slot => newSlots.includes(slot));
+
+                          return (
+                            <div key={day} style={{
+                              backgroundColor: "#0d1117",
+                              border: "1px solid #30363d",
+                              borderRadius: "6px",
+                              padding: "0.75rem"
+                            }}>
+                              <div style={{
+                                fontSize: "0.75rem",
+                                fontWeight: "600",
+                                color: "#58a6ff",
+                                marginBottom: "0.5rem",
+                                textTransform: "uppercase",
+                                letterSpacing: "0.5px"
+                              }}>
+                                {day}
                               </div>
-                            )
-                          ))}
-                        </div>
+
+                              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                                {/* Removed slots */}
+                                {removedSlots.length > 0 && (
+                                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.25rem", alignItems: "center" }}>
+                                    <span style={{ fontSize: "0.75rem", color: "#ef4444", fontWeight: "500", marginRight: "0.25rem" }}>
+                                      Removed:
+                                    </span>
+                                    {removedSlots.map((slot, idx) => (
+                                      <span key={idx} style={{
+                                        fontSize: "0.7rem",
+                                        color: "#ef4444",
+                                        backgroundColor: "#2d1517",
+                                        padding: "0.125rem 0.375rem",
+                                        borderRadius: "3px",
+                                        border: "1px solid #5c2d30",
+                                        textDecoration: "line-through"
+                                      }}>
+                                        {slot}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* Added slots */}
+                                {addedSlots.length > 0 && (
+                                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.25rem", alignItems: "center" }}>
+                                    <span style={{ fontSize: "0.75rem", color: "#10b981", fontWeight: "500", marginRight: "0.25rem" }}>
+                                      Added:
+                                    </span>
+                                    {addedSlots.map((slot, idx) => (
+                                      <span key={idx} style={{
+                                        fontSize: "0.7rem",
+                                        color: "#10b981",
+                                        backgroundColor: "#0d1f17",
+                                        padding: "0.125rem 0.375rem",
+                                        borderRadius: "3px",
+                                        border: "1px solid #1e4d2b",
+                                        fontWeight: "600"
+                                      }}>
+                                        {slot}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* Unchanged slots (if any exist and we want to show them) */}
+                                {unchangedSlots.length > 0 && (addedSlots.length > 0 || removedSlots.length > 0) && (
+                                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.25rem", alignItems: "center" }}>
+                                    <span style={{ fontSize: "0.75rem", color: "#6e7681", fontWeight: "500", marginRight: "0.25rem" }}>
+                                      Unchanged:
+                                    </span>
+                                    {unchangedSlots.slice(0, 5).map((slot, idx) => (
+                                      <span key={idx} style={{
+                                        fontSize: "0.7rem",
+                                        color: "#6e7681",
+                                        backgroundColor: "#0d1117",
+                                        padding: "0.125rem 0.375rem",
+                                        borderRadius: "3px",
+                                        border: "1px solid #21262d"
+                                      }}>
+                                        {slot}
+                                      </span>
+                                    ))}
+                                    {unchangedSlots.length > 5 && (
+                                      <span style={{ fontSize: "0.7rem", color: "#6e7681" }}>
+                                        +{unchangedSlots.length - 5} more
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
 
-                      {/* New Availability */}
-                      <div>
-                        <h4 style={{ fontSize: "0.875rem", fontWeight: "500", color: "#10b981", margin: 0, marginBottom: "0.75rem" }}>
-                          Requested Changes
-                        </h4>
-                        <div style={{ fontSize: "0.75rem", color: "#8b949e" }}>
-                          {Object.entries(request.newAvailability).map(([day, slots]) => (
-                            slots.length > 0 && (
-                              <div key={day} style={{ marginBottom: "0.5rem" }}>
-                                <strong style={{ color: "#c9d1d9" }}>{day}:</strong> {slots.slice(0, 3).join(', ')}
-                                {slots.length > 3 && ` +${slots.length - 3} more`}
-                              </div>
-                            )
-                          ))}
+                      {/* Show message if no days have changes */}
+                      {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].every((day) => {
+                        const oldSlots = request.oldAvailability[day] || [];
+                        const newSlots = request.newAvailability[day] || [];
+                        return JSON.stringify(oldSlots.sort()) === JSON.stringify(newSlots.sort());
+                      }) && (
+                        <div style={{
+                          padding: "1rem",
+                          textAlign: "center",
+                          color: "#6e7681",
+                          fontSize: "0.875rem",
+                          fontStyle: "italic"
+                        }}>
+                          No changes detected in availability
                         </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -18,6 +18,7 @@ export async function GET() {
         email: sessionData.user.email,
         name: sessionData.user.name,
         role: sessionData.user.role,
+        availabilityRequested: sessionData.user.availabilityRequested || false,
       },
     });
 
