@@ -23,6 +23,10 @@ export default function StudentDashboard() {
   const [submitSuccess, setSubmitSuccess] = useState('');
   const [submitError, setSubmitError] = useState('');
 
+  // Published schedule state
+  const [publishedSchedule, setPublishedSchedule] = useState(null);
+  const [loadingSchedule, setLoadingSchedule] = useState(true);
+
   useEffect(() => {
     fetch('/api/auth/me')
       .then(res => res.json())
@@ -40,6 +44,25 @@ export default function StudentDashboard() {
         setLoading(false);
       });
   }, [router]);
+
+  // Fetch published schedule
+  useEffect(() => {
+    if (user) {
+      fetch('/api/schedules/published')
+        .then(res => res.json())
+        .then(data => {
+          if (data.schedule) {
+            setPublishedSchedule(data.schedule);
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching schedule:', err);
+        })
+        .finally(() => {
+          setLoadingSchedule(false);
+        });
+    }
+  }, [user]);
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
@@ -182,6 +205,179 @@ export default function StudentDashboard() {
             Logout
           </button>
         </div>
+
+        {/* Published Schedule Section */}
+        {!loadingSchedule && publishedSchedule && (
+          <div style={{
+            backgroundColor: "#16191f",
+            border: "1px solid #0972d3",
+            borderRadius: "8px",
+            padding: "1.5rem",
+            marginBottom: "2rem"
+          }}>
+            <div style={{ marginBottom: "1.5rem" }}>
+              <h2 style={{
+                fontSize: "1.25rem",
+                fontWeight: "500",
+                color: "#ffffff",
+                marginBottom: "0.5rem"
+              }}>
+                Your Work Schedule
+              </h2>
+              {publishedSchedule.scheduleConfig && (
+                <p style={{
+                  fontSize: "0.875rem",
+                  color: "#8b949e",
+                  margin: 0
+                }}>
+                  {new Date(publishedSchedule.scheduleConfig.startDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                  {' - '}
+                  {new Date(publishedSchedule.scheduleConfig.endDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                </p>
+              )}
+            </div>
+
+            {/* Schedule Table */}
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ borderBottom: "2px solid #30363d" }}>
+                    <th style={{
+                      padding: "0.75rem",
+                      textAlign: "left",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      color: "#8b949e",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em"
+                    }}>Day</th>
+                    <th style={{
+                      padding: "0.75rem",
+                      textAlign: "left",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      color: "#8b949e",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em"
+                    }}>Worker</th>
+                    <th style={{
+                      padding: "0.75rem",
+                      textAlign: "left",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      color: "#8b949e",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em"
+                    }}>Shift Time</th>
+                    <th style={{
+                      padding: "0.75rem",
+                      textAlign: "left",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      color: "#8b949e",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em"
+                    }}>Hours</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].map((day) => {
+                    const dayShifts = publishedSchedule.shifts[day] || [];
+
+                    if (dayShifts.length === 0) {
+                      return (
+                        <tr key={day} style={{ borderBottom: "1px solid #30363d" }}>
+                          <td style={{
+                            padding: "1rem 0.75rem",
+                            color: "#c9d1d9",
+                            fontSize: "0.875rem",
+                            textTransform: "capitalize"
+                          }}>
+                            {day}
+                          </td>
+                          <td colSpan="3" style={{
+                            padding: "1rem 0.75rem",
+                            color: "#6e7681",
+                            fontSize: "0.875rem",
+                            fontStyle: "italic"
+                          }}>
+                            No shifts scheduled
+                          </td>
+                        </tr>
+                      );
+                    }
+
+                    return dayShifts.map((shift, index) => (
+                      <tr key={`${day}-${index}`} style={{ borderBottom: "1px solid #30363d" }}>
+                        {index === 0 && (
+                          <td
+                            rowSpan={dayShifts.length}
+                            style={{
+                              padding: "1rem 0.75rem",
+                              color: "#c9d1d9",
+                              fontSize: "0.875rem",
+                              textTransform: "capitalize",
+                              verticalAlign: "top"
+                            }}
+                          >
+                            {day}
+                          </td>
+                        )}
+                        <td style={{
+                          padding: "1rem 0.75rem",
+                          color: shift.studentId === user?.id ? "#58a6ff" : "#c9d1d9",
+                          fontSize: "0.875rem",
+                          fontWeight: shift.studentId === user?.id ? "600" : "400"
+                        }}>
+                          {shift.studentName}
+                          {shift.studentId === user?.id && (
+                            <span style={{
+                              marginLeft: "0.5rem",
+                              fontSize: "0.75rem",
+                              color: "#58a6ff",
+                              fontWeight: "400"
+                            }}>
+                              (You)
+                            </span>
+                          )}
+                        </td>
+                        <td style={{
+                          padding: "1rem 0.75rem",
+                          color: "#c9d1d9",
+                          fontSize: "0.875rem"
+                        }}>
+                          {shift.startTime} - {shift.endTime}
+                        </td>
+                        <td style={{
+                          padding: "1rem 0.75rem",
+                          color: "#c9d1d9",
+                          fontSize: "0.875rem"
+                        }}>
+                          {shift.hours}h
+                        </td>
+                      </tr>
+                    ));
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {!loadingSchedule && !publishedSchedule && (
+          <div style={{
+            backgroundColor: "#16191f",
+            border: "1px solid #30363d",
+            borderRadius: "8px",
+            padding: "1.5rem",
+            marginBottom: "2rem",
+            textAlign: "center"
+          }}>
+            <p style={{ color: "#8b949e", fontSize: "0.875rem", margin: 0 }}>
+              No schedule has been published yet. You'll see your work schedule here once it's published by your manager.
+            </p>
+          </div>
+        )}
 
         {/* Success/Error Messages */}
         {submitSuccess && (
