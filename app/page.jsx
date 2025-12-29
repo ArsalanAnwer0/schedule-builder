@@ -82,11 +82,11 @@ export default function Home() {
       });
   }, [router]);
 
-  // Load students
+  // Load students with availability
   const loadStudents = async () => {
     setLoadingStudents(true);
     try {
-      const res = await fetch('/api/students');
+      const res = await fetch('/api/students/availability');
       const data = await res.json();
       if (res.ok) {
         setStudents(data.students);
@@ -167,6 +167,62 @@ export default function Home() {
     }
   };
 
+  const handleRequestSingleAvailability = async (studentId) => {
+    setStudentError('');
+    setStudentSuccess('');
+
+    try {
+      const res = await fetch('/api/availability/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentIds: [studentId] }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setStudentError(data.error || 'Failed to send availability request');
+        return;
+      }
+
+      setStudentSuccess(data.message);
+      setTimeout(() => setStudentSuccess(''), 5000);
+    } catch (err) {
+      setStudentError('Something went wrong. Please try again.');
+    }
+  };
+
+  const handleRequestAllAvailability = async () => {
+    if (students.length === 0) {
+      setStudentError('No students available');
+      return;
+    }
+
+    setStudentError('');
+    setStudentSuccess('');
+
+    try {
+      const allStudentIds = students.map(s => s.id);
+      const res = await fetch('/api/availability/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentIds: allStudentIds }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setStudentError(data.error || 'Failed to send availability requests');
+        return;
+      }
+
+      setStudentSuccess(data.message);
+      setTimeout(() => setStudentSuccess(''), 5000);
+    } catch (err) {
+      setStudentError('Something went wrong. Please try again.');
+    }
+  };
+
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
     router.push('/login');
@@ -217,137 +273,131 @@ export default function Home() {
     }
   };
 
-  const addWorker = () => {
-    if (formData.workers.length >= 10) return;
-    const newWorker = {
-      id: Date.now(),
-      name: "",
-      expanded: true,
-      availability: {
-        Monday: { available: true, start: "", end: "" },
-        Tuesday: { available: true, start: "", end: "" },
-        Wednesday: { available: true, start: "", end: "" },
-        Thursday: { available: true, start: "", end: "" },
-        Friday: { available: true, start: "", end: "" },
-      },
-    };
-    setFormData({ ...formData, workers: [...formData.workers, newWorker] });
+  // Removed manual worker management functions - workers are now students with submitted availability
 
-    // Scroll to the new worker after it's rendered
-    setTimeout(() => {
-      const workerElement = document.querySelector(`[data-worker-id="${newWorker.id}"]`);
-      if (workerElement) {
-        workerElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }, 100);
+  // Helper function to convert 12-hour time to 24-hour for sorting
+  const convertTo24Hour = (time12h) => {
+    const [time, period] = time12h.split(' ');
+    let [hours, minutes] = time.split(':');
+    hours = parseInt(hours);
+
+    if (period === 'PM' && hours !== 12) {
+      hours += 12;
+    } else if (period === 'AM' && hours === 12) {
+      hours = 0;
+    }
+
+    return `${String(hours).padStart(2, '0')}:${minutes}`;
   };
 
-  const removeWorker = (workerId) => {
-    setFormData({
-      ...formData,
-      workers: formData.workers.filter((w) => w.id !== workerId),
-    });
-  };
+  // Helper function to add 30 minutes to a time slot
+  const addThirtyMinutes = (time12h) => {
+    const [time, period] = time12h.split(' ');
+    let [hours, minutes] = time.split(':');
+    hours = parseInt(hours);
+    minutes = parseInt(minutes);
 
-  const toggleWorkerExpanded = (workerId) => {
-    setFormData({
-      ...formData,
-      workers: formData.workers.map((w) =>
-        w.id === workerId ? { ...w, expanded: !w.expanded } : w
-      ),
-    });
-  };
+    // Add 30 minutes
+    minutes += 30;
+    if (minutes >= 60) {
+      minutes -= 60;
+      hours += 1;
+    }
 
-  const updateWorkerName = (workerId, name) => {
-    setFormData({
-      ...formData,
-      workers: formData.workers.map((w) =>
-        w.id === workerId ? { ...w, name } : w
-      ),
-    });
-  };
+    // Handle 12-hour rollover and AM/PM transition
+    let newPeriod = period;
 
-  const toggleDayAvailability = (workerId, day) => {
-    setValidationError(null); // Clear validation error when user makes changes
-    setFormData({
-      ...formData,
-      workers: formData.workers.map((w) =>
-        w.id === workerId
-          ? {
-              ...w,
-              availability: {
-                ...w.availability,
-                [day]: {
-                  ...w.availability[day],
-                  available: !w.availability[day].available,
-                },
-              },
-            }
-          : w
-      ),
-    });
-  };
+    // If we went from 11:XX to 12:XX in AM, switch to PM
+    if (period === 'AM' && hours === 12 && minutes > 0) {
+      newPeriod = 'PM';
+      hours = 12;
+    }
+    // If we went past 12 in PM (13+), wrap around but stay in PM
+    else if (hours > 12) {
+      hours -= 12;
+    }
+    // If exactly 12:00, keep the period as is
 
-  const updateWorkerTime = (workerId, day, timeType, value) => {
-    setValidationError(null); // Clear validation error when user makes changes
-    setFormData({
-      ...formData,
-      workers: formData.workers.map((w) =>
-        w.id === workerId
-          ? {
-              ...w,
-              availability: {
-                ...w.availability,
-                [day]: {
-                  ...w.availability[day],
-                  [timeType]: value,
-                },
-              },
-            }
-          : w
-      ),
-    });
+    return `${hours}:${String(minutes).padStart(2, '0')} ${newPeriod}`;
   };
 
   const handleGenerateSchedule = () => {
     // Clear any previous validation errors
     setValidationError(null);
 
-    // Validate workers have complete availability data
-    const incompleteWorkers = [];
+    // Check if we have students with submitted availability
+    const studentsWithAvailability = students.filter(s => s.hasSubmitted);
 
-    formData.workers.forEach(worker => {
-      const hasValidAvailability = Object.values(worker.availability).some(dayAvail => {
-        // Check if day is marked as available AND has both start and end times
-        return dayAvail.available && dayAvail.start && dayAvail.end;
-      });
-
-      // If worker has no valid availability at all, they're incomplete
-      if (!hasValidAvailability) {
-        incompleteWorkers.push(worker.name || 'Unnamed Worker');
-      } else {
-        // Check if any available days are missing times
-        Object.entries(worker.availability).forEach(([day, dayAvail]) => {
-          if (dayAvail.available && (!dayAvail.start || !dayAvail.end)) {
-            if (!incompleteWorkers.includes(worker.name || 'Unnamed Worker')) {
-              incompleteWorkers.push(worker.name || 'Unnamed Worker');
-            }
-          }
-        });
-      }
-    });
-
-    if (incompleteWorkers.length > 0) {
+    if (studentsWithAvailability.length === 0) {
       setValidationError(
-        `Please complete availability for: ${incompleteWorkers.join(', ')}. ` +
-        `Make sure to either enter both start and end times for available days, or mark all days as unavailable.`
+        'No students have submitted their availability yet. Please request availability from students first.'
       );
       return;
     }
 
+    // Convert student availability to the format expected by the scheduler
+    const workers = studentsWithAvailability.map(student => {
+      const availability = {};
+      const studentAvail = student.availability.availability;
+
+      // Convert the student's submitted availability to the scheduler format
+      ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].forEach(day => {
+        if (studentAvail[day] && studentAvail[day].length > 0) {
+          // Student has selected time slots for this day (e.g., ["8:00 AM", "8:30 AM", "9:00 AM"])
+          // We need to find the earliest and latest times to create a range
+          const timeSlots = studentAvail[day];
+
+          // Find the earliest (first) and latest (last) time slots
+          const sortedSlots = [...timeSlots].sort((a, b) => {
+            // Convert to 24-hour for sorting
+            const timeA = convertTo24Hour(a);
+            const timeB = convertTo24Hour(b);
+            return timeA.localeCompare(timeB);
+          });
+
+          const startTime12h = sortedSlots[0]; // Earliest time in 12-hour format
+          const lastSlot12h = sortedSlots[sortedSlots.length - 1]; // Latest time in 12-hour format
+
+          // Add 30 minutes to the last slot to get the end time
+          const endTime12h = addThirtyMinutes(lastSlot12h);
+
+          // Convert to 24-hour format for the scheduler
+          const startTime24h = convertTo24Hour(startTime12h);
+          const endTime24h = convertTo24Hour(endTime12h);
+
+          availability[day] = {
+            available: true,
+            start: startTime24h,
+            end: endTime24h
+          };
+        } else {
+          availability[day] = { available: false, start: '', end: '' };
+        }
+      });
+
+      return {
+        id: student.id,
+        name: student.name,
+        availability: availability
+      };
+    });
+
+    // Update formData with workers from students
+    const scheduleData = {
+      ...formData,
+      workers: workers
+    };
+
+    // Log the converted data for debugging
+    console.log('=== Schedule Generation Debug ===');
+    console.log('Students with availability:', studentsWithAvailability.length);
+    console.log('Converted workers:', workers);
+    console.log('Schedule data being sent to generator:', scheduleData);
+
     setIsGenerating(true);
     setTimeout(() => {
-      const result = generateSchedule(formData);
+      const result = generateSchedule(scheduleData);
+      console.log('Schedule generation result:', result);
       setScheduleResult(result);
       setIsGenerating(false);
       setTimeout(() => {
@@ -436,30 +486,63 @@ export default function Home() {
                 Manage your student roster and their information
               </p>
             </div>
-            <button
-              onClick={handleAddStudent}
-              style={{
-                padding: "0.625rem 1.25rem",
-                backgroundColor: "#0972d3",
-                color: "#ffffff",
-                border: "1px solid #0972d3",
-                borderRadius: "6px",
-                fontSize: "0.875rem",
-                fontWeight: "500",
-                cursor: "pointer",
-                transition: "all 0.15s ease"
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = "#0863bf";
-                e.currentTarget.style.borderColor = "#0863bf";
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = "#0972d3";
-                e.currentTarget.style.borderColor = "#0972d3";
-              }}
-            >
-              + Add Student
-            </button>
+            <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+              <button
+                onClick={handleRequestAllAvailability}
+                disabled={students.length === 0}
+                style={{
+                  padding: "0.625rem 1.25rem",
+                  backgroundColor: students.length === 0 ? "#414d5c" : "#10b981",
+                  color: "#ffffff",
+                  border: "1px solid",
+                  borderColor: students.length === 0 ? "#414d5c" : "#10b981",
+                  borderRadius: "6px",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: students.length === 0 ? "not-allowed" : "pointer",
+                  opacity: students.length === 0 ? 0.6 : 1,
+                  transition: "all 0.15s ease"
+                }}
+                onMouseOver={(e) => {
+                  if (students.length > 0) {
+                    e.currentTarget.style.backgroundColor = "#059669";
+                    e.currentTarget.style.borderColor = "#059669";
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (students.length > 0) {
+                    e.currentTarget.style.backgroundColor = "#10b981";
+                    e.currentTarget.style.borderColor = "#10b981";
+                  }
+                }}
+              >
+                Request All Availability
+              </button>
+              <button
+                onClick={handleAddStudent}
+                style={{
+                  padding: "0.625rem 1.25rem",
+                  backgroundColor: "#0972d3",
+                  color: "#ffffff",
+                  border: "1px solid #0972d3",
+                  borderRadius: "6px",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  transition: "all 0.15s ease"
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = "#0863bf";
+                  e.currentTarget.style.borderColor = "#0863bf";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = "#0972d3";
+                  e.currentTarget.style.borderColor = "#0972d3";
+                }}
+              >
+                + Add Student
+              </button>
+            </div>
           </div>
 
           <div style={{ padding: "2rem" }}>
@@ -483,41 +566,67 @@ export default function Home() {
                         <td style={{ padding: "1rem", color: "#ffffff", fontSize: "0.875rem" }}>{student.name}</td>
                         <td style={{ padding: "1rem", color: "#c9d1d9", fontSize: "0.875rem" }}>{student.email}</td>
                         <td style={{ padding: "1rem", textAlign: "right" }}>
-                          <button
-                            onClick={() => handleEditStudent(student)}
-                            style={{
-                              padding: "0.375rem 0.875rem",
-                              fontSize: "0.875rem",
-                              backgroundColor: "#0d1117",
-                              border: "1px solid #30363d",
-                              borderRadius: "4px",
-                              color: "#58a6ff",
-                              cursor: "pointer",
-                              marginRight: "0.5rem",
-                              transition: "all 0.15s"
-                            }}
-                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#252d3d"}
-                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#0d1117"}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDeleteStudent(student.id)}
-                            style={{
-                              padding: "0.375rem 0.875rem",
-                              fontSize: "0.875rem",
-                              backgroundColor: "#2d1517",
-                              border: "1px solid #5c2d30",
-                              borderRadius: "4px",
-                              color: "#ff6b6b",
-                              cursor: "pointer",
-                              transition: "all 0.15s"
-                            }}
-                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#3d2527"}
-                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#2d1517"}
-                          >
-                            Delete
-                          </button>
+                          <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end", flexWrap: "wrap" }}>
+                            {!student.hasSubmitted && (
+                              <button
+                                onClick={() => handleRequestSingleAvailability(student.id)}
+                                style={{
+                                  padding: "0.375rem 0.875rem",
+                                  fontSize: "0.875rem",
+                                  backgroundColor: "#0d9488",
+                                  border: "1px solid #0d9488",
+                                  borderRadius: "4px",
+                                  color: "#ffffff",
+                                  cursor: "pointer",
+                                  transition: "all 0.15s"
+                                }}
+                                onMouseOver={(e) => {
+                                  e.currentTarget.style.backgroundColor = "#0f766e";
+                                  e.currentTarget.style.borderColor = "#0f766e";
+                                }}
+                                onMouseOut={(e) => {
+                                  e.currentTarget.style.backgroundColor = "#0d9488";
+                                  e.currentTarget.style.borderColor = "#0d9488";
+                                }}
+                              >
+                                Request Availability
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleEditStudent(student)}
+                              style={{
+                                padding: "0.375rem 0.875rem",
+                                fontSize: "0.875rem",
+                                backgroundColor: "#0d1117",
+                                border: "1px solid #30363d",
+                                borderRadius: "4px",
+                                color: "#58a6ff",
+                                cursor: "pointer",
+                                transition: "all 0.15s"
+                              }}
+                              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#252d3d"}
+                              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#0d1117"}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteStudent(student.id)}
+                              style={{
+                                padding: "0.375rem 0.875rem",
+                                fontSize: "0.875rem",
+                                backgroundColor: "#2d1517",
+                                border: "1px solid #5c2d30",
+                                borderRadius: "4px",
+                                color: "#ff6b6b",
+                                cursor: "pointer",
+                                transition: "all 0.15s"
+                              }}
+                              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#3d2527"}
+                              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#2d1517"}
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -794,247 +903,123 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Workers Section */}
+        {/* Student Workers Availability Section */}
         <div style={{ backgroundColor: "#16191f", border: "1px solid #414d5c", borderRadius: "8px", marginBottom: "1rem", overflow: "hidden" }}>
           <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #414d5c" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
-              <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "#ffffff", margin: 0 }}>
-                Workers
+            <div>
+              <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
+                Student Availability
               </h2>
-              <button
-                type="button"
-                onClick={addWorker}
-                disabled={formData.workers.length >= 10}
-                aria-label={`Add worker (${formData.workers.length}/10)`}
-                style={{
-                  padding: "0.5rem 1rem",
-                  backgroundColor: formData.workers.length >= 10 ? "#1a1f2e" : "#0972d3",
-                  color: formData.workers.length >= 10 ? "#4b5563" : "#ffffff",
-                  border: "1px solid",
-                  borderColor: formData.workers.length >= 10 ? "#2d3748" : "#0972d3",
-                  borderRadius: "6px",
-                  fontSize: "0.875rem",
-                  fontWeight: "500",
-                  cursor: formData.workers.length >= 10 ? "not-allowed" : "pointer",
-                  transition: "all 0.15s ease",
-                  letterSpacing: "0.01em",
-                }}
-                onMouseOver={(e) => {
-                  if (formData.workers.length < 10) {
-                    e.currentTarget.style.backgroundColor = "#0863bf";
-                    e.currentTarget.style.borderColor = "#0863bf";
-                  }
-                }}
-                onMouseOut={(e) => {
-                  if (formData.workers.length < 10) {
-                    e.currentTarget.style.backgroundColor = "#0972d3";
-                    e.currentTarget.style.borderColor = "#0972d3";
-                  }
-                }}
-              >
-                <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                  <span style={{ fontSize: "0.875rem", lineHeight: "1" }}>+</span>
-                  Add worker
-                </span>
-              </button>
+              <p style={{ fontSize: "0.875rem", color: "#8b949e", lineHeight: "1.5" }}>
+                Read-only view of student-submitted availability. {students.filter(s => s.hasSubmitted).length} of {students.length} students have submitted.
+              </p>
             </div>
           </div>
           <div style={{ padding: "1.5rem" }}>
-            {formData.workers.length === 0 ? (
+            {students.filter(s => s.hasSubmitted).length === 0 ? (
               <div style={{ padding: "3rem", textAlign: "center", color: "#6b7280", fontSize: "0.875rem" }}>
-                No workers added yet. Click "Add worker" to begin.
+                <p style={{ margin: 0, marginBottom: "1rem" }}>No students have submitted their availability yet.</p>
+                <p style={{ margin: 0, color: "#8b949e" }}>Request availability from students using the Admin Dashboard or wait for them to submit.</p>
               </div>
             ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "3rem" }}>
-                {formData.workers.map((worker, index) => (
-                  <div key={worker.id} data-worker-id={worker.id} style={{ border: "1px solid #2d3748", borderRadius: "6px", overflow: "hidden", backgroundColor: "#1a1f2e" }}>
-
-                    {/* Worker Header */}
-                    <div
-                      onClick={() => toggleWorkerExpanded(worker.id)}
-                      style={{
-                        padding: "1rem 1.25rem",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        cursor: "pointer",
-                        backgroundColor: "#1f2937",
-                        transition: "background-color 0.15s"
-                      }}
-                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#252d3d"}
-                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#1f2937"}
-                    >
+              <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+                {students.filter(s => s.hasSubmitted).map((student, index) => (
+                  <div key={student.id} style={{ border: "1px solid #2d3748", borderRadius: "6px", overflow: "hidden", backgroundColor: "#1a1f2e" }}>
+                    {/* Student Header */}
+                    <div style={{
+                      padding: "1rem 1.25rem",
+                      backgroundColor: "#1f2937",
+                      borderBottom: "1px solid #2d3748"
+                    }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                        <span style={{ fontSize: "0.75rem", color: "#9ca3af" }}>
-                          {worker.expanded ? "▼" : "▶"}
-                        </span>
                         <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff" }}>
-                          Worker {index + 1}: {worker.name || "(No name)"}
+                          {student.name}
+                        </span>
+                        <span style={{ fontSize: "0.75rem", color: "#10b981", padding: "0.25rem 0.5rem", backgroundColor: "#065f46", borderRadius: "4px" }}>
+                          Submitted
                         </span>
                       </div>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeWorker(worker.id);
-                        }}
-                        style={{
-                          padding: "0.375rem 0.875rem",
-                          fontSize: "0.875rem",
-                          border: "1px solid #414d5c",
-                          borderRadius: "4px",
-                          backgroundColor: "#16191f",
-                          color: "#ffffff",
-                          cursor: "pointer",
-                          transition: "all 0.15s"
-                        }}
-                        onMouseOver={(e) => {
-                          e.currentTarget.style.backgroundColor = "#252d3d";
-                        }}
-                        onMouseOut={(e) => {
-                          e.currentTarget.style.backgroundColor = "#16191f";
-                        }}
-                      >
-                        Remove
-                      </button>
+                      <p style={{ fontSize: "0.75rem", color: "#9ca3af", margin: 0, marginTop: "0.25rem" }}>
+                        {student.email} • Submitted {new Date(student.availability.submittedAt).toLocaleDateString()}
+                      </p>
                     </div>
 
-                    {/* Worker Details */}
-                    {worker.expanded && (
-                      <div style={{ padding: "1.5rem" }}>
-
-                        {/* Name Input */}
-                        <div style={{ marginBottom: "1.5rem" }}>
-                          <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#ffffff", marginBottom: "0.5rem" }}>
-                            Name
-                          </label>
-                          <input
-                            type="text"
-                            value={worker.name}
-                            onChange={(e) => updateWorkerName(worker.id, e.target.value)}
-                            placeholder="Enter worker name"
-                            style={{
-                              width: "100%",
-                              maxWidth: "400px",
-                              padding: "0.5rem 0.75rem",
-                              backgroundColor: "#0d1117",
-                              border: "1px solid #414d5c",
-                              borderRadius: "4px",
-                              fontSize: "0.875rem",
-                              color: "#ffffff",
-                              outline: "none"
-                            }}
-                          />
-                        </div>
-
-                        <div>
-                          <p style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff", marginBottom: "0.75rem" }}>
-                            Weekly availability
+                    {/* Student Availability Details */}
+                    <div style={{ padding: "1.5rem" }}>
+                      {student.availability.notes && (
+                        <div style={{
+                          marginBottom: "1.5rem",
+                          padding: "1rem",
+                          backgroundColor: "#0d1117",
+                          border: "1px solid #2d3748",
+                          borderRadius: "6px"
+                        }}>
+                          <p style={{ fontSize: "0.75rem", color: "#9ca3af", margin: 0, marginBottom: "0.5rem", textTransform: "uppercase", fontWeight: "500" }}>
+                            Notes:
                           </p>
-                          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                            {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => (
-                              <div
-                                key={day}
-                                style={{
-                                  padding: "0.875rem",
-                                  border: "1px solid #2d3748",
-                                  borderRadius: "4px",
-                                  backgroundColor: "#16191f",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  gap: "1rem",
-                                  flexWrap: "wrap",
-                                }}
-                              >
-                                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", minWidth: "160px" }}>
-                                  <label
-                                    htmlFor={`${worker.id}-${day}`}
-                                    style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff", cursor: "pointer", userSelect: "none", minWidth: "80px" }}
-                                  >
-                                    {day}
-                                  </label>
-                                  <div
-                                    style={{
-                                      position: "relative",
-                                      width: "48px",
-                                      height: "24px",
-                                      display: "flex",
-                                      alignItems: "center",
-                                      cursor: "pointer"
-                                    }}
-                                    onClick={() => toggleDayAvailability(worker.id, day)}
-                                  >
-                                    <input
-                                      type="checkbox"
-                                      id={`${worker.id}-${day}`}
-                                      checked={!worker.availability[day].available}
-                                      onChange={() => toggleDayAvailability(worker.id, day)}
-                                      style={{
-                                        position: "absolute",
-                                        opacity: 0,
-                                        width: "100%",
-                                        height: "100%",
-                                        cursor: "pointer",
-                                      }}
-                                    />
-                                    <div style={{
-                                      width: "48px",
-                                      height: "24px",
-                                      borderRadius: "12px",
-                                      backgroundColor: !worker.availability[day].available ? "#dc2626" : "#047857",
-                                      border: "2px solid",
-                                      borderColor: !worker.availability[day].available ? "#b91c1c" : "#059669",
-                                      transition: "all 0.3s ease",
-                                      position: "relative",
-                                      boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.2)"
-                                    }}>
-                                      <div style={{
-                                        position: "absolute",
-                                        top: "2px",
-                                        left: !worker.availability[day].available ? "26px" : "2px",
-                                        width: "16px",
-                                        height: "16px",
-                                        borderRadius: "50%",
-                                        backgroundColor: "#ffffff",
-                                        transition: "all 0.3s ease",
-                                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.4)"
-                                      }} />
-                                    </div>
-                                  </div>
-                                  <span style={{
-                                    fontSize: "0.8125rem",
-                                    color: !worker.availability[day].available ? "#ff6b6b" : "#10b981",
-                                    fontWeight: "500",
-                                    minWidth: "100px"
-                                  }}>
-                                    {!worker.availability[day].available ? "Not available" : "Available"}
-                                  </span>
-                                </div>
-
-                                {worker.availability[day].available && (
-                                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flex: "1" }}>
-                                    <TimePicker
-                                      value={worker.availability[day].start}
-                                      onChange={(value) => updateWorkerTime(worker.id, day, "start", value)}
-                                      placeholder="Start time"
-                                      positionAbove={day === "Friday"}
-                                    />
-                                    <span style={{ fontSize: "0.875rem", color: "#6b7280" }}>to</span>
-                                    <TimePicker
-                                      value={worker.availability[day].end}
-                                      onChange={(value) => updateWorkerTime(worker.id, day, "end", value)}
-                                      placeholder="End time"
-                                      positionAbove={day === "Friday"}
-                                      minTime={worker.availability[day].start}
-                                    />
-                                  </div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
+                          <p style={{ fontSize: "0.875rem", color: "#c9d1d9", margin: 0 }}>
+                            {student.availability.notes}
+                          </p>
                         </div>
+                      )}
+
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                        {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => {
+                          const dayAvail = student.availability.availability[day];
+                          const hasAvailability = dayAvail && dayAvail.length > 0;
+
+                          return (
+                            <div
+                              key={day}
+                              style={{
+                                padding: "0.875rem 1rem",
+                                border: "1px solid #2d3748",
+                                borderRadius: "4px",
+                                backgroundColor: "#16191f",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                gap: "1rem",
+                                flexWrap: "wrap"
+                              }}
+                            >
+                              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", minWidth: "120px" }}>
+                                <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff", minWidth: "90px" }}>
+                                  {day}
+                                </span>
+                                <span style={{
+                                  fontSize: "0.75rem",
+                                  color: hasAvailability ? "#10b981" : "#ff6b6b",
+                                  fontWeight: "500",
+                                  padding: "0.25rem 0.5rem",
+                                  backgroundColor: hasAvailability ? "#065f46" : "#7f1d1d",
+                                  borderRadius: "4px"
+                                }}>
+                                  {hasAvailability ? "Available" : "Not available"}
+                                </span>
+                              </div>
+
+                              {hasAvailability && (
+                                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flex: "1", flexWrap: "wrap" }}>
+                                  {dayAvail.map((slot, idx) => (
+                                    <span key={idx} style={{
+                                      fontSize: "0.875rem",
+                                      color: "#c9d1d9",
+                                      padding: "0.375rem 0.75rem",
+                                      backgroundColor: "#0d1117",
+                                      border: "1px solid #414d5c",
+                                      borderRadius: "4px"
+                                    }}>
+                                      {slot}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
-                    )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -1065,30 +1050,30 @@ export default function Home() {
         <div style={{ display: "flex", justifyContent: "flex-end", marginTop: validationError ? "1rem" : "1.5rem", marginBottom: "2rem" }}>
           <button
             onClick={handleGenerateSchedule}
-            disabled={isGenerating || formData.workers.length === 0}
+            disabled={isGenerating || students.filter(s => s.hasSubmitted).length === 0}
             aria-label="Generate work schedule based on provided information"
             aria-busy={isGenerating}
             style={{
               padding: "0.625rem 1.5rem",
-              backgroundColor: isGenerating || formData.workers.length === 0 ? "#1a1f2e" : "#ec7211",
-              color: isGenerating || formData.workers.length === 0 ? "#4b5563" : "#ffffff",
+              backgroundColor: isGenerating || students.filter(s => s.hasSubmitted).length === 0 ? "#1a1f2e" : "#ec7211",
+              color: isGenerating || students.filter(s => s.hasSubmitted).length === 0 ? "#4b5563" : "#ffffff",
               border: "1px solid",
-              borderColor: isGenerating || formData.workers.length === 0 ? "#2d3748" : "#ec7211",
+              borderColor: isGenerating || students.filter(s => s.hasSubmitted).length === 0 ? "#2d3748" : "#ec7211",
               borderRadius: "6px",
               fontSize: "0.875rem",
               fontWeight: "500",
-              cursor: isGenerating || formData.workers.length === 0 ? "not-allowed" : "pointer",
+              cursor: isGenerating || students.filter(s => s.hasSubmitted).length === 0 ? "not-allowed" : "pointer",
               transition: "all 0.15s ease",
               letterSpacing: "0.01em",
             }}
             onMouseOver={(e) => {
-              if (!isGenerating && formData.workers.length > 0) {
+              if (!isGenerating && students.filter(s => s.hasSubmitted).length > 0) {
                 e.currentTarget.style.backgroundColor = "#d66b14";
                 e.currentTarget.style.borderColor = "#d66b14";
               }
             }}
             onMouseOut={(e) => {
-              if (!isGenerating && formData.workers.length > 0) {
+              if (!isGenerating && students.filter(s => s.hasSubmitted).length > 0) {
                 e.currentTarget.style.backgroundColor = "#ec7211";
                 e.currentTarget.style.borderColor = "#ec7211";
               }

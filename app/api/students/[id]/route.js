@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { requireAdmin } from '../../../../lib/auth/session';
 import dbConnect from '../../../../lib/db/connect';
 import User from '../../../../lib/db/models/User';
+import Availability from '../../../../lib/db/models/Availability';
 
 // PUT update student
 export async function PUT(request, { params }) {
@@ -14,7 +15,7 @@ export async function PUT(request, { params }) {
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
     const { email, name } = await request.json();
 
     if (!email || !name) {
@@ -26,17 +27,27 @@ export async function PUT(request, { params }) {
 
     await dbConnect();
 
-    // Check if email is taken by another user
-    const existingUser = await User.findOne({
-      email: email.toLowerCase().trim(),
-      _id: { $ne: id },
-    });
-
-    if (existingUser) {
+    // First check if the student exists
+    const currentStudent = await User.findById(id);
+    if (!currentStudent) {
       return NextResponse.json(
-        { error: 'Email is already taken by another user' },
-        { status: 400 }
+        { error: 'Student not found' },
+        { status: 404 }
       );
+    }
+
+    // Only check for email conflicts if the email is being changed
+    if (email.toLowerCase().trim() !== currentStudent.email.toLowerCase()) {
+      const existingUser = await User.findOne({
+        email: email.toLowerCase().trim(),
+      });
+
+      if (existingUser) {
+        return NextResponse.json(
+          { error: 'Email is already taken by another user' },
+          { status: 400 }
+        );
+      }
     }
 
     const student = await User.findOneAndUpdate(
@@ -84,7 +95,7 @@ export async function DELETE(request, { params }) {
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     await dbConnect();
 
@@ -99,6 +110,9 @@ export async function DELETE(request, { params }) {
         { status: 404 }
       );
     }
+
+    // Also delete the student's availability when deleting the student
+    await Availability.deleteOne({ userId: id });
 
     return NextResponse.json({
       success: true,

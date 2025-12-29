@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
@@ -46,16 +46,16 @@ export default function StudentDashboard() {
     router.push('/login');
   };
 
-  const toggleTimeSlot = (day, hour) => {
+  const toggleTimeSlot = (day, timeSlot) => {
     setAvailability(prev => {
       const daySlots = prev[day];
-      const slotExists = daySlots.includes(hour);
+      const slotExists = daySlots.includes(timeSlot);
 
       return {
         ...prev,
         [day]: slotExists
-          ? daySlots.filter(h => h !== hour)
-          : [...daySlots, hour].sort((a, b) => a - b)
+          ? daySlots.filter(slot => slot !== timeSlot)
+          : [...daySlots, timeSlot].sort()
       };
     });
   };
@@ -65,6 +65,8 @@ export default function StudentDashboard() {
     setSubmitting(true);
     setSubmitError('');
     setSubmitSuccess('');
+
+    console.log('Submitting availability:', availability);
 
     try {
       const res = await fetch('/api/availability', {
@@ -77,6 +79,7 @@ export default function StudentDashboard() {
       });
 
       const data = await res.json();
+      console.log('Response:', res.status, data);
 
       if (!res.ok) {
         setSubmitError(data.error || 'Failed to submit availability');
@@ -86,22 +89,27 @@ export default function StudentDashboard() {
       setSubmitSuccess('Availability submitted successfully!');
       setTimeout(() => setSubmitSuccess(''), 5000);
     } catch (err) {
+      console.error('Submit error:', err);
       setSubmitError('Something went wrong. Please try again.');
     } finally {
       setSubmitting(false);
     }
   };
 
-  const formatTimeSlot = (hour) => {
-    const period = hour >= 12 ? 'PM' : 'AM';
-    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-    return `${displayHour}:00 ${period}`;
-  };
-
   const getTimeSlots = () => {
     const slots = [];
+    // Generate 30-minute intervals from 8:00 AM to 5:30 PM
     for (let hour = 8; hour <= 17; hour++) {
-      slots.push(hour);
+      const period = hour >= 12 ? 'PM' : 'AM';
+      const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+
+      // Add :00 slot
+      slots.push(`${displayHour}:00 ${period}`);
+
+      // Add :30 slot (but not after 5:00 PM)
+      if (hour < 17) {
+        slots.push(`${displayHour}:30 ${period}`);
+      }
     }
     return slots;
   };
@@ -262,10 +270,9 @@ export default function StudentDashboard() {
                 ))}
 
                 {/* Time Rows */}
-                {getTimeSlots().map(hour => (
-                  <>
+                {getTimeSlots().map(timeSlot => (
+                  <React.Fragment key={timeSlot}>
                     <div
-                      key={`label-${hour}`}
                       style={{
                         padding: "0.75rem",
                         fontSize: "0.875rem",
@@ -274,15 +281,15 @@ export default function StudentDashboard() {
                         alignItems: "center"
                       }}
                     >
-                      {formatTimeSlot(hour)}
+                      {timeSlot}
                     </div>
                     {DAYS_OF_WEEK.map(day => {
-                      const isSelected = availability[day].includes(hour);
+                      const isSelected = availability[day].includes(timeSlot);
                       return (
                         <button
-                          key={`${day}-${hour}`}
+                          key={`${day}-${timeSlot}`}
                           type="button"
-                          onClick={() => toggleTimeSlot(day, hour)}
+                          onClick={() => toggleTimeSlot(day, timeSlot)}
                           style={{
                             padding: "0.75rem",
                             backgroundColor: isSelected ? "#0d4a2d" : "#0d1117",
@@ -309,7 +316,7 @@ export default function StudentDashboard() {
                         </button>
                       );
                     })}
-                  </>
+                  </React.Fragment>
                 ))}
               </div>
             </div>
