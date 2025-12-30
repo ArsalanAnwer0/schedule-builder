@@ -7,23 +7,36 @@ export async function middleware(request) {
   // Public routes that don't require authentication
   const publicRoutes = ['/login', '/register', '/api/auth/request-link', '/api/auth/verify', '/api/auth/verify-code', '/api/auth/register'];
 
+  // Create response
+  let response;
+
   if (publicRoutes.some(route => pathname.startsWith(route))) {
-    return NextResponse.next();
+    response = NextResponse.next();
+  } else {
+    // Check for session cookie
+    const cookieStore = await cookies();
+    const sessionToken = cookieStore.get('session_token');
+
+    if (!sessionToken) {
+      response = NextResponse.redirect(new URL('/login', request.url));
+    } else {
+      response = NextResponse.next();
+    }
   }
 
-  // Check for session cookie
-  const cookieStore = await cookies();
-  const sessionToken = cookieStore.get('session_token');
+  // Add security headers
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set('X-XSS-Protection', '1; mode=block');
 
-  if (!sessionToken) {
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
+  // Prevent clickjacking
+  response.headers.set(
+    'Content-Security-Policy',
+    "frame-ancestors 'none';"
+  );
 
-  // For now, let the page components handle role-based access
-  // The main app (/) will check for admin role
-  // The /dashboard will check for student role
-
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {

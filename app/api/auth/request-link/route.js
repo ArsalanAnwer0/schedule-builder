@@ -3,6 +3,7 @@ import dbConnect from '../../../../lib/db/connect';
 import User from '../../../../lib/db/models/User';
 import VerificationCode from '../../../../lib/db/models/VerificationCode';
 import { sendVerificationCode } from '../../../../lib/email/send';
+import { rateLimit } from '../../../../lib/utils/rateLimiter';
 
 // Generate 6-digit code
 function generateCode() {
@@ -17,6 +18,15 @@ export async function POST(request) {
       return NextResponse.json(
         { error: 'Email is required' },
         { status: 400 }
+      );
+    }
+
+    // Rate limiting: 5 requests per email per 15 minutes
+    const rateLimitKey = `request-link:${email.toLowerCase()}`;
+    if (!rateLimit(rateLimitKey, 5, 15 * 60 * 1000)) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again in 15 minutes.' },
+        { status: 429 }
       );
     }
 
