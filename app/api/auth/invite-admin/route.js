@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { requireAdmin } from '../../../../lib/auth/session';
 import dbConnect from '../../../../lib/db/connect';
 import User from '../../../../lib/db/models/User';
-import { sendEmail } from '../../../../lib/email/send';
+import { sendAdminInvite } from '../../../../lib/email/send';
 
 export async function POST(request) {
   try {
@@ -65,48 +65,12 @@ export async function POST(request) {
 
     // Send email invitation
     try {
-      await sendEmail({
-        to: email,
-        subject: `You've been invited as Admin - ${currentAdmin.organizationName}`,
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #0972d3;">Admin Invitation</h2>
-            <p>Hi ${name},</p>
-            <p>You've been invited by ${currentAdmin.name} to be a secondary admin for <strong>${currentAdmin.organizationName}</strong> on Schedule Builder.</p>
-
-            <div style="background-color: #f6f8fa; padding: 20px; border-radius: 6px; margin: 20px 0;">
-              <h3 style="margin-top: 0;">Your Login Email:</h3>
-              <p><strong>Email:</strong> ${email}</p>
-            </div>
-
-            <p>You'll use email verification codes to login (no password needed). Simply enter your email on the login page and we'll send you a verification code.</p>
-
-            <p style="margin-top: 30px;">
-              <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login"
-                 style="background-color: #0972d3; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-                Login to Schedule Builder
-              </a>
-            </p>
-
-            <p style="color: #666; font-size: 12px; margin-top: 30px;">
-              If you didn't expect this invitation, please ignore this email.
-            </p>
-          </div>
-        `,
-        text: `
-Hi ${name},
-
-You've been invited by ${currentAdmin.name} to be a secondary admin for ${currentAdmin.organizationName} on Schedule Builder.
-
-Your Login Email: ${email}
-
-You'll use email verification codes to login (no password needed). Simply enter your email on the login page and we'll send you a verification code.
-
-Login at: ${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login
-
-If you didn't expect this invitation, please ignore this email.
-        `,
-      });
+      await sendAdminInvite(
+        email,
+        name,
+        currentAdmin.name,
+        currentAdmin.organizationName
+      );
     } catch (emailError) {
       console.error('Failed to send invitation email:', emailError);
       // Delete the created admin if email fails
