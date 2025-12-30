@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '../../../../lib/db/connect';
 import User from '../../../../lib/db/models/User';
+import { rateLimit } from '../../../../lib/utils/rateLimiter';
 
 export async function POST(request) {
   try {
@@ -11,6 +12,18 @@ export async function POST(request) {
       return NextResponse.json(
         { error: 'All fields are required' },
         { status: 400 }
+      );
+    }
+
+    // Rate limiting: 3 registration attempts per IP per hour
+    const forwarded = request.headers.get('x-forwarded-for');
+    const ip = forwarded ? forwarded.split(',')[0] : 'unknown';
+    const rateLimitKey = `register:${ip}`;
+
+    if (!rateLimit(rateLimitKey, 3, 60 * 60 * 1000)) {
+      return NextResponse.json(
+        { error: 'Too many registration attempts. Please try again later.' },
+        { status: 429 }
       );
     }
 
