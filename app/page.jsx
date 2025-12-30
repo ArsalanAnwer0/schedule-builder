@@ -41,6 +41,14 @@ export default function Home() {
   const [studentError, setStudentError] = useState('');
   const [studentSuccess, setStudentSuccess] = useState('');
 
+  // Admin management state
+  const [admins, setAdmins] = useState([]);
+  const [loadingAdmins, setLoadingAdmins] = useState(false);
+  const [showInviteAdminModal, setShowInviteAdminModal] = useState(false);
+  const [adminFormData, setAdminFormData] = useState({ name: '', email: '' });
+  const [adminError, setAdminError] = useState('');
+  const [adminSuccess, setAdminSuccess] = useState('');
+
   // Default form data
   const defaultFormData = {
     officeStartTime: "08:00",
@@ -75,6 +83,7 @@ export default function Home() {
           setUser(data.user);
           loadStudents();
           loadEditRequests();
+          loadAdmins();
         } else {
           router.push('/login');
         }
@@ -113,6 +122,58 @@ export default function Home() {
       }
     } catch (err) {
       console.error('Failed to load edit requests:', err);
+    }
+  };
+
+  // Load admins
+  const loadAdmins = async () => {
+    setLoadingAdmins(true);
+    try {
+      const res = await fetch('/api/auth/admins');
+      const data = await res.json();
+      if (res.ok) {
+        setAdmins(data.admins);
+      }
+    } catch (err) {
+      console.error('Failed to load admins:', err);
+    } finally {
+      setLoadingAdmins(false);
+    }
+  };
+
+  // Admin management handlers
+  const handleInviteAdmin = () => {
+    setAdminFormData({ name: '', email: '' });
+    setShowInviteAdminModal(true);
+    setAdminError('');
+    setAdminSuccess('');
+  };
+
+  const handleSubmitAdminInvite = async (e) => {
+    e.preventDefault();
+    setAdminError('');
+    setAdminSuccess('');
+
+    try {
+      const res = await fetch('/api/auth/invite-admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(adminFormData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setAdminError(data.error || 'Failed to send invitation');
+        return;
+      }
+
+      setAdminSuccess(data.message);
+      setShowInviteAdminModal(false);
+      loadAdmins();
+      setTimeout(() => setAdminSuccess(''), 5000);
+    } catch (err) {
+      setAdminError('Something went wrong. Please try again.');
     }
   };
 
@@ -613,24 +674,44 @@ export default function Home() {
               Welcome back, {user?.name}. Manage your office schedules and students below.
             </p>
           </div>
-          <button
-            onClick={handleLogout}
-            style={{
-              padding: "0.625rem 1.25rem",
-              backgroundColor: "#16191f",
-              color: "#ffffff",
-              border: "1px solid #414d5c",
-              borderRadius: "6px",
-              fontSize: "0.875rem",
-              fontWeight: "500",
-              cursor: "pointer",
-              transition: "all 0.15s ease"
-            }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#252d3d"}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#16191f"}
-          >
-            Logout
-          </button>
+          <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+            <button
+              onClick={() => window.location.href = '/profile'}
+              style={{
+                padding: "0.625rem 1.25rem",
+                backgroundColor: "#16191f",
+                color: "#ffffff",
+                border: "1px solid #414d5c",
+                borderRadius: "6px",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+                cursor: "pointer",
+                transition: "all 0.15s ease"
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#252d3d"}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#16191f"}
+            >
+              Profile
+            </button>
+            <button
+              onClick={handleLogout}
+              style={{
+                padding: "0.625rem 1.25rem",
+                backgroundColor: "#16191f",
+                color: "#ffffff",
+                border: "1px solid #414d5c",
+                borderRadius: "6px",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+                cursor: "pointer",
+                transition: "all 0.15s ease"
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#252d3d"}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#16191f"}
+            >
+              Logout
+            </button>
+          </div>
         </div>
 
         {/* Student Success/Error Messages */}
@@ -657,6 +738,121 @@ export default function Home() {
             marginBottom: "1.5rem"
           }}>
             <p style={{ color: "#ff6b6b", margin: 0, fontSize: "0.875rem" }}>{studentError}</p>
+          </div>
+        )}
+
+        {/* Admin Success/Error Messages */}
+        {adminSuccess && (
+          <div style={{
+            padding: "1rem 1.5rem",
+            backgroundColor: "#0d1f17",
+            border: "1px solid #1e4d2b",
+            borderLeft: "4px solid #047857",
+            borderRadius: "6px",
+            marginBottom: "1.5rem"
+          }}>
+            <p style={{ color: "#10b981", margin: 0, fontSize: "0.875rem" }}>✓ {adminSuccess}</p>
+          </div>
+        )}
+
+        {adminError && (
+          <div style={{
+            padding: "1rem 1.5rem",
+            backgroundColor: "#2d1517",
+            border: "1px solid #5c2d30",
+            borderLeft: "4px solid #dc2626",
+            borderRadius: "6px",
+            marginBottom: "1.5rem"
+          }}>
+            <p style={{ color: "#ff6b6b", margin: 0, fontSize: "0.875rem" }}>{adminError}</p>
+          </div>
+        )}
+
+        {/* Admin Management Section - Only show for primary admin */}
+        {(!user?.adminType || user?.adminType === 'primary') && (
+          <div style={{ backgroundColor: "#16191f", border: "1px solid #30363d", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
+            <div style={{ padding: "1.5rem", borderBottom: "1px solid #30363d", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+              <div>
+                <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
+                  Admin Team
+                </h2>
+                <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
+                  Manage administrators for {user?.organizationName || 'your organization'} (max 3 total)
+                </p>
+              </div>
+              <button
+                onClick={handleInviteAdmin}
+                disabled={admins.length >= 3}
+                style={{
+                  padding: "0.625rem 1.25rem",
+                  backgroundColor: admins.length >= 3 ? "#414d5c" : "#0972d3",
+                  color: "#ffffff",
+                  border: "1px solid",
+                  borderColor: admins.length >= 3 ? "#414d5c" : "#0972d3",
+                  borderRadius: "6px",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: admins.length >= 3 ? "not-allowed" : "pointer",
+                  opacity: admins.length >= 3 ? 0.6 : 1,
+                  transition: "all 0.15s ease"
+                }}
+                onMouseOver={(e) => {
+                  if (admins.length < 3) {
+                    e.currentTarget.style.backgroundColor = "#0863bf";
+                    e.currentTarget.style.borderColor = "#0863bf";
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (admins.length < 3) {
+                    e.currentTarget.style.backgroundColor = "#0972d3";
+                    e.currentTarget.style.borderColor = "#0972d3";
+                  }
+                }}
+              >
+                + Invite Admin
+              </button>
+            </div>
+
+            <div style={{ padding: "2rem" }}>
+              {loadingAdmins ? (
+                <p style={{ color: "#8b949e" }}>Loading admins...</p>
+              ) : (
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                    <thead>
+                      <tr style={{ borderBottom: "1px solid #30363d" }}>
+                        <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Name</th>
+                        <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Email</th>
+                        <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Role</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {admins.map((admin) => (
+                        <tr key={admin.id} style={{ borderBottom: "1px solid #30363d" }}>
+                          <td style={{ padding: "1rem", color: "#ffffff", fontSize: "0.875rem" }}>
+                            {admin.name}
+                            {admin.id === user?._id && <span style={{ color: "#8b949e", fontSize: "0.75rem", marginLeft: "0.5rem" }}>(You)</span>}
+                          </td>
+                          <td style={{ padding: "1rem", color: "#c9d1d9", fontSize: "0.875rem" }}>{admin.email}</td>
+                          <td style={{ padding: "1rem", fontSize: "0.875rem" }}>
+                            <span style={{
+                              padding: "0.25rem 0.75rem",
+                              borderRadius: "9999px",
+                              fontSize: "0.75rem",
+                              fontWeight: "500",
+                              backgroundColor: admin.adminType === 'primary' ? "#1e3a5f" : "#1e293b",
+                              color: admin.adminType === 'primary' ? "#60a5fa" : "#94a3b8"
+                            }}>
+                              {admin.adminType === 'primary' ? 'Primary Admin' : 'Secondary Admin'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -1961,6 +2157,165 @@ export default function Home() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Invite Admin Modal */}
+        {showInviteAdminModal && (
+          <div style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+            padding: "1rem"
+          }}>
+            <div style={{
+              backgroundColor: "#16191f",
+              border: "1px solid #30363d",
+              borderRadius: "8px",
+              padding: "2rem",
+              maxWidth: "500px",
+              width: "100%"
+            }}>
+              <h3 style={{ fontSize: "1.25rem", fontWeight: "500", color: "#ffffff", marginBottom: "0.5rem" }}>
+                Invite Secondary Admin
+              </h3>
+              <p style={{ fontSize: "0.875rem", color: "#8b949e", marginBottom: "1.5rem", lineHeight: "1.5" }}>
+                Send an invitation email with login credentials to a new admin for {user?.organizationName}.
+              </p>
+
+              {adminError && (
+                <div style={{
+                  padding: "0.75rem 1rem",
+                  backgroundColor: "#2d1517",
+                  border: "1px solid #5c2d30",
+                  borderRadius: "6px",
+                  marginBottom: "1rem"
+                }}>
+                  <p style={{ color: "#ff6b6b", fontSize: "0.875rem", margin: 0 }}>
+                    {adminError}
+                  </p>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmitAdminInvite}>
+                <div style={{ marginBottom: "1.5rem" }}>
+                  <label style={{
+                    display: "block",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    color: "#c9d1d9",
+                    marginBottom: "0.625rem"
+                  }}>
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    value={adminFormData.name}
+                    onChange={(e) => setAdminFormData({ ...adminFormData, name: e.target.value })}
+                    required
+                    placeholder="Full name of the admin"
+                    style={{
+                      width: "100%",
+                      padding: "0.625rem 0.875rem",
+                      backgroundColor: "#0d1117",
+                      border: "1px solid #30363d",
+                      borderRadius: "6px",
+                      fontSize: "0.875rem",
+                      color: "#ffffff",
+                      outline: "none"
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: "1.5rem" }}>
+                  <label style={{
+                    display: "block",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    color: "#c9d1d9",
+                    marginBottom: "0.625rem"
+                  }}>
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={adminFormData.email}
+                    onChange={(e) => setAdminFormData({ ...adminFormData, email: e.target.value })}
+                    required
+                    placeholder="admin@example.com"
+                    style={{
+                      width: "100%",
+                      padding: "0.625rem 0.875rem",
+                      backgroundColor: "#0d1117",
+                      border: "1px solid #30363d",
+                      borderRadius: "6px",
+                      fontSize: "0.875rem",
+                      color: "#ffffff",
+                      outline: "none"
+                    }}
+                  />
+                  <p style={{ fontSize: "0.75rem", color: "#8b949e", marginTop: "0.5rem", marginBottom: 0 }}>
+                    An invitation email with temporary credentials will be sent to this address.
+                  </p>
+                </div>
+
+                <div style={{ display: "flex", gap: "1rem", justifyContent: "flex-end" }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowInviteAdminModal(false);
+                      setAdminError('');
+                    }}
+                    style={{
+                      padding: "0.625rem 1.25rem",
+                      backgroundColor: "#0d1117",
+                      color: "#ffffff",
+                      border: "1px solid #30363d",
+                      borderRadius: "6px",
+                      fontSize: "0.875rem",
+                      fontWeight: "500",
+                      cursor: "pointer",
+                      transition: "all 0.15s ease"
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#252d3d"}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#0d1117"}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    style={{
+                      padding: "0.625rem 1.25rem",
+                      backgroundColor: "#0972d3",
+                      color: "#ffffff",
+                      border: "1px solid #0972d3",
+                      borderRadius: "6px",
+                      fontSize: "0.875rem",
+                      fontWeight: "500",
+                      cursor: "pointer",
+                      transition: "all 0.15s ease"
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.backgroundColor = "#0863bf";
+                      e.currentTarget.style.borderColor = "#0863bf";
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.backgroundColor = "#0972d3";
+                      e.currentTarget.style.borderColor = "#0972d3";
+                    }}
+                  >
+                    Send Invitation
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
 
