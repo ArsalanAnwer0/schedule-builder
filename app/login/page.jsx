@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -310,6 +311,32 @@ export default function LoginPage() {
               }}>
                 We'll send a 6-digit code to your email
               </p>
+
+              <div style={{
+                marginTop: '1.5rem',
+                textAlign: 'center',
+                paddingTop: '1.5rem',
+                borderTop: '1px solid #334155'
+              }}>
+                <p style={{
+                  fontSize: '0.875rem',
+                  color: '#94a3b8',
+                  marginBottom: '0.5rem'
+                }}>
+                  First time setting up?
+                </p>
+                <Link
+                  href="/register"
+                  style={{
+                    color: '#3b82f6',
+                    fontSize: '0.875rem',
+                    textDecoration: 'underline',
+                    fontWeight: '500'
+                  }}
+                >
+                  Register as Primary Admin
+                </Link>
+              </div>
             </form>
           )}
 
