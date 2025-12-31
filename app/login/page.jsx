@@ -56,12 +56,7 @@ function LoginForm() {
       }
 
       setCodeSent(true);
-      // BETA: Show testing code if email fails
-      if (data.testingCode) {
-        setMessage(`TESTING MODE: Your code is ${data.testingCode} (Check your email or use this code)`);
-      } else {
-        setMessage('Verification code sent! Check your email.');
-      }
+      setMessage('Verification code sent! Check your email.');
       setLoading(false);
       startResendCountdown();
 

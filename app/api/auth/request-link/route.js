@@ -67,24 +67,13 @@ export async function POST(request) {
       expiresAt,
     });
 
-    // BETA: Log verification code for testing (REMOVE IN PRODUCTION!)
-    console.log('🔐 Verification code for', email, ':', code);
-
-    // Send email with verification code (optional during testing)
-    try {
-      await sendVerificationCode(email, code);
-      console.log('✅ Verification email sent successfully to:', email);
-    } catch (emailError) {
-      console.error('⚠️ Email sending failed (continuing anyway for BETA testing):', emailError);
-      // BETA: Don't fail if email fails - code is still saved in DB and logged
-      // User can get code from Vercel logs or we can display it in UI for testing
-    }
+    // Send email with verification code
+    await sendVerificationCode(email, code);
+    console.log('✅ Verification email sent successfully to:', email);
 
     return NextResponse.json({
       success: true,
       message: 'Verification code sent to your email',
-      // BETA: Include code in response for testing (REMOVE IN PRODUCTION!)
-      testingCode: code,
     });
 
   } catch (error) {
