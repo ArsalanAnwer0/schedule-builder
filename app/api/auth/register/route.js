@@ -29,15 +29,19 @@ export async function POST(request) {
 
     await dbConnect();
 
-    // Check if there's already a primary admin
+    // Normalize organization name (lowercase, trim)
+    const normalizedOrgName = organizationName.toLowerCase().trim();
+
+    // Check if there's already a primary admin FOR THIS ORGANIZATION
     const existingPrimaryAdmin = await User.findOne({
       role: 'admin',
-      adminType: 'primary'
+      adminType: 'primary',
+      organizationName: normalizedOrgName,
     });
 
     if (existingPrimaryAdmin) {
       return NextResponse.json(
-        { error: 'Primary admin already exists. Please contact the admin for an invite.' },
+        { error: 'Primary admin already exists for this organization. Please use a different organization name or contact the admin for an invite.' },
         { status: 403 }
       );
     }
@@ -57,7 +61,7 @@ export async function POST(request) {
       name,
       role: 'admin',
       adminType: 'primary',
-      organizationName,
+      organizationName: normalizedOrgName, // Use normalized name
     });
 
     return NextResponse.json({

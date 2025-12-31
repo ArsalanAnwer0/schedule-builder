@@ -16,23 +16,29 @@ export async function DELETE(request) {
 
     await dbConnect();
 
-    // Get current admin from session data
-    const currentAdmin = sessionData.user;
+    // Get current admin from database
+    const currentAdmin = await User.findById(sessionData.user._id);
 
     if (!currentAdmin) {
       return NextResponse.json({ error: 'Admin not found' }, { status: 404 });
     }
 
-    // Delete all students associated with this admin
-    // (Students don't have organizationName, so we assume all students belong to all admins)
-    // If you want students to be per-admin, we'd need to add adminId to students
-    await User.deleteMany({ role: 'student' });
+    // Delete only students belonging to this organization
+    await User.deleteMany({
+      role: 'student',
+      organizationName: currentAdmin.organizationName,
+    });
 
-    // Delete all sessions for this user
-    await Session.deleteMany({ userId: currentAdmin._id });
+    // Delete all admins in this organization (including self)
+    await User.deleteMany({
+      role: 'admin',
+      organizationName: currentAdmin.organizationName,
+    });
 
-    // Delete the user account
-    await User.findByIdAndDelete(currentAdmin._id);
+    // Delete all sessions for users in this organization
+    const orgUsers = await User.find({ organizationName: currentAdmin.organizationName });
+    const orgUserIds = orgUsers.map(u => u._id);
+    await Session.deleteMany({ userId: { $in: orgUserIds } });
 
     // Clear session cookie
     await deleteSession();

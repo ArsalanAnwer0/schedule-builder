@@ -27,16 +27,27 @@ export async function POST(request) {
 
     await dbConnect();
 
-    // Get the selected students
+    // Get current admin's organization
+    const admin = await User.findById(user._id);
+
+    // Verify all students belong to admin's organization
     const students = await User.find({
       _id: { $in: studentIds },
       role: 'student',
+      organizationName: admin.organizationName, // Security check
     });
 
     if (students.length === 0) {
       return NextResponse.json(
-        { error: 'No valid students found' },
+        { error: 'No valid students found in your organization' },
         { status: 404 }
+      );
+    }
+
+    if (students.length !== studentIds.length) {
+      return NextResponse.json(
+        { error: 'Some students do not belong to your organization' },
+        { status: 400 }
       );
     }
 

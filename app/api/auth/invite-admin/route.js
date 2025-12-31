@@ -35,12 +35,15 @@ export async function POST(request) {
       );
     }
 
-    // Check if there are already 3 admins
-    const adminCount = await User.countDocuments({ role: 'admin' });
+    // Check if there are already 3 admins IN THIS ORGANIZATION
+    const adminCount = await User.countDocuments({
+      role: 'admin',
+      organizationName: currentAdmin.organizationName,
+    });
 
     if (adminCount >= 3) {
       return NextResponse.json(
-        { error: 'Maximum of 3 admins allowed (1 primary + 2 secondary)' },
+        { error: 'Maximum of 3 admins allowed per organization (1 primary + 2 secondary)' },
         { status: 400 }
       );
     }
