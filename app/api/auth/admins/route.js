@@ -15,8 +15,14 @@ export async function GET(request) {
 
     await dbConnect();
 
-    // Get all admins
-    const admins = await User.find({ role: 'admin' })
+    // Get current admin's organization
+    const currentAdmin = await User.findById(sessionData.user._id);
+
+    // Get all admins from the same organization
+    const admins = await User.find({
+      role: 'admin',
+      organizationName: currentAdmin.organizationName,
+    })
       .select('_id name email adminType createdAt')
       .sort({ createdAt: 1 }); // Primary admin will be first (oldest)
 
