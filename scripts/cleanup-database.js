@@ -4,6 +4,15 @@
  * USE WITH CAUTION - THIS WILL DELETE EVERYTHING!
  */
 
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+// Load environment variables from .env.local
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+dotenv.config({ path: join(__dirname, '..', '.env.local') });
+
 import dbConnect from '../lib/db/connect.js';
 import User from '../lib/db/models/User.js';
 import Session from '../lib/db/models/Session.js';

@@ -66,7 +66,7 @@ export async function POST(request) {
       organizationName: currentAdmin.organizationName,
     });
 
-    // Send email invitation
+    // Send email invitation (optional during testing)
     try {
       await sendAdminInvite(
         email,
@@ -74,19 +74,16 @@ export async function POST(request) {
         currentAdmin.name,
         currentAdmin.organizationName
       );
+      console.log('Admin invitation email sent successfully');
     } catch (emailError) {
-      console.error('Failed to send invitation email:', emailError);
-      // Delete the created admin if email fails
-      await User.findByIdAndDelete(newAdmin._id);
-      return NextResponse.json(
-        { error: 'Failed to send invitation email. Please try again.' },
-        { status: 500 }
-      );
+      console.error('Failed to send invitation email (continuing anyway for testing):', emailError);
+      // BETA: Don't fail the invitation if email fails
+      // The admin is still created and can log in manually
     }
 
     return NextResponse.json({
       success: true,
-      message: `Invitation sent to ${email}`,
+      message: `Admin added successfully. They can log in with: ${email}`,
       admin: {
         id: newAdmin._id,
         name: newAdmin.name,
