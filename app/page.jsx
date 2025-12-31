@@ -177,6 +177,36 @@ export default function Home() {
     }
   };
 
+  const handleRemoveAdmin = async (adminId) => {
+    if (!confirm('Are you sure you want to remove this admin? They will lose access immediately.')) {
+      return;
+    }
+
+    setAdminError('');
+    setAdminSuccess('');
+
+    try {
+      const res = await fetch('/api/auth/remove-admin', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ adminId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setAdminError(data.error || 'Failed to remove admin');
+        return;
+      }
+
+      setAdminSuccess(data.message);
+      loadAdmins();
+      setTimeout(() => setAdminSuccess(''), 5000);
+    } catch (err) {
+      setAdminError('Something went wrong. Please try again.');
+    }
+  };
+
   // Student management handlers
   const handleAddStudent = () => {
     setStudentFormData({ name: '', email: '' });
@@ -824,6 +854,7 @@ export default function Home() {
                         <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Name</th>
                         <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Email</th>
                         <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Role</th>
+                        <th style={{ padding: "0.875rem 1rem", textAlign: "right", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -845,6 +876,34 @@ export default function Home() {
                             }}>
                               {admin.adminType === 'primary' ? 'Primary Admin' : 'Secondary Admin'}
                             </span>
+                          </td>
+                          <td style={{ padding: "1rem", textAlign: "right" }}>
+                            {admin.adminType === 'secondary' && admin.id !== user?._id && (
+                              <button
+                                onClick={() => handleRemoveAdmin(admin.id)}
+                                style={{
+                                  padding: "0.5rem 1rem",
+                                  backgroundColor: "transparent",
+                                  color: "#dc2626",
+                                  border: "1px solid #dc2626",
+                                  borderRadius: "6px",
+                                  fontSize: "0.75rem",
+                                  fontWeight: "500",
+                                  cursor: "pointer",
+                                  transition: "all 0.15s ease"
+                                }}
+                                onMouseOver={(e) => {
+                                  e.currentTarget.style.backgroundColor = "#dc2626";
+                                  e.currentTarget.style.color = "#ffffff";
+                                }}
+                                onMouseOut={(e) => {
+                                  e.currentTarget.style.backgroundColor = "transparent";
+                                  e.currentTarget.style.color = "#dc2626";
+                                }}
+                              >
+                                Remove
+                              </button>
+                            )}
                           </td>
                         </tr>
                       ))}

@@ -42,14 +42,14 @@ export async function POST(request) {
       );
     }
 
-    // Check rate limiting (1 code per 90 seconds)
+    // Check rate limiting (1 code per 30 seconds for testing)
     const recentCode = await VerificationCode.findOne({
       email: email.toLowerCase(),
-      createdAt: { $gt: new Date(Date.now() - 90000) } // 90 seconds
+      createdAt: { $gt: new Date(Date.now() - 30000) } // 30 seconds
     });
 
     if (recentCode) {
-      const waitTime = Math.ceil((90000 - (Date.now() - recentCode.createdAt)) / 1000);
+      const waitTime = Math.ceil((30000 - (Date.now() - recentCode.createdAt)) / 1000);
       return NextResponse.json(
         { error: `Please wait ${waitTime} seconds before requesting a new code` },
         { status: 429 }
