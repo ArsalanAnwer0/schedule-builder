@@ -6,17 +6,18 @@ import User from '../../../lib/db/models/User';
 // GET all students
 export async function GET() {
   try {
-    const adminCheck = await requireAdmin();
-    if (adminCheck.error) {
-      return NextResponse.json(
-        { error: adminCheck.error },
-        { status: adminCheck.status }
-      );
-    }
+    const sessionData = await requireAdmin();
 
     await dbConnect();
 
-    const students = await User.find({ role: 'student' })
+    // Get current admin's organization
+    const admin = await User.findById(sessionData.user._id);
+
+    // Filter students by organization
+    const students = await User.find({
+      role: 'student',
+      organizationName: admin.organizationName,
+    })
       .select('_id email name createdAt')
       .sort({ name: 1 });
 
@@ -41,13 +42,7 @@ export async function GET() {
 // POST create new student
 export async function POST(request) {
   try {
-    const adminCheck = await requireAdmin();
-    if (adminCheck.error) {
-      return NextResponse.json(
-        { error: adminCheck.error },
-        { status: adminCheck.status }
-      );
-    }
+    const sessionData = await requireAdmin();
 
     const { email, name } = await request.json();
 
@@ -59,6 +54,9 @@ export async function POST(request) {
     }
 
     await dbConnect();
+
+    // Get current admin's organization
+    const admin = await User.findById(sessionData.user._id);
 
     // Check if student already exists
     const existingUser = await User.findOne({
@@ -72,10 +70,12 @@ export async function POST(request) {
       );
     }
 
+    // Create student with admin's organization
     const student = await User.create({
       email: email.toLowerCase().trim(),
       name: name.trim(),
       role: 'student',
+      organizationName: admin.organizationName, // Link to admin's organization
     });
 
     return NextResponse.json({

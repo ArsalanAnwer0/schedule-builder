@@ -18,11 +18,22 @@ export async function GET(request) {
 
     await dbConnect();
 
-    // Get all students
-    const students = await User.find({ role: 'student' }).sort({ name: 1 });
+    // Get current admin's organization
+    const admin = await User.findById(user._id);
 
-    // Get all availability data
-    const availabilities = await Availability.find({}).lean();
+    // Get students from admin's organization only
+    const students = await User.find({
+      role: 'student',
+      organizationName: admin.organizationName,
+    }).sort({ name: 1 });
+
+    // Get student IDs for filtering availability
+    const studentIds = students.map(s => s._id);
+
+    // Get availability data for students in this organization only
+    const availabilities = await Availability.find({
+      userId: { $in: studentIds },
+    }).lean();
 
     // Create a map of userId to availability
     const availabilityMap = {};
