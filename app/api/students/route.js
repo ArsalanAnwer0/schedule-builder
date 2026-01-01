@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { requireAdmin } from '../../../lib/auth/session';
 import dbConnect from '../../../lib/db/connect';
 import User from '../../../lib/db/models/User';
+import { sendStudentWelcome } from '../../../lib/email/send';
 
 // GET all students
 export async function GET() {
@@ -92,6 +93,19 @@ export async function POST(request) {
       role: 'student',
       organizationName: admin.organizationName, // Link to admin's organization
     });
+
+    // Send welcome email to student (both primary and secondary emails)
+    try {
+      const studentEmails = [student.email];
+      if (student.secondaryEmail) {
+        studentEmails.push(student.secondaryEmail);
+      }
+      await sendStudentWelcome(studentEmails, student.name, admin.organizationName);
+      console.log('Welcome email sent successfully to:', studentEmails.join(', '));
+    } catch (emailError) {
+      console.error('Failed to send welcome email:', emailError);
+      // Email failure shouldn't prevent student creation
+    }
 
     return NextResponse.json({
       student: {
