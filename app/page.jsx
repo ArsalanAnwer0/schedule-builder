@@ -166,76 +166,23 @@ export default function LandingPage() {
           letterSpacing: "-0.02em",
           fontFamily: "Georgia, 'Times New Roman', serif"
         }}>
-          Effortless scheduling.
+          Stop the scheduling chaos.
           <br />
-          Refined simplicity.
+          Start working smarter.
         </h1>
 
         <p style={{
           fontSize: "1.25rem",
           color: "rgba(255, 255, 255, 0.6)",
           marginBottom: "3rem",
-          maxWidth: "700px",
+          maxWidth: "750px",
           margin: "2rem auto 3rem auto",
           lineHeight: "1.7",
           fontWeight: "300"
         }}>
-          Build schedules with precision and elegance.
-          <br />
-          Experience planning that adapts to your workflow.
+          No more chasing students for availability. No more manual schedule creation.
+          No more back-and-forth fixing conflicts. Automate the entire process in minutes.
         </p>
-
-        {/* CTA Buttons */}
-        <div style={{
-          display: "flex",
-          gap: "1rem",
-          justifyContent: "center",
-          alignItems: "center",
-          marginBottom: "4rem"
-        }}>
-          <button
-            onClick={() => router.push('/register')}
-            style={{
-              padding: "0.875rem 2rem",
-              background: "#14b8a6",
-              color: "#ffffff",
-              border: "none",
-              borderRadius: "6px",
-              fontSize: "1rem",
-              fontWeight: "600",
-              cursor: "pointer",
-              transition: "all 0.2s ease"
-            }}
-            onMouseOver={(e) => e.currentTarget.style.background = "#0d9488"}
-            onMouseOut={(e) => e.currentTarget.style.background = "#14b8a6"}
-          >
-            Start Building
-          </button>
-          <button
-            onClick={() => router.push('/login')}
-            style={{
-              padding: "0.875rem 2rem",
-              background: "transparent",
-              color: "rgba(255, 255, 255, 0.9)",
-              border: "1px solid rgba(255, 255, 255, 0.2)",
-              borderRadius: "6px",
-              fontSize: "1rem",
-              fontWeight: "500",
-              cursor: "pointer",
-              transition: "all 0.2s ease"
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.4)";
-              e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
-              e.currentTarget.style.background = "transparent";
-            }}
-          >
-            View Demo
-          </button>
-        </div>
 
         {/* Schedule Interface Preview */}
         <div style={{
@@ -334,7 +281,7 @@ export default function LandingPage() {
               color: "#ffffff",
               marginBottom: "1rem"
             }}>
-              Define Your Parameters
+              Admin requests availability
             </h3>
             <p style={{
               fontSize: "1rem",
@@ -342,7 +289,7 @@ export default function LandingPage() {
               lineHeight: "1.7",
               fontWeight: "300"
             }}>
-              Set your scheduling requirements, time zones, and preferences with precision.
+              Add your students and send automated availability requests. Students receive email invitations instantly.
             </p>
           </div>
 
@@ -369,7 +316,7 @@ export default function LandingPage() {
               color: "#ffffff",
               marginBottom: "1rem"
             }}>
-              Build Your Schedule
+              Students submit availability
             </h3>
             <p style={{
               fontSize: "1rem",
@@ -377,7 +324,7 @@ export default function LandingPage() {
               lineHeight: "1.7",
               fontWeight: "300"
             }}>
-              Use our intelligent builder to create optimized schedules that adapt to your needs.
+              Students fill out a simple form with their available hours. No back-and-forth emails or phone calls needed.
             </p>
           </div>
 
@@ -404,7 +351,7 @@ export default function LandingPage() {
               color: "#ffffff",
               marginBottom: "1rem"
             }}>
-              Deploy & Monitor
+              Tool generates schedule
             </h3>
             <p style={{
               fontSize: "1rem",
@@ -412,7 +359,7 @@ export default function LandingPage() {
               lineHeight: "1.7",
               fontWeight: "300"
             }}>
-              Publish your schedule and track performance with real-time analytics.
+              Our algorithm creates conflict-free schedules in seconds. Review, adjust, and share with your team.
             </p>
           </div>
         </div>
@@ -480,7 +427,7 @@ export default function LandingPage() {
                 color: "#ffffff",
                 marginBottom: "0.75rem"
               }}>
-                Smart Scheduling
+                Passwordless email login
               </h3>
               <p style={{
                 fontSize: "0.9375rem",
@@ -488,51 +435,11 @@ export default function LandingPage() {
                 lineHeight: "1.7",
                 fontWeight: "300"
               }}>
-                Intelligent algorithms that optimize your time allocation automatically.
+                No passwords to remember. Admins and students login with email verification codes sent instantly. Secure and simple.
               </p>
             </div>
 
             {/* Feature 2 */}
-            <div style={{
-              padding: "2.5rem",
-              background: "rgba(255, 255, 255, 0.03)",
-              borderRadius: "12px",
-              border: "1px solid rgba(255, 255, 255, 0.1)"
-            }}>
-              <div style={{
-                width: "48px",
-                height: "48px",
-                background: "rgba(20, 184, 166, 0.15)",
-                borderRadius: "8px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: "1.5rem"
-              }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10" />
-                  <polyline points="12 6 12 12 16 14" />
-                </svg>
-              </div>
-              <h3 style={{
-                fontSize: "1.25rem",
-                fontWeight: "600",
-                color: "#ffffff",
-                marginBottom: "0.75rem"
-              }}>
-                Time Zone Support
-              </h3>
-              <p style={{
-                fontSize: "0.9375rem",
-                color: "rgba(255, 255, 255, 0.6)",
-                lineHeight: "1.7",
-                fontWeight: "300"
-              }}>
-                Seamlessly manage schedules across multiple time zones with precision.
-              </p>
-            </div>
-
-            {/* Feature 3 */}
             <div style={{
               padding: "2.5rem",
               background: "rgba(255, 255, 255, 0.03)",
@@ -562,7 +469,7 @@ export default function LandingPage() {
                 color: "#ffffff",
                 marginBottom: "0.75rem"
               }}>
-                Team Collaboration
+                Multi-admin support
               </h3>
               <p style={{
                 fontSize: "0.9375rem",
@@ -570,11 +477,93 @@ export default function LandingPage() {
                 lineHeight: "1.7",
                 fontWeight: "300"
               }}>
-                Coordinate with your team and share schedules effortlessly.
+                Primary admins can invite secondary admins to help manage scheduling. Perfect for teams with multiple managers.
+              </p>
+            </div>
+
+            {/* Feature 3 */}
+            <div style={{
+              padding: "2.5rem",
+              background: "rgba(255, 255, 255, 0.03)",
+              borderRadius: "12px",
+              border: "1px solid rgba(255, 255, 255, 0.1)"
+            }}>
+              <div style={{
+                width: "48px",
+                height: "48px",
+                background: "rgba(20, 184, 166, 0.15)",
+                borderRadius: "8px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: "1.5rem"
+              }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                  <path d="M22 6l-10 7L2 6" />
+                </svg>
+              </div>
+              <h3 style={{
+                fontSize: "1.25rem",
+                fontWeight: "600",
+                color: "#ffffff",
+                marginBottom: "0.75rem"
+              }}>
+                Automated email invitations
+              </h3>
+              <p style={{
+                fontSize: "0.9375rem",
+                color: "rgba(255, 255, 255, 0.6)",
+                lineHeight: "1.7",
+                fontWeight: "300"
+              }}>
+                Students automatically receive email invitations when added. Support for both primary and secondary email addresses.
               </p>
             </div>
 
             {/* Feature 4 */}
+            <div style={{
+              padding: "2.5rem",
+              background: "rgba(255, 255, 255, 0.03)",
+              borderRadius: "12px",
+              border: "1px solid rgba(255, 255, 255, 0.1)"
+            }}>
+              <div style={{
+                width: "48px",
+                height: "48px",
+                background: "rgba(20, 184, 166, 0.15)",
+                borderRadius: "8px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: "1.5rem"
+              }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+              </div>
+              <h3 style={{
+                fontSize: "1.25rem",
+                fontWeight: "600",
+                color: "#ffffff",
+                marginBottom: "0.75rem"
+              }}>
+                Simple availability form
+              </h3>
+              <p style={{
+                fontSize: "0.9375rem",
+                color: "rgba(255, 255, 255, 0.6)",
+                lineHeight: "1.7",
+                fontWeight: "300"
+              }}>
+                Students select their available hours on an intuitive weekly calendar. Takes less than 2 minutes to complete.
+              </p>
+            </div>
+
+            {/* Feature 5 */}
             <div style={{
               padding: "2.5rem",
               background: "rgba(255, 255, 255, 0.03)",
@@ -601,7 +590,7 @@ export default function LandingPage() {
                 color: "#ffffff",
                 marginBottom: "0.75rem"
               }}>
-                Real-time Updates
+                Instant schedule generation
               </h3>
               <p style={{
                 fontSize: "0.9375rem",
@@ -609,47 +598,7 @@ export default function LandingPage() {
                 lineHeight: "1.7",
                 fontWeight: "300"
               }}>
-                Instant synchronization keeps everyone aligned at all times.
-              </p>
-            </div>
-
-            {/* Feature 5 */}
-            <div style={{
-              padding: "2.5rem",
-              background: "rgba(255, 255, 255, 0.03)",
-              borderRadius: "12px",
-              border: "1px solid rgba(255, 255, 255, 0.1)"
-            }}>
-              <div style={{
-                width: "48px",
-                height: "48px",
-                background: "rgba(20, 184, 166, 0.15)",
-                borderRadius: "8px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: "1.5rem"
-              }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                </svg>
-              </div>
-              <h3 style={{
-                fontSize: "1.25rem",
-                fontWeight: "600",
-                color: "#ffffff",
-                marginBottom: "0.75rem"
-              }}>
-                Enterprise Security
-              </h3>
-              <p style={{
-                fontSize: "0.9375rem",
-                color: "rgba(255, 255, 255, 0.6)",
-                lineHeight: "1.7",
-                fontWeight: "300"
-              }}>
-                Bank-level encryption protects your scheduling data.
+                Our algorithm creates balanced, conflict-free schedules in seconds based on student availability. No manual work required.
               </p>
             </div>
 
@@ -671,9 +620,7 @@ export default function LandingPage() {
                 marginBottom: "1.5rem"
               }}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
-                  <line x1="12" y1="20" x2="12" y2="10" />
-                  <line x1="18" y1="20" x2="18" y2="4" />
-                  <line x1="6" y1="20" x2="6" y2="16" />
+                  <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
                 </svg>
               </div>
               <h3 style={{
@@ -682,7 +629,7 @@ export default function LandingPage() {
                 color: "#ffffff",
                 marginBottom: "0.75rem"
               }}>
-                Advanced Analytics
+                Reset and regenerate anytime
               </h3>
               <p style={{
                 fontSize: "0.9375rem",
@@ -690,7 +637,7 @@ export default function LandingPage() {
                 lineHeight: "1.7",
                 fontWeight: "300"
               }}>
-                Gain insights into scheduling patterns and optimize performance.
+                Need to make changes? Reset student availability and request new submissions. Generate fresh schedules whenever needed.
               </p>
             </div>
           </div>
@@ -733,12 +680,12 @@ export default function LandingPage() {
 
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "4rem" }}>
           {[
-            { q: "What is Schedule Builder?", a: "Schedule Builder is an intelligent scheduling platform that automates student worker scheduling with smart availability collection and conflict-free schedule generation." },
-            { q: "How does the scheduling algorithm work?", a: "Our algorithm analyzes student availability and creates balanced schedules that minimize conflicts, distribute shifts fairly, and respect time preferences." },
-            { q: "Can I integrate with existing calendar systems?", a: "Yes, Schedule Builder integrates seamlessly with popular calendar systems to sync your schedules and keep everyone up to date." },
-            { q: "Is my scheduling data secure?", a: "Absolutely. We use bank-level encryption to protect all your scheduling data and ensure complete privacy and security." },
-            { q: "What support options are available?", a: "We offer comprehensive support including documentation, email support, and dedicated account management for enterprise customers." },
-            { q: "Can I try it before committing?", a: "Yes! We offer a free trial so you can explore all features and see how Schedule Builder fits your workflow." }
+            { q: "How do admins register and login?", a: "Admins register with their organization name and email. After registration, they receive a verification code via email. Simply enter the code to access your admin portal. You can login anytime using your email - we'll send you a new code each time." },
+            { q: "How do students register and login?", a: "Students don't register themselves - admins add them to the system. When an admin adds a student, they automatically receive an email invitation with a login link. Students click the link, enter the verification code from their email, and access their dashboard." },
+            { q: "How does the invite admin feature work?", a: "Primary admins can invite secondary admins to help manage scheduling. Just add their name and email in the Invite Admin section. They'll receive an invitation email and can login immediately. Secondary admins have the same access as primary admins." },
+            { q: "How do I add students to my organization?", a: "In your admin portal, use the Add Student section. Enter the student's name, primary email, and optionally a secondary email (like a school email). Click Request Availability, and they'll instantly receive an invitation email to submit their hours." },
+            { q: "Can students use multiple email addresses?", a: "Yes! When adding a student, you can provide both a primary and secondary email. Students receive invitations at both addresses and can login using either email - both access the same account and availability." },
+            { q: "What happens after students submit availability?", a: "Once students submit their available hours, you'll see their status change to \"Submitted\" in your admin portal. You can then generate a schedule using the scheduling tool, which creates a balanced, conflict-free schedule automatically based on all submitted availability." }
           ].map((faq, index) => (
             <div
               key={index}
