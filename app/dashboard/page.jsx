@@ -237,7 +237,7 @@ export default function StudentDashboard() {
 
   const getTimeSlots = () => {
     const slots = [];
-    // Generate 30-minute intervals from 8:00 AM to 5:30 PM
+    // Generate 30-minute intervals from 8:00 AM to 5:00 PM
     for (let hour = 8; hour <= 17; hour++) {
       const period = hour >= 12 ? 'PM' : 'AM';
       const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
@@ -245,8 +245,8 @@ export default function StudentDashboard() {
       // Add :00 slot
       slots.push(`${displayHour}:00 ${period}`);
 
-      // Add :30 slot (but not after 5:00 PM)
-      if (hour < 17) {
+      // Add :30 slot (but not after 4:00 PM)
+      if (hour < 16) {
         slots.push(`${displayHour}:30 ${period}`);
       }
     }
