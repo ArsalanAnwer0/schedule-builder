@@ -85,10 +85,21 @@ export default function RegisterPage() {
           </h1>
           <p style={{
             fontSize: "1rem",
-            color: "#8b949e"
+            color: "#8b949e",
+            marginBottom: "0.75rem"
           }}>
             Register as Primary Admin
           </p>
+          <div style={{
+            padding: "0.875rem 1rem",
+            backgroundColor: "#0d1f17",
+            border: "1px solid #1e4d2b",
+            borderRadius: "6px"
+          }}>
+            <p style={{ color: "#10b981", fontSize: "0.8125rem", margin: 0, lineHeight: "1.5" }}>
+              <strong style={{ color: "#34d399" }}>First time here?</strong> Register to create your organization account and start managing student worker schedules.
+            </p>
+          </div>
         </div>
 
         {error && (
@@ -239,9 +250,20 @@ export default function RegisterPage() {
             borderRadius: "6px",
             marginBottom: "1.5rem"
           }}>
-            <p style={{ color: "#10b981", fontSize: "0.875rem", margin: 0, lineHeight: "1.5" }}>
-              After registration, you'll use email verification codes to login (no password needed).
+            <p style={{ color: "#10b981", fontSize: "0.875rem", margin: 0, marginBottom: "0.75rem", lineHeight: "1.6" }}>
+              <strong style={{ color: "#34d399" }}>Passwordless login</strong>
             </p>
+            <ul style={{
+              fontSize: "0.8125rem",
+              color: "#6ee7b7",
+              margin: 0,
+              paddingLeft: "1.25rem",
+              lineHeight: "1.6"
+            }}>
+              <li>No password required - we use email verification codes</li>
+              <li>After registration, you'll receive a verification code to login</li>
+              <li>Each time you sign in, we'll send a new code to your email</li>
+            </ul>
           </div>
 
           <button

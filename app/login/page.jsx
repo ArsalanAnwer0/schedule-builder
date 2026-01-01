@@ -303,14 +303,23 @@ function LoginForm() {
                 {loading ? 'Sending Code...' : 'Send Verification Code'}
               </button>
 
-              <p style={{
+              <div style={{
                 marginTop: '1.5rem',
-                textAlign: 'center',
-                fontSize: '0.8rem',
-                color: '#94a3b8'
+                padding: '1rem',
+                backgroundColor: '#1e293b',
+                border: '1px solid #334155',
+                borderRadius: '8px'
               }}>
-                We'll send a 6-digit code to your email
-              </p>
+                <p style={{
+                  fontSize: '0.875rem',
+                  color: '#cbd5e1',
+                  margin: 0,
+                  lineHeight: '1.6'
+                }}>
+                  <strong style={{ color: '#e2e8f0' }}>What happens next?</strong><br />
+                  We'll send a 6-digit verification code to your email. The code expires in 10 minutes. If you don't see it, check your spam folder.
+                </p>
+              </div>
 
               <div style={{
                 marginTop: '1.5rem',
@@ -437,14 +446,35 @@ function LoginForm() {
                 {loading ? 'Verifying...' : 'Verify & Sign In'}
               </button>
 
-              <p style={{
+              <div style={{
                 marginTop: '1.5rem',
-                textAlign: 'center',
-                fontSize: '0.8rem',
-                color: '#94a3b8'
+                padding: '1rem',
+                backgroundColor: '#1e293b',
+                border: '1px solid #334155',
+                borderRadius: '8px'
               }}>
-                Enter the 6-digit code sent to your email. Code expires in 10 minutes.
-              </p>
+                <p style={{
+                  fontSize: '0.875rem',
+                  color: '#cbd5e1',
+                  margin: 0,
+                  marginBottom: '0.75rem',
+                  lineHeight: '1.6'
+                }}>
+                  <strong style={{ color: '#e2e8f0' }}>Check your email</strong><br />
+                  Enter the 6-digit code we sent to your email address.
+                </p>
+                <ul style={{
+                  fontSize: '0.8125rem',
+                  color: '#94a3b8',
+                  margin: 0,
+                  paddingLeft: '1.25rem',
+                  lineHeight: '1.6'
+                }}>
+                  <li>Code expires in 10 minutes</li>
+                  <li>Check spam folder if you don't see it</li>
+                  <li>You can resend the code if needed</li>
+                </ul>
+              </div>
 
               <div style={{
                 marginTop: '1.5rem',
