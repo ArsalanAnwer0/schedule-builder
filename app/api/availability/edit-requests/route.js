@@ -58,12 +58,16 @@ export async function POST(request) {
       newNotes: newNotes || ''
     });
 
-    // Send email notification to admin
+    // Send email notification to admin (both primary and secondary emails)
     try {
-      const adminUser = await User.findOne({ role: 'admin' });
+      const adminUser = await User.findOne({ role: 'admin' }).select('email secondaryEmail');
       if (adminUser) {
+        const adminEmails = [adminUser.email];
+        if (adminUser.secondaryEmail) {
+          adminEmails.push(adminUser.secondaryEmail);
+        }
         await sendAvailabilityEditRequestToAdmin(
-          adminUser.email,
+          adminEmails,
           sessionData.user.name,
           sessionData.user.email,
           reason.trim()

@@ -55,12 +55,16 @@ export async function POST(request, { params }) {
       );
     }
 
-    // Send email notification to student
+    // Send email notification to student (both primary and secondary emails)
     try {
-      const student = await User.findById(editRequest.userId);
+      const student = await User.findById(editRequest.userId).select('email secondaryEmail name');
       if (student) {
+        const studentEmails = [student.email];
+        if (student.secondaryEmail) {
+          studentEmails.push(student.secondaryEmail);
+        }
         await sendAvailabilityEditDecisionToStudent(
-          student.email,
+          studentEmails,
           student.name,
           action === 'approve'
         );

@@ -68,14 +68,18 @@ export async function POST(request) {
       availabilityRequested: s.availabilityRequested
     })));
 
-    // Send availability request emails to all selected students
-    const emailPromises = students.map(student =>
-      sendAvailabilityRequest(student.email, student.name)
+    // Send availability request emails to all selected students (both primary and secondary emails)
+    const emailPromises = students.map(student => {
+      const emails = [student.email];
+      if (student.secondaryEmail) {
+        emails.push(student.secondaryEmail);
+      }
+      return sendAvailabilityRequest(emails, student.name)
         .catch(err => {
-          console.error(`Failed to send email to ${student.email}:`, err);
-          return { success: false, email: student.email };
-        })
-    );
+          console.error(`Failed to send email to ${emails.join(', ')}:`, err);
+          return { success: false, email: emails.join(', ') };
+        });
+    });
 
     const results = await Promise.all(emailPromises);
 

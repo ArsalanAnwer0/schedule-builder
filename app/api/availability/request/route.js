@@ -26,11 +26,11 @@ export async function POST(request) {
 
     await dbConnect();
 
-    // Get all students by IDs
+    // Get all students by IDs (including secondary emails)
     const students = await User.find({
       _id: { $in: studentIds },
       role: 'student',
-    }).select('_id email name');
+    }).select('_id email secondaryEmail name');
 
     if (students.length === 0) {
       return NextResponse.json(
@@ -56,11 +56,15 @@ export async function POST(request) {
       availabilityRequested: s.availabilityRequested
     })));
 
-    // Send availability request emails to all students
+    // Send availability request emails to all students (both primary and secondary emails)
     const emailResults = await Promise.allSettled(
-      students.map(student =>
-        sendAvailabilityRequest(student.email, student.name)
-      )
+      students.map(student => {
+        const emails = [student.email];
+        if (student.secondaryEmail) {
+          emails.push(student.secondaryEmail);
+        }
+        return sendAvailabilityRequest(emails, student.name);
+      })
     );
 
     // Count successes and failures

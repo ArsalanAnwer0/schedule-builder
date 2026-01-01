@@ -72,11 +72,16 @@ export async function POST(request) {
     // Only send notifications for new submissions, not updates
     if (isNewSubmission) {
       try {
-        // Send email to admin about this submission
-        const adminUser = await User.findOne({ role: 'admin' });
+        // Send email to admin about this submission (both primary and secondary emails)
+        const adminUser = await User.findOne({ role: 'admin' }).select('email secondaryEmail');
         if (adminUser) {
+          const adminEmails = [adminUser.email];
+          if (adminUser.secondaryEmail) {
+            adminEmails.push(adminUser.secondaryEmail);
+          }
+
           await sendAvailabilitySubmittedNotification(
-            adminUser.email,
+            adminEmails,
             user.name,
             user.email
           );
@@ -91,9 +96,9 @@ export async function POST(request) {
             userId: { $in: requestedStudents.map(s => s._id) }
           });
 
-          // If all requested students have submitted, send summary email
+          // If all requested students have submitted, send summary email to both admin emails
           if (submittedCount === requestedStudents.length) {
-            await sendAllSubmittedNotification(adminUser.email, requestedStudents.length);
+            await sendAllSubmittedNotification(adminEmails, requestedStudents.length);
           }
         }
       } catch (emailError) {

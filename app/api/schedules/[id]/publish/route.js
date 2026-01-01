@@ -35,19 +35,23 @@ export async function POST(request, { params }) {
     schedule.publishedAt = new Date();
     await schedule.save();
 
-    // Get all students to send notifications
-    const students = await User.find({ role: 'student' }).select('email name');
+    // Get all students to send notifications (including secondary emails)
+    const students = await User.find({ role: 'student' }).select('email secondaryEmail name');
 
-    // Send email notifications to all students
+    // Send email notifications to all students (both primary and secondary emails)
     const emailResults = await Promise.allSettled(
-      students.map(student =>
-        sendSchedulePublishedNotification(
-          student.email,
+      students.map(student => {
+        const emails = [student.email];
+        if (student.secondaryEmail) {
+          emails.push(student.secondaryEmail);
+        }
+        return sendSchedulePublishedNotification(
+          emails,
           student.name,
           schedule.scheduleConfig?.startDate,
           schedule.scheduleConfig?.endDate
-        )
-      )
+        );
+      })
     );
 
     const successfulEmails = emailResults.filter(r => r.status === 'fulfilled').length;
