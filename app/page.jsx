@@ -44,19 +44,6 @@ export default function LandingPage() {
         margin: "0 auto"
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <div style={{
-            width: "40px",
-            height: "40px",
-            borderRadius: "8px",
-            background: "#0972d3",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "1.5rem",
-            color: "#ffffff"
-          }}>
-            🔨
-          </div>
           <span style={{ fontSize: "1.25rem", fontWeight: "600", color: "#ffffff" }}>Schedule Builder</span>
         </div>
 
@@ -157,51 +144,19 @@ export default function LandingPage() {
             onClick={() => router.push('/register')}
             style={{
               padding: "1rem 2.5rem",
-              background: "#ffffff",
-              color: "#667eea",
-              border: "none",
-              borderRadius: "12px",
-              fontSize: "1.125rem",
-              fontWeight: "600",
-              cursor: "pointer",
-              transition: "all 0.2s ease",
-              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.2)"
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow = "0 12px 32px rgba(0, 0, 0, 0.25)";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.2)";
-            }}
-          >
-            Get Started Free
-          </button>
-          <button
-            onClick={() => router.push('/login')}
-            style={{
-              padding: "1rem 2.5rem",
-              background: "rgba(255, 255, 255, 0.15)",
-              backdropFilter: "blur(10px)",
+              background: "#0972d3",
               color: "#ffffff",
-              border: "2px solid rgba(255, 255, 255, 0.3)",
-              borderRadius: "12px",
+              border: "none",
+              borderRadius: "6px",
               fontSize: "1.125rem",
               fontWeight: "600",
               cursor: "pointer",
               transition: "all 0.2s ease"
             }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = "rgba(255, 255, 255, 0.25)";
-              e.currentTarget.style.transform = "translateY(-4px)";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = "rgba(255, 255, 255, 0.15)";
-              e.currentTarget.style.transform = "translateY(0)";
-            }}
+            onMouseOver={(e) => e.currentTarget.style.background = "#0863bf"}
+            onMouseOut={(e) => e.currentTarget.style.background = "#0972d3"}
           >
-            Sign In
+            Get Started
           </button>
         </div>
 
