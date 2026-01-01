@@ -40,8 +40,13 @@ export async function POST(request) {
       );
     }
 
-    // Find the user
-    const user = await User.findOne({ email: email.toLowerCase() });
+    // Find the user by either primary or secondary email
+    const user = await User.findOne({
+      $or: [
+        { email: email.toLowerCase() },
+        { secondaryEmail: email.toLowerCase() }
+      ]
+    });
 
     if (!user) {
       return NextResponse.json(

@@ -32,8 +32,13 @@ export async function POST(request) {
 
     await dbConnect();
 
-    // Check if user exists
-    const user = await User.findOne({ email: email.toLowerCase() });
+    // Check if user exists with either primary or secondary email
+    const user = await User.findOne({
+      $or: [
+        { email: email.toLowerCase() },
+        { secondaryEmail: email.toLowerCase() }
+      ]
+    });
 
     if (!user) {
       return NextResponse.json(

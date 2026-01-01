@@ -422,8 +422,9 @@ export default function Home() {
           setTimeout(() => setStudentSuccess(''), 5000);
 
           // Refresh the students list to update the UI
-          fetchStudents();
+          await fetchStudents();
         } catch (err) {
+          console.error('Reset availability error:', err);
           setStudentError('Something went wrong. Please try again.');
         }
       },
