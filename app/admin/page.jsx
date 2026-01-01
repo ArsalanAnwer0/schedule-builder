@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { generateSchedule } from "../lib/scheduler";
-import TimePicker from "./components/TimePicker";
+import { generateSchedule } from "../../lib/scheduler";
+import TimePicker from "../components/TimePicker";
 // import { exportToCSV, downloadCSV } from "../lib/utils/export"; // Archived for later
 
 // Predefined semester dates for US universities
