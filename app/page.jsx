@@ -10,6 +10,7 @@ export default function LandingPage() {
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
   const [feedbackSuccess, setFeedbackSuccess] = useState('');
   const [feedbackError, setFeedbackError] = useState('');
+  const [expandedFaq, setExpandedFaq] = useState(null);
 
   const handleFeedbackSubmit = async (e) => {
     e.preventDefault();
@@ -28,16 +29,23 @@ export default function LandingPage() {
     }, 1000);
   };
 
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
-    <div style={{ backgroundColor: "#0f1b2a", minHeight: "100vh" }}>
+    <div style={{ backgroundColor: "#0a0f1a", minHeight: "100vh" }}>
 
       {/* Fixed Navigation */}
       <nav style={{
         position: "sticky",
         top: 0,
         zIndex: 50,
-        backgroundColor: "#0f1b2a",
-        borderBottom: "1px solid #1f2937",
+        backgroundColor: "#0a0f1a",
+        borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
         padding: "1rem 2rem"
       }}>
         <div style={{
@@ -47,62 +55,77 @@ export default function LandingPage() {
           justifyContent: "space-between",
           alignItems: "center"
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2.5">
+              <path d="M3 12h18M3 6h18M3 18h18" />
+            </svg>
             <span style={{ fontSize: "1.25rem", fontWeight: "600", color: "#ffffff" }}>Schedule Builder</span>
           </div>
 
-          <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+          <div style={{ display: "flex", gap: "2.5rem", alignItems: "center" }}>
             <button
-              onClick={() => setFeedbackOpen(true)}
+              onClick={() => scrollToSection('how-it-works')}
               style={{
-                padding: "0.625rem 1.25rem",
-                background: "#16191f",
-                color: "#ffffff",
-                border: "1px solid #30363d",
-                borderRadius: "6px",
-                fontSize: "0.875rem",
-                fontWeight: "500",
+                background: "none",
+                border: "none",
+                color: "rgba(255, 255, 255, 0.7)",
+                fontSize: "0.9375rem",
                 cursor: "pointer",
-                transition: "all 0.2s ease"
+                padding: "0.5rem 0",
+                transition: "color 0.2s"
               }}
-              onMouseOver={(e) => e.currentTarget.style.background = "#1f2937"}
-              onMouseOut={(e) => e.currentTarget.style.background = "#16191f"}
+              onMouseOver={(e) => e.currentTarget.style.color = "#ffffff"}
+              onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.7)"}
             >
-              Feedback
+              How it works
             </button>
             <button
-              onClick={() => router.push('/login')}
+              onClick={() => scrollToSection('features')}
               style={{
-                padding: "0.625rem 1.25rem",
-                background: "#16191f",
-                color: "#ffffff",
-                border: "1px solid #30363d",
-                borderRadius: "6px",
-                fontSize: "0.875rem",
-                fontWeight: "500",
+                background: "none",
+                border: "none",
+                color: "rgba(255, 255, 255, 0.7)",
+                fontSize: "0.9375rem",
                 cursor: "pointer",
-                transition: "all 0.2s ease"
+                padding: "0.5rem 0",
+                transition: "color 0.2s"
               }}
-              onMouseOver={(e) => e.currentTarget.style.background = "#1f2937"}
-              onMouseOut={(e) => e.currentTarget.style.background = "#16191f"}
+              onMouseOver={(e) => e.currentTarget.style.color = "#ffffff"}
+              onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.7)"}
             >
-              Sign In
+              Features
+            </button>
+            <button
+              onClick={() => scrollToSection('faq')}
+              style={{
+                background: "none",
+                border: "none",
+                color: "rgba(255, 255, 255, 0.7)",
+                fontSize: "0.9375rem",
+                cursor: "pointer",
+                padding: "0.5rem 0",
+                transition: "color 0.2s"
+              }}
+              onMouseOver={(e) => e.currentTarget.style.color = "#ffffff"}
+              onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.7)"}
+            >
+              FAQ
             </button>
             <button
               onClick={() => router.push('/register')}
               style={{
                 padding: "0.625rem 1.5rem",
-                background: "#0972d3",
+                background: "#14b8a6",
                 color: "#ffffff",
                 border: "none",
                 borderRadius: "6px",
-                fontSize: "0.875rem",
+                fontSize: "0.9375rem",
                 fontWeight: "600",
                 cursor: "pointer",
                 transition: "all 0.2s ease"
               }}
-              onMouseOver={(e) => e.currentTarget.style.background = "#0863bf"}
-              onMouseOut={(e) => e.currentTarget.style.background = "#0972d3"}
+              onMouseOver={(e) => e.currentTarget.style.background = "#0d9488"}
+              onMouseOut={(e) => e.currentTarget.style.background = "#14b8a6"}
             >
               Get Started
             </button>
@@ -112,478 +135,562 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section style={{
-        padding: "8rem 2rem",
+        padding: "8rem 2rem 4rem 2rem",
         textAlign: "center",
         maxWidth: "1200px",
-        margin: "0 auto"
+        margin: "0 auto",
+        position: "relative"
       }}>
+        {/* Beta Badge */}
+        <div style={{
+          display: "inline-block",
+          padding: "0.5rem 1rem",
+          backgroundColor: "rgba(20, 184, 166, 0.1)",
+          border: "1px solid rgba(20, 184, 166, 0.3)",
+          borderRadius: "20px",
+          color: "#14b8a6",
+          fontSize: "0.8125rem",
+          fontWeight: "500",
+          marginBottom: "2rem",
+          letterSpacing: "0.05em"
+        }}>
+          Now in Beta
+        </div>
+
         <h1 style={{
-          fontSize: "4.5rem",
-          fontWeight: "700",
+          fontSize: "5rem",
+          fontWeight: "400",
           color: "#ffffff",
           marginBottom: "1.5rem",
           lineHeight: "1.1",
-          letterSpacing: "-0.02em"
+          letterSpacing: "-0.02em",
+          fontFamily: "Georgia, 'Times New Roman', serif"
         }}>
-          Scheduling made simple,
+          Effortless scheduling.
           <br />
-          so you can focus on what matters
+          Refined simplicity.
         </h1>
 
         <p style={{
-          fontSize: "1.5rem",
-          color: "rgba(255, 255, 255, 0.7)",
+          fontSize: "1.25rem",
+          color: "rgba(255, 255, 255, 0.6)",
           marginBottom: "3rem",
-          maxWidth: "800px",
+          maxWidth: "700px",
           margin: "2rem auto 3rem auto",
-          lineHeight: "1.6"
+          lineHeight: "1.7",
+          fontWeight: "300"
         }}>
-          Automate student worker scheduling with smart availability collection
-          and conflict-free schedule generation.
+          Build schedules with precision and elegance.
+          <br />
+          Experience planning that adapts to your workflow.
         </p>
 
-        <button
-          onClick={() => router.push('/register')}
-          style={{
-            padding: "1rem 2.5rem",
-            background: "#0972d3",
-            color: "#ffffff",
-            border: "none",
-            borderRadius: "8px",
-            fontSize: "1.125rem",
-            fontWeight: "600",
-            cursor: "pointer",
-            transition: "all 0.2s ease",
-            boxShadow: "0 4px 20px rgba(9, 114, 211, 0.3)"
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.background = "#0863bf";
-            e.currentTarget.style.transform = "translateY(-2px)";
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.background = "#0972d3";
-            e.currentTarget.style.transform = "translateY(0)";
-          }}
-        >
-          Start scheduling for free
-        </button>
-      </section>
-
-      {/* Social Proof Section */}
-      <section style={{
-        padding: "4rem 2rem",
-        backgroundColor: "#0a1420",
-        borderTop: "1px solid #1f2937",
-        borderBottom: "1px solid #1f2937"
-      }}>
+        {/* CTA Buttons */}
         <div style={{
-          maxWidth: "1200px",
-          margin: "0 auto",
-          textAlign: "center"
+          display: "flex",
+          gap: "1rem",
+          justifyContent: "center",
+          alignItems: "center",
+          marginBottom: "4rem"
         }}>
-          <p style={{
-            fontSize: "1rem",
-            color: "rgba(255, 255, 255, 0.5)",
-            marginBottom: "3rem",
-            textTransform: "uppercase",
-            letterSpacing: "0.1em"
-          }}>
-            Trusted by student organizations
-          </p>
+          <button
+            onClick={() => router.push('/register')}
+            style={{
+              padding: "0.875rem 2rem",
+              background: "#14b8a6",
+              color: "#ffffff",
+              border: "none",
+              borderRadius: "6px",
+              fontSize: "1rem",
+              fontWeight: "600",
+              cursor: "pointer",
+              transition: "all 0.2s ease"
+            }}
+            onMouseOver={(e) => e.currentTarget.style.background = "#0d9488"}
+            onMouseOut={(e) => e.currentTarget.style.background = "#14b8a6"}
+          >
+            Start Building
+          </button>
+          <button
+            onClick={() => router.push('/login')}
+            style={{
+              padding: "0.875rem 2rem",
+              background: "transparent",
+              color: "rgba(255, 255, 255, 0.9)",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+              borderRadius: "6px",
+              fontSize: "1rem",
+              fontWeight: "500",
+              cursor: "pointer",
+              transition: "all 0.2s ease"
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.4)";
+              e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+              e.currentTarget.style.background = "transparent";
+            }}
+          >
+            View Demo
+          </button>
+        </div>
 
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-            gap: "2rem"
-          }}>
+        {/* Schedule Interface Preview */}
+        <div style={{
+          width: "100%",
+          maxWidth: "900px",
+          margin: "0 auto",
+          padding: "4rem",
+          background: "linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, rgba(6, 78, 59, 0.1) 100%)",
+          borderRadius: "16px",
+          border: "1px solid rgba(20, 184, 166, 0.2)",
+          position: "relative",
+          minHeight: "400px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
+        }}>
+          <div style={{ textAlign: "center" }}>
             <div style={{
-              padding: "2rem",
-              backgroundColor: "rgba(255, 255, 255, 0.05)",
+              width: "80px",
+              height: "80px",
+              margin: "0 auto 1.5rem auto",
+              background: "rgba(20, 184, 166, 0.2)",
               borderRadius: "12px",
-              border: "1px solid #1f2937"
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
             }}>
-              <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>⭐⭐⭐⭐⭐</div>
-              <p style={{
-                fontSize: "1.125rem",
-                color: "#ffffff",
-                fontWeight: "500",
-                marginBottom: "1rem"
-              }}>
-                "Saves us 5+ hours every week"
-              </p>
-              <p style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.5)" }}>
-                Campus Library Manager
-              </p>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
             </div>
-
-            <div style={{
-              padding: "2rem",
-              backgroundColor: "rgba(255, 255, 255, 0.05)",
-              borderRadius: "12px",
-              border: "1px solid #1f2937"
+            <p style={{
+              color: "rgba(255, 255, 255, 0.5)",
+              fontSize: "0.9375rem",
+              fontWeight: "300"
             }}>
-              <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>⭐⭐⭐⭐⭐</div>
-              <p style={{
-                fontSize: "1.125rem",
-                color: "#ffffff",
-                fontWeight: "500",
-                marginBottom: "1rem"
-              }}>
-                "No more scheduling conflicts"
-              </p>
-              <p style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.5)" }}>
-                Student Affairs Coordinator
-              </p>
-            </div>
-
-            <div style={{
-              padding: "2rem",
-              backgroundColor: "rgba(255, 255, 255, 0.05)",
-              borderRadius: "12px",
-              border: "1px solid #1f2937"
-            }}>
-              <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>⭐⭐⭐⭐⭐</div>
-              <p style={{
-                fontSize: "1.125rem",
-                color: "#ffffff",
-                fontWeight: "500",
-                marginBottom: "1rem"
-              }}>
-                "Students love how easy it is"
-              </p>
-              <p style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.5)" }}>
-                Recreation Center Director
-              </p>
-            </div>
+              Schedule Interface Preview
+            </p>
           </div>
         </div>
       </section>
 
-      {/* How It Works Section - Elegant Horizontal Flow */}
-      <section style={{
-        padding: "10rem 2rem",
-        maxWidth: "1400px",
+      {/* How It Works Section */}
+      <section id="how-it-works" style={{
+        padding: "8rem 2rem",
+        maxWidth: "1200px",
         margin: "0 auto"
       }}>
-        <div style={{ textAlign: "center", marginBottom: "6rem" }}>
+        <div style={{ textAlign: "center", marginBottom: "5rem" }}>
           <h2 style={{
             fontSize: "3.5rem",
-            fontWeight: "700",
+            fontWeight: "400",
             color: "#ffffff",
             marginBottom: "1rem",
-            letterSpacing: "-0.01em"
+            fontFamily: "Georgia, 'Times New Roman', serif"
           }}>
             How it works
           </h2>
           <p style={{
-            fontSize: "1.375rem",
-            color: "rgba(255, 255, 255, 0.6)",
-            maxWidth: "600px",
-            margin: "0 auto",
+            fontSize: "1.125rem",
+            color: "rgba(255, 255, 255, 0.5)",
             fontWeight: "300"
           }}>
-            Three simple steps to automated scheduling
+            Three steps to transform your scheduling workflow
           </p>
         </div>
 
         <div style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "2rem",
-          position: "relative",
-          flexWrap: "wrap"
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: "2rem"
         }}>
           {/* Step 1 */}
           <div style={{
-            flex: "1",
-            minWidth: "280px",
-            textAlign: "center",
+            padding: "3rem 2rem",
+            background: "rgba(255, 255, 255, 0.03)",
+            borderRadius: "12px",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
             position: "relative"
           }}>
             <div style={{
-              width: "100px",
-              height: "100px",
-              backgroundColor: "#0972d3",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              margin: "0 auto 2.5rem auto",
-              fontSize: "2.5rem",
-              fontWeight: "700",
-              color: "#ffffff",
-              boxShadow: "0 8px 32px rgba(9, 114, 211, 0.4)"
+              fontSize: "3.5rem",
+              fontWeight: "300",
+              color: "#14b8a6",
+              marginBottom: "2rem",
+              fontFamily: "monospace"
             }}>
-              1
+              01
             </div>
             <h3 style={{
-              fontSize: "1.75rem",
+              fontSize: "1.5rem",
               fontWeight: "600",
               color: "#ffffff",
-              marginBottom: "1.25rem",
-              letterSpacing: "-0.01em"
+              marginBottom: "1rem"
             }}>
-              Add your students
+              Define Your Parameters
             </h3>
             <p style={{
-              fontSize: "1.125rem",
-              color: "rgba(255, 255, 255, 0.65)",
+              fontSize: "1rem",
+              color: "rgba(255, 255, 255, 0.6)",
               lineHeight: "1.7",
               fontWeight: "300"
             }}>
-              Import your team with email addresses. They'll receive automatic invitations.
+              Set your scheduling requirements, time zones, and preferences with precision.
             </p>
           </div>
-
-          {/* Connector Line */}
-          <div style={{
-            width: "60px",
-            height: "2px",
-            background: "linear-gradient(to right, #0972d3, rgba(9, 114, 211, 0.3))",
-            alignSelf: "flex-start",
-            marginTop: "50px",
-            display: "none"
-          }} />
 
           {/* Step 2 */}
           <div style={{
-            flex: "1",
-            minWidth: "280px",
-            textAlign: "center",
+            padding: "3rem 2rem",
+            background: "rgba(255, 255, 255, 0.03)",
+            borderRadius: "12px",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
             position: "relative"
           }}>
             <div style={{
-              width: "100px",
-              height: "100px",
-              backgroundColor: "#0972d3",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              margin: "0 auto 2.5rem auto",
-              fontSize: "2.5rem",
-              fontWeight: "700",
-              color: "#ffffff",
-              boxShadow: "0 8px 32px rgba(9, 114, 211, 0.4)"
+              fontSize: "3.5rem",
+              fontWeight: "300",
+              color: "#14b8a6",
+              marginBottom: "2rem",
+              fontFamily: "monospace"
             }}>
-              2
+              02
             </div>
             <h3 style={{
-              fontSize: "1.75rem",
+              fontSize: "1.5rem",
               fontWeight: "600",
               color: "#ffffff",
-              marginBottom: "1.25rem",
-              letterSpacing: "-0.01em"
+              marginBottom: "1rem"
             }}>
-              Collect availability
+              Build Your Schedule
             </h3>
             <p style={{
-              fontSize: "1.125rem",
-              color: "rgba(255, 255, 255, 0.65)",
+              fontSize: "1rem",
+              color: "rgba(255, 255, 255, 0.6)",
               lineHeight: "1.7",
               fontWeight: "300"
             }}>
-              Students submit their availability through a simple, intuitive form.
+              Use our intelligent builder to create optimized schedules that adapt to your needs.
             </p>
           </div>
 
-          {/* Connector Line */}
-          <div style={{
-            width: "60px",
-            height: "2px",
-            background: "linear-gradient(to right, #0972d3, rgba(9, 114, 211, 0.3))",
-            alignSelf: "flex-start",
-            marginTop: "50px",
-            display: "none"
-          }} />
-
           {/* Step 3 */}
           <div style={{
-            flex: "1",
-            minWidth: "280px",
-            textAlign: "center",
+            padding: "3rem 2rem",
+            background: "rgba(255, 255, 255, 0.03)",
+            borderRadius: "12px",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
             position: "relative"
           }}>
             <div style={{
-              width: "100px",
-              height: "100px",
-              backgroundColor: "#0972d3",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              margin: "0 auto 2.5rem auto",
-              fontSize: "2.5rem",
-              fontWeight: "700",
-              color: "#ffffff",
-              boxShadow: "0 8px 32px rgba(9, 114, 211, 0.4)"
+              fontSize: "3.5rem",
+              fontWeight: "300",
+              color: "#14b8a6",
+              marginBottom: "2rem",
+              fontFamily: "monospace"
             }}>
-              3
+              03
             </div>
             <h3 style={{
-              fontSize: "1.75rem",
+              fontSize: "1.5rem",
               fontWeight: "600",
               color: "#ffffff",
-              marginBottom: "1.25rem",
-              letterSpacing: "-0.01em"
+              marginBottom: "1rem"
             }}>
-              Generate schedule
+              Deploy & Monitor
             </h3>
             <p style={{
-              fontSize: "1.125rem",
-              color: "rgba(255, 255, 255, 0.65)",
+              fontSize: "1rem",
+              color: "rgba(255, 255, 255, 0.6)",
               lineHeight: "1.7",
               fontWeight: "300"
             }}>
-              Our smart algorithm creates a balanced, conflict-free schedule instantly.
+              Publish your schedule and track performance with real-time analytics.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Features Section - Minimal Luxury Design */}
-      <section style={{
-        padding: "10rem 2rem",
-        backgroundColor: "#0a1420",
-        borderTop: "1px solid #1f2937",
-        borderBottom: "1px solid #1f2937"
+      {/* Features Section */}
+      <section id="features" style={{
+        padding: "8rem 2rem",
+        backgroundColor: "rgba(20, 184, 166, 0.02)",
+        borderTop: "1px solid rgba(255, 255, 255, 0.05)",
+        borderBottom: "1px solid rgba(255, 255, 255, 0.05)"
       }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: "8rem" }}>
+          <div style={{ textAlign: "center", marginBottom: "5rem" }}>
             <h2 style={{
               fontSize: "3.5rem",
-              fontWeight: "700",
+              fontWeight: "400",
               color: "#ffffff",
               marginBottom: "1rem",
-              letterSpacing: "-0.01em"
+              fontFamily: "Georgia, 'Times New Roman', serif"
             }}>
               Everything you need
             </h2>
             <p style={{
-              fontSize: "1.375rem",
-              color: "rgba(255, 255, 255, 0.6)",
-              maxWidth: "600px",
-              margin: "0 auto",
+              fontSize: "1.125rem",
+              color: "rgba(255, 255, 255, 0.5)",
               fontWeight: "300"
             }}>
-              Powerful features that make scheduling effortless
+              Comprehensive tools designed for modern scheduling
             </p>
           </div>
 
           <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",
-            gap: "4rem",
-            marginBottom: "4rem"
+            gap: "2.5rem"
           }}>
             {/* Feature 1 */}
-            <div style={{ textAlign: "center" }}>
+            <div style={{
+              padding: "2.5rem",
+              background: "rgba(255, 255, 255, 0.03)",
+              borderRadius: "12px",
+              border: "1px solid rgba(255, 255, 255, 0.1)"
+            }}>
               <div style={{
-                width: "80px",
-                height: "80px",
-                backgroundColor: "rgba(255, 255, 255, 0.05)",
-                borderRadius: "50%",
+                width: "48px",
+                height: "48px",
+                background: "rgba(20, 184, 166, 0.15)",
+                borderRadius: "8px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                margin: "0 auto 2.5rem auto",
-                border: "1px solid rgba(255, 255, 255, 0.1)"
+                marginBottom: "1.5rem"
               }}>
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#0972d3" strokeWidth="2">
-                  <path d="M12 2v20M2 12h20" />
-                  <circle cx="12" cy="12" r="9" />
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
                 </svg>
               </div>
               <h3 style={{
-                fontSize: "1.75rem",
+                fontSize: "1.25rem",
                 fontWeight: "600",
                 color: "#ffffff",
-                marginBottom: "1.25rem",
-                letterSpacing: "-0.01em"
+                marginBottom: "0.75rem"
               }}>
                 Smart Scheduling
               </h3>
               <p style={{
-                fontSize: "1.0625rem",
+                fontSize: "0.9375rem",
                 color: "rgba(255, 255, 255, 0.6)",
-                lineHeight: "1.75",
+                lineHeight: "1.7",
                 fontWeight: "300"
               }}>
-                Our algorithm ensures fair distribution of shifts while respecting availability
+                Intelligent algorithms that optimize your time allocation automatically.
               </p>
             </div>
 
             {/* Feature 2 */}
-            <div style={{ textAlign: "center" }}>
+            <div style={{
+              padding: "2.5rem",
+              background: "rgba(255, 255, 255, 0.03)",
+              borderRadius: "12px",
+              border: "1px solid rgba(255, 255, 255, 0.1)"
+            }}>
               <div style={{
-                width: "80px",
-                height: "80px",
-                backgroundColor: "rgba(255, 255, 255, 0.05)",
-                borderRadius: "50%",
+                width: "48px",
+                height: "48px",
+                background: "rgba(20, 184, 166, 0.15)",
+                borderRadius: "8px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                margin: "0 auto 2.5rem auto",
-                border: "1px solid rgba(255, 255, 255, 0.1)"
+                marginBottom: "1.5rem"
               }}>
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#0972d3" strokeWidth="2">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                  <path d="M22 6l-10 7L2 6" />
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
                 </svg>
               </div>
               <h3 style={{
-                fontSize: "1.75rem",
+                fontSize: "1.25rem",
                 fontWeight: "600",
                 color: "#ffffff",
-                marginBottom: "1.25rem",
-                letterSpacing: "-0.01em"
+                marginBottom: "0.75rem"
               }}>
-                Email Invitations
+                Time Zone Support
               </h3>
               <p style={{
-                fontSize: "1.0625rem",
+                fontSize: "0.9375rem",
                 color: "rgba(255, 255, 255, 0.6)",
-                lineHeight: "1.75",
+                lineHeight: "1.7",
                 fontWeight: "300"
               }}>
-                Automatically send invitations. Students can login with any registered email
+                Seamlessly manage schedules across multiple time zones with precision.
               </p>
             </div>
 
             {/* Feature 3 */}
-            <div style={{ textAlign: "center" }}>
+            <div style={{
+              padding: "2.5rem",
+              background: "rgba(255, 255, 255, 0.03)",
+              borderRadius: "12px",
+              border: "1px solid rgba(255, 255, 255, 0.1)"
+            }}>
               <div style={{
-                width: "80px",
-                height: "80px",
-                backgroundColor: "rgba(255, 255, 255, 0.05)",
-                borderRadius: "50%",
+                width: "48px",
+                height: "48px",
+                background: "rgba(20, 184, 166, 0.15)",
+                borderRadius: "8px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                margin: "0 auto 2.5rem auto",
-                border: "1px solid rgba(255, 255, 255, 0.1)"
+                marginBottom: "1.5rem"
               }}>
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#0972d3" strokeWidth="2">
-                  <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                 </svg>
               </div>
               <h3 style={{
-                fontSize: "1.75rem",
+                fontSize: "1.25rem",
                 fontWeight: "600",
                 color: "#ffffff",
-                marginBottom: "1.25rem",
-                letterSpacing: "-0.01em"
+                marginBottom: "0.75rem"
               }}>
-                Lightning Fast
+                Team Collaboration
               </h3>
               <p style={{
-                fontSize: "1.0625rem",
+                fontSize: "0.9375rem",
                 color: "rgba(255, 255, 255, 0.6)",
-                lineHeight: "1.75",
+                lineHeight: "1.7",
                 fontWeight: "300"
               }}>
-                Generate schedules in seconds, not hours. Get back to what matters
+                Coordinate with your team and share schedules effortlessly.
+              </p>
+            </div>
+
+            {/* Feature 4 */}
+            <div style={{
+              padding: "2.5rem",
+              background: "rgba(255, 255, 255, 0.03)",
+              borderRadius: "12px",
+              border: "1px solid rgba(255, 255, 255, 0.1)"
+            }}>
+              <div style={{
+                width: "48px",
+                height: "48px",
+                background: "rgba(20, 184, 166, 0.15)",
+                borderRadius: "8px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: "1.5rem"
+              }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                </svg>
+              </div>
+              <h3 style={{
+                fontSize: "1.25rem",
+                fontWeight: "600",
+                color: "#ffffff",
+                marginBottom: "0.75rem"
+              }}>
+                Real-time Updates
+              </h3>
+              <p style={{
+                fontSize: "0.9375rem",
+                color: "rgba(255, 255, 255, 0.6)",
+                lineHeight: "1.7",
+                fontWeight: "300"
+              }}>
+                Instant synchronization keeps everyone aligned at all times.
+              </p>
+            </div>
+
+            {/* Feature 5 */}
+            <div style={{
+              padding: "2.5rem",
+              background: "rgba(255, 255, 255, 0.03)",
+              borderRadius: "12px",
+              border: "1px solid rgba(255, 255, 255, 0.1)"
+            }}>
+              <div style={{
+                width: "48px",
+                height: "48px",
+                background: "rgba(20, 184, 166, 0.15)",
+                borderRadius: "8px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: "1.5rem"
+              }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+              </div>
+              <h3 style={{
+                fontSize: "1.25rem",
+                fontWeight: "600",
+                color: "#ffffff",
+                marginBottom: "0.75rem"
+              }}>
+                Enterprise Security
+              </h3>
+              <p style={{
+                fontSize: "0.9375rem",
+                color: "rgba(255, 255, 255, 0.6)",
+                lineHeight: "1.7",
+                fontWeight: "300"
+              }}>
+                Bank-level encryption protects your scheduling data.
+              </p>
+            </div>
+
+            {/* Feature 6 */}
+            <div style={{
+              padding: "2.5rem",
+              background: "rgba(255, 255, 255, 0.03)",
+              borderRadius: "12px",
+              border: "1px solid rgba(255, 255, 255, 0.1)"
+            }}>
+              <div style={{
+                width: "48px",
+                height: "48px",
+                background: "rgba(20, 184, 166, 0.15)",
+                borderRadius: "8px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: "1.5rem"
+              }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
+                  <line x1="12" y1="20" x2="12" y2="10" />
+                  <line x1="18" y1="20" x2="18" y2="4" />
+                  <line x1="6" y1="20" x2="6" y2="16" />
+                </svg>
+              </div>
+              <h3 style={{
+                fontSize: "1.25rem",
+                fontWeight: "600",
+                color: "#ffffff",
+                marginBottom: "0.75rem"
+              }}>
+                Advanced Analytics
+              </h3>
+              <p style={{
+                fontSize: "0.9375rem",
+                color: "rgba(255, 255, 255, 0.6)",
+                lineHeight: "1.7",
+                fontWeight: "300"
+              }}>
+                Gain insights into scheduling patterns and optimize performance.
               </p>
             </div>
           </div>
@@ -591,145 +698,113 @@ export default function LandingPage() {
       </section>
 
       {/* FAQ Section */}
-      <section style={{
-        padding: "10rem 2rem",
+      <section id="faq" style={{
+        padding: "8rem 2rem",
         maxWidth: "900px",
         margin: "0 auto"
       }}>
-        <div style={{ textAlign: "center", marginBottom: "6rem" }}>
+        <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+          <div style={{
+            display: "inline-block",
+            padding: "0.5rem 1rem",
+            backgroundColor: "rgba(20, 184, 166, 0.1)",
+            border: "1px solid rgba(20, 184, 166, 0.3)",
+            borderRadius: "20px",
+            color: "#14b8a6",
+            fontSize: "0.75rem",
+            fontWeight: "500",
+            marginBottom: "2rem",
+            letterSpacing: "0.1em"
+          }}>
+            FAQs
+          </div>
           <h2 style={{
-            fontSize: "3.5rem",
-            fontWeight: "700",
+            fontSize: "3rem",
+            fontWeight: "400",
             color: "#ffffff",
             marginBottom: "1rem",
-            letterSpacing: "-0.01em"
+            fontFamily: "Georgia, 'Times New Roman', serif"
           }}>
             Got questions?
+            <br />
+            Here's the answers.
           </h2>
-          <p style={{
-            fontSize: "1.375rem",
-            color: "rgba(255, 255, 255, 0.6)",
-            fontWeight: "300"
-          }}>
-            Here's what you need to know
-          </p>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-          <div style={{
-            padding: "2.5rem",
-            backgroundColor: "rgba(255, 255, 255, 0.03)",
-            borderRadius: "12px",
-            border: "1px solid #1f2937"
-          }}>
-            <h3 style={{
-              fontSize: "1.375rem",
-              fontWeight: "600",
-              color: "#ffffff",
-              marginBottom: "1rem",
-              letterSpacing: "-0.01em"
-            }}>
-              How does the scheduling algorithm work?
-            </h3>
-            <p style={{
-              fontSize: "1.0625rem",
-              color: "rgba(255, 255, 255, 0.65)",
-              lineHeight: "1.75",
-              fontWeight: "300"
-            }}>
-              Our smart algorithm analyzes student availability and creates balanced schedules that minimize conflicts,
-              distribute shifts fairly, and respect time preferences.
-            </p>
-          </div>
-
-          <div style={{
-            padding: "2.5rem",
-            backgroundColor: "rgba(255, 255, 255, 0.03)",
-            borderRadius: "12px",
-            border: "1px solid #1f2937"
-          }}>
-            <h3 style={{
-              fontSize: "1.375rem",
-              fontWeight: "600",
-              color: "#ffffff",
-              marginBottom: "1rem",
-              letterSpacing: "-0.01em"
-            }}>
-              Can students login with multiple email addresses?
-            </h3>
-            <p style={{
-              fontSize: "1.0625rem",
-              color: "rgba(255, 255, 255, 0.65)",
-              lineHeight: "1.75",
-              fontWeight: "300"
-            }}>
-              Yes! Students can have both a primary and secondary email. They can login with either one
-              and access the same account and availability.
-            </p>
-          </div>
-
-          <div style={{
-            padding: "2.5rem",
-            backgroundColor: "rgba(255, 255, 255, 0.03)",
-            borderRadius: "12px",
-            border: "1px solid #1f2937"
-          }}>
-            <h3 style={{
-              fontSize: "1.375rem",
-              fontWeight: "600",
-              color: "#ffffff",
-              marginBottom: "1rem",
-              letterSpacing: "-0.01em"
-            }}>
-              What if I need to change the schedule?
-            </h3>
-            <p style={{
-              fontSize: "1.0625rem",
-              color: "rgba(255, 255, 255, 0.65)",
-              lineHeight: "1.75",
-              fontWeight: "300"
-            }}>
-              You can reset student availability and regenerate schedules anytime. The system is flexible
-              and adapts to your changing needs.
-            </p>
-          </div>
-
-          <div style={{
-            padding: "2.5rem",
-            backgroundColor: "rgba(255, 255, 255, 0.03)",
-            borderRadius: "12px",
-            border: "1px solid #1f2937"
-          }}>
-            <h3 style={{
-              fontSize: "1.375rem",
-              fontWeight: "600",
-              color: "#ffffff",
-              marginBottom: "1rem",
-              letterSpacing: "-0.01em"
-            }}>
-              Is there a limit on the number of students?
-            </h3>
-            <p style={{
-              fontSize: "1.0625rem",
-              color: "rgba(255, 255, 255, 0.65)",
-              lineHeight: "1.75",
-              fontWeight: "300"
-            }}>
-              No limits! Add as many students and admins as you need to manage your organization effectively.
-            </p>
-          </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "4rem" }}>
+          {[
+            { q: "What is Schedule Builder?", a: "Schedule Builder is an intelligent scheduling platform that automates student worker scheduling with smart availability collection and conflict-free schedule generation." },
+            { q: "How does the scheduling algorithm work?", a: "Our algorithm analyzes student availability and creates balanced schedules that minimize conflicts, distribute shifts fairly, and respect time preferences." },
+            { q: "Can I integrate with existing calendar systems?", a: "Yes, Schedule Builder integrates seamlessly with popular calendar systems to sync your schedules and keep everyone up to date." },
+            { q: "Is my scheduling data secure?", a: "Absolutely. We use bank-level encryption to protect all your scheduling data and ensure complete privacy and security." },
+            { q: "What support options are available?", a: "We offer comprehensive support including documentation, email support, and dedicated account management for enterprise customers." },
+            { q: "Can I try it before committing?", a: "Yes! We offer a free trial so you can explore all features and see how Schedule Builder fits your workflow." }
+          ].map((faq, index) => (
+            <div
+              key={index}
+              style={{
+                background: "rgba(255, 255, 255, 0.03)",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
+                borderRadius: "8px",
+                overflow: "hidden"
+              }}
+            >
+              <button
+                onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
+                style={{
+                  width: "100%",
+                  padding: "1.5rem",
+                  background: "none",
+                  border: "none",
+                  color: "#ffffff",
+                  fontSize: "1.0625rem",
+                  fontWeight: "500",
+                  textAlign: "left",
+                  cursor: "pointer",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center"
+                }}
+              >
+                <span>{faq.q}</span>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  style={{
+                    transform: expandedFaq === index ? "rotate(180deg)" : "rotate(0deg)",
+                    transition: "transform 0.2s"
+                  }}
+                >
+                  <path d="M5 7.5L10 12.5L15 7.5" stroke="rgba(255, 255, 255, 0.5)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+              {expandedFaq === index && (
+                <div style={{
+                  padding: "0 1.5rem 1.5rem 1.5rem",
+                  color: "rgba(255, 255, 255, 0.6)",
+                  fontSize: "0.9375rem",
+                  lineHeight: "1.7",
+                  fontWeight: "300"
+                }}>
+                  {faq.a}
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </section>
 
       {/* Footer */}
       <footer style={{
-        padding: "4rem 2rem",
-        borderTop: "1px solid #1f2937",
+        padding: "3rem 2rem",
+        borderTop: "1px solid rgba(255, 255, 255, 0.1)",
         textAlign: "center"
       }}>
         <p style={{
-          fontSize: "0.9375rem",
-          color: "rgba(255, 255, 255, 0.5)",
+          fontSize: "0.875rem",
+          color: "rgba(255, 255, 255, 0.4)",
           fontWeight: "300"
         }}>
           © 2026 Schedule Builder. Built to make scheduling simple.
@@ -751,12 +826,12 @@ export default function LandingPage() {
           zIndex: 100
         }}>
           <div style={{
-            backgroundColor: "#16191f",
+            backgroundColor: "#0f1419",
             borderRadius: "12px",
             padding: "2.5rem",
             maxWidth: "500px",
             width: "90%",
-            border: "1px solid #30363d"
+            border: "1px solid rgba(255, 255, 255, 0.1)"
           }}>
             <h2 style={{
               fontSize: "1.5rem",
@@ -786,8 +861,8 @@ export default function LandingPage() {
                   style={{
                     width: "100%",
                     padding: "0.75rem",
-                    backgroundColor: "#0f1b2a",
-                    border: "1px solid #30363d",
+                    backgroundColor: "#0a0f1a",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
                     borderRadius: "6px",
                     color: "#ffffff",
                     fontSize: "1rem"
@@ -813,8 +888,8 @@ export default function LandingPage() {
                   style={{
                     width: "100%",
                     padding: "0.75rem",
-                    backgroundColor: "#0f1b2a",
-                    border: "1px solid #30363d",
+                    backgroundColor: "#0a0f1a",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
                     borderRadius: "6px",
                     color: "#ffffff",
                     fontSize: "1rem"
@@ -840,8 +915,8 @@ export default function LandingPage() {
                   style={{
                     width: "100%",
                     padding: "0.75rem",
-                    backgroundColor: "#0f1b2a",
-                    border: "1px solid #30363d",
+                    backgroundColor: "#0a0f1a",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
                     borderRadius: "6px",
                     color: "#ffffff",
                     fontSize: "1rem",
@@ -884,9 +959,9 @@ export default function LandingPage() {
                   onClick={() => setFeedbackOpen(false)}
                   style={{
                     padding: "0.75rem 1.5rem",
-                    background: "#16191f",
+                    background: "transparent",
                     color: "#ffffff",
-                    border: "1px solid #30363d",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
                     borderRadius: "6px",
                     fontSize: "0.875rem",
                     fontWeight: "500",
@@ -900,7 +975,7 @@ export default function LandingPage() {
                   disabled={feedbackSubmitting}
                   style={{
                     padding: "0.75rem 1.5rem",
-                    background: "#0972d3",
+                    background: "#14b8a6",
                     color: "#ffffff",
                     border: "none",
                     borderRadius: "6px",
