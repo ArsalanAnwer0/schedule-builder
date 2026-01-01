@@ -74,6 +74,17 @@ export default function Home() {
   const [editRequests, setEditRequests] = useState([]); // Pending edit requests
   const [processingRequestId, setProcessingRequestId] = useState(null); // Track which request is being processed
 
+  // Confirmation modal state
+  const [confirmModal, setConfirmModal] = useState({
+    show: false,
+    title: '',
+    message: '',
+    onConfirm: null,
+    confirmText: 'Confirm',
+    cancelText: 'Cancel',
+    isDangerous: false
+  });
+
   // Check authentication
   useEffect(() => {
     fetch('/api/auth/me')
@@ -177,34 +188,67 @@ export default function Home() {
     }
   };
 
-  const handleRemoveAdmin = async (adminId) => {
-    if (!confirm('Are you sure you want to remove this admin? They will lose access immediately.')) {
-      return;
-    }
-
-    setAdminError('');
-    setAdminSuccess('');
-
-    try {
-      const res = await fetch('/api/auth/remove-admin', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ adminId }),
+  // Helper function to show custom confirmation modal
+  const showConfirm = (title, message, onConfirm, isDangerous = false) => {
+    return new Promise((resolve) => {
+      setConfirmModal({
+        show: true,
+        title,
+        message,
+        onConfirm: () => {
+          resolve(true);
+          onConfirm();
+          setConfirmModal(prev => ({ ...prev, show: false }));
+        },
+        onCancel: () => {
+          resolve(false);
+          setConfirmModal(prev => ({ ...prev, show: false }));
+        },
+        confirmText: isDangerous ? 'Delete' : 'Confirm',
+        cancelText: 'Cancel',
+        isDangerous
       });
+    });
+  };
 
-      const data = await res.json();
+  const handleRemoveAdmin = async (adminId) => {
+    setConfirmModal({
+      show: true,
+      title: 'Remove Admin',
+      message: 'Are you sure you want to remove this admin? They will lose access immediately.',
+      isDangerous: true,
+      confirmText: 'Remove',
+      cancelText: 'Cancel',
+      onConfirm: async () => {
+        setConfirmModal(prev => ({ ...prev, show: false }));
+        setAdminError('');
+        setAdminSuccess('');
 
-      if (!res.ok) {
-        setAdminError(data.error || 'Failed to remove admin');
-        return;
+        try {
+          const res = await fetch('/api/auth/remove-admin', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ adminId }),
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            setAdminError(data.error || 'Failed to remove admin');
+            return;
+          }
+
+          setAdminSuccess(data.message);
+          loadAdmins();
+          setTimeout(() => setAdminSuccess(''), 5000);
+        } catch (err) {
+          setAdminError('Something went wrong. Please try again.');
+        }
+      },
+      onCancel: () => {
+        setConfirmModal(prev => ({ ...prev, show: false }));
       }
-
-      setAdminSuccess(data.message);
-      loadAdmins();
-      setTimeout(() => setAdminSuccess(''), 5000);
-    } catch (err) {
-      setAdminError('Something went wrong. Please try again.');
-    }
+    });
   };
 
   // Student management handlers
@@ -258,22 +302,34 @@ export default function Home() {
   };
 
   const handleDeleteStudent = async (id) => {
-    if (!confirm('Are you sure you want to delete this student?')) return;
+    setConfirmModal({
+      show: true,
+      title: 'Delete Student',
+      message: 'Are you sure you want to delete this student? This action cannot be undone.',
+      isDangerous: true,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      onConfirm: async () => {
+        setConfirmModal(prev => ({ ...prev, show: false }));
+        try {
+          const res = await fetch(`/api/students/${id}`, { method: 'DELETE' });
 
-    try {
-      const res = await fetch(`/api/students/${id}`, { method: 'DELETE' });
-
-      if (res.ok) {
-        setStudentSuccess('Student deleted successfully');
-        loadStudents();
-        setTimeout(() => setStudentSuccess(''), 3000);
-      } else {
-        const data = await res.json();
-        setStudentError(data.error || 'Failed to delete student');
+          if (res.ok) {
+            setStudentSuccess('Student deleted successfully');
+            loadStudents();
+            setTimeout(() => setStudentSuccess(''), 3000);
+          } else {
+            const data = await res.json();
+            setStudentError(data.error || 'Failed to delete student');
+          }
+        } catch (err) {
+          setStudentError('Something went wrong. Please try again.');
+        }
+      },
+      onCancel: () => {
+        setConfirmModal(prev => ({ ...prev, show: false }));
       }
-    } catch (err) {
-      setStudentError('Something went wrong. Please try again.');
-    }
+    });
   };
 
   const handleRequestSingleAvailability = async (studentId) => {
@@ -333,35 +389,45 @@ export default function Home() {
   };
 
   const handleResetSingleAvailability = async (studentId) => {
-    if (!confirm('Are you sure you want to reset this student\'s availability? This will delete their submitted availability and lock their access. You must request availability again for them to resubmit.')) {
-      return;
-    }
+    setConfirmModal({
+      show: true,
+      title: 'Reset Availability',
+      message: 'Are you sure you want to reset this student\'s availability? This will delete their submitted availability and lock their access. You must request availability again for them to resubmit.',
+      isDangerous: true,
+      confirmText: 'Reset',
+      cancelText: 'Cancel',
+      onConfirm: async () => {
+        setConfirmModal(prev => ({ ...prev, show: false }));
+        setStudentError('');
+        setStudentSuccess('');
 
-    setStudentError('');
-    setStudentSuccess('');
+        try {
+          const res = await fetch('/api/availability/reset', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ studentId }),
+          });
 
-    try {
-      const res = await fetch('/api/availability/reset', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ studentId }),
-      });
+          const data = await res.json();
 
-      const data = await res.json();
+          if (!res.ok) {
+            setStudentError(data.error || 'Failed to reset availability');
+            return;
+          }
 
-      if (!res.ok) {
-        setStudentError(data.error || 'Failed to reset availability');
-        return;
+          setStudentSuccess(data.message);
+          setTimeout(() => setStudentSuccess(''), 5000);
+
+          // Refresh the students list to update the UI
+          fetchStudents();
+        } catch (err) {
+          setStudentError('Something went wrong. Please try again.');
+        }
+      },
+      onCancel: () => {
+        setConfirmModal(prev => ({ ...prev, show: false }));
       }
-
-      setStudentSuccess(data.message);
-      setTimeout(() => setStudentSuccess(''), 5000);
-
-      // Refresh the students list to update the UI
-      fetchStudents();
-    } catch (err) {
-      setStudentError('Something went wrong. Please try again.');
-    }
+    });
   };
 
   const handleResetAllAvailability = async () => {
@@ -370,36 +436,46 @@ export default function Home() {
       return;
     }
 
-    if (!confirm(`Are you sure you want to reset availability for all ${students.length} student(s)? This will delete all submitted availability and lock their access. You must request availability again for them to resubmit.`)) {
-      return;
-    }
+    setConfirmModal({
+      show: true,
+      title: 'Reset All Availability',
+      message: `Are you sure you want to reset availability for all ${students.length} student(s)? This will delete all submitted availability and lock their access. You must request availability again for them to resubmit.`,
+      isDangerous: true,
+      confirmText: 'Reset All',
+      cancelText: 'Cancel',
+      onConfirm: async () => {
+        setConfirmModal(prev => ({ ...prev, show: false }));
+        setStudentError('');
+        setStudentSuccess('');
 
-    setStudentError('');
-    setStudentSuccess('');
+        try {
+          const allStudentIds = students.map(s => s.id);
+          const res = await fetch('/api/availability/reset-all', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ studentIds: allStudentIds }),
+          });
 
-    try {
-      const allStudentIds = students.map(s => s.id);
-      const res = await fetch('/api/availability/reset-all', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ studentIds: allStudentIds }),
-      });
+          const data = await res.json();
 
-      const data = await res.json();
+          if (!res.ok) {
+            setStudentError(data.error || 'Failed to reset availability');
+            return;
+          }
 
-      if (!res.ok) {
-        setStudentError(data.error || 'Failed to reset availability');
-        return;
+          setStudentSuccess(data.message);
+          setTimeout(() => setStudentSuccess(''), 5000);
+
+          // Refresh the students list to update the UI
+          fetchStudents();
+        } catch (err) {
+          setStudentError('Something went wrong. Please try again.');
+        }
+      },
+      onCancel: () => {
+        setConfirmModal(prev => ({ ...prev, show: false }));
       }
-
-      setStudentSuccess(data.message);
-      setTimeout(() => setStudentSuccess(''), 5000);
-
-      // Refresh the students list to update the UI
-      fetchStudents();
-    } catch (err) {
-      setStudentError('Something went wrong. Please try again.');
-    }
+    });
   };
 
   const handleLogout = async () => {
@@ -2554,6 +2630,114 @@ export default function Home() {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* Confirmation Modal */}
+        {confirmModal.show && (
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(0, 0, 0, 0.75)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 9999,
+              padding: "1rem"
+            }}
+            onClick={() => confirmModal.onCancel && confirmModal.onCancel()}
+          >
+            <div
+              style={{
+                backgroundColor: "#1c2432",
+                borderRadius: "12px",
+                maxWidth: "500px",
+                width: "100%",
+                boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.5)",
+                border: "1px solid #30363d"
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div style={{ padding: "1.5rem" }}>
+                <h3 style={{
+                  margin: 0,
+                  fontSize: "1.25rem",
+                  fontWeight: "600",
+                  color: confirmModal.isDangerous ? "#f87171" : "#ffffff",
+                  marginBottom: "0.75rem"
+                }}>
+                  {confirmModal.title}
+                </h3>
+                <p style={{
+                  margin: 0,
+                  fontSize: "0.875rem",
+                  color: "#c9d1d9",
+                  lineHeight: "1.5"
+                }}>
+                  {confirmModal.message}
+                </p>
+              </div>
+
+              <div style={{
+                padding: "1rem 1.5rem",
+                backgroundColor: "#161b22",
+                borderTop: "1px solid #30363d",
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: "0.75rem",
+                borderBottomLeftRadius: "12px",
+                borderBottomRightRadius: "12px"
+              }}>
+                <button
+                  onClick={() => confirmModal.onCancel && confirmModal.onCancel()}
+                  style={{
+                    padding: "0.5rem 1rem",
+                    backgroundColor: "transparent",
+                    color: "#c9d1d9",
+                    border: "1px solid #30363d",
+                    borderRadius: "6px",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    transition: "all 0.15s ease"
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = "#30363d";
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                  }}
+                >
+                  {confirmModal.cancelText}
+                </button>
+                <button
+                  onClick={() => confirmModal.onConfirm && confirmModal.onConfirm()}
+                  style={{
+                    padding: "0.5rem 1rem",
+                    backgroundColor: confirmModal.isDangerous ? "#dc2626" : "#0972d3",
+                    color: "#ffffff",
+                    border: "none",
+                    borderRadius: "6px",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    transition: "all 0.15s ease"
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = confirmModal.isDangerous ? "#b91c1c" : "#0863bf";
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = confirmModal.isDangerous ? "#dc2626" : "#0972d3";
+                  }}
+                >
+                  {confirmModal.confirmText}
+                </button>
+              </div>
             </div>
           </div>
         )}
