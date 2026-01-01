@@ -17,7 +17,6 @@ export default function LandingPage() {
     setFeedbackError('');
     setFeedbackSuccess('');
 
-    // Simulate submission (you can add API endpoint later)
     setTimeout(() => {
       setFeedbackSuccess('Thank you for your feedback! We\'ll get back to you soon.');
       setFeedbackForm({ name: '', email: '', message: '', type: 'feedback' });
@@ -30,362 +29,904 @@ export default function LandingPage() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#0f1b2a", position: "relative", overflow: "hidden" }}>
+    <div style={{ backgroundColor: "#0f1b2a", minHeight: "100vh" }}>
 
-      {/* Navigation */}
+      {/* Fixed Navigation */}
       <nav style={{
-        position: "relative",
-        zIndex: 10,
-        padding: "1.5rem 2rem",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        maxWidth: "1400px",
-        margin: "0 auto"
+        position: "sticky",
+        top: 0,
+        zIndex: 50,
+        backgroundColor: "#0f1b2a",
+        borderBottom: "1px solid #1f2937",
+        padding: "1rem 2rem"
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ fontSize: "1.25rem", fontWeight: "600", color: "#ffffff" }}>Schedule Builder</span>
-        </div>
+        <div style={{
+          maxWidth: "1400px",
+          margin: "0 auto",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <span style={{ fontSize: "1.25rem", fontWeight: "600", color: "#ffffff" }}>Schedule Builder</span>
+          </div>
 
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-          <button
-            onClick={() => setFeedbackOpen(true)}
-            style={{
-              padding: "0.625rem 1.25rem",
-              background: "#16191f",
-              color: "#ffffff",
-              border: "1px solid #30363d",
-              borderRadius: "6px",
-              fontSize: "0.875rem",
-              fontWeight: "500",
-              cursor: "pointer",
-              transition: "all 0.2s ease"
-            }}
-            onMouseOver={(e) => e.currentTarget.style.background = "#1f2937"}
-            onMouseOut={(e) => e.currentTarget.style.background = "#16191f"}
-          >
-            Feedback
-          </button>
-          <button
-            onClick={() => router.push('/login')}
-            style={{
-              padding: "0.625rem 1.25rem",
-              background: "#16191f",
-              color: "#ffffff",
-              border: "1px solid #30363d",
-              borderRadius: "6px",
-              fontSize: "0.875rem",
-              fontWeight: "500",
-              cursor: "pointer",
-              transition: "all 0.2s ease"
-            }}
-            onMouseOver={(e) => e.currentTarget.style.background = "#1f2937"}
-            onMouseOut={(e) => e.currentTarget.style.background = "#16191f"}
-          >
-            Sign In
-          </button>
-          <button
-            onClick={() => router.push('/register')}
-            style={{
-              padding: "0.625rem 1.5rem",
-              background: "#0972d3",
-              color: "#ffffff",
-              border: "none",
-              borderRadius: "6px",
-              fontSize: "0.875rem",
-              fontWeight: "600",
-              cursor: "pointer",
-              transition: "all 0.2s ease"
-            }}
-            onMouseOver={(e) => e.currentTarget.style.background = "#0863bf"}
-            onMouseOut={(e) => e.currentTarget.style.background = "#0972d3"}
-          >
-            Get Started
-          </button>
+          <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+            <button
+              onClick={() => setFeedbackOpen(true)}
+              style={{
+                padding: "0.625rem 1.25rem",
+                background: "#16191f",
+                color: "#ffffff",
+                border: "1px solid #30363d",
+                borderRadius: "6px",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+              onMouseOver={(e) => e.currentTarget.style.background = "#1f2937"}
+              onMouseOut={(e) => e.currentTarget.style.background = "#16191f"}
+            >
+              Feedback
+            </button>
+            <button
+              onClick={() => router.push('/login')}
+              style={{
+                padding: "0.625rem 1.25rem",
+                background: "#16191f",
+                color: "#ffffff",
+                border: "1px solid #30363d",
+                borderRadius: "6px",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+              onMouseOver={(e) => e.currentTarget.style.background = "#1f2937"}
+              onMouseOut={(e) => e.currentTarget.style.background = "#16191f"}
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => router.push('/register')}
+              style={{
+                padding: "0.625rem 1.5rem",
+                background: "#0972d3",
+                color: "#ffffff",
+                border: "none",
+                borderRadius: "6px",
+                fontSize: "0.875rem",
+                fontWeight: "600",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+              onMouseOver={(e) => e.currentTarget.style.background = "#0863bf"}
+              onMouseOut={(e) => e.currentTarget.style.background = "#0972d3"}
+            >
+              Get Started
+            </button>
+          </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <main style={{
-        position: "relative",
-        zIndex: 10,
+      <section style={{
+        padding: "8rem 2rem",
+        textAlign: "center",
         maxWidth: "1200px",
-        margin: "0 auto",
-        padding: "6rem 2rem",
-        textAlign: "center"
+        margin: "0 auto"
       }}>
         <h1 style={{
-          fontSize: "4rem",
+          fontSize: "4.5rem",
           fontWeight: "700",
           color: "#ffffff",
           marginBottom: "1.5rem",
           lineHeight: "1.1",
           letterSpacing: "-0.02em"
         }}>
-          One Smart Platform.
+          Scheduling made simple,
           <br />
-          No Scheduling Hassle.
+          so you can focus on what matters
         </h1>
 
         <p style={{
-          fontSize: "1.25rem",
-          color: "rgba(255, 255, 255, 0.9)",
+          fontSize: "1.5rem",
+          color: "rgba(255, 255, 255, 0.7)",
           marginBottom: "3rem",
-          maxWidth: "700px",
-          margin: "0 auto 3rem auto",
+          maxWidth: "800px",
+          margin: "2rem auto 3rem auto",
           lineHeight: "1.6"
         }}>
-          Streamline your student worker scheduling with automated availability collection,
-          smart schedule generation, and seamless team management.
+          Automate student worker scheduling with smart availability collection
+          and conflict-free schedule generation.
         </p>
 
-        {/* Features Grid */}
+        <button
+          onClick={() => router.push('/register')}
+          style={{
+            padding: "1rem 2.5rem",
+            background: "#0972d3",
+            color: "#ffffff",
+            border: "none",
+            borderRadius: "8px",
+            fontSize: "1.125rem",
+            fontWeight: "600",
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+            boxShadow: "0 4px 20px rgba(9, 114, 211, 0.3)"
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.background = "#0863bf";
+            e.currentTarget.style.transform = "translateY(-2px)";
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.background = "#0972d3";
+            e.currentTarget.style.transform = "translateY(0)";
+          }}
+        >
+          Start scheduling for free
+        </button>
+      </section>
+
+      {/* Social Proof Section */}
+      <section style={{
+        padding: "4rem 2rem",
+        backgroundColor: "#0a1420",
+        borderTop: "1px solid #1f2937",
+        borderBottom: "1px solid #1f2937"
+      }}>
         <div style={{
-          marginTop: "8rem",
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-          gap: "2rem",
-          textAlign: "left"
+          maxWidth: "1200px",
+          margin: "0 auto",
+          textAlign: "center"
         }}>
+          <p style={{
+            fontSize: "1rem",
+            color: "rgba(255, 255, 255, 0.5)",
+            marginBottom: "3rem",
+            textTransform: "uppercase",
+            letterSpacing: "0.1em"
+          }}>
+            Trusted by student organizations
+          </p>
+
           <div style={{
-            padding: "2rem",
-            background: "rgba(255, 255, 255, 0.1)",
-            backdropFilter: "blur(10px)",
-            borderRadius: "16px",
-            border: "1px solid rgba(255, 255, 255, 0.2)"
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+            gap: "2rem"
           }}>
             <div style={{
-              width: "48px",
-              height: "48px",
+              padding: "2rem",
+              backgroundColor: "rgba(255, 255, 255, 0.05)",
               borderRadius: "12px",
-              background: "rgba(255, 255, 255, 0.2)",
+              border: "1px solid #1f2937"
+            }}>
+              <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>⭐⭐⭐⭐⭐</div>
+              <p style={{
+                fontSize: "1.125rem",
+                color: "#ffffff",
+                fontWeight: "500",
+                marginBottom: "1rem"
+              }}>
+                "Saves us 5+ hours every week"
+              </p>
+              <p style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.5)" }}>
+                Campus Library Manager
+              </p>
+            </div>
+
+            <div style={{
+              padding: "2rem",
+              backgroundColor: "rgba(255, 255, 255, 0.05)",
+              borderRadius: "12px",
+              border: "1px solid #1f2937"
+            }}>
+              <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>⭐⭐⭐⭐⭐</div>
+              <p style={{
+                fontSize: "1.125rem",
+                color: "#ffffff",
+                fontWeight: "500",
+                marginBottom: "1rem"
+              }}>
+                "No more scheduling conflicts"
+              </p>
+              <p style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.5)" }}>
+                Student Affairs Coordinator
+              </p>
+            </div>
+
+            <div style={{
+              padding: "2rem",
+              backgroundColor: "rgba(255, 255, 255, 0.05)",
+              borderRadius: "12px",
+              border: "1px solid #1f2937"
+            }}>
+              <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>⭐⭐⭐⭐⭐</div>
+              <p style={{
+                fontSize: "1.125rem",
+                color: "#ffffff",
+                fontWeight: "500",
+                marginBottom: "1rem"
+              }}>
+                "Students love how easy it is"
+              </p>
+              <p style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.5)" }}>
+                Recreation Center Director
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section style={{
+        padding: "8rem 2rem",
+        maxWidth: "1200px",
+        margin: "0 auto"
+      }}>
+        <div style={{ textAlign: "center", marginBottom: "5rem" }}>
+          <h2 style={{
+            fontSize: "3rem",
+            fontWeight: "700",
+            color: "#ffffff",
+            marginBottom: "1rem"
+          }}>
+            How it works
+          </h2>
+          <p style={{
+            fontSize: "1.25rem",
+            color: "rgba(255, 255, 255, 0.7)",
+            maxWidth: "600px",
+            margin: "0 auto"
+          }}>
+            Three simple steps to automated scheduling
+          </p>
+        </div>
+
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+          gap: "3rem"
+        }}>
+          <div style={{ textAlign: "center" }}>
+            <div style={{
+              width: "80px",
+              height: "80px",
+              backgroundColor: "#0972d3",
+              borderRadius: "50%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              margin: "0 auto 2rem auto",
+              fontSize: "2rem",
+              fontWeight: "700",
+              color: "#ffffff"
+            }}>
+              1
+            </div>
+            <h3 style={{
+              fontSize: "1.5rem",
+              fontWeight: "600",
+              color: "#ffffff",
               marginBottom: "1rem"
             }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M12 8V12L15 15" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-                <circle cx="12" cy="12" r="9" stroke="white" strokeWidth="2"/>
-              </svg>
-            </div>
-            <h3 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#ffffff", marginBottom: "0.5rem" }}>
-              Save Time
+              Add your students
             </h3>
-            <p style={{ fontSize: "0.9375rem", color: "rgba(255, 255, 255, 0.8)", lineHeight: "1.6" }}>
-              Automate availability collection and generate optimized schedules in seconds.
+            <p style={{
+              fontSize: "1.125rem",
+              color: "rgba(255, 255, 255, 0.7)",
+              lineHeight: "1.6"
+            }}>
+              Import your team with email addresses. They'll receive automatic invitations.
             </p>
           </div>
 
-          <div style={{
-            padding: "2rem",
-            background: "rgba(255, 255, 255, 0.1)",
-            backdropFilter: "blur(10px)",
-            borderRadius: "16px",
-            border: "1px solid rgba(255, 255, 255, 0.2)"
-          }}>
+          <div style={{ textAlign: "center" }}>
             <div style={{
-              width: "48px",
-              height: "48px",
-              borderRadius: "12px",
-              background: "rgba(255, 255, 255, 0.2)",
+              width: "80px",
+              height: "80px",
+              backgroundColor: "#0972d3",
+              borderRadius: "50%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              margin: "0 auto 2rem auto",
+              fontSize: "2rem",
+              fontWeight: "700",
+              color: "#ffffff"
+            }}>
+              2
+            </div>
+            <h3 style={{
+              fontSize: "1.5rem",
+              fontWeight: "600",
+              color: "#ffffff",
               marginBottom: "1rem"
             }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <circle cx="9" cy="7" r="4" stroke="white" strokeWidth="2"/>
-                <path d="M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89318 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-            <h3 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#ffffff", marginBottom: "0.5rem" }}>
-              Team Management
+              Collect availability
             </h3>
-            <p style={{ fontSize: "0.9375rem", color: "rgba(255, 255, 255, 0.8)", lineHeight: "1.6" }}>
-              Manage students, admins, and availability all in one centralized platform.
+            <p style={{
+              fontSize: "1.125rem",
+              color: "rgba(255, 255, 255, 0.7)",
+              lineHeight: "1.6"
+            }}>
+              Students submit their availability through a simple, intuitive form.
             </p>
           </div>
 
-          <div style={{
-            padding: "2rem",
-            background: "rgba(255, 255, 255, 0.1)",
-            backdropFilter: "blur(10px)",
-            borderRadius: "16px",
-            border: "1px solid rgba(255, 255, 255, 0.2)"
-          }}>
+          <div style={{ textAlign: "center" }}>
             <div style={{
-              width: "48px",
-              height: "48px",
-              borderRadius: "12px",
-              background: "rgba(255, 255, 255, 0.2)",
+              width: "80px",
+              height: "80px",
+              backgroundColor: "#0972d3",
+              borderRadius: "50%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              margin: "0 auto 2rem auto",
+              fontSize: "2rem",
+              fontWeight: "700",
+              color: "#ffffff"
+            }}>
+              3
+            </div>
+            <h3 style={{
+              fontSize: "1.5rem",
+              fontWeight: "600",
+              color: "#ffffff",
               marginBottom: "1rem"
             }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M22 11.08V12C21.9988 14.1564 21.3005 16.2547 20.0093 17.9818C18.7182 19.7088 16.9033 20.9725 14.8354 21.5839C12.7674 22.1953 10.5573 22.1219 8.53447 21.3746C6.51168 20.6273 4.78465 19.2461 3.61096 17.4371C2.43727 15.628 1.87979 13.4881 2.02168 11.3363C2.16356 9.18455 2.99721 7.13631 4.39828 5.49706C5.79935 3.85781 7.69279 2.71537 9.79619 2.24013C11.8996 1.76489 14.1003 1.98232 16.07 2.86" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M22 4L12 14.01L9 11.01" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-            <h3 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#ffffff", marginBottom: "0.5rem" }}>
-              Smart Scheduling
+              Generate schedule
             </h3>
-            <p style={{ fontSize: "0.9375rem", color: "rgba(255, 255, 255, 0.8)", lineHeight: "1.6" }}>
-              AI-powered algorithm ensures fair distribution and full office coverage.
+            <p style={{
+              fontSize: "1.125rem",
+              color: "rgba(255, 255, 255, 0.7)",
+              lineHeight: "1.6"
+            }}>
+              Our smart algorithm creates a balanced, conflict-free schedule instantly.
             </p>
           </div>
         </div>
-      </main>
+      </section>
+
+      {/* Features Section */}
+      <section style={{
+        padding: "8rem 2rem",
+        backgroundColor: "#0a1420",
+        borderTop: "1px solid #1f2937",
+        borderBottom: "1px solid #1f2937"
+      }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: "5rem" }}>
+            <h2 style={{
+              fontSize: "3rem",
+              fontWeight: "700",
+              color: "#ffffff",
+              marginBottom: "1rem"
+            }}>
+              Everything you need
+            </h2>
+            <p style={{
+              fontSize: "1.25rem",
+              color: "rgba(255, 255, 255, 0.7)",
+              maxWidth: "600px",
+              margin: "0 auto"
+            }}>
+              Powerful features that make scheduling effortless
+            </p>
+          </div>
+
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+            gap: "2.5rem"
+          }}>
+            <div style={{
+              padding: "2.5rem",
+              backgroundColor: "rgba(255, 255, 255, 0.03)",
+              borderRadius: "12px",
+              border: "1px solid #1f2937",
+              transition: "all 0.3s ease"
+            }}>
+              <div style={{
+                fontSize: "2.5rem",
+                marginBottom: "1.5rem"
+              }}>📊</div>
+              <h3 style={{
+                fontSize: "1.5rem",
+                fontWeight: "600",
+                color: "#ffffff",
+                marginBottom: "1rem"
+              }}>
+                Smart Scheduling
+              </h3>
+              <p style={{
+                fontSize: "1rem",
+                color: "rgba(255, 255, 255, 0.7)",
+                lineHeight: "1.6"
+              }}>
+                Our algorithm ensures fair distribution of shifts while respecting student availability and preferences.
+              </p>
+            </div>
+
+            <div style={{
+              padding: "2.5rem",
+              backgroundColor: "rgba(255, 255, 255, 0.03)",
+              borderRadius: "12px",
+              border: "1px solid #1f2937"
+            }}>
+              <div style={{
+                fontSize: "2.5rem",
+                marginBottom: "1.5rem"
+              }}>✉️</div>
+              <h3 style={{
+                fontSize: "1.5rem",
+                fontWeight: "600",
+                color: "#ffffff",
+                marginBottom: "1rem"
+              }}>
+                Email Invitations
+              </h3>
+              <p style={{
+                fontSize: "1rem",
+                color: "rgba(255, 255, 255, 0.7)",
+                lineHeight: "1.6"
+              }}>
+                Automatically send invitations to students. They can login with any registered email address.
+              </p>
+            </div>
+
+            <div style={{
+              padding: "2.5rem",
+              backgroundColor: "rgba(255, 255, 255, 0.03)",
+              borderRadius: "12px",
+              border: "1px solid #1f2937"
+            }}>
+              <div style={{
+                fontSize: "2.5rem",
+                marginBottom: "1.5rem"
+              }}>🔄</div>
+              <h3 style={{
+                fontSize: "1.5rem",
+                fontWeight: "600",
+                color: "#ffffff",
+                marginBottom: "1rem"
+              }}>
+                Flexible Updates
+              </h3>
+              <p style={{
+                fontSize: "1rem",
+                color: "rgba(255, 255, 255, 0.7)",
+                lineHeight: "1.6"
+              }}>
+                Reset availability, regenerate schedules, and make adjustments anytime you need.
+              </p>
+            </div>
+
+            <div style={{
+              padding: "2.5rem",
+              backgroundColor: "rgba(255, 255, 255, 0.03)",
+              borderRadius: "12px",
+              border: "1px solid #1f2937"
+            }}>
+              <div style={{
+                fontSize: "2.5rem",
+                marginBottom: "1.5rem"
+              }}>👥</div>
+              <h3 style={{
+                fontSize: "1.5rem",
+                fontWeight: "600",
+                color: "#ffffff",
+                marginBottom: "1rem"
+              }}>
+                Team Management
+              </h3>
+              <p style={{
+                fontSize: "1rem",
+                color: "rgba(255, 255, 255, 0.7)",
+                lineHeight: "1.6"
+              }}>
+                Manage multiple admins and students. Organize your entire workforce in one place.
+              </p>
+            </div>
+
+            <div style={{
+              padding: "2.5rem",
+              backgroundColor: "rgba(255, 255, 255, 0.03)",
+              borderRadius: "12px",
+              border: "1px solid #1f2937"
+            }}>
+              <div style={{
+                fontSize: "2.5rem",
+                marginBottom: "1.5rem"
+              }}>📥</div>
+              <h3 style={{
+                fontSize: "1.5rem",
+                fontWeight: "600",
+                color: "#ffffff",
+                marginBottom: "1rem"
+              }}>
+                Export Schedules
+              </h3>
+              <p style={{
+                fontSize: "1rem",
+                color: "rgba(255, 255, 255, 0.7)",
+                lineHeight: "1.6"
+              }}>
+                Download schedules in multiple formats. Share with your team easily.
+              </p>
+            </div>
+
+            <div style={{
+              padding: "2.5rem",
+              backgroundColor: "rgba(255, 255, 255, 0.03)",
+              borderRadius: "12px",
+              border: "1px solid #1f2937"
+            }}>
+              <div style={{
+                fontSize: "2.5rem",
+                marginBottom: "1.5rem"
+              }}>⚡</div>
+              <h3 style={{
+                fontSize: "1.5rem",
+                fontWeight: "600",
+                color: "#ffffff",
+                marginBottom: "1rem"
+              }}>
+                Lightning Fast
+              </h3>
+              <p style={{
+                fontSize: "1rem",
+                color: "rgba(255, 255, 255, 0.7)",
+                lineHeight: "1.6"
+              }}>
+                Generate schedules in seconds, not hours. Get back to what matters.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section style={{
+        padding: "8rem 2rem",
+        maxWidth: "900px",
+        margin: "0 auto"
+      }}>
+        <div style={{ textAlign: "center", marginBottom: "5rem" }}>
+          <h2 style={{
+            fontSize: "3rem",
+            fontWeight: "700",
+            color: "#ffffff",
+            marginBottom: "1rem"
+          }}>
+            Got questions?
+          </h2>
+          <p style={{
+            fontSize: "1.25rem",
+            color: "rgba(255, 255, 255, 0.7)"
+          }}>
+            Here's what you need to know
+          </p>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+          <div style={{
+            padding: "2rem",
+            backgroundColor: "rgba(255, 255, 255, 0.03)",
+            borderRadius: "12px",
+            border: "1px solid #1f2937"
+          }}>
+            <h3 style={{
+              fontSize: "1.25rem",
+              fontWeight: "600",
+              color: "#ffffff",
+              marginBottom: "0.75rem"
+            }}>
+              How does the scheduling algorithm work?
+            </h3>
+            <p style={{
+              fontSize: "1rem",
+              color: "rgba(255, 255, 255, 0.7)",
+              lineHeight: "1.6"
+            }}>
+              Our smart algorithm analyzes student availability and creates balanced schedules that minimize conflicts,
+              distribute shifts fairly, and respect time preferences.
+            </p>
+          </div>
+
+          <div style={{
+            padding: "2rem",
+            backgroundColor: "rgba(255, 255, 255, 0.03)",
+            borderRadius: "12px",
+            border: "1px solid #1f2937"
+          }}>
+            <h3 style={{
+              fontSize: "1.25rem",
+              fontWeight: "600",
+              color: "#ffffff",
+              marginBottom: "0.75rem"
+            }}>
+              Can students login with multiple email addresses?
+            </h3>
+            <p style={{
+              fontSize: "1rem",
+              color: "rgba(255, 255, 255, 0.7)",
+              lineHeight: "1.6"
+            }}>
+              Yes! Students can have both a primary and secondary email. They can login with either one
+              and access the same account and availability.
+            </p>
+          </div>
+
+          <div style={{
+            padding: "2rem",
+            backgroundColor: "rgba(255, 255, 255, 0.03)",
+            borderRadius: "12px",
+            border: "1px solid #1f2937"
+          }}>
+            <h3 style={{
+              fontSize: "1.25rem",
+              fontWeight: "600",
+              color: "#ffffff",
+              marginBottom: "0.75rem"
+            }}>
+              What if I need to change the schedule?
+            </h3>
+            <p style={{
+              fontSize: "1rem",
+              color: "rgba(255, 255, 255, 0.7)",
+              lineHeight: "1.6"
+            }}>
+              You can reset student availability and regenerate schedules anytime. The system is flexible
+              and adapts to your changing needs.
+            </p>
+          </div>
+
+          <div style={{
+            padding: "2rem",
+            backgroundColor: "rgba(255, 255, 255, 0.03)",
+            borderRadius: "12px",
+            border: "1px solid #1f2937"
+          }}>
+            <h3 style={{
+              fontSize: "1.25rem",
+              fontWeight: "600",
+              color: "#ffffff",
+              marginBottom: "0.75rem"
+            }}>
+              Is there a limit on the number of students?
+            </h3>
+            <p style={{
+              fontSize: "1rem",
+              color: "rgba(255, 255, 255, 0.7)",
+              lineHeight: "1.6"
+            }}>
+              No limits! Add as many students and admins as you need to manage your organization effectively.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section style={{
+        padding: "8rem 2rem",
+        backgroundColor: "#0a1420",
+        borderTop: "1px solid #1f2937",
+        textAlign: "center"
+      }}>
+        <div style={{ maxWidth: "800px", margin: "0 auto" }}>
+          <h2 style={{
+            fontSize: "3rem",
+            fontWeight: "700",
+            color: "#ffffff",
+            marginBottom: "1.5rem"
+          }}>
+            Ready to simplify your scheduling?
+          </h2>
+          <p style={{
+            fontSize: "1.25rem",
+            color: "rgba(255, 255, 255, 0.7)",
+            marginBottom: "3rem",
+            lineHeight: "1.6"
+          }}>
+            Join organizations already saving hours every week with automated scheduling.
+          </p>
+          <button
+            onClick={() => router.push('/register')}
+            style={{
+              padding: "1rem 2.5rem",
+              background: "#0972d3",
+              color: "#ffffff",
+              border: "none",
+              borderRadius: "8px",
+              fontSize: "1.125rem",
+              fontWeight: "600",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              boxShadow: "0 4px 20px rgba(9, 114, 211, 0.3)"
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = "#0863bf";
+              e.currentTarget.style.transform = "translateY(-2px)";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = "#0972d3";
+              e.currentTarget.style.transform = "translateY(0)";
+            }}
+          >
+            Get started for free
+          </button>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer style={{
+        padding: "3rem 2rem",
+        borderTop: "1px solid #1f2937",
+        textAlign: "center"
+      }}>
+        <p style={{
+          fontSize: "0.875rem",
+          color: "rgba(255, 255, 255, 0.5)"
+        }}>
+          © 2026 Schedule Builder. Built to make scheduling simple.
+        </p>
+      </footer>
 
       {/* Feedback Modal */}
       {feedbackOpen && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "rgba(0, 0, 0, 0.5)",
-            backdropFilter: "blur(4px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            padding: "1rem"
-          }}
-          onClick={() => setFeedbackOpen(false)}
-        >
-          <div
-            style={{
-              background: "#ffffff",
-              borderRadius: "16px",
-              padding: "2rem",
-              maxWidth: "500px",
-              width: "100%",
-              boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)"
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 style={{ fontSize: "1.5rem", fontWeight: "600", color: "#1a1d29", marginBottom: "0.5rem" }}>
-              Send Feedback
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.8)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 100
+        }}>
+          <div style={{
+            backgroundColor: "#16191f",
+            borderRadius: "12px",
+            padding: "2.5rem",
+            maxWidth: "500px",
+            width: "90%",
+            border: "1px solid #30363d"
+          }}>
+            <h2 style={{
+              fontSize: "1.5rem",
+              fontWeight: "600",
+              color: "#ffffff",
+              marginBottom: "1.5rem"
+            }}>
+              Send us feedback
             </h2>
-            <p style={{ fontSize: "0.875rem", color: "#6b7280", marginBottom: "1.5rem" }}>
-              We'd love to hear your thoughts, suggestions, or issues you've encountered.
-            </p>
-
-            {feedbackSuccess && (
-              <div style={{
-                padding: "1rem",
-                background: "#d1fae5",
-                border: "1px solid #10b981",
-                borderRadius: "8px",
-                marginBottom: "1rem",
-                color: "#065f46",
-                fontSize: "0.875rem"
-              }}>
-                {feedbackSuccess}
-              </div>
-            )}
 
             <form onSubmit={handleFeedbackSubmit}>
-              <div style={{ marginBottom: "1rem" }}>
-                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#374151", marginBottom: "0.5rem" }}>
-                  Type
-                </label>
-                <select
-                  value={feedbackForm.type}
-                  onChange={(e) => setFeedbackForm({ ...feedbackForm, type: e.target.value })}
-                  style={{
-                    width: "100%",
-                    padding: "0.75rem",
-                    border: "1px solid #d1d5db",
-                    borderRadius: "8px",
-                    fontSize: "0.875rem"
-                  }}
-                >
-                  <option value="feedback">General Feedback</option>
-                  <option value="bug">Bug Report</option>
-                  <option value="feature">Feature Request</option>
-                </select>
-              </div>
-
-              <div style={{ marginBottom: "1rem" }}>
-                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#374151", marginBottom: "0.5rem" }}>
+              <div style={{ marginBottom: "1.5rem" }}>
+                <label style={{
+                  display: "block",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  color: "rgba(255, 255, 255, 0.9)",
+                  marginBottom: "0.5rem"
+                }}>
                   Name
                 </label>
                 <input
                   type="text"
+                  required
                   value={feedbackForm.name}
                   onChange={(e) => setFeedbackForm({ ...feedbackForm, name: e.target.value })}
-                  required
                   style={{
                     width: "100%",
                     padding: "0.75rem",
-                    border: "1px solid #d1d5db",
-                    borderRadius: "8px",
-                    fontSize: "0.875rem"
+                    backgroundColor: "#0f1b2a",
+                    border: "1px solid #30363d",
+                    borderRadius: "6px",
+                    color: "#ffffff",
+                    fontSize: "1rem"
                   }}
-                  placeholder="Your name"
-                />
-              </div>
-
-              <div style={{ marginBottom: "1rem" }}>
-                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#374151", marginBottom: "0.5rem" }}>
-                  Email
-                </label>
-                <input
-                  type="email"
-                  value={feedbackForm.email}
-                  onChange={(e) => setFeedbackForm({ ...feedbackForm, email: e.target.value })}
-                  required
-                  style={{
-                    width: "100%",
-                    padding: "0.75rem",
-                    border: "1px solid #d1d5db",
-                    borderRadius: "8px",
-                    fontSize: "0.875rem"
-                  }}
-                  placeholder="your.email@example.com"
                 />
               </div>
 
               <div style={{ marginBottom: "1.5rem" }}>
-                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#374151", marginBottom: "0.5rem" }}>
-                  Message
+                <label style={{
+                  display: "block",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  color: "rgba(255, 255, 255, 0.9)",
+                  marginBottom: "0.5rem"
+                }}>
+                  Email
                 </label>
-                <textarea
-                  value={feedbackForm.message}
-                  onChange={(e) => setFeedbackForm({ ...feedbackForm, message: e.target.value })}
+                <input
+                  type="email"
                   required
-                  rows={4}
+                  value={feedbackForm.email}
+                  onChange={(e) => setFeedbackForm({ ...feedbackForm, email: e.target.value })}
                   style={{
                     width: "100%",
                     padding: "0.75rem",
-                    border: "1px solid #d1d5db",
-                    borderRadius: "8px",
-                    fontSize: "0.875rem",
-                    fontFamily: "inherit",
-                    resize: "vertical"
+                    backgroundColor: "#0f1b2a",
+                    border: "1px solid #30363d",
+                    borderRadius: "6px",
+                    color: "#ffffff",
+                    fontSize: "1rem"
                   }}
-                  placeholder="Tell us what's on your mind..."
                 />
               </div>
 
-              <div style={{ display: "flex", gap: "0.75rem", justifyContent: "flex-end" }}>
+              <div style={{ marginBottom: "1.5rem" }}>
+                <label style={{
+                  display: "block",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  color: "rgba(255, 255, 255, 0.9)",
+                  marginBottom: "0.5rem"
+                }}>
+                  Message
+                </label>
+                <textarea
+                  required
+                  rows={4}
+                  value={feedbackForm.message}
+                  onChange={(e) => setFeedbackForm({ ...feedbackForm, message: e.target.value })}
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem",
+                    backgroundColor: "#0f1b2a",
+                    border: "1px solid #30363d",
+                    borderRadius: "6px",
+                    color: "#ffffff",
+                    fontSize: "1rem",
+                    resize: "vertical"
+                  }}
+                />
+              </div>
+
+              {feedbackSuccess && (
+                <div style={{
+                  padding: "0.75rem",
+                  backgroundColor: "rgba(34, 197, 94, 0.1)",
+                  border: "1px solid rgba(34, 197, 94, 0.3)",
+                  borderRadius: "6px",
+                  color: "#22c55e",
+                  marginBottom: "1.5rem",
+                  fontSize: "0.875rem"
+                }}>
+                  {feedbackSuccess}
+                </div>
+              )}
+
+              {feedbackError && (
+                <div style={{
+                  padding: "0.75rem",
+                  backgroundColor: "rgba(239, 68, 68, 0.1)",
+                  border: "1px solid rgba(239, 68, 68, 0.3)",
+                  borderRadius: "6px",
+                  color: "#ef4444",
+                  marginBottom: "1.5rem",
+                  fontSize: "0.875rem"
+                }}>
+                  {feedbackError}
+                </div>
+              )}
+
+              <div style={{ display: "flex", gap: "1rem", justifyContent: "flex-end" }}>
                 <button
                   type="button"
                   onClick={() => setFeedbackOpen(false)}
                   style={{
                     padding: "0.75rem 1.5rem",
-                    background: "#f3f4f6",
-                    color: "#374151",
-                    border: "none",
-                    borderRadius: "8px",
+                    background: "#16191f",
+                    color: "#ffffff",
+                    border: "1px solid #30363d",
+                    borderRadius: "6px",
                     fontSize: "0.875rem",
                     fontWeight: "500",
                     cursor: "pointer"
@@ -398,16 +939,17 @@ export default function LandingPage() {
                   disabled={feedbackSubmitting}
                   style={{
                     padding: "0.75rem 1.5rem",
-                    background: feedbackSubmitting ? "#9ca3af" : "#667eea",
+                    background: "#0972d3",
                     color: "#ffffff",
                     border: "none",
-                    borderRadius: "8px",
+                    borderRadius: "6px",
                     fontSize: "0.875rem",
-                    fontWeight: "500",
-                    cursor: feedbackSubmitting ? "not-allowed" : "pointer"
+                    fontWeight: "600",
+                    cursor: feedbackSubmitting ? "not-allowed" : "pointer",
+                    opacity: feedbackSubmitting ? 0.5 : 1
                   }}
                 >
-                  {feedbackSubmitting ? "Sending..." : "Send Feedback"}
+                  {feedbackSubmitting ? 'Sending...' : 'Send feedback'}
                 </button>
               </div>
             </form>
