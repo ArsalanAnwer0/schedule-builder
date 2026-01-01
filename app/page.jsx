@@ -30,28 +30,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", position: "relative", overflow: "hidden" }}>
-      {/* Decorative background elements */}
-      <div style={{
-        position: "absolute",
-        top: "-10%",
-        right: "-5%",
-        width: "500px",
-        height: "500px",
-        borderRadius: "50%",
-        background: "rgba(255, 255, 255, 0.1)",
-        filter: "blur(80px)"
-      }} />
-      <div style={{
-        position: "absolute",
-        bottom: "-10%",
-        left: "-5%",
-        width: "400px",
-        height: "400px",
-        borderRadius: "50%",
-        background: "rgba(255, 255, 255, 0.1)",
-        filter: "blur(80px)"
-      }} />
+    <div style={{ minHeight: "100vh", backgroundColor: "#0f1b2a", position: "relative", overflow: "hidden" }}>
 
       {/* Navigation */}
       <nav style={{
@@ -69,16 +48,14 @@ export default function LandingPage() {
             width: "40px",
             height: "40px",
             borderRadius: "8px",
-            background: "rgba(255, 255, 255, 0.2)",
-            backdropFilter: "blur(10px)",
+            background: "#0972d3",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontSize: "1.25rem",
-            fontWeight: "700",
+            fontSize: "1.5rem",
             color: "#ffffff"
           }}>
-            SB
+            🔨
           </div>
           <span style={{ fontSize: "1.25rem", fontWeight: "600", color: "#ffffff" }}>Schedule Builder</span>
         </div>
@@ -88,18 +65,17 @@ export default function LandingPage() {
             onClick={() => setFeedbackOpen(true)}
             style={{
               padding: "0.625rem 1.25rem",
-              background: "rgba(255, 255, 255, 0.15)",
-              backdropFilter: "blur(10px)",
+              background: "#16191f",
               color: "#ffffff",
-              border: "1px solid rgba(255, 255, 255, 0.2)",
-              borderRadius: "8px",
+              border: "1px solid #30363d",
+              borderRadius: "6px",
               fontSize: "0.875rem",
               fontWeight: "500",
               cursor: "pointer",
               transition: "all 0.2s ease"
             }}
-            onMouseOver={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.25)"}
-            onMouseOut={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.15)"}
+            onMouseOver={(e) => e.currentTarget.style.background = "#1f2937"}
+            onMouseOut={(e) => e.currentTarget.style.background = "#16191f"}
           >
             Feedback
           </button>
@@ -107,18 +83,17 @@ export default function LandingPage() {
             onClick={() => router.push('/login')}
             style={{
               padding: "0.625rem 1.25rem",
-              background: "rgba(255, 255, 255, 0.15)",
-              backdropFilter: "blur(10px)",
+              background: "#16191f",
               color: "#ffffff",
-              border: "1px solid rgba(255, 255, 255, 0.2)",
-              borderRadius: "8px",
+              border: "1px solid #30363d",
+              borderRadius: "6px",
               fontSize: "0.875rem",
               fontWeight: "500",
               cursor: "pointer",
               transition: "all 0.2s ease"
             }}
-            onMouseOver={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.25)"}
-            onMouseOut={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.15)"}
+            onMouseOver={(e) => e.currentTarget.style.background = "#1f2937"}
+            onMouseOut={(e) => e.currentTarget.style.background = "#16191f"}
           >
             Sign In
           </button>
@@ -126,24 +101,17 @@ export default function LandingPage() {
             onClick={() => router.push('/register')}
             style={{
               padding: "0.625rem 1.5rem",
-              background: "#ffffff",
-              color: "#667eea",
+              background: "#0972d3",
+              color: "#ffffff",
               border: "none",
-              borderRadius: "8px",
+              borderRadius: "6px",
               fontSize: "0.875rem",
               fontWeight: "600",
               cursor: "pointer",
-              transition: "all 0.2s ease",
-              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)"
+              transition: "all 0.2s ease"
             }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.2)";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.15)";
-            }}
+            onMouseOver={(e) => e.currentTarget.style.background = "#0863bf"}
+            onMouseOut={(e) => e.currentTarget.style.background = "#0972d3"}
           >
             Get Started
           </button>
@@ -156,25 +124,9 @@ export default function LandingPage() {
         zIndex: 10,
         maxWidth: "1200px",
         margin: "0 auto",
-        padding: "4rem 2rem",
+        padding: "6rem 2rem",
         textAlign: "center"
       }}>
-        <div style={{ marginBottom: "1rem" }}>
-          <span style={{
-            display: "inline-block",
-            padding: "0.5rem 1rem",
-            background: "rgba(255, 255, 255, 0.2)",
-            backdropFilter: "blur(10px)",
-            borderRadius: "20px",
-            color: "#ffffff",
-            fontSize: "0.875rem",
-            fontWeight: "500",
-            border: "1px solid rgba(255, 255, 255, 0.3)"
-          }}>
-            Now Live
-          </span>
-        </div>
-
         <h1 style={{
           fontSize: "4rem",
           fontWeight: "700",
