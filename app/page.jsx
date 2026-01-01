@@ -139,27 +139,6 @@ export default function LandingPage() {
           smart schedule generation, and seamless team management.
         </p>
 
-        <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
-          <button
-            onClick={() => router.push('/register')}
-            style={{
-              padding: "1rem 2.5rem",
-              background: "#0972d3",
-              color: "#ffffff",
-              border: "none",
-              borderRadius: "6px",
-              fontSize: "1.125rem",
-              fontWeight: "600",
-              cursor: "pointer",
-              transition: "all 0.2s ease"
-            }}
-            onMouseOver={(e) => e.currentTarget.style.background = "#0863bf"}
-            onMouseOut={(e) => e.currentTarget.style.background = "#0972d3"}
-          >
-            Get Started
-          </button>
-        </div>
-
         {/* Features Grid */}
         <div style={{
           marginTop: "8rem",

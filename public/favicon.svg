@@ -1,4 +1,11 @@
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect width="32" height="32" rx="6" fill="#0972d3"/>
-  <text x="16" y="23" font-family="system-ui, -apple-system, sans-serif" font-size="20" fill="white" text-anchor="middle">🔨</text>
+  <g transform="translate(6, 6)">
+    <!-- Hammer head -->
+    <rect x="12" y="4" width="8" height="6" rx="1" fill="#ffffff"/>
+    <!-- Hammer handle -->
+    <rect x="7" y="9" width="3" height="12" rx="1" fill="#ffffff"/>
+    <!-- Handle grip -->
+    <circle cx="8.5" cy="18" r="1.5" fill="#e0e0e0"/>
+  </g>
 </svg>
