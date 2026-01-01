@@ -1,2844 +1,533 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { generateSchedule } from "../lib/scheduler";
-import TimePicker from "./components/TimePicker";
-// import { exportToCSV, downloadCSV } from "../lib/utils/export"; // Archived for later
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-// Predefined semester dates for US universities
-const SEMESTER_PRESETS = {
-  "Spring 2026": { start: "2026-01-12", end: "2026-05-08" },
-  "Summer 2026": { start: "2026-06-01", end: "2026-08-07" },
-  "Fall 2026": { start: "2026-08-24", end: "2026-12-18" },
-  "Spring 2027": { start: "2027-01-11", end: "2027-05-07" },
-  "Summer 2027": { start: "2027-06-01", end: "2027-08-06" },
-  "Fall 2027": { start: "2027-08-23", end: "2027-12-17" },
-};
-
-// Convert 24-hour time to 12-hour format
-const convertTo12Hour = (time24) => {
-  if (!time24) return '';
-  const [hours, minutes] = time24.split(':').map(Number);
-  const hour12 = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
-  const ampm = hours < 12 ? 'AM' : 'PM';
-  return `${hour12}:${String(minutes).padStart(2, '0')} ${ampm}`;
-};
-
-export default function Home() {
+export default function LandingPage() {
   const router = useRouter();
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [feedbackForm, setFeedbackForm] = useState({ name: '', email: '', message: '', type: 'feedback' });
+  const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
+  const [feedbackSuccess, setFeedbackSuccess] = useState('');
+  const [feedbackError, setFeedbackError] = useState('');
 
-  // Auth state
-  const [user, setUser] = useState(null);
-  const [authLoading, setAuthLoading] = useState(true);
-
-  // Student management state
-  const [students, setStudents] = useState([]);
-  const [loadingStudents, setLoadingStudents] = useState(false);
-  const [showAddStudentModal, setShowAddStudentModal] = useState(false);
-  const [editingStudent, setEditingStudent] = useState(null);
-  const [studentFormData, setStudentFormData] = useState({ name: '', email: '', secondaryEmail: '' });
-  const [studentError, setStudentError] = useState('');
-  const [studentSuccess, setStudentSuccess] = useState('');
-
-  // Admin management state
-  const [admins, setAdmins] = useState([]);
-  const [loadingAdmins, setLoadingAdmins] = useState(false);
-  const [showInviteAdminModal, setShowInviteAdminModal] = useState(false);
-  const [adminFormData, setAdminFormData] = useState({ name: '', email: '', secondaryEmail: '' });
-  const [adminError, setAdminError] = useState('');
-  const [adminSuccess, setAdminSuccess] = useState('');
-
-  // Default form data
-  const defaultFormData = {
-    officeStartTime: "08:00",
-    officeEndTime: "16:30",
-    scheduleStartDate: "",
-    scheduleEndDate: "",
-    totalHoursPerWeek: "40",
-    hoursPerWorkerPerWeek: "6",
-    minShiftLength: "",
-    maxShiftLength: "",
-    workers: [],
-  };
-
-  const [formData, setFormData] = useState(defaultFormData);
-  const [scheduleResult, setScheduleResult] = useState(null);
-  const [selectedScheduleOption, setSelectedScheduleOption] = useState(0); // 0, 1, or 2 for the 3 options
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [selectedSemester, setSelectedSemester] = useState("");
-  const [isHydrated, setIsHydrated] = useState(false);
-  const [validationError, setValidationError] = useState(null);
-  const [savedScheduleIds, setSavedScheduleIds] = useState([]); // Store schedule IDs after saving to DB
-  const [publishingScheduleId, setPublishingScheduleId] = useState(null); // Track which schedule is being published
-  const [editRequests, setEditRequests] = useState([]); // Pending edit requests
-  const [processingRequestId, setProcessingRequestId] = useState(null); // Track which request is being processed
-
-  // Confirmation modal state
-  const [confirmModal, setConfirmModal] = useState({
-    show: false,
-    title: '',
-    message: '',
-    onConfirm: null,
-    confirmText: 'Confirm',
-    cancelText: 'Cancel',
-    isDangerous: false
-  });
-
-  // Profile dropdown state
-  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-
-  // Check authentication
-  useEffect(() => {
-    fetch('/api/auth/me')
-      .then(res => res.json())
-      .then(data => {
-        if (data.user && data.user.role === 'admin') {
-          setUser(data.user);
-          loadStudents();
-          loadEditRequests();
-          loadAdmins();
-        } else {
-          router.push('/login');
-        }
-      })
-      .catch(() => {
-        router.push('/login');
-      })
-      .finally(() => {
-        setAuthLoading(false);
-      });
-  }, [router]);
-
-  // Load students with availability
-  const loadStudents = async () => {
-    setLoadingStudents(true);
-    try {
-      const res = await fetch('/api/students/availability');
-      const data = await res.json();
-      if (res.ok) {
-        setStudents(data.students);
-      }
-    } catch (err) {
-      console.error('Failed to load students:', err);
-    } finally {
-      setLoadingStudents(false);
-    }
-  };
-
-  // Load edit requests
-  const loadEditRequests = async () => {
-    try {
-      const res = await fetch('/api/availability/edit-requests');
-      const data = await res.json();
-      if (res.ok && data.requests) {
-        setEditRequests(data.requests.filter(req => req.status === 'pending'));
-      }
-    } catch (err) {
-      console.error('Failed to load edit requests:', err);
-    }
-  };
-
-  // Load admins
-  const loadAdmins = async () => {
-    setLoadingAdmins(true);
-    try {
-      const res = await fetch('/api/auth/admins');
-      const data = await res.json();
-      if (res.ok) {
-        setAdmins(data.admins);
-      }
-    } catch (err) {
-      console.error('Failed to load admins:', err);
-    } finally {
-      setLoadingAdmins(false);
-    }
-  };
-
-  // Admin management handlers
-  const handleInviteAdmin = () => {
-    setAdminFormData({ name: '', email: '' });
-    setShowInviteAdminModal(true);
-    setAdminError('');
-    setAdminSuccess('');
-  };
-
-  const handleSubmitAdminInvite = async (e) => {
+  const handleFeedbackSubmit = async (e) => {
     e.preventDefault();
-    setAdminError('');
-    setAdminSuccess('');
-
-    try {
-      const res = await fetch('/api/auth/invite-admin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(adminFormData),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setAdminError(data.error || 'Failed to send invitation');
-        return;
-      }
-
-      setAdminSuccess(data.message);
-      setShowInviteAdminModal(false);
-      loadAdmins();
-      setTimeout(() => setAdminSuccess(''), 5000);
-    } catch (err) {
-      setAdminError('Something went wrong. Please try again.');
-    }
-  };
-
-  // Helper function to show custom confirmation modal
-  const showConfirm = (title, message, onConfirm, isDangerous = false) => {
-    return new Promise((resolve) => {
-      setConfirmModal({
-        show: true,
-        title,
-        message,
-        onConfirm: () => {
-          resolve(true);
-          onConfirm();
-          setConfirmModal(prev => ({ ...prev, show: false }));
-        },
-        onCancel: () => {
-          resolve(false);
-          setConfirmModal(prev => ({ ...prev, show: false }));
-        },
-        confirmText: isDangerous ? 'Delete' : 'Confirm',
-        cancelText: 'Cancel',
-        isDangerous
-      });
-    });
-  };
-
-  const handleRemoveAdmin = async (adminId) => {
-    setConfirmModal({
-      show: true,
-      title: 'Remove Admin',
-      message: 'Are you sure you want to remove this admin? They will lose access immediately.',
-      isDangerous: true,
-      confirmText: 'Remove',
-      cancelText: 'Cancel',
-      onConfirm: async () => {
-        setConfirmModal(prev => ({ ...prev, show: false }));
-        setAdminError('');
-        setAdminSuccess('');
-
-        try {
-          const res = await fetch('/api/auth/remove-admin', {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ adminId }),
-          });
-
-          const data = await res.json();
-
-          if (!res.ok) {
-            setAdminError(data.error || 'Failed to remove admin');
-            return;
-          }
-
-          setAdminSuccess(data.message);
-          loadAdmins();
-          setTimeout(() => setAdminSuccess(''), 5000);
-        } catch (err) {
-          setAdminError('Something went wrong. Please try again.');
-        }
-      },
-      onCancel: () => {
-        setConfirmModal(prev => ({ ...prev, show: false }));
-      }
-    });
-  };
-
-  // Student management handlers
-  const handleAddStudent = () => {
-    setStudentFormData({ name: '', email: '', secondaryEmail: '' });
-    setEditingStudent(null);
-    setShowAddStudentModal(true);
-    setStudentError('');
-    setStudentSuccess('');
-  };
-
-  const handleEditStudent = (student) => {
-    setStudentFormData({ name: student.name, email: student.email, secondaryEmail: student.secondaryEmail || '' });
-    setEditingStudent(student);
-    setShowAddStudentModal(true);
-    setStudentError('');
-    setStudentSuccess('');
-  };
-
-  const handleSubmitStudent = async (e) => {
-    e.preventDefault();
-    setStudentError('');
-    setStudentSuccess('');
-
-    try {
-      const url = editingStudent
-        ? `/api/students/${editingStudent.id}`
-        : '/api/students';
-      const method = editingStudent ? 'PUT' : 'POST';
-
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(studentFormData),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setStudentError(data.error || 'Failed to save student');
-        return;
-      }
-
-      setStudentSuccess(editingStudent ? 'Student updated successfully' : 'Student added successfully');
-      setShowAddStudentModal(false);
-      loadStudents();
-      setTimeout(() => setStudentSuccess(''), 3000);
-    } catch (err) {
-      setStudentError('Something went wrong. Please try again.');
-    }
-  };
-
-  const handleDeleteStudent = async (id) => {
-    setConfirmModal({
-      show: true,
-      title: 'Delete Student',
-      message: 'Are you sure you want to delete this student? This action cannot be undone.',
-      isDangerous: true,
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
-      onConfirm: async () => {
-        setConfirmModal(prev => ({ ...prev, show: false }));
-        try {
-          const res = await fetch(`/api/students/${id}`, { method: 'DELETE' });
-
-          if (res.ok) {
-            setStudentSuccess('Student deleted successfully');
-            loadStudents();
-            setTimeout(() => setStudentSuccess(''), 3000);
-          } else {
-            const data = await res.json();
-            setStudentError(data.error || 'Failed to delete student');
-          }
-        } catch (err) {
-          setStudentError('Something went wrong. Please try again.');
-        }
-      },
-      onCancel: () => {
-        setConfirmModal(prev => ({ ...prev, show: false }));
-      }
-    });
-  };
-
-  const handleRequestSingleAvailability = async (studentId) => {
-    setStudentError('');
-    setStudentSuccess('');
-
-    try {
-      const res = await fetch('/api/availability/request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ studentIds: [studentId] }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setStudentError(data.error || 'Failed to send availability request');
-        return;
-      }
-
-      setStudentSuccess(data.message);
-      setTimeout(() => setStudentSuccess(''), 5000);
-    } catch (err) {
-      setStudentError('Something went wrong. Please try again.');
-    }
-  };
-
-  const handleRequestAllAvailability = async () => {
-    if (students.length === 0) {
-      setStudentError('No students available');
-      return;
-    }
-
-    setStudentError('');
-    setStudentSuccess('');
-
-    try {
-      const allStudentIds = students.map(s => s.id);
-      const res = await fetch('/api/availability/request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ studentIds: allStudentIds }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setStudentError(data.error || 'Failed to send availability requests');
-        return;
-      }
-
-      setStudentSuccess(data.message);
-      setTimeout(() => setStudentSuccess(''), 5000);
-    } catch (err) {
-      setStudentError('Something went wrong. Please try again.');
-    }
-  };
-
-  const handleResetSingleAvailability = async (studentId) => {
-    setConfirmModal({
-      show: true,
-      title: 'Reset Availability',
-      message: 'Are you sure you want to reset this student\'s availability? This will delete their submitted availability and lock their access. You must request availability again for them to resubmit.',
-      isDangerous: true,
-      confirmText: 'Reset',
-      cancelText: 'Cancel',
-      onConfirm: async () => {
-        setConfirmModal(prev => ({ ...prev, show: false }));
-        setStudentError('');
-        setStudentSuccess('');
-
-        try {
-          const res = await fetch('/api/availability/reset', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ studentId }),
-          });
-
-          const data = await res.json();
-
-          if (!res.ok) {
-            setStudentError(data.error || 'Failed to reset availability');
-            return;
-          }
-
-          setStudentSuccess(data.message);
-          setTimeout(() => setStudentSuccess(''), 5000);
-
-          // Refresh the students list to update the UI
-          fetchStudents();
-        } catch (err) {
-          setStudentError('Something went wrong. Please try again.');
-        }
-      },
-      onCancel: () => {
-        setConfirmModal(prev => ({ ...prev, show: false }));
-      }
-    });
-  };
-
-  const handleResetAllAvailability = async () => {
-    if (students.length === 0) {
-      setStudentError('No students available');
-      return;
-    }
-
-    setConfirmModal({
-      show: true,
-      title: 'Reset All Availability',
-      message: `Are you sure you want to reset availability for all ${students.length} student(s)? This will delete all submitted availability and lock their access. You must request availability again for them to resubmit.`,
-      isDangerous: true,
-      confirmText: 'Reset All',
-      cancelText: 'Cancel',
-      onConfirm: async () => {
-        setConfirmModal(prev => ({ ...prev, show: false }));
-        setStudentError('');
-        setStudentSuccess('');
-
-        try {
-          const allStudentIds = students.map(s => s.id);
-          const res = await fetch('/api/availability/reset-all', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ studentIds: allStudentIds }),
-          });
-
-          const data = await res.json();
-
-          if (!res.ok) {
-            setStudentError(data.error || 'Failed to reset availability');
-            return;
-          }
-
-          setStudentSuccess(data.message);
-          setTimeout(() => setStudentSuccess(''), 5000);
-
-          // Refresh the students list to update the UI
-          fetchStudents();
-        } catch (err) {
-          setStudentError('Something went wrong. Please try again.');
-        }
-      },
-      onCancel: () => {
-        setConfirmModal(prev => ({ ...prev, show: false }));
-      }
-    });
-  };
-
-  const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    router.push('/login');
-  };
-
-  // Load from localStorage after hydration
-  useEffect(() => {
-    setIsHydrated(true);
-    const saved = localStorage.getItem('scheduleBuilderData');
-    if (saved) {
-      try {
-        const savedData = JSON.parse(saved);
-        // Merge saved data with defaults to ensure new fields are present
-        const mergedData = { ...defaultFormData, ...savedData };
-        // Ensure numeric fields are valid (allow empty strings for optional fields)
-        if (mergedData.minShiftLength !== "" && isNaN(mergedData.minShiftLength)) {
-          mergedData.minShiftLength = defaultFormData.minShiftLength;
-        }
-        if (mergedData.maxShiftLength !== "" && isNaN(mergedData.maxShiftLength)) {
-          mergedData.maxShiftLength = defaultFormData.maxShiftLength;
-        }
-        setFormData(mergedData);
-      } catch (e) {
-        console.error('Failed to load saved data:', e);
-      }
-    }
-  }, []);
-
-  // Save to localStorage whenever formData changes (only after hydration)
-  useEffect(() => {
-    if (isHydrated) {
-      localStorage.setItem('scheduleBuilderData', JSON.stringify(formData));
-    }
-  }, [formData, isHydrated]);
-
-  const handleInputChange = (field, value) => {
-    setFormData({ ...formData, [field]: value });
-  };
-
-  const handleSemesterChange = (semester) => {
-    setSelectedSemester(semester);
-    if (semester && SEMESTER_PRESETS[semester]) {
-      setFormData({
-        ...formData,
-        scheduleStartDate: SEMESTER_PRESETS[semester].start,
-        scheduleEndDate: SEMESTER_PRESETS[semester].end,
-      });
-    }
-  };
-
-  // Removed manual worker management functions - workers are now students with submitted availability
-
-  // Helper function to convert 12-hour time to 24-hour for sorting
-  const convertTo24Hour = (time12h) => {
-    const [time, period] = time12h.split(' ');
-    let [hours, minutes] = time.split(':');
-    hours = parseInt(hours);
-
-    if (period === 'PM' && hours !== 12) {
-      hours += 12;
-    } else if (period === 'AM' && hours === 12) {
-      hours = 0;
-    }
-
-    return `${String(hours).padStart(2, '0')}:${minutes}`;
-  };
-
-  // Helper function to add 30 minutes to a time slot
-  const addThirtyMinutes = (time12h) => {
-    const [time, period] = time12h.split(' ');
-    let [hours, minutes] = time.split(':');
-    hours = parseInt(hours);
-    minutes = parseInt(minutes);
-
-    // Add 30 minutes
-    minutes += 30;
-    if (minutes >= 60) {
-      minutes -= 60;
-      hours += 1;
-    }
-
-    // Handle 12-hour rollover and AM/PM transition
-    let newPeriod = period;
-
-    // If we went from 11:XX to 12:XX in AM, switch to PM
-    if (period === 'AM' && hours === 12 && minutes > 0) {
-      newPeriod = 'PM';
-      hours = 12;
-    }
-    // If we went past 12 in PM (13+), wrap around but stay in PM
-    else if (hours > 12) {
-      hours -= 12;
-    }
-    // If exactly 12:00, keep the period as is
-
-    return `${hours}:${String(minutes).padStart(2, '0')} ${newPeriod}`;
-  };
-
-  const handleGenerateSchedule = () => {
-    // Clear any previous validation errors
-    setValidationError(null);
-
-    // Check if we have students with submitted availability
-    const studentsWithAvailability = students.filter(s => s.hasSubmitted);
-
-    if (studentsWithAvailability.length === 0) {
-      setValidationError(
-        'No students have submitted their availability yet. Please request availability from students first.'
-      );
-      return;
-    }
-
-    // Convert student availability to the format expected by the scheduler
-    const workers = studentsWithAvailability.map(student => {
-      const availability = {};
-      const studentAvail = student.availability.availability;
-
-      // Convert the student's submitted availability to the scheduler format
-      ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].forEach(day => {
-        if (studentAvail[day] && studentAvail[day].length > 0) {
-          // Student has selected time slots for this day (e.g., ["8:00 AM", "8:30 AM", "9:00 AM"])
-          // We need to find the earliest and latest times to create a range
-          const timeSlots = studentAvail[day];
-
-          // Find the earliest (first) and latest (last) time slots
-          const sortedSlots = [...timeSlots].sort((a, b) => {
-            // Convert to 24-hour for sorting
-            const timeA = convertTo24Hour(a);
-            const timeB = convertTo24Hour(b);
-            return timeA.localeCompare(timeB);
-          });
-
-          const startTime12h = sortedSlots[0]; // Earliest time in 12-hour format
-          const lastSlot12h = sortedSlots[sortedSlots.length - 1]; // Latest time in 12-hour format
-
-          // Add 30 minutes to the last slot to get the end time
-          const endTime12h = addThirtyMinutes(lastSlot12h);
-
-          // Convert to 24-hour format for the scheduler
-          const startTime24h = convertTo24Hour(startTime12h);
-          const endTime24h = convertTo24Hour(endTime12h);
-
-          availability[day] = {
-            available: true,
-            start: startTime24h,
-            end: endTime24h
-          };
-        } else {
-          availability[day] = { available: false, start: '', end: '' };
-        }
-      });
-
-      return {
-        id: student.id,
-        name: student.name,
-        availability: availability
-      };
-    });
-
-    // Update formData with workers from students
-    const scheduleData = {
-      ...formData,
-      workers: workers
-    };
-
-    // Log the converted data for debugging
-    console.log('=== Schedule Generation Debug ===');
-    console.log('Students with availability:', studentsWithAvailability.length);
-    console.log('Converted workers:', workers);
-    console.log('Schedule data being sent to generator:', scheduleData);
-
-    setIsGenerating(true);
-    setTimeout(async () => {
-      const result = generateSchedule(scheduleData);
-      console.log('Schedule generation result:', result);
-      setScheduleResult(result);
-
-      // Save schedules to database
-      if (result.success && result.schedules) {
-        try {
-          const saveResponse = await fetch('/api/schedules', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              schedules: result.schedules,
-              scheduleConfig: {
-                scheduleStartDate: formData.scheduleStartDate,
-                scheduleEndDate: formData.scheduleEndDate,
-                officeStartTime: formData.officeStartTime,
-                officeEndTime: formData.officeEndTime
-              }
-            }),
-          });
-
-          const saveData = await saveResponse.json();
-
-          if (saveData.success) {
-            // Store the schedule IDs so we can publish them later
-            setSavedScheduleIds(saveData.schedules.map(s => s.id));
-            console.log('Schedules saved to database:', saveData.schedules);
-          }
-        } catch (error) {
-          console.error('Error saving schedules:', error);
-        }
-      }
-
-      setIsGenerating(false);
+    setFeedbackSubmitting(true);
+    setFeedbackError('');
+    setFeedbackSuccess('');
+
+    // Simulate submission (you can add API endpoint later)
+    setTimeout(() => {
+      setFeedbackSuccess('Thank you for your feedback! We\'ll get back to you soon.');
+      setFeedbackForm({ name: '', email: '', message: '', type: 'feedback' });
+      setFeedbackSubmitting(false);
       setTimeout(() => {
-        document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-    }, 500);
+        setFeedbackOpen(false);
+        setFeedbackSuccess('');
+      }, 2000);
+    }, 1000);
   };
-
-  const handlePublishSchedule = async (scheduleIndex) => {
-    const scheduleId = savedScheduleIds[scheduleIndex];
-
-    if (!scheduleId) {
-      setStudentError('Schedule not saved yet. Please regenerate the schedule.');
-      return;
-    }
-
-    setPublishingScheduleId(scheduleId);
-
-    try {
-      const response = await fetch(`/api/schedules/${scheduleId}/publish`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setStudentError(data.error || 'Failed to publish schedule');
-        return;
-      }
-
-      setStudentSuccess(data.message);
-      setTimeout(() => setStudentSuccess(''), 5000);
-
-      // Reload students to refresh the UI
-      await loadStudents();
-    } catch (err) {
-      setStudentError('Something went wrong. Please try again.');
-    } finally {
-      setPublishingScheduleId(null);
-    }
-  };
-
-  const handleProcessEditRequest = async (requestId, action) => {
-    setProcessingRequestId(requestId);
-    setStudentError('');
-    setStudentSuccess('');
-
-    try {
-      const response = await fetch(`/api/availability/edit-requests/${requestId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action }) // 'approve' or 'reject'
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setStudentError(data.error || `Failed to ${action} request`);
-        return;
-      }
-
-      setStudentSuccess(data.message);
-      setTimeout(() => setStudentSuccess(''), 5000);
-
-      // Reload both students and edit requests
-      await loadStudents();
-      await loadEditRequests();
-    } catch (err) {
-      setStudentError('Something went wrong. Please try again.');
-    } finally {
-      setProcessingRequestId(null);
-    }
-  };
-
-  if (authLoading) {
-    return (
-      <div style={{ minHeight: "100vh", backgroundColor: "#0f1b2a", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <p style={{ color: "#aab7b8" }}>Loading...</p>
-      </div>
-    );
-  }
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#0f1b2a", padding: "2rem 1.5rem" }}>
-      <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
+    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", position: "relative", overflow: "hidden" }}>
+      {/* Decorative background elements */}
+      <div style={{
+        position: "absolute",
+        top: "-10%",
+        right: "-5%",
+        width: "500px",
+        height: "500px",
+        borderRadius: "50%",
+        background: "rgba(255, 255, 255, 0.1)",
+        filter: "blur(80px)"
+      }} />
+      <div style={{
+        position: "absolute",
+        bottom: "-10%",
+        left: "-5%",
+        width: "400px",
+        height: "400px",
+        borderRadius: "50%",
+        background: "rgba(255, 255, 255, 0.1)",
+        filter: "blur(80px)"
+      }} />
 
-        {/* Header with User Info and Profile Dropdown */}
-        <div style={{ marginBottom: "1.5rem", display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1rem" }}>
-          <div>
-            <h1 style={{ fontSize: "1.875rem", fontWeight: "400", color: "#ffffff", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
-              Schedule Builder
-            </h1>
-            <p style={{ fontSize: "1rem", color: "#aab7b8", lineHeight: "1.6" }}>
-              Welcome back, {user?.name}. Manage your office schedules and students below.
-            </p>
+      {/* Navigation */}
+      <nav style={{
+        position: "relative",
+        zIndex: 10,
+        padding: "1.5rem 2rem",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        maxWidth: "1400px",
+        margin: "0 auto"
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{
+            width: "40px",
+            height: "40px",
+            borderRadius: "8px",
+            background: "rgba(255, 255, 255, 0.2)",
+            backdropFilter: "blur(10px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "1.25rem",
+            fontWeight: "700",
+            color: "#ffffff"
+          }}>
+            SB
           </div>
-
-          {/* Modern Profile Dropdown */}
-          <div style={{ position: "relative" }}>
-            <button
-              onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-              style={{
-                padding: "0.625rem 1rem",
-                backgroundColor: "#161b22",
-                color: "#ffffff",
-                border: "1px solid #30363d",
-                borderRadius: "8px",
-                fontSize: "0.875rem",
-                fontWeight: "500",
-                cursor: "pointer",
-                transition: "all 0.15s ease",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.75rem"
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = "#1c2128";
-                e.currentTarget.style.borderColor = "#484f58";
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = "#161b22";
-                e.currentTarget.style.borderColor = "#30363d";
-              }}
-            >
-              <div style={{
-                width: "32px",
-                height: "32px",
-                borderRadius: "50%",
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "0.875rem",
-                fontWeight: "600",
-                color: "#ffffff"
-              }}>
-                {user?.name?.charAt(0).toUpperCase()}
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", textAlign: "left" }}>
-                <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff" }}>{user?.name}</span>
-                <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>
-                  {user?.adminType === 'primary' ? 'Primary Admin' : 'Secondary Admin'}
-                </span>
-              </div>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ marginLeft: "0.25rem" }}>
-                <path d="M4 6L8 10L12 6" stroke="#8b949e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-
-            {/* Dropdown Menu */}
-            {showProfileDropdown && (
-              <>
-                <div
-                  style={{
-                    position: "fixed",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    zIndex: 40
-                  }}
-                  onClick={() => setShowProfileDropdown(false)}
-                />
-                <div style={{
-                  position: "absolute",
-                  top: "calc(100% + 0.5rem)",
-                  right: 0,
-                  minWidth: "240px",
-                  backgroundColor: "#161b22",
-                  border: "1px solid #30363d",
-                  borderRadius: "8px",
-                  boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
-                  zIndex: 50,
-                  overflow: "hidden"
-                }}>
-                  <div style={{ padding: "0.75rem 1rem", borderBottom: "1px solid #30363d" }}>
-                    <div style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff", marginBottom: "0.25rem" }}>
-                      {user?.name}
-                    </div>
-                    <div style={{ fontSize: "0.75rem", color: "#8b949e" }}>
-                      {user?.email}
-                    </div>
-                    {user?.organizationName && (
-                      <div style={{ fontSize: "0.75rem", color: "#8b949e", marginTop: "0.25rem" }}>
-                        {user.organizationName}
-                      </div>
-                    )}
-                  </div>
-                  <div style={{ padding: "0.5rem" }}>
-                    <button
-                      onClick={() => {
-                        setShowProfileDropdown(false);
-                        window.location.href = '/profile';
-                      }}
-                      style={{
-                        width: "100%",
-                        padding: "0.625rem 0.75rem",
-                        backgroundColor: "transparent",
-                        color: "#c9d1d9",
-                        border: "none",
-                        borderRadius: "6px",
-                        fontSize: "0.875rem",
-                        fontWeight: "400",
-                        cursor: "pointer",
-                        transition: "all 0.15s ease",
-                        textAlign: "left",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.75rem"
-                      }}
-                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#1c2128"}
-                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
-                    >
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path d="M8 8C9.65685 8 11 6.65685 11 5C11 3.34315 9.65685 2 8 2C6.34315 2 5 3.34315 5 5C5 6.65685 6.34315 8 8 8Z" stroke="currentColor" strokeWidth="1.5"/>
-                        <path d="M3 14C3 11.7909 5.23858 10 8 10C10.7614 10 13 11.7909 13 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                      </svg>
-                      View Profile
-                    </button>
-                    <button
-                      onClick={() => {
-                        setShowProfileDropdown(false);
-                        handleLogout();
-                      }}
-                      style={{
-                        width: "100%",
-                        padding: "0.625rem 0.75rem",
-                        backgroundColor: "transparent",
-                        color: "#f87171",
-                        border: "none",
-                        borderRadius: "6px",
-                        fontSize: "0.875rem",
-                        fontWeight: "400",
-                        cursor: "pointer",
-                        transition: "all 0.15s ease",
-                        textAlign: "left",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.75rem"
-                      }}
-                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#1c2128"}
-                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
-                    >
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path d="M6 14H3C2.44772 14 2 13.5523 2 13V3C2 2.44772 2.44772 2 3 2H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                        <path d="M11 11L14 8M14 8L11 5M14 8H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                      Logout
-                    </button>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
+          <span style={{ fontSize: "1.25rem", fontWeight: "600", color: "#ffffff" }}>Schedule Builder</span>
         </div>
 
-        {/* Student Success/Error Messages */}
-        {studentSuccess && (
-          <div style={{
-            padding: "1rem 1.5rem",
-            backgroundColor: "#0d1f17",
-            border: "1px solid #1e4d2b",
-            borderLeft: "4px solid #047857",
-            borderRadius: "6px",
-            marginBottom: "1.5rem"
-          }}>
-            <p style={{ color: "#10b981", margin: 0, fontSize: "0.875rem" }}>✓ {studentSuccess}</p>
-          </div>
-        )}
-
-        {studentError && (
-          <div style={{
-            padding: "1rem 1.5rem",
-            backgroundColor: "#2d1517",
-            border: "1px solid #5c2d30",
-            borderLeft: "4px solid #dc2626",
-            borderRadius: "6px",
-            marginBottom: "1.5rem"
-          }}>
-            <p style={{ color: "#ff6b6b", margin: 0, fontSize: "0.875rem" }}>{studentError}</p>
-          </div>
-        )}
-
-        {/* Admin Success/Error Messages */}
-        {adminSuccess && (
-          <div style={{
-            padding: "1rem 1.5rem",
-            backgroundColor: "#0d1f17",
-            border: "1px solid #1e4d2b",
-            borderLeft: "4px solid #047857",
-            borderRadius: "6px",
-            marginBottom: "1.5rem"
-          }}>
-            <p style={{ color: "#10b981", margin: 0, fontSize: "0.875rem" }}>✓ {adminSuccess}</p>
-          </div>
-        )}
-
-        {adminError && (
-          <div style={{
-            padding: "1rem 1.5rem",
-            backgroundColor: "#2d1517",
-            border: "1px solid #5c2d30",
-            borderLeft: "4px solid #dc2626",
-            borderRadius: "6px",
-            marginBottom: "1.5rem"
-          }}>
-            <p style={{ color: "#ff6b6b", margin: 0, fontSize: "0.875rem" }}>{adminError}</p>
-          </div>
-        )}
-
-        {/* Admin Management Section - Only show for primary admin */}
-        {(!user?.adminType || user?.adminType === 'primary') && (
-          <div style={{ backgroundColor: "#16191f", border: "1px solid #30363d", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
-            <div style={{ padding: "1.5rem", borderBottom: "1px solid #30363d", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
-              <div>
-                <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
-                  Admin Team
-                </h2>
-                <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
-                  Manage administrators for {user?.organizationName || 'your organization'} (max 3 total)
-                </p>
-              </div>
-              {user?.adminType === 'primary' && (
-                <button
-                  onClick={handleInviteAdmin}
-                  disabled={admins.length >= 3}
-                  style={{
-                    padding: "0.625rem 1.25rem",
-                    backgroundColor: admins.length >= 3 ? "#414d5c" : "#0972d3",
-                    color: "#ffffff",
-                    border: "1px solid",
-                    borderColor: admins.length >= 3 ? "#414d5c" : "#0972d3",
-                    borderRadius: "6px",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    cursor: admins.length >= 3 ? "not-allowed" : "pointer",
-                    opacity: admins.length >= 3 ? 0.6 : 1,
-                    transition: "all 0.15s ease"
-                  }}
-                  onMouseOver={(e) => {
-                    if (admins.length < 3) {
-                      e.currentTarget.style.backgroundColor = "#0863bf";
-                      e.currentTarget.style.borderColor = "#0863bf";
-                    }
-                  }}
-                  onMouseOut={(e) => {
-                    if (admins.length < 3) {
-                      e.currentTarget.style.backgroundColor = "#0972d3";
-                      e.currentTarget.style.borderColor = "#0972d3";
-                    }
-                  }}
-                >
-                  + Invite Admin
-                </button>
-              )}
-            </div>
-
-            <div style={{ padding: "2rem" }}>
-              {loadingAdmins ? (
-                <p style={{ color: "#8b949e" }}>Loading admins...</p>
-              ) : (
-                <div style={{ overflowX: "auto" }}>
-                  <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                    <thead>
-                      <tr style={{ borderBottom: "1px solid #30363d" }}>
-                        <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Name</th>
-                        <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Email</th>
-                        <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Role</th>
-                        <th style={{ padding: "0.875rem 1rem", textAlign: "right", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {admins.map((admin) => (
-                        <tr key={admin.id} style={{ borderBottom: "1px solid #30363d" }}>
-                          <td style={{ padding: "1rem", color: "#ffffff", fontSize: "0.875rem" }}>
-                            {admin.name}
-                            {admin.id === user?._id && <span style={{ color: "#8b949e", fontSize: "0.75rem", marginLeft: "0.5rem" }}>(You)</span>}
-                          </td>
-                          <td style={{ padding: "1rem", color: "#c9d1d9", fontSize: "0.875rem" }}>{admin.email}</td>
-                          <td style={{ padding: "1rem", fontSize: "0.875rem" }}>
-                            <span style={{
-                              padding: "0.25rem 0.75rem",
-                              borderRadius: "9999px",
-                              fontSize: "0.75rem",
-                              fontWeight: "500",
-                              backgroundColor: admin.adminType === 'primary' ? "#1e3a5f" : "#1e293b",
-                              color: admin.adminType === 'primary' ? "#60a5fa" : "#94a3b8"
-                            }}>
-                              {admin.adminType === 'primary' ? 'Primary Admin' : 'Secondary Admin'}
-                            </span>
-                          </td>
-                          <td style={{ padding: "1rem", textAlign: "right" }}>
-                            {user?.adminType === 'primary' && admin.adminType === 'secondary' && admin.id !== user?._id && (
-                              <button
-                                onClick={() => handleRemoveAdmin(admin.id)}
-                                style={{
-                                  padding: "0.5rem 1rem",
-                                  backgroundColor: "transparent",
-                                  color: "#dc2626",
-                                  border: "1px solid #dc2626",
-                                  borderRadius: "6px",
-                                  fontSize: "0.75rem",
-                                  fontWeight: "500",
-                                  cursor: "pointer",
-                                  transition: "all 0.15s ease"
-                                }}
-                                onMouseOver={(e) => {
-                                  e.currentTarget.style.backgroundColor = "#dc2626";
-                                  e.currentTarget.style.color = "#ffffff";
-                                }}
-                                onMouseOut={(e) => {
-                                  e.currentTarget.style.backgroundColor = "transparent";
-                                  e.currentTarget.style.color = "#dc2626";
-                                }}
-                              >
-                                Remove
-                              </button>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Student Management Section */}
-        <div style={{ backgroundColor: "#16191f", border: "1px solid #30363d", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
-          <div style={{ padding: "1.5rem", borderBottom: "1px solid #30363d", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
-            <div>
-              <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
-                Students
-              </h2>
-              <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
-                Manage your student roster and their information
-              </p>
-            </div>
-            <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-              <button
-                onClick={handleRequestAllAvailability}
-                disabled={students.length === 0}
-                style={{
-                  padding: "0.625rem 1.25rem",
-                  backgroundColor: students.length === 0 ? "#414d5c" : "#10b981",
-                  color: "#ffffff",
-                  border: "1px solid",
-                  borderColor: students.length === 0 ? "#414d5c" : "#10b981",
-                  borderRadius: "6px",
-                  fontSize: "0.875rem",
-                  fontWeight: "500",
-                  cursor: students.length === 0 ? "not-allowed" : "pointer",
-                  opacity: students.length === 0 ? 0.6 : 1,
-                  transition: "all 0.15s ease"
-                }}
-                onMouseOver={(e) => {
-                  if (students.length > 0) {
-                    e.currentTarget.style.backgroundColor = "#059669";
-                    e.currentTarget.style.borderColor = "#059669";
-                  }
-                }}
-                onMouseOut={(e) => {
-                  if (students.length > 0) {
-                    e.currentTarget.style.backgroundColor = "#10b981";
-                    e.currentTarget.style.borderColor = "#10b981";
-                  }
-                }}
-              >
-                Request All Availability
-              </button>
-              <button
-                onClick={handleResetAllAvailability}
-                disabled={students.length === 0}
-                style={{
-                  padding: "0.625rem 1.25rem",
-                  backgroundColor: students.length === 0 ? "#414d5c" : "#ca8a04",
-                  color: "#ffffff",
-                  border: "1px solid",
-                  borderColor: students.length === 0 ? "#414d5c" : "#ca8a04",
-                  borderRadius: "6px",
-                  fontSize: "0.875rem",
-                  fontWeight: "500",
-                  cursor: students.length === 0 ? "not-allowed" : "pointer",
-                  opacity: students.length === 0 ? 0.6 : 1,
-                  transition: "all 0.15s ease"
-                }}
-                onMouseOver={(e) => {
-                  if (students.length > 0) {
-                    e.currentTarget.style.backgroundColor = "#a16207";
-                    e.currentTarget.style.borderColor = "#a16207";
-                  }
-                }}
-                onMouseOut={(e) => {
-                  if (students.length > 0) {
-                    e.currentTarget.style.backgroundColor = "#ca8a04";
-                    e.currentTarget.style.borderColor = "#ca8a04";
-                  }
-                }}
-              >
-                Reset All Availability
-              </button>
-              <button
-                onClick={handleAddStudent}
-                style={{
-                  padding: "0.625rem 1.25rem",
-                  backgroundColor: "#0972d3",
-                  color: "#ffffff",
-                  border: "1px solid #0972d3",
-                  borderRadius: "6px",
-                  fontSize: "0.875rem",
-                  fontWeight: "500",
-                  cursor: "pointer",
-                  transition: "all 0.15s ease"
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = "#0863bf";
-                  e.currentTarget.style.borderColor = "#0863bf";
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = "#0972d3";
-                  e.currentTarget.style.borderColor = "#0972d3";
-                }}
-              >
-                + Add Student
-              </button>
-            </div>
-          </div>
-
-          <div style={{ padding: "2rem" }}>
-            {loadingStudents ? (
-              <p style={{ color: "#8b949e" }}>Loading students...</p>
-            ) : students.length === 0 ? (
-              <p style={{ color: "#8b949e" }}>No students yet. Add your first student to get started.</p>
-            ) : (
-              <div style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                  <thead>
-                    <tr style={{ borderBottom: "1px solid #30363d" }}>
-                      <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Name</th>
-                      <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Email</th>
-                      <th style={{ padding: "0.875rem 1rem", textAlign: "right", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {students.map((student) => (
-                      <tr key={student.id} style={{ borderBottom: "1px solid #30363d" }}>
-                        <td style={{ padding: "1rem", color: "#ffffff", fontSize: "0.875rem" }}>{student.name}</td>
-                        <td style={{ padding: "1rem", color: "#c9d1d9", fontSize: "0.875rem" }}>{student.email}</td>
-                        <td style={{ padding: "1rem", textAlign: "right" }}>
-                          <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end", flexWrap: "wrap" }}>
-                            {!student.hasSubmitted && (
-                              <button
-                                onClick={() => handleRequestSingleAvailability(student.id)}
-                                style={{
-                                  padding: "0.375rem 0.875rem",
-                                  fontSize: "0.875rem",
-                                  backgroundColor: "#0d9488",
-                                  border: "1px solid #0d9488",
-                                  borderRadius: "4px",
-                                  color: "#ffffff",
-                                  cursor: "pointer",
-                                  transition: "all 0.15s"
-                                }}
-                                onMouseOver={(e) => {
-                                  e.currentTarget.style.backgroundColor = "#0f766e";
-                                  e.currentTarget.style.borderColor = "#0f766e";
-                                }}
-                                onMouseOut={(e) => {
-                                  e.currentTarget.style.backgroundColor = "#0d9488";
-                                  e.currentTarget.style.borderColor = "#0d9488";
-                                }}
-                              >
-                                Request Availability
-                              </button>
-                            )}
-                            {student.hasSubmitted && (
-                              <button
-                                onClick={() => handleResetSingleAvailability(student.id)}
-                                style={{
-                                  padding: "0.375rem 0.875rem",
-                                  fontSize: "0.875rem",
-                                  backgroundColor: "#854d0e",
-                                  border: "1px solid #854d0e",
-                                  borderRadius: "4px",
-                                  color: "#ffffff",
-                                  cursor: "pointer",
-                                  transition: "all 0.15s"
-                                }}
-                                onMouseOver={(e) => {
-                                  e.currentTarget.style.backgroundColor = "#a16207";
-                                  e.currentTarget.style.borderColor = "#a16207";
-                                }}
-                                onMouseOut={(e) => {
-                                  e.currentTarget.style.backgroundColor = "#854d0e";
-                                  e.currentTarget.style.borderColor = "#854d0e";
-                                }}
-                              >
-                                Reset Availability
-                              </button>
-                            )}
-                            <button
-                              onClick={() => handleEditStudent(student)}
-                              style={{
-                                padding: "0.375rem 0.875rem",
-                                fontSize: "0.875rem",
-                                backgroundColor: "#0d1117",
-                                border: "1px solid #30363d",
-                                borderRadius: "4px",
-                                color: "#58a6ff",
-                                cursor: "pointer",
-                                transition: "all 0.15s"
-                              }}
-                              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#252d3d"}
-                              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#0d1117"}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleDeleteStudent(student.id)}
-                              style={{
-                                padding: "0.375rem 0.875rem",
-                                fontSize: "0.875rem",
-                                backgroundColor: "#2d1517",
-                                border: "1px solid #5c2d30",
-                                borderRadius: "4px",
-                                color: "#ff6b6b",
-                                cursor: "pointer",
-                                transition: "all 0.15s"
-                              }}
-                              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#3d2527"}
-                              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#2d1517"}
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Schedule Configuration Section */}
-        <div style={{ backgroundColor: "#16191f", border: "1px solid #30363d", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
-          <div style={{ padding: "1.5rem", borderBottom: "1px solid #30363d" }}>
-            <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
-              Schedule configuration
-            </h2>
-            <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
-              Configure your office hours, schedule period, and shift constraints
-            </p>
-          </div>
-
-          <div style={{ padding: "2rem" }}>
-            {/* Office Hours */}
-            <div style={{ marginBottom: "2.5rem" }}>
-              <div style={{ marginBottom: "1.25rem" }}>
-                <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.375rem" }}>
-                  Office hours
-                </h3>
-                <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
-                  Define the operating hours for your office (Monday - Friday)
-                </p>
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem", maxWidth: "540px" }}>
-                <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", marginBottom: "0.625rem" }}>
-                    Start time
-                  </label>
-                  <input
-                    type="time"
-                    value={formData.officeStartTime}
-                    onChange={(e) => handleInputChange("officeStartTime", e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      color: "#ffffff",
-                      outline: "none",
-                      colorScheme: "dark"
-                    }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", marginBottom: "0.625rem" }}>
-                    End time
-                  </label>
-                  <input
-                    type="time"
-                    value={formData.officeEndTime}
-                    onChange={(e) => handleInputChange("officeEndTime", e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      color: "#ffffff",
-                      outline: "none",
-                      colorScheme: "dark"
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div style={{ borderTop: "1px solid #21262d", margin: "2.5rem 0" }}></div>
-
-            {/* Schedule Period */}
-            <div style={{ marginBottom: "2.5rem" }}>
-              <div style={{ marginBottom: "1.25rem" }}>
-                <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.375rem" }}>
-                  Schedule period
-                </h3>
-                <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
-                  Specify the date range for this schedule (e.g., semester dates)
-                </p>
-              </div>
-
-              <div style={{ marginBottom: "1.5rem" }}>
-                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", marginBottom: "0.625rem" }}>
-                  Semester preset
-                </label>
-                <select
-                  value={selectedSemester}
-                  onChange={(e) => handleSemesterChange(e.target.value)}
-                  style={{
-                    width: "100%",
-                    maxWidth: "340px",
-                    padding: "0.625rem 0.875rem",
-                    backgroundColor: "#0d1117",
-                    border: "1px solid #30363d",
-                    borderRadius: "6px",
-                    fontSize: "0.875rem",
-                    color: "#ffffff",
-                    outline: "none",
-                    cursor: "pointer"
-                  }}
-                >
-                  <option value="">Custom dates</option>
-                  <option value="Spring 2026">Spring 2026</option>
-                  <option value="Summer 2026">Summer 2026</option>
-                  <option value="Fall 2026">Fall 2026</option>
-                  <option value="Spring 2027">Spring 2027</option>
-                  <option value="Summer 2027">Summer 2027</option>
-                  <option value="Fall 2027">Fall 2027</option>
-                </select>
-              </div>
-
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem", maxWidth: "540px" }}>
-                <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", marginBottom: "0.625rem" }}>
-                    Start date
-                  </label>
-                  <input
-                    type="date"
-                    value={formData.scheduleStartDate}
-                    onChange={(e) => {
-                      handleInputChange("scheduleStartDate", e.target.value);
-                      setSelectedSemester("");
-                    }}
-                    style={{
-                      width: "100%",
-                      padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      color: "#ffffff",
-                      outline: "none",
-                      colorScheme: "dark"
-                    }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", marginBottom: "0.625rem" }}>
-                    End date
-                  </label>
-                  <input
-                    type="date"
-                    value={formData.scheduleEndDate}
-                    onChange={(e) => {
-                      handleInputChange("scheduleEndDate", e.target.value);
-                      setSelectedSemester("");
-                    }}
-                    style={{
-                      width: "100%",
-                      padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      color: "#ffffff",
-                      outline: "none",
-                      colorScheme: "dark"
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div style={{ borderTop: "1px solid #21262d", margin: "2.5rem 0" }}></div>
-
-            {/* Hours and Shift Constraints */}
-            <div>
-              <div style={{ marginBottom: "1.25rem" }}>
-                <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.375rem" }}>
-                  Hours and shift constraints
-                </h3>
-                <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
-                  Set weekly hour targets and optional shift length limits. Leave shift constraints empty to use automatic scheduling strategies.
-                </p>
-              </div>
-
-              <div style={{ marginBottom: "1.5rem", maxWidth: "340px" }}>
-                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", marginBottom: "0.625rem" }}>
-                  Hours per worker per week
-                </label>
-                <input
-                  type="number"
-                  value={formData.hoursPerWorkerPerWeek}
-                  onChange={(e) => handleInputChange("hoursPerWorkerPerWeek", e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "0.625rem 0.875rem",
-                    backgroundColor: "#0d1117",
-                    border: "1px solid #30363d",
-                    borderRadius: "6px",
-                    fontSize: "0.875rem",
-                    color: "#ffffff",
-                    outline: "none"
-                  }}
-                  min="2"
-                  max="20"
-                  step="0.5"
-                />
-                <p style={{ fontSize: "0.8125rem", color: "#6e7681", marginTop: "0.5rem", marginBottom: 0, lineHeight: "1.4" }}>
-                  Target hours each worker should get
-                </p>
-              </div>
-
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "1.5rem", marginTop: "1.5rem" }}>
-                <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", marginBottom: "0.625rem" }}>
-                    Minimum shift (hours)
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.minShiftLength}
-                    onChange={(e) => handleInputChange("minShiftLength", e.target.value === "" ? "" : parseFloat(e.target.value))}
-                    placeholder="Auto"
-                    style={{
-                      width: "100%",
-                      padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      color: "#ffffff",
-                      outline: "none"
-                    }}
-                    min="1"
-                    max="8"
-                    step="0.5"
-                  />
-                  <p style={{ fontSize: "0.8125rem", color: "#6e7681", marginTop: "0.5rem", marginBottom: 0, lineHeight: "1.4" }}>
-                    Optional: Shortest shift duration (leave empty for auto)
-                  </p>
-                </div>
-
-                <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", marginBottom: "0.625rem" }}>
-                    Maximum shift (hours)
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.maxShiftLength}
-                    onChange={(e) => handleInputChange("maxShiftLength", e.target.value === "" ? "" : parseFloat(e.target.value))}
-                    placeholder="Auto"
-                    style={{
-                      width: "100%",
-                      padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      color: "#ffffff",
-                      outline: "none"
-                    }}
-                    min="1"
-                    max="8"
-                    step="0.5"
-                  />
-                  <p style={{ fontSize: "0.8125rem", color: "#6e7681", marginTop: "0.5rem", marginBottom: 0, lineHeight: "1.4" }}>
-                    Optional: Longest shift duration (leave empty for auto)
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Pending Edit Requests Section */}
-        {editRequests.length > 0 && (
-          <div style={{ backgroundColor: "#2d1f17", border: "1px solid #f59e0b", borderRadius: "8px", marginBottom: "1.5rem", overflow: "hidden" }}>
-            <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #f59e0b" }}>
-              <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "#f59e0b", margin: 0, marginBottom: "0.5rem" }}>
-                Pending Availability Edit Requests ({editRequests.length})
-              </h2>
-              <p style={{ fontSize: "0.875rem", color: "#e5e7eb", lineHeight: "1.5", margin: 0 }}>
-                Review and approve/reject student requests to update their availability
-              </p>
-            </div>
-            <div style={{ padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-              {editRequests.map((request) => (
-                <div key={request.id} style={{ backgroundColor: "#16191f", border: "1px solid #30363d", borderRadius: "8px", overflow: "hidden" }}>
-                  {/* Request Header */}
-                  <div style={{ padding: "1rem 1.25rem", backgroundColor: "#1f2937", borderBottom: "1px solid #30363d", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
-                    <div>
-                      <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.25rem" }}>
-                        {request.userName}
-                      </h3>
-                      <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0 }}>
-                        {request.userEmail}
-                      </p>
-                    </div>
-                    <div style={{ display: "flex", gap: "0.75rem" }}>
-                      <button
-                        onClick={() => handleProcessEditRequest(request.id, 'approve')}
-                        disabled={processingRequestId === request.id}
-                        style={{
-                          padding: "0.5rem 1rem",
-                          backgroundColor: processingRequestId === request.id ? "#374151" : "#10b981",
-                          color: "#ffffff",
-                          border: "none",
-                          borderRadius: "6px",
-                          fontSize: "0.875rem",
-                          fontWeight: "500",
-                          cursor: processingRequestId === request.id ? "not-allowed" : "pointer",
-                          transition: "all 0.15s ease"
-                        }}
-                        onMouseOver={(e) => {
-                          if (processingRequestId !== request.id) {
-                            e.currentTarget.style.backgroundColor = "#059669";
-                          }
-                        }}
-                        onMouseOut={(e) => {
-                          if (processingRequestId !== request.id) {
-                            e.currentTarget.style.backgroundColor = "#10b981";
-                          }
-                        }}
-                      >
-                        ✓ Approve
-                      </button>
-                      <button
-                        onClick={() => handleProcessEditRequest(request.id, 'reject')}
-                        disabled={processingRequestId === request.id}
-                        style={{
-                          padding: "0.5rem 1rem",
-                          backgroundColor: processingRequestId === request.id ? "#374151" : "#dc2626",
-                          color: "#ffffff",
-                          border: "none",
-                          borderRadius: "6px",
-                          fontSize: "0.875rem",
-                          fontWeight: "500",
-                          cursor: processingRequestId === request.id ? "not-allowed" : "pointer",
-                          transition: "all 0.15s ease"
-                        }}
-                        onMouseOver={(e) => {
-                          if (processingRequestId !== request.id) {
-                            e.currentTarget.style.backgroundColor = "#b91c1c";
-                          }
-                        }}
-                        onMouseOut={(e) => {
-                          if (processingRequestId !== request.id) {
-                            e.currentTarget.style.backgroundColor = "#dc2626";
-                          }
-                        }}
-                      >
-                        × Reject
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Request Content */}
-                  <div style={{ padding: "1.25rem" }}>
-                    {/* Reason */}
-                    <div style={{ marginBottom: "1.5rem" }}>
-                      <h4 style={{ fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", margin: 0, marginBottom: "0.5rem" }}>
-                        Reason for Edit:
-                      </h4>
-                      <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, padding: "0.75rem", backgroundColor: "#0d1117", borderRadius: "4px", border: "1px solid #30363d" }}>
-                        {request.reason}
-                      </p>
-                    </div>
-
-                    {/* Comparison */}
-                    <div>
-                      <h4 style={{ fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", margin: 0, marginBottom: "0.75rem" }}>
-                        Changes by Day
-                      </h4>
-                      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                        {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map((day) => {
-                          const oldSlots = request.oldAvailability[day] || [];
-                          const newSlots = request.newAvailability[day] || [];
-
-                          // Check if there are changes for this day
-                          const hasChanges = JSON.stringify(oldSlots.sort()) !== JSON.stringify(newSlots.sort());
-
-                          // Only show days with changes
-                          if (!hasChanges) return null;
-
-                          // Find added and removed slots
-                          const removedSlots = oldSlots.filter(slot => !newSlots.includes(slot));
-                          const addedSlots = newSlots.filter(slot => !oldSlots.includes(slot));
-                          const unchangedSlots = oldSlots.filter(slot => newSlots.includes(slot));
-
-                          return (
-                            <div key={day} style={{
-                              backgroundColor: "#0d1117",
-                              border: "1px solid #30363d",
-                              borderRadius: "6px",
-                              padding: "0.75rem"
-                            }}>
-                              <div style={{
-                                fontSize: "0.75rem",
-                                fontWeight: "600",
-                                color: "#58a6ff",
-                                marginBottom: "0.5rem",
-                                textTransform: "uppercase",
-                                letterSpacing: "0.5px"
-                              }}>
-                                {day}
-                              </div>
-
-                              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                                {/* Removed slots */}
-                                {removedSlots.length > 0 && (
-                                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.25rem", alignItems: "center" }}>
-                                    <span style={{ fontSize: "0.75rem", color: "#ef4444", fontWeight: "500", marginRight: "0.25rem" }}>
-                                      Removed:
-                                    </span>
-                                    {removedSlots.map((slot, idx) => (
-                                      <span key={idx} style={{
-                                        fontSize: "0.7rem",
-                                        color: "#ef4444",
-                                        backgroundColor: "#2d1517",
-                                        padding: "0.125rem 0.375rem",
-                                        borderRadius: "3px",
-                                        border: "1px solid #5c2d30",
-                                        textDecoration: "line-through"
-                                      }}>
-                                        {slot}
-                                      </span>
-                                    ))}
-                                  </div>
-                                )}
-
-                                {/* Added slots */}
-                                {addedSlots.length > 0 && (
-                                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.25rem", alignItems: "center" }}>
-                                    <span style={{ fontSize: "0.75rem", color: "#10b981", fontWeight: "500", marginRight: "0.25rem" }}>
-                                      Added:
-                                    </span>
-                                    {addedSlots.map((slot, idx) => (
-                                      <span key={idx} style={{
-                                        fontSize: "0.7rem",
-                                        color: "#10b981",
-                                        backgroundColor: "#0d1f17",
-                                        padding: "0.125rem 0.375rem",
-                                        borderRadius: "3px",
-                                        border: "1px solid #1e4d2b",
-                                        fontWeight: "600"
-                                      }}>
-                                        {slot}
-                                      </span>
-                                    ))}
-                                  </div>
-                                )}
-
-                                {/* Unchanged slots (if any exist and we want to show them) */}
-                                {unchangedSlots.length > 0 && (addedSlots.length > 0 || removedSlots.length > 0) && (
-                                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.25rem", alignItems: "center" }}>
-                                    <span style={{ fontSize: "0.75rem", color: "#6e7681", fontWeight: "500", marginRight: "0.25rem" }}>
-                                      Unchanged:
-                                    </span>
-                                    {unchangedSlots.slice(0, 5).map((slot, idx) => (
-                                      <span key={idx} style={{
-                                        fontSize: "0.7rem",
-                                        color: "#6e7681",
-                                        backgroundColor: "#0d1117",
-                                        padding: "0.125rem 0.375rem",
-                                        borderRadius: "3px",
-                                        border: "1px solid #21262d"
-                                      }}>
-                                        {slot}
-                                      </span>
-                                    ))}
-                                    {unchangedSlots.length > 5 && (
-                                      <span style={{ fontSize: "0.7rem", color: "#6e7681" }}>
-                                        +{unchangedSlots.length - 5} more
-                                      </span>
-                                    )}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      {/* Show message if no days have changes */}
-                      {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].every((day) => {
-                        const oldSlots = request.oldAvailability[day] || [];
-                        const newSlots = request.newAvailability[day] || [];
-                        return JSON.stringify(oldSlots.sort()) === JSON.stringify(newSlots.sort());
-                      }) && (
-                        <div style={{
-                          padding: "1rem",
-                          textAlign: "center",
-                          color: "#6e7681",
-                          fontSize: "0.875rem",
-                          fontStyle: "italic"
-                        }}>
-                          No changes detected in availability
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Student Workers Availability Section */}
-        <div style={{ backgroundColor: "#16191f", border: "1px solid #414d5c", borderRadius: "8px", marginBottom: "1rem", overflow: "hidden" }}>
-          <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #414d5c" }}>
-            <div>
-              <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
-                Student Availability
-              </h2>
-              <p style={{ fontSize: "0.875rem", color: "#8b949e", lineHeight: "1.5" }}>
-                Read-only view of student-submitted availability. {students.filter(s => s.hasSubmitted).length} of {students.length} students have submitted.
-              </p>
-            </div>
-          </div>
-          <div style={{ padding: "1.5rem" }}>
-            {students.filter(s => s.hasSubmitted).length === 0 ? (
-              <div style={{ padding: "3rem", textAlign: "center", color: "#6b7280", fontSize: "0.875rem" }}>
-                <p style={{ margin: 0, marginBottom: "1rem" }}>No students have submitted their availability yet.</p>
-                <p style={{ margin: 0, color: "#8b949e" }}>Request availability from students using the Admin Dashboard or wait for them to submit.</p>
-              </div>
-            ) : (
-              <div style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: "0" }}>
-                  <thead>
-                    <tr style={{ backgroundColor: "#161b22" }}>
-                      <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "600", color: "#8b949e", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #30363d", position: "sticky", left: 0, backgroundColor: "#161b22", zIndex: 10 }}>
-                        Student
-                      </th>
-                      {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => (
-                        <th key={day} style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "600", color: "#8b949e", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #30363d", minWidth: "180px" }}>
-                          {day}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {students.filter(s => s.hasSubmitted).map((student) => (
-                      <tr key={student.id} style={{ borderBottom: "1px solid #21262d" }}>
-                        <td style={{ padding: "1rem", borderRight: "1px solid #21262d", position: "sticky", left: 0, backgroundColor: "#0d1117", zIndex: 5 }}>
-                          <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-                            <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff" }}>
-                              {student.name}
-                            </span>
-                            <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>
-                              {student.email}
-                            </span>
-                            <span style={{ fontSize: "0.7rem", color: "#6b7280", marginTop: "0.25rem" }}>
-                              Submitted {new Date(student.availability.submittedAt).toLocaleDateString()}
-                            </span>
-                            {student.availability.notes && (
-                              <div style={{ marginTop: "0.5rem", padding: "0.5rem", backgroundColor: "#161b22", borderRadius: "4px", border: "1px solid #30363d" }}>
-                                <span style={{ fontSize: "0.7rem", color: "#6b7280", fontWeight: "500" }}>Note: </span>
-                                <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>{student.availability.notes}</span>
-                              </div>
-                            )}
-                          </div>
-                        </td>
-                        {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => {
-                          const dayAvail = student.availability.availability[day];
-                          const hasAvailability = dayAvail && dayAvail.length > 0;
-
-                          return (
-                            <td key={day} style={{ padding: "1rem", verticalAlign: "top" }}>
-                              {hasAvailability ? (
-                                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.375rem" }}>
-                                  {dayAvail.map((slot, idx) => (
-                                    <span key={idx} style={{
-                                      fontSize: "0.75rem",
-                                      color: "#10b981",
-                                      padding: "0.25rem 0.5rem",
-                                      backgroundColor: "#0d3320",
-                                      border: "1px solid #1f5e3a",
-                                      borderRadius: "4px",
-                                      whiteSpace: "nowrap"
-                                    }}>
-                                      {slot}
-                                    </span>
-                                  ))}
-                                </div>
-                              ) : (
-                                <span style={{
-                                  fontSize: "0.75rem",
-                                  color: "#6b7280",
-                                  fontStyle: "italic"
-                                }}>
-                                  Not available
-                                </span>
-                              )}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Generate Button */}
-        {/* Validation Error */}
-        {validationError && (
-          <div style={{
-            padding: "1rem 1.25rem",
-            backgroundColor: "#2d1517",
-            border: "1px solid #5c2d30",
-            borderRadius: "6px",
-            marginTop: "1.5rem",
-            marginBottom: "1rem"
-          }}>
-            <div style={{ display: "flex", alignItems: "start", gap: "0.75rem" }}>
-              <span style={{ fontSize: "1.25rem", color: "#ff6b6b", lineHeight: "1" }}>⚠</span>
-              <p style={{ color: "#ff9999", fontSize: "0.875rem", margin: 0, lineHeight: "1.6" }}>
-                {validationError}
-              </p>
-            </div>
-          </div>
-        )}
-
-        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: validationError ? "1rem" : "1.5rem", marginBottom: "2rem" }}>
+        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
           <button
-            onClick={handleGenerateSchedule}
-            disabled={isGenerating || students.filter(s => s.hasSubmitted).length === 0}
-            aria-label="Generate work schedule based on provided information"
-            aria-busy={isGenerating}
+            onClick={() => setFeedbackOpen(true)}
             style={{
-              padding: "0.625rem 1.5rem",
-              backgroundColor: isGenerating || students.filter(s => s.hasSubmitted).length === 0 ? "#1a1f2e" : "#ec7211",
-              color: isGenerating || students.filter(s => s.hasSubmitted).length === 0 ? "#4b5563" : "#ffffff",
-              border: "1px solid",
-              borderColor: isGenerating || students.filter(s => s.hasSubmitted).length === 0 ? "#2d3748" : "#ec7211",
-              borderRadius: "6px",
+              padding: "0.625rem 1.25rem",
+              background: "rgba(255, 255, 255, 0.15)",
+              backdropFilter: "blur(10px)",
+              color: "#ffffff",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+              borderRadius: "8px",
               fontSize: "0.875rem",
               fontWeight: "500",
-              cursor: isGenerating || students.filter(s => s.hasSubmitted).length === 0 ? "not-allowed" : "pointer",
-              transition: "all 0.15s ease",
-              letterSpacing: "0.01em",
+              cursor: "pointer",
+              transition: "all 0.2s ease"
+            }}
+            onMouseOver={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.25)"}
+            onMouseOut={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.15)"}
+          >
+            Feedback
+          </button>
+          <button
+            onClick={() => router.push('/login')}
+            style={{
+              padding: "0.625rem 1.25rem",
+              background: "rgba(255, 255, 255, 0.15)",
+              backdropFilter: "blur(10px)",
+              color: "#ffffff",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+              borderRadius: "8px",
+              fontSize: "0.875rem",
+              fontWeight: "500",
+              cursor: "pointer",
+              transition: "all 0.2s ease"
+            }}
+            onMouseOver={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.25)"}
+            onMouseOut={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.15)"}
+          >
+            Sign In
+          </button>
+          <button
+            onClick={() => router.push('/register')}
+            style={{
+              padding: "0.625rem 1.5rem",
+              background: "#ffffff",
+              color: "#667eea",
+              border: "none",
+              borderRadius: "8px",
+              fontSize: "0.875rem",
+              fontWeight: "600",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)"
             }}
             onMouseOver={(e) => {
-              if (!isGenerating && students.filter(s => s.hasSubmitted).length > 0) {
-                e.currentTarget.style.backgroundColor = "#d66b14";
-                e.currentTarget.style.borderColor = "#d66b14";
-              }
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.boxShadow = "0 6px 20px rgba(0, 0, 0, 0.2)";
             }}
             onMouseOut={(e) => {
-              if (!isGenerating && students.filter(s => s.hasSubmitted).length > 0) {
-                e.currentTarget.style.backgroundColor = "#ec7211";
-                e.currentTarget.style.borderColor = "#ec7211";
-              }
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.15)";
             }}
           >
-            <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              {isGenerating && (
-                <span style={{
-                  display: "inline-block",
-                  width: "14px",
-                  height: "14px",
-                  border: "2px solid #ffffff",
-                  borderTopColor: "transparent",
-                  borderRadius: "50%",
-                  animation: "spin 0.6s linear infinite"
-                }} />
-              )}
-              {isGenerating ? "Generating schedule..." : "Generate schedule"}
-            </span>
+            Get Started
+          </button>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <main style={{
+        position: "relative",
+        zIndex: 10,
+        maxWidth: "1200px",
+        margin: "0 auto",
+        padding: "4rem 2rem",
+        textAlign: "center"
+      }}>
+        <div style={{ marginBottom: "1rem" }}>
+          <span style={{
+            display: "inline-block",
+            padding: "0.5rem 1rem",
+            background: "rgba(255, 255, 255, 0.2)",
+            backdropFilter: "blur(10px)",
+            borderRadius: "20px",
+            color: "#ffffff",
+            fontSize: "0.875rem",
+            fontWeight: "500",
+            border: "1px solid rgba(255, 255, 255, 0.3)"
+          }}>
+            Now Live
+          </span>
+        </div>
+
+        <h1 style={{
+          fontSize: "4rem",
+          fontWeight: "700",
+          color: "#ffffff",
+          marginBottom: "1.5rem",
+          lineHeight: "1.1",
+          letterSpacing: "-0.02em"
+        }}>
+          One Smart Platform.
+          <br />
+          No Scheduling Hassle.
+        </h1>
+
+        <p style={{
+          fontSize: "1.25rem",
+          color: "rgba(255, 255, 255, 0.9)",
+          marginBottom: "3rem",
+          maxWidth: "700px",
+          margin: "0 auto 3rem auto",
+          lineHeight: "1.6"
+        }}>
+          Streamline your student worker scheduling with automated availability collection,
+          smart schedule generation, and seamless team management.
+        </p>
+
+        <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
+          <button
+            onClick={() => router.push('/register')}
+            style={{
+              padding: "1rem 2.5rem",
+              background: "#ffffff",
+              color: "#667eea",
+              border: "none",
+              borderRadius: "12px",
+              fontSize: "1.125rem",
+              fontWeight: "600",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.2)"
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.transform = "translateY(-4px)";
+              e.currentTarget.style.boxShadow = "0 12px 32px rgba(0, 0, 0, 0.25)";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.2)";
+            }}
+          >
+            Get Started Free
+          </button>
+          <button
+            onClick={() => router.push('/login')}
+            style={{
+              padding: "1rem 2.5rem",
+              background: "rgba(255, 255, 255, 0.15)",
+              backdropFilter: "blur(10px)",
+              color: "#ffffff",
+              border: "2px solid rgba(255, 255, 255, 0.3)",
+              borderRadius: "12px",
+              fontSize: "1.125rem",
+              fontWeight: "600",
+              cursor: "pointer",
+              transition: "all 0.2s ease"
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = "rgba(255, 255, 255, 0.25)";
+              e.currentTarget.style.transform = "translateY(-4px)";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = "rgba(255, 255, 255, 0.15)";
+              e.currentTarget.style.transform = "translateY(0)";
+            }}
+          >
+            Sign In
           </button>
         </div>
 
-        {/* Results */}
-        {scheduleResult && scheduleResult.success && scheduleResult.schedules && (
-          <div id="results">
-            <div style={{ marginBottom: "2rem" }}>
-              <h2 style={{ fontSize: "1.5rem", fontWeight: "400", color: "#ffffff", marginBottom: "0.5rem" }}>
-                Generated Schedules
-              </h2>
-              <p style={{ fontSize: "0.875rem", color: "#8b949e", lineHeight: "1.6" }}>
-                Three different scheduling strategies have been generated. Review all options below to choose the best fit.
-              </p>
-            </div>
-
-            {/* Display all 3 schedules */}
-            {scheduleResult.schedules.map((currentSchedule, scheduleIndex) => (
-              <div key={scheduleIndex} style={{ marginBottom: "3rem" }}>
-                {/* Schedule Header */}
-                <div style={{
-                  backgroundColor: "#16191f",
-                  border: "2px solid #0972d3",
-                  borderRadius: "8px 8px 0 0",
-                  padding: "1.5rem",
-                  borderBottom: "1px solid #30363d",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-start",
-                  gap: "1rem"
-                }}>
-                  <div style={{ flex: 1 }}>
-                    <h3 style={{ fontSize: "1.25rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
-                      {currentSchedule.name}
-                    </h3>
-                    <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
-                      {currentSchedule.description}
-                    </p>
-                  </div>
-
-                  {/* Publish Button */}
-                  <button
-                    onClick={() => handlePublishSchedule(scheduleIndex)}
-                    disabled={publishingScheduleId === savedScheduleIds[scheduleIndex]}
-                    aria-label={`Publish ${currentSchedule.name}`}
-                    style={{
-                      padding: "0.625rem 1.25rem",
-                      backgroundColor: publishingScheduleId === savedScheduleIds[scheduleIndex] ? "#374151" : "#10b981",
-                      color: "#ffffff",
-                      border: "1px solid",
-                      borderColor: publishingScheduleId === savedScheduleIds[scheduleIndex] ? "#374151" : "#10b981",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      fontWeight: "500",
-                      cursor: publishingScheduleId === savedScheduleIds[scheduleIndex] ? "not-allowed" : "pointer",
-                      transition: "all 0.15s ease",
-                      whiteSpace: "nowrap",
-                      letterSpacing: "0.01em",
-                      opacity: publishingScheduleId === savedScheduleIds[scheduleIndex] ? 0.6 : 1
-                    }}
-                    onMouseOver={(e) => {
-                      if (publishingScheduleId !== savedScheduleIds[scheduleIndex]) {
-                        e.currentTarget.style.backgroundColor = "#059669";
-                        e.currentTarget.style.borderColor = "#059669";
-                      }
-                    }}
-                    onMouseOut={(e) => {
-                      if (publishingScheduleId !== savedScheduleIds[scheduleIndex]) {
-                        e.currentTarget.style.backgroundColor = "#10b981";
-                        e.currentTarget.style.borderColor = "#10b981";
-                      }
-                    }}
-                  >
-                    {publishingScheduleId === savedScheduleIds[scheduleIndex] ? 'Publishing...' : 'Publish Schedule'}
-                  </button>
-
-                  {/* Export CSV button - Archived for later
-                  <button
-                    onClick={() => {
-                      const csv = exportToCSV(currentSchedule.schedule, currentSchedule.name);
-                      const filename = `schedule_${scheduleIndex + 1}_${currentSchedule.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.csv`;
-                      downloadCSV(csv, filename);
-                    }}
-                    aria-label={`Export ${currentSchedule.name} to CSV`}
-                    style={{
-                      padding: "0.625rem 1.25rem",
-                      backgroundColor: "#047857",
-                      color: "#ffffff",
-                      border: "1px solid #047857",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      fontWeight: "500",
-                      cursor: "pointer",
-                      transition: "all 0.15s ease",
-                      whiteSpace: "nowrap",
-                      letterSpacing: "0.01em"
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.backgroundColor = "#059669";
-                      e.currentTarget.style.borderColor = "#059669";
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.backgroundColor = "#047857";
-                      e.currentTarget.style.borderColor = "#047857";
-                    }}
-                  >
-                    Export CSV
-                  </button>
-                  */}
-                </div>
-
-                <div style={{
-                  backgroundColor: "#16191f",
-                  border: "2px solid #0972d3",
-                  borderTop: "none",
-                  borderRadius: "0 0 8px 8px",
-                  padding: "1.5rem"
-                }}>
-                  <>
-                  {/* Errors */}
-                  {currentSchedule.errors && currentSchedule.errors.length > 0 && (
-                    <div style={{
-                      padding: "1rem 1.5rem",
-                      backgroundColor: "#2d1517",
-                      border: "1px solid #5c2d30",
-                      borderLeft: "4px solid #dc2626",
-                      borderRadius: "6px",
-                      marginBottom: "1rem"
-                    }}>
-                      <div style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
-                        <div style={{
-                          width: "20px",
-                          height: "20px",
-                          borderRadius: "50%",
-                          backgroundColor: "#dc2626",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          flexShrink: 0,
-                          marginTop: "0.125rem"
-                        }}>
-                          <span style={{ color: "#fff", fontWeight: "bold", fontSize: "0.875rem" }}>×</span>
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontWeight: "500", color: "#ff6b6b", fontSize: "0.875rem", marginBottom: "0.5rem" }}>
-                            Errors
-                          </div>
-                          <ul style={{ paddingLeft: "0", color: "#ff9999", fontSize: "0.875rem", margin: 0, lineHeight: "1.6", listStyle: "none" }}>
-                            {currentSchedule.errors.map((error, i) => (
-                              <li key={i} style={{ marginBottom: i < currentSchedule.errors.length - 1 ? "0.5rem" : 0 }}>
-                                {error}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Success Messages */}
-                  {currentSchedule.successMessages && currentSchedule.successMessages.length > 0 && (
-                    <div style={{
-                      padding: "1rem 1.5rem",
-                      backgroundColor: "#0d1f17",
-                      border: "1px solid #1e4d2b",
-                      borderLeft: "4px solid #047857",
-                      borderRadius: "6px",
-                      marginBottom: "1rem"
-                    }}>
-                      <div style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
-                        <div style={{
-                          width: "20px",
-                          height: "20px",
-                          borderRadius: "50%",
-                          backgroundColor: "#047857",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          flexShrink: 0,
-                          marginTop: "0.125rem"
-                        }}>
-                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                            <path d="M10 3L4.5 8.5L2 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontWeight: "500", color: "#10b981", fontSize: "0.875rem", marginBottom: "0.5rem" }}>
-                            Success
-                          </div>
-                          <ul style={{ paddingLeft: "0", color: "#6ee7b7", fontSize: "0.875rem", margin: 0, lineHeight: "1.6", listStyle: "none" }}>
-                            {currentSchedule.successMessages.map((message, i) => (
-                              <li key={i} style={{ marginBottom: i < currentSchedule.successMessages.length - 1 ? "0.25rem" : 0 }}>
-                                {message}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Warnings */}
-                  {currentSchedule.warnings && currentSchedule.warnings.length > 0 && (
-                    <div style={{
-                      padding: "1rem 1.5rem",
-                      backgroundColor: "#1f1b13",
-                      border: "1px solid #4d3d1e",
-                      borderLeft: "4px solid #f59e0b",
-                      borderRadius: "6px",
-                      marginBottom: "1rem"
-                    }}>
-                      <div style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
-                        <div style={{
-                          width: "20px",
-                          height: "20px",
-                          borderRadius: "50%",
-                          backgroundColor: "#f59e0b",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          flexShrink: 0,
-                          marginTop: "0.125rem"
-                        }}>
-                          <span style={{ color: "#000", fontWeight: "bold", fontSize: "0.875rem" }}>!</span>
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontWeight: "500", color: "#fbbf24", fontSize: "0.875rem", marginBottom: "0.5rem" }}>
-                            Warnings
-                          </div>
-                          <ul style={{ paddingLeft: "0", color: "#fcd34d", fontSize: "0.875rem", margin: 0, lineHeight: "1.6", listStyle: "none" }}>
-                            {currentSchedule.warnings.map((warning, i) => (
-                              <li key={i} style={{ marginBottom: i < currentSchedule.warnings.length - 1 ? "0.5rem" : 0 }}>
-                                {warning}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Generated Successfully Message */}
-                  {(!currentSchedule.successMessages || currentSchedule.successMessages.length === 0) && (
-                    <div style={{
-                      padding: "1rem 1.5rem",
-                      backgroundColor: "#0d1f17",
-                      border: "1px solid #1e4d2b",
-                      borderLeft: "4px solid #047857",
-                      borderRadius: "6px",
-                      marginBottom: "1.5rem"
-                    }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                        <div style={{
-                          width: "20px",
-                          height: "20px",
-                          borderRadius: "50%",
-                          backgroundColor: "#047857",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          flexShrink: 0
-                        }}>
-                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                            <path d="M10 3L4.5 8.5L2 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </div>
-                        <p style={{ fontWeight: "500", color: "#10b981", margin: 0, fontSize: "0.875rem" }}>
-                          Schedule generated successfully
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Statistics */}
-                  <div style={{ backgroundColor: "#16191f", border: "1px solid #414d5c", borderRadius: "8px", padding: "1.5rem", marginBottom: "1.5rem" }}>
-                    <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "#ffffff", marginBottom: "1.25rem" }}>Statistics</h2>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
-                      <div style={{ padding: "1rem", backgroundColor: "#1f2937", borderRadius: "4px", border: "1px solid #2d3748" }}>
-                        <p style={{ fontSize: "0.75rem", color: "#9ca3af", textTransform: "uppercase", marginBottom: "0.5rem", fontWeight: "500", letterSpacing: "0.05em" }}>Workers Scheduled</p>
-                        <p style={{ fontSize: "1.5rem", fontWeight: "400", color: "#ffffff", margin: 0 }}>
-                          {currentSchedule.statistics.totalWorkersScheduled} / {currentSchedule.statistics.totalWorkersAvailable}
-                        </p>
-                      </div>
-                      <div style={{ padding: "1rem", backgroundColor: "#1f2937", borderRadius: "4px", border: "1px solid #2d3748" }}>
-                        <p style={{ fontSize: "0.75rem", color: "#9ca3af", textTransform: "uppercase", marginBottom: "0.5rem", fontWeight: "500", letterSpacing: "0.05em" }}>Total Hours</p>
-                        <p style={{ fontSize: "1.5rem", fontWeight: "400", color: "#ffffff", margin: 0 }}>{currentSchedule.statistics.totalHoursScheduled}h</p>
-                      </div>
-                      <div style={{ padding: "1rem", backgroundColor: "#1f2937", borderRadius: "4px", border: "1px solid #2d3748" }}>
-                        <p style={{ fontSize: "0.75rem", color: "#9ca3af", textTransform: "uppercase", marginBottom: "0.5rem", fontWeight: "500", letterSpacing: "0.05em" }}>Avg Hours/Worker</p>
-                        <p style={{ fontSize: "1.5rem", fontWeight: "400", color: "#ffffff", margin: 0 }}>{currentSchedule.statistics.avgHoursPerWorker}h</p>
-                      </div>
-                      <div style={{ padding: "1rem", backgroundColor: "#1f2937", borderRadius: "4px", border: "1px solid #2d3748" }}>
-                        <p style={{ fontSize: "0.75rem", color: "#9ca3af", textTransform: "uppercase", marginBottom: "0.5rem", fontWeight: "500", letterSpacing: "0.05em" }}>Hour Balance</p>
-                        <p style={{ fontSize: "1.5rem", fontWeight: "400", margin: 0, color: currentSchedule.statistics.hoursDifference <= 1 ? "#4ade80" : "#ff9900" }}>
-                          ±{currentSchedule.statistics.hoursDifference}h
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Schedule Table */}
-                  <div style={{ backgroundColor: "#16191f", border: "1px solid #414d5c", borderRadius: "8px", overflow: "hidden", marginBottom: "1.5rem" }}>
-                    <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #414d5c" }}>
-                      <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "#ffffff", margin: 0 }}>Weekly schedule</h2>
-                    </div>
-                    <div style={{ overflowX: "auto" }}>
-                      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                        <thead style={{ backgroundColor: "#1f2937" }}>
-                          <tr>
-                            <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #2d3748" }}>Worker</th>
-                            {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => (
-                              <th key={day} style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #2d3748" }}>
-                                {day}
-                              </th>
-                            ))}
-                            <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #2d3748" }}>Total</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {currentSchedule.schedule.map((worker, i) => (
-                          <tr key={i} style={{ borderBottom: "1px solid #2d3748", transition: "background-color 0.15s" }}
-                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#1a1f2e"}
-                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
-                          >
-                            <td style={{ padding: "1rem", fontWeight: "500", color: "#ffffff", fontSize: "0.875rem" }}>{worker.workerName}</td>
-                            {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => (
-                              <td key={day} style={{ padding: "1rem", fontSize: "0.875rem" }}>
-                                {worker.schedule[day] ? (
-                                  Array.isArray(worker.schedule[day]) ? (
-                                    // Multiple shifts
-                                    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                                      {worker.schedule[day].map((shift, idx) => (
-                                        <div key={idx}>
-                                          <div style={{ fontWeight: "400", color: "#ffffff" }}>
-                                            {convertTo12Hour(shift.start)} - {convertTo12Hour(shift.end)}
-                                          </div>
-                                          <div style={{ fontSize: "0.75rem", color: "#6b7280", marginTop: "0.125rem" }}>
-                                            {shift.hours}h
-                                          </div>
-                                        </div>
-                                      ))}
-                                      <div style={{ fontSize: "0.75rem", color: "#047857", marginTop: "0.125rem", fontWeight: "500" }}>
-                                        Total: {worker.schedule[day].reduce((sum, s) => sum + s.hours, 0)}h
-                                      </div>
-                                    </div>
-                                  ) : (
-                                    // Single shift
-                                    <div>
-                                      <div style={{ fontWeight: "400", color: "#ffffff" }}>
-                                        {convertTo12Hour(worker.schedule[day].start)} - {convertTo12Hour(worker.schedule[day].end)}
-                                      </div>
-                                      <div style={{ fontSize: "0.75rem", color: "#6b7280", marginTop: "0.125rem" }}>
-                                        {worker.schedule[day].hours}h
-                                      </div>
-                                    </div>
-                                  )
-                                ) : (
-                                  <span style={{ color: "#4b5563" }}>—</span>
-                                )}
-                              </td>
-                            ))}
-                            <td style={{ padding: "1rem", fontWeight: "500", color: "#ffffff", fontSize: "0.875rem" }}>{worker.totalHours}h</td>
-                          </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-
-                  {/* Coverage Gaps */}
-                  {currentSchedule.uncoveredPeriods && Object.keys(currentSchedule.uncoveredPeriods).length > 0 && (
-                    <div style={{ backgroundColor: "#16191f", border: "1px solid #414d5c", borderRadius: "8px", padding: "1.5rem" }}>
-                      <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "#ff6b6b", marginBottom: "1rem" }}>
-                        ⚠ Coverage gaps
-                      </h2>
-                      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                        {Object.entries(currentSchedule.uncoveredPeriods).map(([day, periods]) => (
-                          <div key={day} style={{ padding: "1rem", backgroundColor: "#2d1517", border: "1px solid #5c2d30", borderRadius: "4px" }}>
-                            <p style={{ fontWeight: "500", color: "#ff6b6b", marginBottom: "0.5rem", fontSize: "0.875rem" }}>{day}</p>
-                            <ul style={{ paddingLeft: "1.25rem", fontSize: "0.875rem", color: "#ff9999", margin: 0 }}>
-                              {periods.map((period, i) => (
-                                <li key={i}>
-                                  {convertTo12Hour(period.start)} - {convertTo12Hour(period.end)} (no coverage)
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  </>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Invite Admin Modal */}
-        {showInviteAdminModal && (
+        {/* Features Grid */}
+        <div style={{
+          marginTop: "8rem",
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+          gap: "2rem",
+          textAlign: "left"
+        }}>
           <div style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.8)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            padding: "1rem"
+            padding: "2rem",
+            background: "rgba(255, 255, 255, 0.1)",
+            backdropFilter: "blur(10px)",
+            borderRadius: "16px",
+            border: "1px solid rgba(255, 255, 255, 0.2)"
           }}>
             <div style={{
-              backgroundColor: "#16191f",
-              border: "1px solid #30363d",
-              borderRadius: "8px",
-              padding: "2rem",
-              maxWidth: "500px",
-              width: "100%"
-            }}>
-              <h3 style={{ fontSize: "1.25rem", fontWeight: "500", color: "#ffffff", marginBottom: "0.5rem" }}>
-                Invite Secondary Admin
-              </h3>
-              <p style={{ fontSize: "0.875rem", color: "#8b949e", marginBottom: "1.5rem", lineHeight: "1.5" }}>
-                Send an invitation email with login credentials to a new admin for {user?.organizationName}.
-              </p>
-
-              {adminError && (
-                <div style={{
-                  padding: "0.75rem 1rem",
-                  backgroundColor: "#2d1517",
-                  border: "1px solid #5c2d30",
-                  borderRadius: "6px",
-                  marginBottom: "1rem"
-                }}>
-                  <p style={{ color: "#ff6b6b", fontSize: "0.875rem", margin: 0 }}>
-                    {adminError}
-                  </p>
-                </div>
-              )}
-
-              <form onSubmit={handleSubmitAdminInvite}>
-                <div style={{ marginBottom: "1.5rem" }}>
-                  <label style={{
-                    display: "block",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    color: "#c9d1d9",
-                    marginBottom: "0.625rem"
-                  }}>
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    value={adminFormData.name}
-                    onChange={(e) => setAdminFormData({ ...adminFormData, name: e.target.value })}
-                    required
-                    placeholder="Full name of the admin"
-                    style={{
-                      width: "100%",
-                      padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      color: "#ffffff",
-                      outline: "none"
-                    }}
-                  />
-                </div>
-
-                <div style={{ marginBottom: "1.5rem" }}>
-                  <label style={{
-                    display: "block",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    color: "#c9d1d9",
-                    marginBottom: "0.625rem"
-                  }}>
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    value={adminFormData.email}
-                    onChange={(e) => setAdminFormData({ ...adminFormData, email: e.target.value })}
-                    required
-                    placeholder="admin@example.com"
-                    style={{
-                      width: "100%",
-                      padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      color: "#ffffff",
-                      outline: "none"
-                    }}
-                  />
-                  <p style={{ fontSize: "0.75rem", color: "#8b949e", marginTop: "0.5rem", marginBottom: 0 }}>
-                    An invitation email with temporary credentials will be sent to this address.
-                  </p>
-                </div>
-
-                <div style={{ display: "flex", gap: "1rem", justifyContent: "flex-end" }}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowInviteAdminModal(false);
-                      setAdminError('');
-                    }}
-                    style={{
-                      padding: "0.625rem 1.25rem",
-                      backgroundColor: "#0d1117",
-                      color: "#ffffff",
-                      border: "1px solid #30363d",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      fontWeight: "500",
-                      cursor: "pointer",
-                      transition: "all 0.15s ease"
-                    }}
-                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#252d3d"}
-                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#0d1117"}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    style={{
-                      padding: "0.625rem 1.25rem",
-                      backgroundColor: "#0972d3",
-                      color: "#ffffff",
-                      border: "1px solid #0972d3",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      fontWeight: "500",
-                      cursor: "pointer",
-                      transition: "all 0.15s ease"
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.backgroundColor = "#0863bf";
-                      e.currentTarget.style.borderColor = "#0863bf";
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.backgroundColor = "#0972d3";
-                      e.currentTarget.style.borderColor = "#0972d3";
-                    }}
-                  >
-                    Send Invitation
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-
-        {/* Add/Edit Student Modal */}
-        {showAddStudentModal && (
-          <div style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.8)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            padding: "1rem"
-          }}>
-            <div style={{
-              backgroundColor: "#16191f",
-              border: "1px solid #30363d",
-              borderRadius: "8px",
-              padding: "2rem",
-              maxWidth: "500px",
-              width: "100%"
-            }}>
-              <h3 style={{ fontSize: "1.25rem", fontWeight: "500", color: "#ffffff", marginBottom: "1.5rem" }}>
-                {editingStudent ? 'Edit Student' : 'Add New Student'}
-              </h3>
-
-              <form onSubmit={handleSubmitStudent}>
-                <div style={{ marginBottom: "1.5rem" }}>
-                  <label style={{
-                    display: "block",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    color: "#c9d1d9",
-                    marginBottom: "0.625rem"
-                  }}>
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    value={studentFormData.name}
-                    onChange={(e) => setStudentFormData({ ...studentFormData, name: e.target.value })}
-                    required
-                    style={{
-                      width: "100%",
-                      padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      color: "#ffffff",
-                      outline: "none"
-                    }}
-                  />
-                </div>
-
-                <div style={{ marginBottom: "1.5rem" }}>
-                  <label style={{
-                    display: "block",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    color: "#c9d1d9",
-                    marginBottom: "0.625rem"
-                  }}>
-                    Primary Email
-                  </label>
-                  <input
-                    type="email"
-                    value={studentFormData.email}
-                    onChange={(e) => setStudentFormData({ ...studentFormData, email: e.target.value })}
-                    style={{
-                      width: "100%",
-                      padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      color: "#ffffff",
-                      outline: "none"
-                    }}
-                    placeholder="personal@email.com"
-                  />
-                  <small style={{
-                    display: "block",
-                    fontSize: "0.75rem",
-                    color: "#8b949e",
-                    marginTop: "0.25rem"
-                  }}>
-                    At least one email is required
-                  </small>
-                </div>
-
-                <div style={{ marginBottom: "1.25rem" }}>
-                  <label style={{
-                    display: "block",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    color: "#c9d1d9",
-                    marginBottom: "0.625rem"
-                  }}>
-                    Secondary Email (Optional)
-                  </label>
-                  <input
-                    type="email"
-                    value={studentFormData.secondaryEmail}
-                    onChange={(e) => setStudentFormData({ ...studentFormData, secondaryEmail: e.target.value })}
-                    style={{
-                      width: "100%",
-                      padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      color: "#ffffff",
-                      outline: "none"
-                    }}
-                    placeholder="school@university.edu"
-                  />
-                  <small style={{
-                    display: "block",
-                    fontSize: "0.75rem",
-                    color: "#8b949e",
-                    marginTop: "0.25rem"
-                  }}>
-                    Notifications will be sent to both emails
-                  </small>
-                </div>
-
-                <div style={{ display: "flex", gap: "1rem", justifyContent: "flex-end" }}>
-                  <button
-                    type="button"
-                    onClick={() => setShowAddStudentModal(false)}
-                    style={{
-                      padding: "0.625rem 1.25rem",
-                      backgroundColor: "#0d1117",
-                      color: "#ffffff",
-                      border: "1px solid #30363d",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      fontWeight: "500",
-                      cursor: "pointer",
-                      transition: "all 0.15s ease"
-                    }}
-                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#252d3d"}
-                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#0d1117"}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    style={{
-                      padding: "0.625rem 1.25rem",
-                      backgroundColor: "#0972d3",
-                      color: "#ffffff",
-                      border: "1px solid #0972d3",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      fontWeight: "500",
-                      cursor: "pointer",
-                      transition: "all 0.15s ease"
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.backgroundColor = "#0863bf";
-                      e.currentTarget.style.borderColor = "#0863bf";
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.backgroundColor = "#0972d3";
-                      e.currentTarget.style.borderColor = "#0972d3";
-                    }}
-                  >
-                    {editingStudent ? 'Update' : 'Add'} Student
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-
-        {/* Confirmation Modal */}
-        {confirmModal.show && (
-          <div
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: "rgba(0, 0, 0, 0.75)",
+              width: "48px",
+              height: "48px",
+              borderRadius: "12px",
+              background: "rgba(255, 255, 255, 0.2)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              zIndex: 9999,
-              padding: "1rem"
+              marginBottom: "1rem"
+            }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M12 8V12L15 15" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                <circle cx="12" cy="12" r="9" stroke="white" strokeWidth="2"/>
+              </svg>
+            </div>
+            <h3 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#ffffff", marginBottom: "0.5rem" }}>
+              Save Time
+            </h3>
+            <p style={{ fontSize: "0.9375rem", color: "rgba(255, 255, 255, 0.8)", lineHeight: "1.6" }}>
+              Automate availability collection and generate optimized schedules in seconds.
+            </p>
+          </div>
+
+          <div style={{
+            padding: "2rem",
+            background: "rgba(255, 255, 255, 0.1)",
+            backdropFilter: "blur(10px)",
+            borderRadius: "16px",
+            border: "1px solid rgba(255, 255, 255, 0.2)"
+          }}>
+            <div style={{
+              width: "48px",
+              height: "48px",
+              borderRadius: "12px",
+              background: "rgba(255, 255, 255, 0.2)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: "1rem"
+            }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="9" cy="7" r="4" stroke="white" strokeWidth="2"/>
+                <path d="M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89318 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <h3 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#ffffff", marginBottom: "0.5rem" }}>
+              Team Management
+            </h3>
+            <p style={{ fontSize: "0.9375rem", color: "rgba(255, 255, 255, 0.8)", lineHeight: "1.6" }}>
+              Manage students, admins, and availability all in one centralized platform.
+            </p>
+          </div>
+
+          <div style={{
+            padding: "2rem",
+            background: "rgba(255, 255, 255, 0.1)",
+            backdropFilter: "blur(10px)",
+            borderRadius: "16px",
+            border: "1px solid rgba(255, 255, 255, 0.2)"
+          }}>
+            <div style={{
+              width: "48px",
+              height: "48px",
+              borderRadius: "12px",
+              background: "rgba(255, 255, 255, 0.2)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: "1rem"
+            }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M22 11.08V12C21.9988 14.1564 21.3005 16.2547 20.0093 17.9818C18.7182 19.7088 16.9033 20.9725 14.8354 21.5839C12.7674 22.1953 10.5573 22.1219 8.53447 21.3746C6.51168 20.6273 4.78465 19.2461 3.61096 17.4371C2.43727 15.628 1.87979 13.4881 2.02168 11.3363C2.16356 9.18455 2.99721 7.13631 4.39828 5.49706C5.79935 3.85781 7.69279 2.71537 9.79619 2.24013C11.8996 1.76489 14.1003 1.98232 16.07 2.86" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M22 4L12 14.01L9 11.01" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <h3 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#ffffff", marginBottom: "0.5rem" }}>
+              Smart Scheduling
+            </h3>
+            <p style={{ fontSize: "0.9375rem", color: "rgba(255, 255, 255, 0.8)", lineHeight: "1.6" }}>
+              AI-powered algorithm ensures fair distribution and full office coverage.
+            </p>
+          </div>
+        </div>
+      </main>
+
+      {/* Feedback Modal */}
+      {feedbackOpen && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0, 0, 0, 0.5)",
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+            padding: "1rem"
+          }}
+          onClick={() => setFeedbackOpen(false)}
+        >
+          <div
+            style={{
+              background: "#ffffff",
+              borderRadius: "16px",
+              padding: "2rem",
+              maxWidth: "500px",
+              width: "100%",
+              boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)"
             }}
-            onClick={() => confirmModal.onCancel && confirmModal.onCancel()}
+            onClick={(e) => e.stopPropagation()}
           >
-            <div
-              style={{
-                backgroundColor: "#1c2432",
-                borderRadius: "12px",
-                maxWidth: "500px",
-                width: "100%",
-                boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.5)",
-                border: "1px solid #30363d"
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div style={{ padding: "1.5rem" }}>
-                <h3 style={{
-                  margin: 0,
-                  fontSize: "1.25rem",
-                  fontWeight: "600",
-                  color: confirmModal.isDangerous ? "#f87171" : "#ffffff",
-                  marginBottom: "0.75rem"
-                }}>
-                  {confirmModal.title}
-                </h3>
-                <p style={{
-                  margin: 0,
-                  fontSize: "0.875rem",
-                  color: "#c9d1d9",
-                  lineHeight: "1.5"
-                }}>
-                  {confirmModal.message}
-                </p>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: "600", color: "#1a1d29", marginBottom: "0.5rem" }}>
+              Send Feedback
+            </h2>
+            <p style={{ fontSize: "0.875rem", color: "#6b7280", marginBottom: "1.5rem" }}>
+              We'd love to hear your thoughts, suggestions, or issues you've encountered.
+            </p>
+
+            {feedbackSuccess && (
+              <div style={{
+                padding: "1rem",
+                background: "#d1fae5",
+                border: "1px solid #10b981",
+                borderRadius: "8px",
+                marginBottom: "1rem",
+                color: "#065f46",
+                fontSize: "0.875rem"
+              }}>
+                {feedbackSuccess}
+              </div>
+            )}
+
+            <form onSubmit={handleFeedbackSubmit}>
+              <div style={{ marginBottom: "1rem" }}>
+                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#374151", marginBottom: "0.5rem" }}>
+                  Type
+                </label>
+                <select
+                  value={feedbackForm.type}
+                  onChange={(e) => setFeedbackForm({ ...feedbackForm, type: e.target.value })}
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem",
+                    border: "1px solid #d1d5db",
+                    borderRadius: "8px",
+                    fontSize: "0.875rem"
+                  }}
+                >
+                  <option value="feedback">General Feedback</option>
+                  <option value="bug">Bug Report</option>
+                  <option value="feature">Feature Request</option>
+                </select>
               </div>
 
-              <div style={{
-                padding: "1rem 1.5rem",
-                backgroundColor: "#161b22",
-                borderTop: "1px solid #30363d",
-                display: "flex",
-                justifyContent: "flex-end",
-                gap: "0.75rem",
-                borderBottomLeftRadius: "12px",
-                borderBottomRightRadius: "12px"
-              }}>
-                <button
-                  onClick={() => confirmModal.onCancel && confirmModal.onCancel()}
+              <div style={{ marginBottom: "1rem" }}>
+                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#374151", marginBottom: "0.5rem" }}>
+                  Name
+                </label>
+                <input
+                  type="text"
+                  value={feedbackForm.name}
+                  onChange={(e) => setFeedbackForm({ ...feedbackForm, name: e.target.value })}
+                  required
                   style={{
-                    padding: "0.5rem 1rem",
-                    backgroundColor: "transparent",
-                    color: "#c9d1d9",
-                    border: "1px solid #30363d",
-                    borderRadius: "6px",
+                    width: "100%",
+                    padding: "0.75rem",
+                    border: "1px solid #d1d5db",
+                    borderRadius: "8px",
+                    fontSize: "0.875rem"
+                  }}
+                  placeholder="Your name"
+                />
+              </div>
+
+              <div style={{ marginBottom: "1rem" }}>
+                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#374151", marginBottom: "0.5rem" }}>
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={feedbackForm.email}
+                  onChange={(e) => setFeedbackForm({ ...feedbackForm, email: e.target.value })}
+                  required
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem",
+                    border: "1px solid #d1d5db",
+                    borderRadius: "8px",
+                    fontSize: "0.875rem"
+                  }}
+                  placeholder="your.email@example.com"
+                />
+              </div>
+
+              <div style={{ marginBottom: "1.5rem" }}>
+                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#374151", marginBottom: "0.5rem" }}>
+                  Message
+                </label>
+                <textarea
+                  value={feedbackForm.message}
+                  onChange={(e) => setFeedbackForm({ ...feedbackForm, message: e.target.value })}
+                  required
+                  rows={4}
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem",
+                    border: "1px solid #d1d5db",
+                    borderRadius: "8px",
+                    fontSize: "0.875rem",
+                    fontFamily: "inherit",
+                    resize: "vertical"
+                  }}
+                  placeholder="Tell us what's on your mind..."
+                />
+              </div>
+
+              <div style={{ display: "flex", gap: "0.75rem", justifyContent: "flex-end" }}>
+                <button
+                  type="button"
+                  onClick={() => setFeedbackOpen(false)}
+                  style={{
+                    padding: "0.75rem 1.5rem",
+                    background: "#f3f4f6",
+                    color: "#374151",
+                    border: "none",
+                    borderRadius: "8px",
                     fontSize: "0.875rem",
                     fontWeight: "500",
-                    cursor: "pointer",
-                    transition: "all 0.15s ease"
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = "#30363d";
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.backgroundColor = "transparent";
+                    cursor: "pointer"
                   }}
                 >
-                  {confirmModal.cancelText}
+                  Cancel
                 </button>
                 <button
-                  onClick={() => confirmModal.onConfirm && confirmModal.onConfirm()}
+                  type="submit"
+                  disabled={feedbackSubmitting}
                   style={{
-                    padding: "0.5rem 1rem",
-                    backgroundColor: confirmModal.isDangerous ? "#dc2626" : "#0972d3",
+                    padding: "0.75rem 1.5rem",
+                    background: feedbackSubmitting ? "#9ca3af" : "#667eea",
                     color: "#ffffff",
                     border: "none",
-                    borderRadius: "6px",
+                    borderRadius: "8px",
                     fontSize: "0.875rem",
                     fontWeight: "500",
-                    cursor: "pointer",
-                    transition: "all 0.15s ease"
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = confirmModal.isDangerous ? "#b91c1c" : "#0863bf";
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.backgroundColor = confirmModal.isDangerous ? "#dc2626" : "#0972d3";
+                    cursor: feedbackSubmitting ? "not-allowed" : "pointer"
                   }}
                 >
-                  {confirmModal.confirmText}
+                  {feedbackSubmitting ? "Sending..." : "Send Feedback"}
                 </button>
               </div>
-            </div>
+            </form>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
