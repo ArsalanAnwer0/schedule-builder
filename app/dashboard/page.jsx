@@ -33,6 +33,9 @@ export default function StudentDashboard() {
   const [editReason, setEditReason] = useState('');
   const [submittingEdit, setSubmittingEdit] = useState(false);
 
+  // Profile dropdown state
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+
   // Function to fetch user data
   const fetchUserData = () => {
     fetch('/api/auth/me')
@@ -302,24 +305,130 @@ export default function StudentDashboard() {
               Welcome, {user?.name}
             </p>
           </div>
-          <button
-            onClick={handleLogout}
-            style={{
-              padding: "0.625rem 1.25rem",
-              backgroundColor: "#16191f",
-              color: "#ffffff",
-              border: "1px solid #414d5c",
-              borderRadius: "6px",
-              fontSize: "0.875rem",
-              fontWeight: "500",
-              cursor: "pointer",
-              transition: "all 0.15s ease"
-            }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#252d3d"}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#16191f"}
-          >
-            Logout
-          </button>
+
+          {/* Modern Profile Dropdown */}
+          <div style={{ position: "relative" }}>
+            <button
+              onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+              style={{
+                padding: "0.625rem 1rem",
+                backgroundColor: "#161b22",
+                color: "#ffffff",
+                border: "1px solid #30363d",
+                borderRadius: "8px",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+                cursor: "pointer",
+                transition: "all 0.15s ease",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.75rem"
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = "#1c2128";
+                e.currentTarget.style.borderColor = "#484f58";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = "#161b22";
+                e.currentTarget.style.borderColor = "#30363d";
+              }}
+            >
+              <div style={{
+                width: "32px",
+                height: "32px",
+                borderRadius: "50%",
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "0.875rem",
+                fontWeight: "600",
+                color: "#ffffff"
+              }}>
+                {user?.name?.charAt(0).toUpperCase()}
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", textAlign: "left" }}>
+                <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff" }}>{user?.name}</span>
+                <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>Student</span>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ marginLeft: "0.25rem" }}>
+                <path d="M4 6L8 10L12 6" stroke="#8b949e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+
+            {/* Dropdown Menu */}
+            {showProfileDropdown && (
+              <>
+                <div
+                  style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    zIndex: 40
+                  }}
+                  onClick={() => setShowProfileDropdown(false)}
+                />
+                <div style={{
+                  position: "absolute",
+                  top: "calc(100% + 0.5rem)",
+                  right: 0,
+                  minWidth: "240px",
+                  backgroundColor: "#161b22",
+                  border: "1px solid #30363d",
+                  borderRadius: "8px",
+                  boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+                  zIndex: 50,
+                  overflow: "hidden"
+                }}>
+                  <div style={{ padding: "0.75rem 1rem", borderBottom: "1px solid #30363d" }}>
+                    <div style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff", marginBottom: "0.25rem" }}>
+                      {user?.name}
+                    </div>
+                    <div style={{ fontSize: "0.75rem", color: "#8b949e" }}>
+                      {user?.email}
+                    </div>
+                    <div style={{ fontSize: "0.75rem", color: "#8b949e", marginTop: "0.25rem" }}>
+                      Student
+                    </div>
+                  </div>
+                  <div style={{ padding: "0.5rem" }}>
+                    <button
+                      onClick={() => {
+                        setShowProfileDropdown(false);
+                        handleLogout();
+                      }}
+                      style={{
+                        width: "100%",
+                        padding: "0.625rem 0.75rem",
+                        backgroundColor: "transparent",
+                        color: "#f87171",
+                        border: "none",
+                        borderRadius: "6px",
+                        fontSize: "0.875rem",
+                        fontWeight: "400",
+                        cursor: "pointer",
+                        transition: "all 0.15s ease",
+                        textAlign: "left",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.75rem"
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#1c2128"}
+                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M6 14H3C2.44772 14 2 13.5523 2 13V3C2 2.44772 2.44772 2 3 2H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                        <path d="M11 11L14 8M14 8L11 5M14 8H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Published Schedule Section */}
