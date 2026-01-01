@@ -37,7 +37,7 @@ export default function Home() {
   const [loadingStudents, setLoadingStudents] = useState(false);
   const [showAddStudentModal, setShowAddStudentModal] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
-  const [studentFormData, setStudentFormData] = useState({ name: '', email: '' });
+  const [studentFormData, setStudentFormData] = useState({ name: '', email: '', secondaryEmail: '' });
   const [studentError, setStudentError] = useState('');
   const [studentSuccess, setStudentSuccess] = useState('');
 
@@ -45,7 +45,7 @@ export default function Home() {
   const [admins, setAdmins] = useState([]);
   const [loadingAdmins, setLoadingAdmins] = useState(false);
   const [showInviteAdminModal, setShowInviteAdminModal] = useState(false);
-  const [adminFormData, setAdminFormData] = useState({ name: '', email: '' });
+  const [adminFormData, setAdminFormData] = useState({ name: '', email: '', secondaryEmail: '' });
   const [adminError, setAdminError] = useState('');
   const [adminSuccess, setAdminSuccess] = useState('');
 
@@ -209,7 +209,7 @@ export default function Home() {
 
   // Student management handlers
   const handleAddStudent = () => {
-    setStudentFormData({ name: '', email: '' });
+    setStudentFormData({ name: '', email: '', secondaryEmail: '' });
     setEditingStudent(null);
     setShowAddStudentModal(true);
     setStudentError('');
@@ -217,7 +217,7 @@ export default function Home() {
   };
 
   const handleEditStudent = (student) => {
-    setStudentFormData({ name: student.name, email: student.email });
+    setStudentFormData({ name: student.name, email: student.email, secondaryEmail: student.secondaryEmail || '' });
     setEditingStudent(student);
     setShowAddStudentModal(true);
     setStudentError('');
@@ -2442,13 +2442,12 @@ export default function Home() {
                     color: "#c9d1d9",
                     marginBottom: "0.625rem"
                   }}>
-                    Email
+                    Primary Email
                   </label>
                   <input
                     type="email"
                     value={studentFormData.email}
                     onChange={(e) => setStudentFormData({ ...studentFormData, email: e.target.value })}
-                    required
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
@@ -2459,7 +2458,52 @@ export default function Home() {
                       color: "#ffffff",
                       outline: "none"
                     }}
+                    placeholder="personal@email.com"
                   />
+                  <small style={{
+                    display: "block",
+                    fontSize: "0.75rem",
+                    color: "#8b949e",
+                    marginTop: "0.25rem"
+                  }}>
+                    At least one email is required
+                  </small>
+                </div>
+
+                <div style={{ marginBottom: "1.25rem" }}>
+                  <label style={{
+                    display: "block",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    color: "#c9d1d9",
+                    marginBottom: "0.625rem"
+                  }}>
+                    Secondary Email (Optional)
+                  </label>
+                  <input
+                    type="email"
+                    value={studentFormData.secondaryEmail}
+                    onChange={(e) => setStudentFormData({ ...studentFormData, secondaryEmail: e.target.value })}
+                    style={{
+                      width: "100%",
+                      padding: "0.625rem 0.875rem",
+                      backgroundColor: "#0d1117",
+                      border: "1px solid #30363d",
+                      borderRadius: "6px",
+                      fontSize: "0.875rem",
+                      color: "#ffffff",
+                      outline: "none"
+                    }}
+                    placeholder="school@university.edu"
+                  />
+                  <small style={{
+                    display: "block",
+                    fontSize: "0.75rem",
+                    color: "#8b949e",
+                    marginTop: "0.25rem"
+                  }}>
+                    Notifications will be sent to both emails
+                  </small>
                 </div>
 
                 <div style={{ display: "flex", gap: "1rem", justifyContent: "flex-end" }}>

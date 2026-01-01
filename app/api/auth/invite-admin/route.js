@@ -14,14 +14,18 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { email, name } = await request.json();
+    const { email, secondaryEmail, name } = await request.json();
 
-    if (!email || !name) {
+    // At least one email is required
+    if ((!email && !secondaryEmail) || !name) {
       return NextResponse.json(
-        { error: 'Email and name are required' },
+        { error: 'At least one email and name are required' },
         { status: 400 }
       );
     }
+
+    // Determine primary email (use first available)
+    const primaryEmail = email?.trim() || secondaryEmail?.trim();
 
     await dbConnect();
 
@@ -48,8 +52,8 @@ export async function POST(request) {
       );
     }
 
-    // Check if email already exists
-    const existingUser = await User.findOne({ email });
+    // Check if primary email already exists
+    const existingUser = await User.findOne({ email: primaryEmail.toLowerCase() });
     if (existingUser) {
       return NextResponse.json(
         { error: 'This email is already registered' },
@@ -57,37 +61,52 @@ export async function POST(request) {
       );
     }
 
+    // Check if secondary email is same as primary
+    const trimmedSecondaryEmail = secondaryEmail?.trim();
+    if (trimmedSecondaryEmail && trimmedSecondaryEmail.toLowerCase() === primaryEmail.toLowerCase()) {
+      return NextResponse.json(
+        { error: 'Secondary email cannot be the same as primary email' },
+        { status: 400 }
+      );
+    }
+
     // Create secondary admin (no password - will use passwordless auth)
     const newAdmin = await User.create({
-      email,
+      email: primaryEmail.toLowerCase(),
+      secondaryEmail: trimmedSecondaryEmail ? trimmedSecondaryEmail.toLowerCase() : null,
       name,
       role: 'admin',
       adminType: 'secondary',
       organizationName: currentAdmin.organizationName,
     });
 
-    // Send email invitation (optional during testing)
+    // Send email invitation to both emails
     try {
+      const emailsToNotify = [newAdmin.email];
+      if (newAdmin.secondaryEmail) {
+        emailsToNotify.push(newAdmin.secondaryEmail);
+      }
+
       await sendAdminInvite(
-        email,
+        emailsToNotify,
         name,
         currentAdmin.name,
         currentAdmin.organizationName
       );
-      console.log('Admin invitation email sent successfully');
+      console.log('Admin invitation email sent successfully to:', emailsToNotify.join(', '));
     } catch (emailError) {
-      console.error('Failed to send invitation email (continuing anyway for testing):', emailError);
-      // BETA: Don't fail the invitation if email fails
-      // The admin is still created and can log in manually
+      console.error('Failed to send invitation email:', emailError);
+      // Email failure shouldn't prevent admin creation
     }
 
     return NextResponse.json({
       success: true,
-      message: `Admin added successfully. They can log in with: ${email}`,
+      message: `Admin added successfully. They can log in with: ${newAdmin.email}`,
       admin: {
         id: newAdmin._id,
         name: newAdmin.name,
         email: newAdmin.email,
+        secondaryEmail: newAdmin.secondaryEmail,
         adminType: newAdmin.adminType,
       },
     });
