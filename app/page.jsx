@@ -1729,106 +1729,80 @@ export default function Home() {
                 <p style={{ margin: 0, color: "#8b949e" }}>Request availability from students using the Admin Dashboard or wait for them to submit.</p>
               </div>
             ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-                {students.filter(s => s.hasSubmitted).map((student, index) => (
-                  <div key={student.id} style={{ border: "1px solid #2d3748", borderRadius: "6px", overflow: "hidden", backgroundColor: "#1a1f2e" }}>
-                    {/* Student Header */}
-                    <div style={{
-                      padding: "1rem 1.25rem",
-                      backgroundColor: "#1f2937",
-                      borderBottom: "1px solid #2d3748"
-                    }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                        <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff" }}>
-                          {student.name}
-                        </span>
-                        <span style={{ fontSize: "0.75rem", color: "#10b981", padding: "0.25rem 0.5rem", backgroundColor: "#065f46", borderRadius: "4px" }}>
-                          Submitted
-                        </span>
-                      </div>
-                      <p style={{ fontSize: "0.75rem", color: "#9ca3af", margin: 0, marginTop: "0.25rem" }}>
-                        {student.email} • Submitted {new Date(student.availability.submittedAt).toLocaleDateString()}
-                      </p>
-                    </div>
-
-                    {/* Student Availability Details */}
-                    <div style={{ padding: "1.5rem" }}>
-                      {student.availability.notes && (
-                        <div style={{
-                          marginBottom: "1.5rem",
-                          padding: "1rem",
-                          backgroundColor: "#0d1117",
-                          border: "1px solid #2d3748",
-                          borderRadius: "6px"
-                        }}>
-                          <p style={{ fontSize: "0.75rem", color: "#9ca3af", margin: 0, marginBottom: "0.5rem", textTransform: "uppercase", fontWeight: "500" }}>
-                            Notes:
-                          </p>
-                          <p style={{ fontSize: "0.875rem", color: "#c9d1d9", margin: 0 }}>
-                            {student.availability.notes}
-                          </p>
-                        </div>
-                      )}
-
-                      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: "0" }}>
+                  <thead>
+                    <tr style={{ backgroundColor: "#161b22" }}>
+                      <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "600", color: "#8b949e", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #30363d", position: "sticky", left: 0, backgroundColor: "#161b22", zIndex: 10 }}>
+                        Student
+                      </th>
+                      {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => (
+                        <th key={day} style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "600", color: "#8b949e", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #30363d", minWidth: "180px" }}>
+                          {day}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {students.filter(s => s.hasSubmitted).map((student) => (
+                      <tr key={student.id} style={{ borderBottom: "1px solid #21262d" }}>
+                        <td style={{ padding: "1rem", borderRight: "1px solid #21262d", position: "sticky", left: 0, backgroundColor: "#0d1117", zIndex: 5 }}>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                            <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff" }}>
+                              {student.name}
+                            </span>
+                            <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>
+                              {student.email}
+                            </span>
+                            <span style={{ fontSize: "0.7rem", color: "#6b7280", marginTop: "0.25rem" }}>
+                              Submitted {new Date(student.availability.submittedAt).toLocaleDateString()}
+                            </span>
+                            {student.availability.notes && (
+                              <div style={{ marginTop: "0.5rem", padding: "0.5rem", backgroundColor: "#161b22", borderRadius: "4px", border: "1px solid #30363d" }}>
+                                <span style={{ fontSize: "0.7rem", color: "#6b7280", fontWeight: "500" }}>Note: </span>
+                                <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>{student.availability.notes}</span>
+                              </div>
+                            )}
+                          </div>
+                        </td>
                         {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => {
                           const dayAvail = student.availability.availability[day];
                           const hasAvailability = dayAvail && dayAvail.length > 0;
 
                           return (
-                            <div
-                              key={day}
-                              style={{
-                                padding: "0.875rem 1rem",
-                                border: "1px solid #2d3748",
-                                borderRadius: "4px",
-                                backgroundColor: "#16191f",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                                gap: "1rem",
-                                flexWrap: "wrap"
-                              }}
-                            >
-                              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", minWidth: "120px" }}>
-                                <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff", minWidth: "90px" }}>
-                                  {day}
-                                </span>
-                                <span style={{
-                                  fontSize: "0.75rem",
-                                  color: hasAvailability ? "#10b981" : "#ff6b6b",
-                                  fontWeight: "500",
-                                  padding: "0.25rem 0.5rem",
-                                  backgroundColor: hasAvailability ? "#065f46" : "#7f1d1d",
-                                  borderRadius: "4px"
-                                }}>
-                                  {hasAvailability ? "Available" : "Not available"}
-                                </span>
-                              </div>
-
-                              {hasAvailability && (
-                                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flex: "1", flexWrap: "wrap" }}>
+                            <td key={day} style={{ padding: "1rem", verticalAlign: "top" }}>
+                              {hasAvailability ? (
+                                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.375rem" }}>
                                   {dayAvail.map((slot, idx) => (
                                     <span key={idx} style={{
-                                      fontSize: "0.875rem",
-                                      color: "#c9d1d9",
-                                      padding: "0.375rem 0.75rem",
-                                      backgroundColor: "#0d1117",
-                                      border: "1px solid #414d5c",
-                                      borderRadius: "4px"
+                                      fontSize: "0.75rem",
+                                      color: "#10b981",
+                                      padding: "0.25rem 0.5rem",
+                                      backgroundColor: "#0d3320",
+                                      border: "1px solid #1f5e3a",
+                                      borderRadius: "4px",
+                                      whiteSpace: "nowrap"
                                     }}>
                                       {slot}
                                     </span>
                                   ))}
                                 </div>
+                              ) : (
+                                <span style={{
+                                  fontSize: "0.75rem",
+                                  color: "#6b7280",
+                                  fontStyle: "italic"
+                                }}>
+                                  Not available
+                                </span>
                               )}
-                            </div>
+                            </td>
                           );
                         })}
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>
