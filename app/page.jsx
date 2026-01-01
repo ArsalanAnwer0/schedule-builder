@@ -810,37 +810,39 @@ export default function Home() {
                   Manage administrators for {user?.organizationName || 'your organization'} (max 3 total)
                 </p>
               </div>
-              <button
-                onClick={handleInviteAdmin}
-                disabled={admins.length >= 3}
-                style={{
-                  padding: "0.625rem 1.25rem",
-                  backgroundColor: admins.length >= 3 ? "#414d5c" : "#0972d3",
-                  color: "#ffffff",
-                  border: "1px solid",
-                  borderColor: admins.length >= 3 ? "#414d5c" : "#0972d3",
-                  borderRadius: "6px",
-                  fontSize: "0.875rem",
-                  fontWeight: "500",
-                  cursor: admins.length >= 3 ? "not-allowed" : "pointer",
-                  opacity: admins.length >= 3 ? 0.6 : 1,
-                  transition: "all 0.15s ease"
-                }}
-                onMouseOver={(e) => {
-                  if (admins.length < 3) {
-                    e.currentTarget.style.backgroundColor = "#0863bf";
-                    e.currentTarget.style.borderColor = "#0863bf";
-                  }
-                }}
-                onMouseOut={(e) => {
-                  if (admins.length < 3) {
-                    e.currentTarget.style.backgroundColor = "#0972d3";
-                    e.currentTarget.style.borderColor = "#0972d3";
-                  }
-                }}
-              >
-                + Invite Admin
-              </button>
+              {user?.adminType === 'primary' && (
+                <button
+                  onClick={handleInviteAdmin}
+                  disabled={admins.length >= 3}
+                  style={{
+                    padding: "0.625rem 1.25rem",
+                    backgroundColor: admins.length >= 3 ? "#414d5c" : "#0972d3",
+                    color: "#ffffff",
+                    border: "1px solid",
+                    borderColor: admins.length >= 3 ? "#414d5c" : "#0972d3",
+                    borderRadius: "6px",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    cursor: admins.length >= 3 ? "not-allowed" : "pointer",
+                    opacity: admins.length >= 3 ? 0.6 : 1,
+                    transition: "all 0.15s ease"
+                  }}
+                  onMouseOver={(e) => {
+                    if (admins.length < 3) {
+                      e.currentTarget.style.backgroundColor = "#0863bf";
+                      e.currentTarget.style.borderColor = "#0863bf";
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (admins.length < 3) {
+                      e.currentTarget.style.backgroundColor = "#0972d3";
+                      e.currentTarget.style.borderColor = "#0972d3";
+                    }
+                  }}
+                >
+                  + Invite Admin
+                </button>
+              )}
             </div>
 
             <div style={{ padding: "2rem" }}>
@@ -878,7 +880,7 @@ export default function Home() {
                             </span>
                           </td>
                           <td style={{ padding: "1rem", textAlign: "right" }}>
-                            {admin.adminType === 'secondary' && admin.id !== user?._id && (
+                            {user?.adminType === 'primary' && admin.adminType === 'secondary' && admin.id !== user?._id && (
                               <button
                                 onClick={() => handleRemoveAdmin(admin.id)}
                                 style={{
