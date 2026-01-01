@@ -259,130 +259,182 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* How It Works Section */}
+      {/* How It Works Section - Elegant Horizontal Flow */}
       <section style={{
-        padding: "8rem 2rem",
-        maxWidth: "1200px",
+        padding: "10rem 2rem",
+        maxWidth: "1400px",
         margin: "0 auto"
       }}>
-        <div style={{ textAlign: "center", marginBottom: "5rem" }}>
+        <div style={{ textAlign: "center", marginBottom: "6rem" }}>
           <h2 style={{
-            fontSize: "3rem",
+            fontSize: "3.5rem",
             fontWeight: "700",
             color: "#ffffff",
-            marginBottom: "1rem"
+            marginBottom: "1rem",
+            letterSpacing: "-0.01em"
           }}>
             How it works
           </h2>
           <p style={{
-            fontSize: "1.25rem",
-            color: "rgba(255, 255, 255, 0.7)",
+            fontSize: "1.375rem",
+            color: "rgba(255, 255, 255, 0.6)",
             maxWidth: "600px",
-            margin: "0 auto"
+            margin: "0 auto",
+            fontWeight: "300"
           }}>
             Three simple steps to automated scheduling
           </p>
         </div>
 
         <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-          gap: "3rem"
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "2rem",
+          position: "relative",
+          flexWrap: "wrap"
         }}>
-          <div style={{ textAlign: "center" }}>
+          {/* Step 1 */}
+          <div style={{
+            flex: "1",
+            minWidth: "280px",
+            textAlign: "center",
+            position: "relative"
+          }}>
             <div style={{
-              width: "80px",
-              height: "80px",
+              width: "100px",
+              height: "100px",
               backgroundColor: "#0972d3",
               borderRadius: "50%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              margin: "0 auto 2rem auto",
-              fontSize: "2rem",
+              margin: "0 auto 2.5rem auto",
+              fontSize: "2.5rem",
               fontWeight: "700",
-              color: "#ffffff"
+              color: "#ffffff",
+              boxShadow: "0 8px 32px rgba(9, 114, 211, 0.4)"
             }}>
               1
             </div>
             <h3 style={{
-              fontSize: "1.5rem",
+              fontSize: "1.75rem",
               fontWeight: "600",
               color: "#ffffff",
-              marginBottom: "1rem"
+              marginBottom: "1.25rem",
+              letterSpacing: "-0.01em"
             }}>
               Add your students
             </h3>
             <p style={{
               fontSize: "1.125rem",
-              color: "rgba(255, 255, 255, 0.7)",
-              lineHeight: "1.6"
+              color: "rgba(255, 255, 255, 0.65)",
+              lineHeight: "1.7",
+              fontWeight: "300"
             }}>
               Import your team with email addresses. They'll receive automatic invitations.
             </p>
           </div>
 
-          <div style={{ textAlign: "center" }}>
+          {/* Connector Line */}
+          <div style={{
+            width: "60px",
+            height: "2px",
+            background: "linear-gradient(to right, #0972d3, rgba(9, 114, 211, 0.3))",
+            alignSelf: "flex-start",
+            marginTop: "50px",
+            display: "none"
+          }} />
+
+          {/* Step 2 */}
+          <div style={{
+            flex: "1",
+            minWidth: "280px",
+            textAlign: "center",
+            position: "relative"
+          }}>
             <div style={{
-              width: "80px",
-              height: "80px",
+              width: "100px",
+              height: "100px",
               backgroundColor: "#0972d3",
               borderRadius: "50%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              margin: "0 auto 2rem auto",
-              fontSize: "2rem",
+              margin: "0 auto 2.5rem auto",
+              fontSize: "2.5rem",
               fontWeight: "700",
-              color: "#ffffff"
+              color: "#ffffff",
+              boxShadow: "0 8px 32px rgba(9, 114, 211, 0.4)"
             }}>
               2
             </div>
             <h3 style={{
-              fontSize: "1.5rem",
+              fontSize: "1.75rem",
               fontWeight: "600",
               color: "#ffffff",
-              marginBottom: "1rem"
+              marginBottom: "1.25rem",
+              letterSpacing: "-0.01em"
             }}>
               Collect availability
             </h3>
             <p style={{
               fontSize: "1.125rem",
-              color: "rgba(255, 255, 255, 0.7)",
-              lineHeight: "1.6"
+              color: "rgba(255, 255, 255, 0.65)",
+              lineHeight: "1.7",
+              fontWeight: "300"
             }}>
               Students submit their availability through a simple, intuitive form.
             </p>
           </div>
 
-          <div style={{ textAlign: "center" }}>
+          {/* Connector Line */}
+          <div style={{
+            width: "60px",
+            height: "2px",
+            background: "linear-gradient(to right, #0972d3, rgba(9, 114, 211, 0.3))",
+            alignSelf: "flex-start",
+            marginTop: "50px",
+            display: "none"
+          }} />
+
+          {/* Step 3 */}
+          <div style={{
+            flex: "1",
+            minWidth: "280px",
+            textAlign: "center",
+            position: "relative"
+          }}>
             <div style={{
-              width: "80px",
-              height: "80px",
+              width: "100px",
+              height: "100px",
               backgroundColor: "#0972d3",
               borderRadius: "50%",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              margin: "0 auto 2rem auto",
-              fontSize: "2rem",
+              margin: "0 auto 2.5rem auto",
+              fontSize: "2.5rem",
               fontWeight: "700",
-              color: "#ffffff"
+              color: "#ffffff",
+              boxShadow: "0 8px 32px rgba(9, 114, 211, 0.4)"
             }}>
               3
             </div>
             <h3 style={{
-              fontSize: "1.5rem",
+              fontSize: "1.75rem",
               fontWeight: "600",
               color: "#ffffff",
-              marginBottom: "1rem"
+              marginBottom: "1.25rem",
+              letterSpacing: "-0.01em"
             }}>
               Generate schedule
             </h3>
             <p style={{
               fontSize: "1.125rem",
-              color: "rgba(255, 255, 255, 0.7)",
-              lineHeight: "1.6"
+              color: "rgba(255, 255, 255, 0.65)",
+              lineHeight: "1.7",
+              fontWeight: "300"
             }}>
               Our smart algorithm creates a balanced, conflict-free schedule instantly.
             </p>
@@ -390,28 +442,30 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Features Section - Minimal Luxury Design */}
       <section style={{
-        padding: "8rem 2rem",
+        padding: "10rem 2rem",
         backgroundColor: "#0a1420",
         borderTop: "1px solid #1f2937",
         borderBottom: "1px solid #1f2937"
       }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: "5rem" }}>
+          <div style={{ textAlign: "center", marginBottom: "8rem" }}>
             <h2 style={{
-              fontSize: "3rem",
+              fontSize: "3.5rem",
               fontWeight: "700",
               color: "#ffffff",
-              marginBottom: "1rem"
+              marginBottom: "1rem",
+              letterSpacing: "-0.01em"
             }}>
               Everything you need
             </h2>
             <p style={{
-              fontSize: "1.25rem",
-              color: "rgba(255, 255, 255, 0.7)",
+              fontSize: "1.375rem",
+              color: "rgba(255, 255, 255, 0.6)",
               maxWidth: "600px",
-              margin: "0 auto"
+              margin: "0 auto",
+              fontWeight: "300"
             }}>
               Powerful features that make scheduling effortless
             </p>
@@ -419,169 +473,117 @@ export default function LandingPage() {
 
           <div style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-            gap: "2.5rem"
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "4rem",
+            marginBottom: "4rem"
           }}>
-            <div style={{
-              padding: "2.5rem",
-              backgroundColor: "rgba(255, 255, 255, 0.03)",
-              borderRadius: "12px",
-              border: "1px solid #1f2937",
-              transition: "all 0.3s ease"
-            }}>
+            {/* Feature 1 */}
+            <div style={{ textAlign: "center" }}>
               <div style={{
-                fontSize: "2.5rem",
-                marginBottom: "1.5rem"
-              }}>📊</div>
+                width: "80px",
+                height: "80px",
+                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 2.5rem auto",
+                border: "1px solid rgba(255, 255, 255, 0.1)"
+              }}>
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#0972d3" strokeWidth="2">
+                  <path d="M12 2v20M2 12h20" />
+                  <circle cx="12" cy="12" r="9" />
+                </svg>
+              </div>
               <h3 style={{
-                fontSize: "1.5rem",
+                fontSize: "1.75rem",
                 fontWeight: "600",
                 color: "#ffffff",
-                marginBottom: "1rem"
+                marginBottom: "1.25rem",
+                letterSpacing: "-0.01em"
               }}>
                 Smart Scheduling
               </h3>
               <p style={{
-                fontSize: "1rem",
-                color: "rgba(255, 255, 255, 0.7)",
-                lineHeight: "1.6"
+                fontSize: "1.0625rem",
+                color: "rgba(255, 255, 255, 0.6)",
+                lineHeight: "1.75",
+                fontWeight: "300"
               }}>
-                Our algorithm ensures fair distribution of shifts while respecting student availability and preferences.
+                Our algorithm ensures fair distribution of shifts while respecting availability
               </p>
             </div>
 
-            <div style={{
-              padding: "2.5rem",
-              backgroundColor: "rgba(255, 255, 255, 0.03)",
-              borderRadius: "12px",
-              border: "1px solid #1f2937"
-            }}>
+            {/* Feature 2 */}
+            <div style={{ textAlign: "center" }}>
               <div style={{
-                fontSize: "2.5rem",
-                marginBottom: "1.5rem"
-              }}>✉️</div>
+                width: "80px",
+                height: "80px",
+                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 2.5rem auto",
+                border: "1px solid rgba(255, 255, 255, 0.1)"
+              }}>
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#0972d3" strokeWidth="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                  <path d="M22 6l-10 7L2 6" />
+                </svg>
+              </div>
               <h3 style={{
-                fontSize: "1.5rem",
+                fontSize: "1.75rem",
                 fontWeight: "600",
                 color: "#ffffff",
-                marginBottom: "1rem"
+                marginBottom: "1.25rem",
+                letterSpacing: "-0.01em"
               }}>
                 Email Invitations
               </h3>
               <p style={{
-                fontSize: "1rem",
-                color: "rgba(255, 255, 255, 0.7)",
-                lineHeight: "1.6"
+                fontSize: "1.0625rem",
+                color: "rgba(255, 255, 255, 0.6)",
+                lineHeight: "1.75",
+                fontWeight: "300"
               }}>
-                Automatically send invitations to students. They can login with any registered email address.
+                Automatically send invitations. Students can login with any registered email
               </p>
             </div>
 
-            <div style={{
-              padding: "2.5rem",
-              backgroundColor: "rgba(255, 255, 255, 0.03)",
-              borderRadius: "12px",
-              border: "1px solid #1f2937"
-            }}>
+            {/* Feature 3 */}
+            <div style={{ textAlign: "center" }}>
               <div style={{
-                fontSize: "2.5rem",
-                marginBottom: "1.5rem"
-              }}>🔄</div>
+                width: "80px",
+                height: "80px",
+                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 2.5rem auto",
+                border: "1px solid rgba(255, 255, 255, 0.1)"
+              }}>
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#0972d3" strokeWidth="2">
+                  <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
+                </svg>
+              </div>
               <h3 style={{
-                fontSize: "1.5rem",
+                fontSize: "1.75rem",
                 fontWeight: "600",
                 color: "#ffffff",
-                marginBottom: "1rem"
-              }}>
-                Flexible Updates
-              </h3>
-              <p style={{
-                fontSize: "1rem",
-                color: "rgba(255, 255, 255, 0.7)",
-                lineHeight: "1.6"
-              }}>
-                Reset availability, regenerate schedules, and make adjustments anytime you need.
-              </p>
-            </div>
-
-            <div style={{
-              padding: "2.5rem",
-              backgroundColor: "rgba(255, 255, 255, 0.03)",
-              borderRadius: "12px",
-              border: "1px solid #1f2937"
-            }}>
-              <div style={{
-                fontSize: "2.5rem",
-                marginBottom: "1.5rem"
-              }}>👥</div>
-              <h3 style={{
-                fontSize: "1.5rem",
-                fontWeight: "600",
-                color: "#ffffff",
-                marginBottom: "1rem"
-              }}>
-                Team Management
-              </h3>
-              <p style={{
-                fontSize: "1rem",
-                color: "rgba(255, 255, 255, 0.7)",
-                lineHeight: "1.6"
-              }}>
-                Manage multiple admins and students. Organize your entire workforce in one place.
-              </p>
-            </div>
-
-            <div style={{
-              padding: "2.5rem",
-              backgroundColor: "rgba(255, 255, 255, 0.03)",
-              borderRadius: "12px",
-              border: "1px solid #1f2937"
-            }}>
-              <div style={{
-                fontSize: "2.5rem",
-                marginBottom: "1.5rem"
-              }}>📥</div>
-              <h3 style={{
-                fontSize: "1.5rem",
-                fontWeight: "600",
-                color: "#ffffff",
-                marginBottom: "1rem"
-              }}>
-                Export Schedules
-              </h3>
-              <p style={{
-                fontSize: "1rem",
-                color: "rgba(255, 255, 255, 0.7)",
-                lineHeight: "1.6"
-              }}>
-                Download schedules in multiple formats. Share with your team easily.
-              </p>
-            </div>
-
-            <div style={{
-              padding: "2.5rem",
-              backgroundColor: "rgba(255, 255, 255, 0.03)",
-              borderRadius: "12px",
-              border: "1px solid #1f2937"
-            }}>
-              <div style={{
-                fontSize: "2.5rem",
-                marginBottom: "1.5rem"
-              }}>⚡</div>
-              <h3 style={{
-                fontSize: "1.5rem",
-                fontWeight: "600",
-                color: "#ffffff",
-                marginBottom: "1rem"
+                marginBottom: "1.25rem",
+                letterSpacing: "-0.01em"
               }}>
                 Lightning Fast
               </h3>
               <p style={{
-                fontSize: "1rem",
-                color: "rgba(255, 255, 255, 0.7)",
-                lineHeight: "1.6"
+                fontSize: "1.0625rem",
+                color: "rgba(255, 255, 255, 0.6)",
+                lineHeight: "1.75",
+                fontWeight: "300"
               }}>
-                Generate schedules in seconds, not hours. Get back to what matters.
+                Generate schedules in seconds, not hours. Get back to what matters
               </p>
             </div>
           </div>
@@ -590,22 +592,24 @@ export default function LandingPage() {
 
       {/* FAQ Section */}
       <section style={{
-        padding: "8rem 2rem",
+        padding: "10rem 2rem",
         maxWidth: "900px",
         margin: "0 auto"
       }}>
-        <div style={{ textAlign: "center", marginBottom: "5rem" }}>
+        <div style={{ textAlign: "center", marginBottom: "6rem" }}>
           <h2 style={{
-            fontSize: "3rem",
+            fontSize: "3.5rem",
             fontWeight: "700",
             color: "#ffffff",
-            marginBottom: "1rem"
+            marginBottom: "1rem",
+            letterSpacing: "-0.01em"
           }}>
             Got questions?
           </h2>
           <p style={{
-            fontSize: "1.25rem",
-            color: "rgba(255, 255, 255, 0.7)"
+            fontSize: "1.375rem",
+            color: "rgba(255, 255, 255, 0.6)",
+            fontWeight: "300"
           }}>
             Here's what you need to know
           </p>
@@ -613,23 +617,25 @@ export default function LandingPage() {
 
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <div style={{
-            padding: "2rem",
+            padding: "2.5rem",
             backgroundColor: "rgba(255, 255, 255, 0.03)",
             borderRadius: "12px",
             border: "1px solid #1f2937"
           }}>
             <h3 style={{
-              fontSize: "1.25rem",
+              fontSize: "1.375rem",
               fontWeight: "600",
               color: "#ffffff",
-              marginBottom: "0.75rem"
+              marginBottom: "1rem",
+              letterSpacing: "-0.01em"
             }}>
               How does the scheduling algorithm work?
             </h3>
             <p style={{
-              fontSize: "1rem",
-              color: "rgba(255, 255, 255, 0.7)",
-              lineHeight: "1.6"
+              fontSize: "1.0625rem",
+              color: "rgba(255, 255, 255, 0.65)",
+              lineHeight: "1.75",
+              fontWeight: "300"
             }}>
               Our smart algorithm analyzes student availability and creates balanced schedules that minimize conflicts,
               distribute shifts fairly, and respect time preferences.
@@ -637,23 +643,25 @@ export default function LandingPage() {
           </div>
 
           <div style={{
-            padding: "2rem",
+            padding: "2.5rem",
             backgroundColor: "rgba(255, 255, 255, 0.03)",
             borderRadius: "12px",
             border: "1px solid #1f2937"
           }}>
             <h3 style={{
-              fontSize: "1.25rem",
+              fontSize: "1.375rem",
               fontWeight: "600",
               color: "#ffffff",
-              marginBottom: "0.75rem"
+              marginBottom: "1rem",
+              letterSpacing: "-0.01em"
             }}>
               Can students login with multiple email addresses?
             </h3>
             <p style={{
-              fontSize: "1rem",
-              color: "rgba(255, 255, 255, 0.7)",
-              lineHeight: "1.6"
+              fontSize: "1.0625rem",
+              color: "rgba(255, 255, 255, 0.65)",
+              lineHeight: "1.75",
+              fontWeight: "300"
             }}>
               Yes! Students can have both a primary and secondary email. They can login with either one
               and access the same account and availability.
@@ -661,23 +669,25 @@ export default function LandingPage() {
           </div>
 
           <div style={{
-            padding: "2rem",
+            padding: "2.5rem",
             backgroundColor: "rgba(255, 255, 255, 0.03)",
             borderRadius: "12px",
             border: "1px solid #1f2937"
           }}>
             <h3 style={{
-              fontSize: "1.25rem",
+              fontSize: "1.375rem",
               fontWeight: "600",
               color: "#ffffff",
-              marginBottom: "0.75rem"
+              marginBottom: "1rem",
+              letterSpacing: "-0.01em"
             }}>
               What if I need to change the schedule?
             </h3>
             <p style={{
-              fontSize: "1rem",
-              color: "rgba(255, 255, 255, 0.7)",
-              lineHeight: "1.6"
+              fontSize: "1.0625rem",
+              color: "rgba(255, 255, 255, 0.65)",
+              lineHeight: "1.75",
+              fontWeight: "300"
             }}>
               You can reset student availability and regenerate schedules anytime. The system is flexible
               and adapts to your changing needs.
@@ -685,23 +695,25 @@ export default function LandingPage() {
           </div>
 
           <div style={{
-            padding: "2rem",
+            padding: "2.5rem",
             backgroundColor: "rgba(255, 255, 255, 0.03)",
             borderRadius: "12px",
             border: "1px solid #1f2937"
           }}>
             <h3 style={{
-              fontSize: "1.25rem",
+              fontSize: "1.375rem",
               fontWeight: "600",
               color: "#ffffff",
-              marginBottom: "0.75rem"
+              marginBottom: "1rem",
+              letterSpacing: "-0.01em"
             }}>
               Is there a limit on the number of students?
             </h3>
             <p style={{
-              fontSize: "1rem",
-              color: "rgba(255, 255, 255, 0.7)",
-              lineHeight: "1.6"
+              fontSize: "1.0625rem",
+              color: "rgba(255, 255, 255, 0.65)",
+              lineHeight: "1.75",
+              fontWeight: "300"
             }}>
               No limits! Add as many students and admins as you need to manage your organization effectively.
             </p>
@@ -709,67 +721,16 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section style={{
-        padding: "8rem 2rem",
-        backgroundColor: "#0a1420",
-        borderTop: "1px solid #1f2937",
-        textAlign: "center"
-      }}>
-        <div style={{ maxWidth: "800px", margin: "0 auto" }}>
-          <h2 style={{
-            fontSize: "3rem",
-            fontWeight: "700",
-            color: "#ffffff",
-            marginBottom: "1.5rem"
-          }}>
-            Ready to simplify your scheduling?
-          </h2>
-          <p style={{
-            fontSize: "1.25rem",
-            color: "rgba(255, 255, 255, 0.7)",
-            marginBottom: "3rem",
-            lineHeight: "1.6"
-          }}>
-            Join organizations already saving hours every week with automated scheduling.
-          </p>
-          <button
-            onClick={() => router.push('/register')}
-            style={{
-              padding: "1rem 2.5rem",
-              background: "#0972d3",
-              color: "#ffffff",
-              border: "none",
-              borderRadius: "8px",
-              fontSize: "1.125rem",
-              fontWeight: "600",
-              cursor: "pointer",
-              transition: "all 0.2s ease",
-              boxShadow: "0 4px 20px rgba(9, 114, 211, 0.3)"
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = "#0863bf";
-              e.currentTarget.style.transform = "translateY(-2px)";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = "#0972d3";
-              e.currentTarget.style.transform = "translateY(0)";
-            }}
-          >
-            Get started for free
-          </button>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer style={{
-        padding: "3rem 2rem",
+        padding: "4rem 2rem",
         borderTop: "1px solid #1f2937",
         textAlign: "center"
       }}>
         <p style={{
-          fontSize: "0.875rem",
-          color: "rgba(255, 255, 255, 0.5)"
+          fontSize: "0.9375rem",
+          color: "rgba(255, 255, 255, 0.5)",
+          fontWeight: "300"
         }}>
           © 2026 Schedule Builder. Built to make scheduling simple.
         </p>
