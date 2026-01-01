@@ -58,7 +58,7 @@ export async function POST(request) {
     await setSessionCookie(session.token, session.expiresAt);
 
     // Return success with redirect URL based on role
-    const redirectUrl = user.role === 'admin' ? '/' : '/dashboard';
+    const redirectUrl = user.role === 'admin' ? '/admin' : '/dashboard';
 
     return NextResponse.json({
       success: true,
