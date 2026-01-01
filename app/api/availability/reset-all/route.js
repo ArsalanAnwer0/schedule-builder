@@ -21,6 +21,30 @@ export async function POST(request) {
 
     await dbConnect();
 
+    // Get current admin's organization for security
+    const admin = await User.findById(sessionData.user._id);
+
+    // Verify all students belong to admin's organization (security check)
+    const students = await User.find({
+      _id: { $in: studentIds },
+      role: 'student',
+      organizationName: admin.organizationName
+    });
+
+    if (students.length === 0) {
+      return NextResponse.json(
+        { error: 'No valid students found in your organization' },
+        { status: 404 }
+      );
+    }
+
+    if (students.length !== studentIds.length) {
+      return NextResponse.json(
+        { error: 'Some students do not belong to your organization' },
+        { status: 403 }
+      );
+    }
+
     // Delete availability for all these students
     const deleteResult = await Availability.deleteMany({ userId: { $in: studentIds } });
 
