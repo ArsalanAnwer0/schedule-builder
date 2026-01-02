@@ -303,36 +303,20 @@ export default function LandingPage() {
           borderRadius: "16px",
           border: "1px solid rgba(20, 184, 166, 0.2)",
           position: "relative",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
+          overflow: "hidden",
+          padding: "1.5rem"
         }}>
-          <div style={{ textAlign: "center" }}>
-            <div style={{
-              width: "80px",
-              height: "80px",
-              margin: "0 auto 1.5rem auto",
-              background: "rgba(20, 184, 166, 0.2)",
-              borderRadius: "12px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
-            }}>
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" />
-                <line x1="16" y1="2" x2="16" y2="6" />
-                <line x1="8" y1="2" x2="8" y2="6" />
-                <line x1="3" y1="10" x2="21" y2="10" />
-              </svg>
-            </div>
-            <p style={{
-              color: "rgba(255, 255, 255, 0.5)",
-              fontSize: "0.9375rem",
-              fontWeight: "300"
-            }}>
-              Schedule Interface Preview
-            </p>
-          </div>
+          <img
+            src="/availability-grid.png"
+            alt="Schedule Builder Availability Grid Interface"
+            style={{
+              width: "100%",
+              height: "auto",
+              display: "block",
+              borderRadius: "8px",
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)"
+            }}
+          />
         </div>
       </section>
 
