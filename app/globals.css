@@ -115,3 +115,162 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover,
 input[type="time"]::-webkit-calendar-picker-indicator:hover {
   filter: invert(0.9);
 }
+
+/* ============================================
+   MOBILE RESPONSIVE STYLES
+   ============================================ */
+
+/* Mobile: Base styles (max-width: 768px) */
+@media (max-width: 768px) {
+  /* Hide desktop navigation on mobile */
+  .desktop-nav {
+    display: none !important;
+  }
+
+  /* Show mobile menu button */
+  .mobile-menu-button {
+    display: block !important;
+  }
+
+  /* Hero section responsive */
+  .hero-section {
+    padding: 4rem 1.5rem 2rem 1.5rem !important;
+  }
+
+  .hero-title {
+    font-size: 2.5rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .hero-preview {
+    padding: 2rem !important;
+    min-height: 300px !important;
+  }
+
+  /* Section padding */
+  .section-padding {
+    padding: 4rem 1.5rem !important;
+  }
+
+  /* Section titles */
+  .section-title {
+    font-size: 2rem !important;
+  }
+
+  /* Grid layouts */
+  .grid-3-cols {
+    grid-template-columns: 1fr !important;
+  }
+
+  .grid-2-cols {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Navigation padding */
+  .nav-padding {
+    padding: 1rem 1.5rem !important;
+  }
+
+  /* Step numbers */
+  .step-number {
+    font-size: 2.5rem !important;
+  }
+
+  /* Tables - make them scrollable on mobile */
+  .table-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Form inputs on mobile */
+  input, textarea, select {
+    font-size: 16px !important; /* Prevents zoom on iOS */
+  }
+
+  /* Buttons on mobile */
+  button {
+    min-height: 44px; /* iOS touch target size */
+  }
+
+  /* Profile dropdown on mobile */
+  .profile-dropdown {
+    position: fixed !important;
+    top: auto !important;
+    right: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    border-radius: 16px 16px 0 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* Card layouts stack vertically */
+  .card-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Flex layouts wrap */
+  .flex-wrap-mobile {
+    flex-wrap: wrap !important;
+  }
+}
+
+/* Tablet: 769px - 1024px */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .grid-3-cols {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .hero-title {
+    font-size: 3.5rem !important;
+  }
+
+  .section-title {
+    font-size: 2.5rem !important;
+  }
+}
+
+/* Desktop: 769px and up */
+@media (min-width: 769px) {
+  .mobile-menu-button {
+    display: none !important;
+  }
+
+  .mobile-menu {
+    display: none !important;
+  }
+}
+
+/* Very large screens: 1440px and up */
+@media (min-width: 1440px) {
+  .hero-title {
+    font-size: 5.5rem !important;
+  }
+}
+
+/* Small mobile: 480px and below */
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 2rem !important;
+  }
+
+  .section-title {
+    font-size: 1.75rem !important;
+  }
+
+  .hero-section {
+    padding: 3rem 1rem 1.5rem 1rem !important;
+  }
+
+  .section-padding {
+    padding: 3rem 1rem !important;
+  }
+
+  .nav-padding {
+    padding: 0.75rem 1rem !important;
+  }
+
+  /* Smaller step numbers on very small screens */
+  .step-number {
+    font-size: 2rem !important;
+  }
+}

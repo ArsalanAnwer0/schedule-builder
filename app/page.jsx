@@ -11,6 +11,7 @@ export default function LandingPage() {
   const [feedbackSuccess, setFeedbackSuccess] = useState('');
   const [feedbackError, setFeedbackError] = useState('');
   const [expandedFaq, setExpandedFaq] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleFeedbackSubmit = async (e) => {
     e.preventDefault();
