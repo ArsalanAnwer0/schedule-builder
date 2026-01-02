@@ -60,244 +60,326 @@ export default function RegisterPage() {
   return (
     <div style={{
       minHeight: "100vh",
-      backgroundColor: "#0d1117",
+      backgroundColor: "#0a0f1a",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      padding: "1rem"
+      padding: "2rem",
+      fontFamily: "system-ui, -apple-system, sans-serif"
     }}>
       <div style={{
         width: "100%",
-        maxWidth: "450px",
-        backgroundColor: "#161b22",
-        border: "1px solid #30363d",
-        borderRadius: "8px",
-        padding: "2rem"
+        maxWidth: "520px"
       }}>
-        <div style={{ marginBottom: "2rem", textAlign: "center" }}>
-          <h1 style={{
-            fontSize: "1.875rem",
-            fontWeight: "600",
-            color: "#ffffff",
-            marginBottom: "0.5rem"
-          }}>
-            Schedule Builder
-          </h1>
+        {/* Header */}
+        <div style={{ marginBottom: "3rem", textAlign: "center" }}>
+          <Link href="/" style={{ textDecoration: "none" }}>
+            <h1 style={{
+              fontSize: "2rem",
+              fontWeight: "400",
+              color: "#ffffff",
+              marginBottom: "0.75rem",
+              fontFamily: "Georgia, 'Times New Roman', serif",
+              letterSpacing: "-0.01em"
+            }}>
+              Schedule Builder
+            </h1>
+          </Link>
           <p style={{
             fontSize: "1rem",
-            color: "#8b949e",
-            marginBottom: "0.75rem"
+            color: "rgba(255, 255, 255, 0.5)",
+            fontWeight: "300"
           }}>
-            Register as Primary Admin
+            Create your admin account
           </p>
-          <div style={{
-            padding: "0.875rem 1rem",
-            backgroundColor: "#0d1f17",
-            border: "1px solid #1e4d2b",
-            borderRadius: "6px"
-          }}>
-            <p style={{ color: "#10b981", fontSize: "0.8125rem", margin: 0, lineHeight: "1.5" }}>
-              <strong style={{ color: "#34d399" }}>First time here?</strong> Register to create your organization account and start managing student worker schedules.
-            </p>
-          </div>
         </div>
 
-        {error && (
-          <div style={{
-            padding: "0.75rem 1rem",
-            backgroundColor: "#2d1517",
-            border: "1px solid #5c2d30",
-            borderRadius: "6px",
-            marginBottom: "1.5rem"
-          }}>
-            <p style={{ color: "#ff6b6b", fontSize: "0.875rem", margin: 0 }}>
-              {error}
-            </p>
-          </div>
-        )}
-
-        {success && (
-          <div style={{
-            padding: "1rem 1.5rem",
-            backgroundColor: "#0d1f17",
-            border: "1px solid #1e4d2b",
-            borderRadius: "6px",
-            marginBottom: "1.5rem"
-          }}>
-            <p style={{ color: "#10b981", fontSize: "0.875rem", margin: 0, marginBottom: "0.5rem", fontWeight: "600" }}>
-              Registration successful!
-            </p>
-            <p style={{ color: "#10b981", fontSize: "0.875rem", margin: 0, marginBottom: "1rem" }}>
-              Your admin account has been created. You can now login using the verification code sent to your email.
-            </p>
-            <Link
-              href="/login"
-              style={{
-                display: "inline-block",
-                padding: "0.5rem 1rem",
-                backgroundColor: "#0972d3",
-                color: "#ffffff",
-                borderRadius: "6px",
-                fontSize: "0.875rem",
-                fontWeight: "500",
-                textDecoration: "none"
-              }}
-            >
-              Go to Login
-            </Link>
-          </div>
-        )}
-
-        {!success && <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: "1.25rem" }}>
-            <label style={{
-              display: "block",
-              fontSize: "0.875rem",
-              fontWeight: "500",
-              color: "#c9d1d9",
-              marginBottom: "0.5rem"
+        {/* Main Card */}
+        <div style={{
+          backgroundColor: "rgba(255, 255, 255, 0.03)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          borderRadius: "12px",
+          padding: "2.5rem",
+          backdropFilter: "blur(10px)"
+        }}>
+          {error && (
+            <div style={{
+              padding: "1rem 1.25rem",
+              backgroundColor: "rgba(239, 68, 68, 0.1)",
+              border: "1px solid rgba(239, 68, 68, 0.3)",
+              borderRadius: "8px",
+              marginBottom: "1.5rem"
             }}>
-              Your Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              style={{
-                width: "100%",
-                padding: "0.625rem 0.875rem",
-                backgroundColor: "#0d1117",
-                border: "1px solid #30363d",
-                borderRadius: "6px",
-                fontSize: "0.875rem",
+              <p style={{
+                color: "#fca5a5",
+                fontSize: "0.9375rem",
+                margin: 0,
+                fontWeight: "300"
+              }}>
+                {error}
+              </p>
+            </div>
+          )}
+
+          {success ? (
+            <div style={{ textAlign: "center" }}>
+              <div style={{
+                width: "64px",
+                height: "64px",
+                margin: "0 auto 1.5rem auto",
+                backgroundColor: "rgba(20, 184, 166, 0.15)",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
+                  <path d="M20 6L9 17l-5-5" />
+                </svg>
+              </div>
+
+              <h2 style={{
+                fontSize: "1.5rem",
+                fontWeight: "400",
                 color: "#ffffff",
-                outline: "none"
-              }}
-              onFocus={(e) => e.currentTarget.style.borderColor = "#58a6ff"}
-              onBlur={(e) => e.currentTarget.style.borderColor = "#30363d"}
-            />
-          </div>
+                marginBottom: "0.75rem",
+                fontFamily: "Georgia, 'Times New Roman', serif"
+              }}>
+                Account created successfully
+              </h2>
 
-          <div style={{ marginBottom: "1.25rem" }}>
-            <label style={{
-              display: "block",
-              fontSize: "0.875rem",
-              fontWeight: "500",
-              color: "#c9d1d9",
-              marginBottom: "0.5rem"
-            }}>
-              Organization Name
-            </label>
-            <input
-              type="text"
-              name="organizationName"
-              value={formData.organizationName}
-              onChange={handleChange}
-              required
-              placeholder="e.g., ABC University"
-              style={{
-                width: "100%",
-                padding: "0.625rem 0.875rem",
-                backgroundColor: "#0d1117",
-                border: "1px solid #30363d",
-                borderRadius: "6px",
-                fontSize: "0.875rem",
-                color: "#ffffff",
-                outline: "none"
-              }}
-              onFocus={(e) => e.currentTarget.style.borderColor = "#58a6ff"}
-              onBlur={(e) => e.currentTarget.style.borderColor = "#30363d"}
-            />
-          </div>
+              <p style={{
+                color: "rgba(255, 255, 255, 0.6)",
+                fontSize: "0.9375rem",
+                margin: "0 0 2rem 0",
+                lineHeight: "1.6",
+                fontWeight: "300"
+              }}>
+                Check your email for a verification code to login.
+              </p>
 
-          <div style={{ marginBottom: "1.25rem" }}>
-            <label style={{
-              display: "block",
-              fontSize: "0.875rem",
-              fontWeight: "500",
-              color: "#c9d1d9",
-              marginBottom: "0.5rem"
-            }}>
-              Email Address
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              style={{
-                width: "100%",
-                padding: "0.625rem 0.875rem",
-                backgroundColor: "#0d1117",
-                border: "1px solid #30363d",
-                borderRadius: "6px",
-                fontSize: "0.875rem",
-                color: "#ffffff",
-                outline: "none"
-              }}
-              onFocus={(e) => e.currentTarget.style.borderColor = "#58a6ff"}
-              onBlur={(e) => e.currentTarget.style.borderColor = "#30363d"}
-            />
-          </div>
+              <Link
+                href="/login"
+                style={{
+                  display: "inline-block",
+                  padding: "0.875rem 2rem",
+                  backgroundColor: "#14b8a6",
+                  color: "#ffffff",
+                  borderRadius: "8px",
+                  fontSize: "0.9375rem",
+                  fontWeight: "500",
+                  textDecoration: "none",
+                  transition: "all 0.2s"
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#0d9488"}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#14b8a6"}
+              >
+                Continue to Login
+              </Link>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              {/* Info Banner */}
+              <div style={{
+                padding: "1rem 1.25rem",
+                backgroundColor: "rgba(20, 184, 166, 0.1)",
+                border: "1px solid rgba(20, 184, 166, 0.2)",
+                borderRadius: "8px",
+                marginBottom: "2rem"
+              }}>
+                <p style={{
+                  color: "#14b8a6",
+                  fontSize: "0.875rem",
+                  margin: 0,
+                  lineHeight: "1.6",
+                  fontWeight: "300"
+                }}>
+                  Passwordless authentication • We'll send you a verification code via email
+                </p>
+              </div>
 
-          <div style={{
-            padding: "1rem",
-            backgroundColor: "#0d1f17",
-            border: "1px solid #1e4d2b",
-            borderRadius: "6px",
-            marginBottom: "1.5rem"
-          }}>
-            <p style={{ color: "#10b981", fontSize: "0.875rem", margin: 0, marginBottom: "0.75rem", lineHeight: "1.6" }}>
-              <strong style={{ color: "#34d399" }}>Passwordless login</strong>
-            </p>
-            <ul style={{
-              fontSize: "0.8125rem",
-              color: "#6ee7b7",
-              margin: 0,
-              paddingLeft: "1.25rem",
-              lineHeight: "1.6"
-            }}>
-              <li>No password required - we use email verification codes</li>
-              <li>After registration, you'll receive a verification code to login</li>
-              <li>Each time you sign in, we'll send a new code to your email</li>
-            </ul>
-          </div>
+              {/* Form Fields */}
+              <div style={{ marginBottom: "1.5rem" }}>
+                <label style={{
+                  display: "block",
+                  fontSize: "0.875rem",
+                  fontWeight: "400",
+                  color: "rgba(255, 255, 255, 0.8)",
+                  marginBottom: "0.5rem"
+                }}>
+                  Your Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  style={{
+                    width: "100%",
+                    padding: "0.875rem 1rem",
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    borderRadius: "8px",
+                    fontSize: "0.9375rem",
+                    color: "#ffffff",
+                    outline: "none",
+                    fontWeight: "300",
+                    transition: "all 0.2s"
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "#14b8a6";
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                  }}
+                />
+              </div>
 
-          <button
-            type="submit"
-            disabled={loading}
+              <div style={{ marginBottom: "1.5rem" }}>
+                <label style={{
+                  display: "block",
+                  fontSize: "0.875rem",
+                  fontWeight: "400",
+                  color: "rgba(255, 255, 255, 0.8)",
+                  marginBottom: "0.5rem"
+                }}>
+                  Organization Name
+                </label>
+                <input
+                  type="text"
+                  name="organizationName"
+                  value={formData.organizationName}
+                  onChange={handleChange}
+                  required
+                  placeholder="e.g., ABC University"
+                  style={{
+                    width: "100%",
+                    padding: "0.875rem 1rem",
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    borderRadius: "8px",
+                    fontSize: "0.9375rem",
+                    color: "#ffffff",
+                    outline: "none",
+                    fontWeight: "300",
+                    transition: "all 0.2s"
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "#14b8a6";
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: "2rem" }}>
+                <label style={{
+                  display: "block",
+                  fontSize: "0.875rem",
+                  fontWeight: "400",
+                  color: "rgba(255, 255, 255, 0.8)",
+                  marginBottom: "0.5rem"
+                }}>
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  style={{
+                    width: "100%",
+                    padding: "0.875rem 1rem",
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    borderRadius: "8px",
+                    fontSize: "0.9375rem",
+                    color: "#ffffff",
+                    outline: "none",
+                    fontWeight: "300",
+                    transition: "all 0.2s"
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "#14b8a6";
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                  }}
+                />
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                style={{
+                  width: "100%",
+                  padding: "0.875rem 1.5rem",
+                  backgroundColor: loading ? "rgba(255, 255, 255, 0.1)" : "#14b8a6",
+                  color: "#ffffff",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontSize: "0.9375rem",
+                  fontWeight: "500",
+                  cursor: loading ? "not-allowed" : "pointer",
+                  marginBottom: "1.5rem",
+                  transition: "all 0.2s"
+                }}
+                onMouseOver={(e) => {
+                  if (!loading) e.currentTarget.style.backgroundColor = "#0d9488";
+                }}
+                onMouseOut={(e) => {
+                  if (!loading) e.currentTarget.style.backgroundColor = "#14b8a6";
+                }}
+              >
+                {loading ? 'Creating account...' : 'Create Admin Account'}
+              </button>
+
+              {/* Login Link */}
+              <div style={{ textAlign: "center" }}>
+                <Link
+                  href="/login"
+                  style={{
+                    color: "#14b8a6",
+                    fontSize: "0.9375rem",
+                    textDecoration: "none",
+                    fontWeight: "300"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.textDecoration = "underline"}
+                  onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
+                >
+                  Already have an account? Login
+                </Link>
+              </div>
+            </form>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div style={{ marginTop: "2rem", textAlign: "center" }}>
+          <Link
+            href="/"
             style={{
-              width: "100%",
-              padding: "0.75rem 1.5rem",
-              backgroundColor: loading ? "#414d5c" : "#0972d3",
-              color: "#ffffff",
-              border: "none",
-              borderRadius: "6px",
+              color: "rgba(255, 255, 255, 0.4)",
               fontSize: "0.875rem",
-              fontWeight: "500",
-              cursor: loading ? "not-allowed" : "pointer",
-              marginBottom: "1rem"
+              textDecoration: "none",
+              fontWeight: "300"
             }}
+            onMouseOver={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+            onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.4)"}
           >
-            {loading ? 'Creating Account...' : 'Register as Primary Admin'}
-          </button>
-
-          <div style={{ textAlign: "center" }}>
-            <Link
-              href="/login"
-              style={{
-                color: "#58a6ff",
-                fontSize: "0.875rem",
-                textDecoration: "none"
-              }}
-            >
-              Already have an account? Login
-            </Link>
-          </div>
-        </form>}
+            ← Back to home
+          </Link>
+        </div>
       </div>
     </div>
   );

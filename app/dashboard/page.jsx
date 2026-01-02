@@ -258,12 +258,12 @@ export default function StudentDashboard() {
     return (
       <div style={{
         minHeight: "100vh",
-        backgroundColor: "#0f1b2a",
+        backgroundColor: "#0a0f1a",
         display: "flex",
         alignItems: "center",
         justifyContent: "center"
       }}>
-        <p style={{ color: "#aab7b8" }}>Loading...</p>
+        <p style={{ color: "rgba(255, 255, 255, 0.6)", fontWeight: "300" }}>Loading...</p>
       </div>
     );
   }
@@ -271,7 +271,7 @@ export default function StudentDashboard() {
   return (
     <div style={{
       minHeight: "100vh",
-      backgroundColor: "#0f1b2a",
+      backgroundColor: "#0a0f1a",
       padding: "2rem 1.5rem"
     }}>
       <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
@@ -291,14 +291,16 @@ export default function StudentDashboard() {
               fontWeight: "400",
               color: "#ffffff",
               marginBottom: "0.5rem",
-              letterSpacing: "-0.02em"
+              letterSpacing: "-0.02em",
+              fontFamily: "Georgia, 'Times New Roman', serif"
             }}>
               Student Dashboard
             </h1>
             <p style={{
               fontSize: "1rem",
-              color: "#aab7b8",
-              lineHeight: "1.6"
+              color: "rgba(255, 255, 255, 0.6)",
+              lineHeight: "1.6",
+              fontWeight: "300"
             }}>
               Welcome, {user?.name}
             </p>
@@ -310,9 +312,9 @@ export default function StudentDashboard() {
               onClick={() => setShowProfileDropdown(!showProfileDropdown)}
               style={{
                 padding: "0.625rem 1rem",
-                backgroundColor: "#161b22",
+                backgroundColor: "rgba(255, 255, 255, 0.05)",
                 color: "#ffffff",
-                border: "1px solid #30363d",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
                 borderRadius: "8px",
                 fontSize: "0.875rem",
                 fontWeight: "500",
@@ -323,12 +325,12 @@ export default function StudentDashboard() {
                 gap: "0.75rem"
               }}
               onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = "#1c2128";
+                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
                 e.currentTarget.style.borderColor = "#484f58";
               }}
               onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = "#161b22";
-                e.currentTarget.style.borderColor = "#30363d";
+                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
               }}
             >
               <div style={{
@@ -373,14 +375,15 @@ export default function StudentDashboard() {
                   top: "calc(100% + 0.5rem)",
                   right: 0,
                   minWidth: "240px",
-                  backgroundColor: "#161b22",
-                  border: "1px solid #30363d",
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
                   borderRadius: "8px",
                   boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+                  backdropFilter: "blur(10px)",
                   zIndex: 50,
                   overflow: "hidden"
                 }}>
-                  <div style={{ padding: "0.75rem 1rem", borderBottom: "1px solid #30363d" }}>
+                  <div style={{ padding: "0.75rem 1rem", borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
                     <div style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff", marginBottom: "0.25rem" }}>
                       {user?.name}
                     </div>
@@ -413,7 +416,7 @@ export default function StudentDashboard() {
                         alignItems: "center",
                         gap: "0.75rem"
                       }}
-                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#1c2128"}
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)"}
                       onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                     >
                       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -432,8 +435,8 @@ export default function StudentDashboard() {
         {/* Published Schedule Section */}
         {!loadingSchedule && publishedSchedule && (
           <div style={{
-            backgroundColor: "#16191f",
-            border: "1px solid #0972d3",
+            backgroundColor: "rgba(255, 255, 255, 0.03)",
+            border: "1px solid #14b8a6",
             borderRadius: "8px",
             padding: "1.5rem",
             marginBottom: "2rem"
@@ -464,7 +467,7 @@ export default function StudentDashboard() {
             <div style={{ overflowX: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
-                  <tr style={{ borderBottom: "2px solid #30363d" }}>
+                  <tr style={{ borderBottom: "2px solid rgba(255, 255, 255, 0.1)" }}>
                     <th style={{
                       padding: "0.75rem",
                       textAlign: "left",
@@ -509,7 +512,7 @@ export default function StudentDashboard() {
 
                     if (dayShifts.length === 0) {
                       return (
-                        <tr key={day} style={{ borderBottom: "1px solid #30363d" }}>
+                        <tr key={day} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
                           <td style={{
                             padding: "1rem 0.75rem",
                             color: "#c9d1d9",
@@ -531,7 +534,7 @@ export default function StudentDashboard() {
                     }
 
                     return dayShifts.map((shift, index) => (
-                      <tr key={`${day}-${index}`} style={{ borderBottom: "1px solid #30363d" }}>
+                      <tr key={`${day}-${index}`} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
                         {index === 0 && (
                           <td
                             rowSpan={dayShifts.length}
@@ -548,7 +551,7 @@ export default function StudentDashboard() {
                         )}
                         <td style={{
                           padding: "1rem 0.75rem",
-                          color: shift.studentId === user?.id ? "#58a6ff" : "#c9d1d9",
+                          color: shift.studentId === user?.id ? "#14b8a6" : "#c9d1d9",
                           fontSize: "0.875rem",
                           fontWeight: shift.studentId === user?.id ? "600" : "400"
                         }}>
@@ -557,7 +560,7 @@ export default function StudentDashboard() {
                             <span style={{
                               marginLeft: "0.5rem",
                               fontSize: "0.75rem",
-                              color: "#58a6ff",
+                              color: "#14b8a6",
                               fontWeight: "400"
                             }}>
                               (You)
@@ -589,8 +592,8 @@ export default function StudentDashboard() {
 
         {!loadingSchedule && !publishedSchedule && (
           <div style={{
-            backgroundColor: "#16191f",
-            border: "1px solid #30363d",
+            backgroundColor: "rgba(255, 255, 255, 0.03)",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
             borderRadius: "8px",
             padding: "1.5rem",
             marginBottom: "2rem",
@@ -655,15 +658,15 @@ export default function StudentDashboard() {
 
         {/* Availability Submission Section */}
         <div style={{
-          backgroundColor: "#16191f",
-          border: "1px solid #30363d",
+          backgroundColor: "rgba(255, 255, 255, 0.03)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
           borderRadius: "8px",
           marginBottom: "2rem",
           overflow: "hidden"
         }}>
           <div style={{
             padding: "1.5rem",
-            borderBottom: "1px solid #30363d",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "flex-start",
@@ -706,7 +709,7 @@ export default function StudentDashboard() {
                   transition: "all 0.15s ease",
                   whiteSpace: "nowrap"
                 }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#0f766e"}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#0d9488"}
                 onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#0d9488"}
               >
                 Request Edit
@@ -742,8 +745,8 @@ export default function StudentDashboard() {
           {user && !user.availabilityRequested ? (
             <div style={{ padding: "3rem 2rem", textAlign: "center" }}>
               <div style={{
-                backgroundColor: "#0d1117",
-                border: "1px solid #21262d",
+                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                border: "1px solid rgba(255, 255, 255, 0.08)",
                 borderRadius: "8px",
                 padding: "3rem 2rem",
                 maxWidth: "600px",
@@ -822,8 +825,8 @@ export default function StudentDashboard() {
                           disabled={isDisabled}
                           style={{
                             padding: "0.75rem",
-                            backgroundColor: isSelected ? "#0d4a2d" : "#0d1117",
-                            border: `1px solid ${isSelected ? "#1e7a4d" : "#30363d"}`,
+                            backgroundColor: isSelected ? "#0d4a2d" : "rgba(255, 255, 255, 0.05)",
+                            border: `1px solid ${isSelected ? "#1e7a4d" : "rgba(255, 255, 255, 0.1)"}`,
                             borderRadius: "4px",
                             fontSize: "0.75rem",
                             color: isSelected ? "#86efac" : "#8b949e",
@@ -834,12 +837,12 @@ export default function StudentDashboard() {
                           }}
                           onMouseOver={(e) => {
                             if (!isSelected && !isDisabled) {
-                              e.currentTarget.style.backgroundColor = "#1c2128";
+                              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
                             }
                           }}
                           onMouseOut={(e) => {
                             if (!isSelected && !isDisabled) {
-                              e.currentTarget.style.backgroundColor = "#0d1117";
+                              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
                             }
                           }}
                         >
@@ -873,8 +876,8 @@ export default function StudentDashboard() {
                   style={{
                     width: "100%",
                     padding: "0.625rem 0.875rem",
-                    backgroundColor: "#0d1117",
-                    border: "1px solid #30363d",
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
                     borderRadius: "6px",
                     fontSize: "0.875rem",
                     color: "#ffffff",
@@ -906,8 +909,8 @@ export default function StudentDashboard() {
                 style={{
                   width: "100%",
                   padding: "0.625rem 0.875rem",
-                  backgroundColor: "#0d1117",
-                  border: "1px solid #30363d",
+                  backgroundColor: "rgba(255, 255, 255, 0.05)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
                   borderRadius: "6px",
                   fontSize: "0.875rem",
                   color: "#ffffff",
@@ -927,9 +930,9 @@ export default function StudentDashboard() {
                 disabled={showEditForm ? submittingEdit : submitting}
                 style={{
                   padding: "0.625rem 1.25rem",
-                  backgroundColor: (showEditForm ? submittingEdit : submitting) ? "#414d5c" : showEditForm ? "#0d9488" : "#0972d3",
+                  backgroundColor: (showEditForm ? submittingEdit : submitting) ? "#414d5c" : showEditForm ? "#0d9488" : "#14b8a6",
                   color: "#ffffff",
-                  border: `1px solid ${(showEditForm ? submittingEdit : submitting) ? "#414d5c" : showEditForm ? "#0d9488" : "#0972d3"}`,
+                  border: `1px solid ${(showEditForm ? submittingEdit : submitting) ? "#414d5c" : showEditForm ? "#0d9488" : "#14b8a6"}`,
                   borderRadius: "6px",
                   fontSize: "0.875rem",
                   fontWeight: "500",
@@ -938,14 +941,14 @@ export default function StudentDashboard() {
                 }}
                 onMouseOver={(e) => {
                   if (!(showEditForm ? submittingEdit : submitting)) {
-                    e.currentTarget.style.backgroundColor = showEditForm ? "#0f766e" : "#0863bf";
-                    e.currentTarget.style.borderColor = showEditForm ? "#0f766e" : "#0863bf";
+                    e.currentTarget.style.backgroundColor = showEditForm ? "#0d9488" : "#0d9488";
+                    e.currentTarget.style.borderColor = showEditForm ? "#0d9488" : "#0d9488";
                   }
                 }}
                 onMouseOut={(e) => {
                   if (!(showEditForm ? submittingEdit : submitting)) {
-                    e.currentTarget.style.backgroundColor = showEditForm ? "#0d9488" : "#0972d3";
-                    e.currentTarget.style.borderColor = showEditForm ? "#0d9488" : "#0972d3";
+                    e.currentTarget.style.backgroundColor = showEditForm ? "#0d9488" : "#14b8a6";
+                    e.currentTarget.style.borderColor = showEditForm ? "#0d9488" : "#14b8a6";
                   }
                 }}
               >
@@ -960,14 +963,14 @@ export default function StudentDashboard() {
 
         {/* Schedule Section */}
         <div style={{
-          backgroundColor: "#16191f",
-          border: "1px solid #30363d",
+          backgroundColor: "rgba(255, 255, 255, 0.03)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
           borderRadius: "8px",
           overflow: "hidden"
         }}>
           <div style={{
             padding: "1.5rem",
-            borderBottom: "1px solid #30363d"
+            borderBottom: "1px solid rgba(255, 255, 255, 0.1)"
           }}>
             <h2 style={{
               fontSize: "1.125rem",

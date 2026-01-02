@@ -166,9 +166,9 @@ export default function LandingPage() {
           letterSpacing: "-0.02em",
           fontFamily: "Georgia, 'Times New Roman', serif"
         }}>
-          Stop the scheduling chaos.
+          Scheduling office hours is broken.
           <br />
-          Start working smarter.
+          We fixed it.
         </h1>
 
         <p style={{
@@ -180,8 +180,7 @@ export default function LandingPage() {
           lineHeight: "1.7",
           fontWeight: "300"
         }}>
-          No more chasing students for availability. No more manual schedule creation.
-          No more back-and-forth fixing conflicts. Automate the entire process in minutes.
+          Collect availability, create schedules, and manage changes automatically without the chaos.
         </p>
 
         {/* Schedule Interface Preview */}

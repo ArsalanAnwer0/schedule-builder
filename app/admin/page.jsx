@@ -764,23 +764,23 @@ export default function Home() {
 
   if (authLoading) {
     return (
-      <div style={{ minHeight: "100vh", backgroundColor: "#0f1b2a", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <p style={{ color: "#aab7b8" }}>Loading...</p>
+      <div style={{ minHeight: "100vh", backgroundColor: "#0a0f1a", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <p style={{ color: "rgba(255, 255, 255, 0.6)", fontWeight: "300" }}>Loading...</p>
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#0f1b2a", padding: "2rem 1.5rem" }}>
+    <div style={{ minHeight: "100vh", backgroundColor: "#0a0f1a", padding: "2rem 1.5rem" }}>
       <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
 
         {/* Header with User Info and Profile Dropdown */}
         <div style={{ marginBottom: "1.5rem", display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1rem" }}>
           <div>
-            <h1 style={{ fontSize: "1.875rem", fontWeight: "400", color: "#ffffff", marginBottom: "0.5rem", letterSpacing: "-0.02em" }}>
+            <h1 style={{ fontSize: "1.875rem", fontWeight: "400", color: "#ffffff", marginBottom: "0.5rem", letterSpacing: "-0.02em", fontFamily: "Georgia, 'Times New Roman', serif" }}>
               Schedule Builder
             </h1>
-            <p style={{ fontSize: "1rem", color: "#aab7b8", lineHeight: "1.6" }}>
+            <p style={{ fontSize: "1rem", color: "rgba(255, 255, 255, 0.6)", lineHeight: "1.6", fontWeight: "300" }}>
               Welcome back, {user?.name}. Manage your office schedules and students below.
             </p>
           </div>
@@ -791,9 +791,9 @@ export default function Home() {
               onClick={() => setShowProfileDropdown(!showProfileDropdown)}
               style={{
                 padding: "0.625rem 1rem",
-                backgroundColor: "#161b22",
+                backgroundColor: "rgba(255, 255, 255, 0.05)",
                 color: "#ffffff",
-                border: "1px solid #30363d",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
                 borderRadius: "8px",
                 fontSize: "0.875rem",
                 fontWeight: "500",
@@ -804,12 +804,12 @@ export default function Home() {
                 gap: "0.75rem"
               }}
               onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = "#1c2128";
+                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
                 e.currentTarget.style.borderColor = "#484f58";
               }}
               onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = "#161b22";
-                e.currentTarget.style.borderColor = "#30363d";
+                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
               }}
             >
               <div style={{
@@ -856,14 +856,15 @@ export default function Home() {
                   top: "calc(100% + 0.5rem)",
                   right: 0,
                   minWidth: "240px",
-                  backgroundColor: "#161b22",
-                  border: "1px solid #30363d",
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
                   borderRadius: "8px",
                   boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+                  backdropFilter: "blur(10px)",
                   zIndex: 50,
                   overflow: "hidden"
                 }}>
-                  <div style={{ padding: "0.75rem 1rem", borderBottom: "1px solid #30363d" }}>
+                  <div style={{ padding: "0.75rem 1rem", borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
                     <div style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff", marginBottom: "0.25rem" }}>
                       {user?.name}
                     </div>
@@ -898,7 +899,7 @@ export default function Home() {
                         alignItems: "center",
                         gap: "0.75rem"
                       }}
-                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#1c2128"}
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)"}
                       onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                     >
                       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -928,7 +929,7 @@ export default function Home() {
                         alignItems: "center",
                         gap: "0.75rem"
                       }}
-                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#1c2128"}
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)"}
                       onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                     >
                       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -1000,8 +1001,8 @@ export default function Home() {
 
         {/* Admin Management Section - Only show for primary admin */}
         {(!user?.adminType || user?.adminType === 'primary') && (
-          <div style={{ backgroundColor: "#16191f", border: "1px solid #30363d", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
-            <div style={{ padding: "1.5rem", borderBottom: "1px solid #30363d", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+          <div style={{ backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
+            <div style={{ padding: "1.5rem", borderBottom: "1px solid rgba(255, 255, 255, 0.1)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
               <div>
                 <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
                   Admin Team
@@ -1016,10 +1017,10 @@ export default function Home() {
                   disabled={admins.length >= 3}
                   style={{
                     padding: "0.625rem 1.25rem",
-                    backgroundColor: admins.length >= 3 ? "#414d5c" : "#0972d3",
+                    backgroundColor: admins.length >= 3 ? "#414d5c" : "#14b8a6",
                     color: "#ffffff",
                     border: "1px solid",
-                    borderColor: admins.length >= 3 ? "#414d5c" : "#0972d3",
+                    borderColor: admins.length >= 3 ? "#414d5c" : "#14b8a6",
                     borderRadius: "6px",
                     fontSize: "0.875rem",
                     fontWeight: "500",
@@ -1029,14 +1030,14 @@ export default function Home() {
                   }}
                   onMouseOver={(e) => {
                     if (admins.length < 3) {
-                      e.currentTarget.style.backgroundColor = "#0863bf";
-                      e.currentTarget.style.borderColor = "#0863bf";
+                      e.currentTarget.style.backgroundColor = "#0d9488";
+                      e.currentTarget.style.borderColor = "#0d9488";
                     }
                   }}
                   onMouseOut={(e) => {
                     if (admins.length < 3) {
-                      e.currentTarget.style.backgroundColor = "#0972d3";
-                      e.currentTarget.style.borderColor = "#0972d3";
+                      e.currentTarget.style.backgroundColor = "#14b8a6";
+                      e.currentTarget.style.borderColor = "#14b8a6";
                     }
                   }}
                 >
@@ -1052,7 +1053,7 @@ export default function Home() {
                 <div style={{ overflowX: "auto" }}>
                   <table style={{ width: "100%", borderCollapse: "collapse" }}>
                     <thead>
-                      <tr style={{ borderBottom: "1px solid #30363d" }}>
+                      <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
                         <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Name</th>
                         <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Email</th>
                         <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Role</th>
@@ -1061,7 +1062,7 @@ export default function Home() {
                     </thead>
                     <tbody>
                       {admins.map((admin) => (
-                        <tr key={admin.id} style={{ borderBottom: "1px solid #30363d" }}>
+                        <tr key={admin.id} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
                           <td style={{ padding: "1rem", color: "#ffffff", fontSize: "0.875rem" }}>
                             {admin.name}
                             {admin.id === user?._id && <span style={{ color: "#8b949e", fontSize: "0.75rem", marginLeft: "0.5rem" }}>(You)</span>}
@@ -1118,8 +1119,8 @@ export default function Home() {
         )}
 
         {/* Student Management Section */}
-        <div style={{ backgroundColor: "#16191f", border: "1px solid #30363d", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
-          <div style={{ padding: "1.5rem", borderBottom: "1px solid #30363d", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+        <div style={{ backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
+          <div style={{ padding: "1.5rem", borderBottom: "1px solid rgba(255, 255, 255, 0.1)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
             <div>
               <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
                 Students
@@ -1195,9 +1196,9 @@ export default function Home() {
                 onClick={handleAddStudent}
                 style={{
                   padding: "0.625rem 1.25rem",
-                  backgroundColor: "#0972d3",
+                  backgroundColor: "#14b8a6",
                   color: "#ffffff",
-                  border: "1px solid #0972d3",
+                  border: "1px solid #14b8a6",
                   borderRadius: "6px",
                   fontSize: "0.875rem",
                   fontWeight: "500",
@@ -1205,12 +1206,12 @@ export default function Home() {
                   transition: "all 0.15s ease"
                 }}
                 onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = "#0863bf";
-                  e.currentTarget.style.borderColor = "#0863bf";
+                  e.currentTarget.style.backgroundColor = "#0d9488";
+                  e.currentTarget.style.borderColor = "#0d9488";
                 }}
                 onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = "#0972d3";
-                  e.currentTarget.style.borderColor = "#0972d3";
+                  e.currentTarget.style.backgroundColor = "#14b8a6";
+                  e.currentTarget.style.borderColor = "#14b8a6";
                 }}
               >
                 + Add Student
@@ -1227,7 +1228,7 @@ export default function Home() {
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
                   <thead>
-                    <tr style={{ borderBottom: "1px solid #30363d" }}>
+                    <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
                       <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Name</th>
                       <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Email</th>
                       <th style={{ padding: "0.875rem 1rem", textAlign: "right", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Actions</th>
@@ -1235,7 +1236,7 @@ export default function Home() {
                   </thead>
                   <tbody>
                     {students.map((student) => (
-                      <tr key={student.id} style={{ borderBottom: "1px solid #30363d" }}>
+                      <tr key={student.id} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
                         <td style={{ padding: "1rem", color: "#ffffff", fontSize: "0.875rem" }}>{student.name}</td>
                         <td style={{ padding: "1rem", color: "#c9d1d9", fontSize: "0.875rem" }}>{student.email}</td>
                         <td style={{ padding: "1rem", textAlign: "right" }}>
@@ -1295,15 +1296,15 @@ export default function Home() {
                               style={{
                                 padding: "0.375rem 0.875rem",
                                 fontSize: "0.875rem",
-                                backgroundColor: "#0d1117",
-                                border: "1px solid #30363d",
+                                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                                border: "1px solid rgba(255, 255, 255, 0.1)",
                                 borderRadius: "4px",
-                                color: "#58a6ff",
+                                color: "#14b8a6",
                                 cursor: "pointer",
                                 transition: "all 0.15s"
                               }}
                               onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#252d3d"}
-                              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#0d1117"}
+                              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)"}
                             >
                               Edit
                             </button>
@@ -1336,8 +1337,8 @@ export default function Home() {
         </div>
 
         {/* Schedule Configuration Section */}
-        <div style={{ backgroundColor: "#16191f", border: "1px solid #30363d", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
-          <div style={{ padding: "1.5rem", borderBottom: "1px solid #30363d" }}>
+        <div style={{ backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
+          <div style={{ padding: "1.5rem", borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
             <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
               Schedule configuration
             </h2>
@@ -1369,8 +1370,8 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
+                      backgroundColor: "rgba(255, 255, 255, 0.05)",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       color: "#ffffff",
@@ -1390,8 +1391,8 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
+                      backgroundColor: "rgba(255, 255, 255, 0.05)",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       color: "#ffffff",
@@ -1404,7 +1405,7 @@ export default function Home() {
             </div>
 
             {/* Divider */}
-            <div style={{ borderTop: "1px solid #21262d", margin: "2.5rem 0" }}></div>
+            <div style={{ borderTop: "1px solid rgba(255, 255, 255, 0.08)", margin: "2.5rem 0" }}></div>
 
             {/* Schedule Period */}
             <div style={{ marginBottom: "2.5rem" }}>
@@ -1428,8 +1429,8 @@ export default function Home() {
                     width: "100%",
                     maxWidth: "340px",
                     padding: "0.625rem 0.875rem",
-                    backgroundColor: "#0d1117",
-                    border: "1px solid #30363d",
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
                     borderRadius: "6px",
                     fontSize: "0.875rem",
                     color: "#ffffff",
@@ -1462,8 +1463,8 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
+                      backgroundColor: "rgba(255, 255, 255, 0.05)",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       color: "#ffffff",
@@ -1486,8 +1487,8 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
+                      backgroundColor: "rgba(255, 255, 255, 0.05)",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       color: "#ffffff",
@@ -1500,7 +1501,7 @@ export default function Home() {
             </div>
 
             {/* Divider */}
-            <div style={{ borderTop: "1px solid #21262d", margin: "2.5rem 0" }}></div>
+            <div style={{ borderTop: "1px solid rgba(255, 255, 255, 0.08)", margin: "2.5rem 0" }}></div>
 
             {/* Hours and Shift Constraints */}
             <div>
@@ -1524,8 +1525,8 @@ export default function Home() {
                   style={{
                     width: "100%",
                     padding: "0.625rem 0.875rem",
-                    backgroundColor: "#0d1117",
-                    border: "1px solid #30363d",
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
                     borderRadius: "6px",
                     fontSize: "0.875rem",
                     color: "#ffffff",
@@ -1553,8 +1554,8 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
+                      backgroundColor: "rgba(255, 255, 255, 0.05)",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       color: "#ffffff",
@@ -1581,8 +1582,8 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
+                      backgroundColor: "rgba(255, 255, 255, 0.05)",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       color: "#ffffff",
@@ -1614,9 +1615,9 @@ export default function Home() {
             </div>
             <div style={{ padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
               {editRequests.map((request) => (
-                <div key={request.id} style={{ backgroundColor: "#16191f", border: "1px solid #30363d", borderRadius: "8px", overflow: "hidden" }}>
+                <div key={request.id} style={{ backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "8px", overflow: "hidden" }}>
                   {/* Request Header */}
-                  <div style={{ padding: "1rem 1.25rem", backgroundColor: "#1f2937", borderBottom: "1px solid #30363d", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+                  <div style={{ padding: "1rem 1.25rem", backgroundColor: "#1f2937", borderBottom: "1px solid rgba(255, 255, 255, 0.1)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
                     <div>
                       <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.25rem" }}>
                         {request.userName}
@@ -1690,7 +1691,7 @@ export default function Home() {
                       <h4 style={{ fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", margin: 0, marginBottom: "0.5rem" }}>
                         Reason for Edit:
                       </h4>
-                      <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, padding: "0.75rem", backgroundColor: "#0d1117", borderRadius: "4px", border: "1px solid #30363d" }}>
+                      <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, padding: "0.75rem", backgroundColor: "rgba(255, 255, 255, 0.05)", borderRadius: "4px", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
                         {request.reason}
                       </p>
                     </div>
@@ -1718,15 +1719,15 @@ export default function Home() {
 
                           return (
                             <div key={day} style={{
-                              backgroundColor: "#0d1117",
-                              border: "1px solid #30363d",
+                              backgroundColor: "rgba(255, 255, 255, 0.05)",
+                              border: "1px solid rgba(255, 255, 255, 0.1)",
                               borderRadius: "6px",
                               padding: "0.75rem"
                             }}>
                               <div style={{
                                 fontSize: "0.75rem",
                                 fontWeight: "600",
-                                color: "#58a6ff",
+                                color: "#14b8a6",
                                 marginBottom: "0.5rem",
                                 textTransform: "uppercase",
                                 letterSpacing: "0.5px"
@@ -1789,10 +1790,10 @@ export default function Home() {
                                       <span key={idx} style={{
                                         fontSize: "0.7rem",
                                         color: "#6e7681",
-                                        backgroundColor: "#0d1117",
+                                        backgroundColor: "rgba(255, 255, 255, 0.05)",
                                         padding: "0.125rem 0.375rem",
                                         borderRadius: "3px",
-                                        border: "1px solid #21262d"
+                                        border: "1px solid rgba(255, 255, 255, 0.08)"
                                       }}>
                                         {slot}
                                       </span>
@@ -1835,7 +1836,7 @@ export default function Home() {
         )}
 
         {/* Student Workers Availability Section */}
-        <div style={{ backgroundColor: "#16191f", border: "1px solid #414d5c", borderRadius: "8px", marginBottom: "1rem", overflow: "hidden" }}>
+        <div style={{ backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid #414d5c", borderRadius: "8px", marginBottom: "1rem", overflow: "hidden" }}>
           <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #414d5c" }}>
             <div>
               <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
@@ -1856,12 +1857,12 @@ export default function Home() {
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: "0" }}>
                   <thead>
-                    <tr style={{ backgroundColor: "#161b22" }}>
-                      <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "600", color: "#8b949e", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #30363d", position: "sticky", left: 0, backgroundColor: "#161b22", zIndex: 10 }}>
+                    <tr style={{ backgroundColor: "rgba(255, 255, 255, 0.05)" }}>
+                      <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "600", color: "#8b949e", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid rgba(255, 255, 255, 0.1)", position: "sticky", left: 0, backgroundColor: "rgba(255, 255, 255, 0.05)", zIndex: 10 }}>
                         Student
                       </th>
                       {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => (
-                        <th key={day} style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "600", color: "#8b949e", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #30363d", minWidth: "180px" }}>
+                        <th key={day} style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "600", color: "#8b949e", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid rgba(255, 255, 255, 0.1)", minWidth: "180px" }}>
                           {day}
                         </th>
                       ))}
@@ -1869,8 +1870,8 @@ export default function Home() {
                   </thead>
                   <tbody>
                     {students.filter(s => s.hasSubmitted).map((student) => (
-                      <tr key={student.id} style={{ borderBottom: "1px solid #21262d" }}>
-                        <td style={{ padding: "1rem", borderRight: "1px solid #21262d", position: "sticky", left: 0, backgroundColor: "#0d1117", zIndex: 5 }}>
+                      <tr key={student.id} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.08)" }}>
+                        <td style={{ padding: "1rem", borderRight: "1px solid rgba(255, 255, 255, 0.08)", position: "sticky", left: 0, backgroundColor: "rgba(255, 255, 255, 0.05)", zIndex: 5 }}>
                           <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
                             <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff" }}>
                               {student.name}
@@ -1882,7 +1883,7 @@ export default function Home() {
                               Submitted {new Date(student.availability.submittedAt).toLocaleDateString()}
                             </span>
                             {student.availability.notes && (
-                              <div style={{ marginTop: "0.5rem", padding: "0.5rem", backgroundColor: "#161b22", borderRadius: "4px", border: "1px solid #30363d" }}>
+                              <div style={{ marginTop: "0.5rem", padding: "0.5rem", backgroundColor: "rgba(255, 255, 255, 0.05)", borderRadius: "4px", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
                                 <span style={{ fontSize: "0.7rem", color: "#6b7280", fontWeight: "500" }}>Note: </span>
                                 <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>{student.availability.notes}</span>
                               </div>
@@ -2018,11 +2019,11 @@ export default function Home() {
               <div key={scheduleIndex} style={{ marginBottom: "3rem" }}>
                 {/* Schedule Header */}
                 <div style={{
-                  backgroundColor: "#16191f",
-                  border: "2px solid #0972d3",
+                  backgroundColor: "rgba(255, 255, 255, 0.03)",
+                  border: "2px solid #14b8a6",
                   borderRadius: "8px 8px 0 0",
                   padding: "1.5rem",
-                  borderBottom: "1px solid #30363d",
+                  borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "flex-start",
@@ -2109,8 +2110,8 @@ export default function Home() {
                 </div>
 
                 <div style={{
-                  backgroundColor: "#16191f",
-                  border: "2px solid #0972d3",
+                  backgroundColor: "rgba(255, 255, 255, 0.03)",
+                  border: "2px solid #14b8a6",
                   borderTop: "none",
                   borderRadius: "0 0 8px 8px",
                   padding: "1.5rem"
@@ -2271,7 +2272,7 @@ export default function Home() {
                   )}
 
                   {/* Statistics */}
-                  <div style={{ backgroundColor: "#16191f", border: "1px solid #414d5c", borderRadius: "8px", padding: "1.5rem", marginBottom: "1.5rem" }}>
+                  <div style={{ backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid #414d5c", borderRadius: "8px", padding: "1.5rem", marginBottom: "1.5rem" }}>
                     <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "#ffffff", marginBottom: "1.25rem" }}>Statistics</h2>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
                       <div style={{ padding: "1rem", backgroundColor: "#1f2937", borderRadius: "4px", border: "1px solid #2d3748" }}>
@@ -2298,7 +2299,7 @@ export default function Home() {
                   </div>
 
                   {/* Schedule Table */}
-                  <div style={{ backgroundColor: "#16191f", border: "1px solid #414d5c", borderRadius: "8px", overflow: "hidden", marginBottom: "1.5rem" }}>
+                  <div style={{ backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid #414d5c", borderRadius: "8px", overflow: "hidden", marginBottom: "1.5rem" }}>
                     <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #414d5c" }}>
                       <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "#ffffff", margin: 0 }}>Weekly schedule</h2>
                     </div>
@@ -2368,7 +2369,7 @@ export default function Home() {
 
                   {/* Coverage Gaps */}
                   {currentSchedule.uncoveredPeriods && Object.keys(currentSchedule.uncoveredPeriods).length > 0 && (
-                    <div style={{ backgroundColor: "#16191f", border: "1px solid #414d5c", borderRadius: "8px", padding: "1.5rem" }}>
+                    <div style={{ backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid #414d5c", borderRadius: "8px", padding: "1.5rem" }}>
                       <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "#ff6b6b", marginBottom: "1rem" }}>
                         ⚠ Coverage gaps
                       </h2>
@@ -2411,8 +2412,8 @@ export default function Home() {
             padding: "1rem"
           }}>
             <div style={{
-              backgroundColor: "#16191f",
-              border: "1px solid #30363d",
+              backgroundColor: "rgba(255, 255, 255, 0.03)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
               borderRadius: "8px",
               padding: "2rem",
               maxWidth: "500px",
@@ -2459,8 +2460,8 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
+                      backgroundColor: "rgba(255, 255, 255, 0.05)",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       color: "#ffffff",
@@ -2488,8 +2489,8 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
+                      backgroundColor: "rgba(255, 255, 255, 0.05)",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       color: "#ffffff",
@@ -2510,9 +2511,9 @@ export default function Home() {
                     }}
                     style={{
                       padding: "0.625rem 1.25rem",
-                      backgroundColor: "#0d1117",
+                      backgroundColor: "rgba(255, 255, 255, 0.05)",
                       color: "#ffffff",
-                      border: "1px solid #30363d",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       fontWeight: "500",
@@ -2520,7 +2521,7 @@ export default function Home() {
                       transition: "all 0.15s ease"
                     }}
                     onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#252d3d"}
-                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#0d1117"}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)"}
                   >
                     Cancel
                   </button>
@@ -2528,9 +2529,9 @@ export default function Home() {
                     type="submit"
                     style={{
                       padding: "0.625rem 1.25rem",
-                      backgroundColor: "#0972d3",
+                      backgroundColor: "#14b8a6",
                       color: "#ffffff",
-                      border: "1px solid #0972d3",
+                      border: "1px solid #14b8a6",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       fontWeight: "500",
@@ -2538,12 +2539,12 @@ export default function Home() {
                       transition: "all 0.15s ease"
                     }}
                     onMouseOver={(e) => {
-                      e.currentTarget.style.backgroundColor = "#0863bf";
-                      e.currentTarget.style.borderColor = "#0863bf";
+                      e.currentTarget.style.backgroundColor = "#0d9488";
+                      e.currentTarget.style.borderColor = "#0d9488";
                     }}
                     onMouseOut={(e) => {
-                      e.currentTarget.style.backgroundColor = "#0972d3";
-                      e.currentTarget.style.borderColor = "#0972d3";
+                      e.currentTarget.style.backgroundColor = "#14b8a6";
+                      e.currentTarget.style.borderColor = "#14b8a6";
                     }}
                   >
                     Send Invitation
@@ -2570,8 +2571,8 @@ export default function Home() {
             padding: "1rem"
           }}>
             <div style={{
-              backgroundColor: "#16191f",
-              border: "1px solid #30363d",
+              backgroundColor: "rgba(255, 255, 255, 0.03)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
               borderRadius: "8px",
               padding: "2rem",
               maxWidth: "500px",
@@ -2600,8 +2601,8 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
+                      backgroundColor: "rgba(255, 255, 255, 0.05)",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       color: "#ffffff",
@@ -2627,8 +2628,8 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
+                      backgroundColor: "rgba(255, 255, 255, 0.05)",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       color: "#ffffff",
@@ -2663,8 +2664,8 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "#0d1117",
-                      border: "1px solid #30363d",
+                      backgroundColor: "rgba(255, 255, 255, 0.05)",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       color: "#ffffff",
@@ -2688,9 +2689,9 @@ export default function Home() {
                     onClick={() => setShowAddStudentModal(false)}
                     style={{
                       padding: "0.625rem 1.25rem",
-                      backgroundColor: "#0d1117",
+                      backgroundColor: "rgba(255, 255, 255, 0.05)",
                       color: "#ffffff",
-                      border: "1px solid #30363d",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       fontWeight: "500",
@@ -2698,7 +2699,7 @@ export default function Home() {
                       transition: "all 0.15s ease"
                     }}
                     onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#252d3d"}
-                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#0d1117"}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)"}
                   >
                     Cancel
                   </button>
@@ -2706,9 +2707,9 @@ export default function Home() {
                     type="submit"
                     style={{
                       padding: "0.625rem 1.25rem",
-                      backgroundColor: "#0972d3",
+                      backgroundColor: "#14b8a6",
                       color: "#ffffff",
-                      border: "1px solid #0972d3",
+                      border: "1px solid #14b8a6",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       fontWeight: "500",
@@ -2716,12 +2717,12 @@ export default function Home() {
                       transition: "all 0.15s ease"
                     }}
                     onMouseOver={(e) => {
-                      e.currentTarget.style.backgroundColor = "#0863bf";
-                      e.currentTarget.style.borderColor = "#0863bf";
+                      e.currentTarget.style.backgroundColor = "#0d9488";
+                      e.currentTarget.style.borderColor = "#0d9488";
                     }}
                     onMouseOut={(e) => {
-                      e.currentTarget.style.backgroundColor = "#0972d3";
-                      e.currentTarget.style.borderColor = "#0972d3";
+                      e.currentTarget.style.backgroundColor = "#14b8a6";
+                      e.currentTarget.style.borderColor = "#14b8a6";
                     }}
                   >
                     {editingStudent ? 'Update' : 'Add'} Student
@@ -2757,7 +2758,7 @@ export default function Home() {
                 maxWidth: "500px",
                 width: "100%",
                 boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.5)",
-                border: "1px solid #30363d"
+                border: "1px solid rgba(255, 255, 255, 0.1)"
               }}
               onClick={(e) => e.stopPropagation()}
             >
@@ -2783,8 +2784,8 @@ export default function Home() {
 
               <div style={{
                 padding: "1rem 1.5rem",
-                backgroundColor: "#161b22",
-                borderTop: "1px solid #30363d",
+                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                borderTop: "1px solid rgba(255, 255, 255, 0.1)",
                 display: "flex",
                 justifyContent: "flex-end",
                 gap: "0.75rem",
@@ -2797,7 +2798,7 @@ export default function Home() {
                     padding: "0.5rem 1rem",
                     backgroundColor: "transparent",
                     color: "#c9d1d9",
-                    border: "1px solid #30363d",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
                     borderRadius: "6px",
                     fontSize: "0.875rem",
                     fontWeight: "500",
@@ -2805,7 +2806,7 @@ export default function Home() {
                     transition: "all 0.15s ease"
                   }}
                   onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = "#30363d";
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
                   }}
                   onMouseOut={(e) => {
                     e.currentTarget.style.backgroundColor = "transparent";
@@ -2817,7 +2818,7 @@ export default function Home() {
                   onClick={() => confirmModal.onConfirm && confirmModal.onConfirm()}
                   style={{
                     padding: "0.5rem 1rem",
-                    backgroundColor: confirmModal.isDangerous ? "#dc2626" : "#0972d3",
+                    backgroundColor: confirmModal.isDangerous ? "#dc2626" : "#14b8a6",
                     color: "#ffffff",
                     border: "none",
                     borderRadius: "6px",
@@ -2827,10 +2828,10 @@ export default function Home() {
                     transition: "all 0.15s ease"
                   }}
                   onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = confirmModal.isDangerous ? "#b91c1c" : "#0863bf";
+                    e.currentTarget.style.backgroundColor = confirmModal.isDangerous ? "#b91c1c" : "#0d9488";
                   }}
                   onMouseOut={(e) => {
-                    e.currentTarget.style.backgroundColor = confirmModal.isDangerous ? "#dc2626" : "#0972d3";
+                    e.currentTarget.style.backgroundColor = confirmModal.isDangerous ? "#dc2626" : "#14b8a6";
                   }}
                 >
                   {confirmModal.confirmText}
