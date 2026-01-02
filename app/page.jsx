@@ -41,13 +41,12 @@ export default function LandingPage() {
     <div style={{ backgroundColor: "#0a0f1a", minHeight: "100vh" }}>
 
       {/* Fixed Navigation */}
-      <nav style={{
+      <nav className="nav-padding" style={{
         position: "sticky",
         top: 0,
         zIndex: 50,
         backgroundColor: "#0a0f1a",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-        padding: "1rem 2rem"
+        borderBottom: "1px solid rgba(255, 255, 255, 0.1)"
       }}>
         <div style={{
           maxWidth: "1400px",
@@ -63,7 +62,8 @@ export default function LandingPage() {
             <span style={{ fontSize: "1.25rem", fontWeight: "600", color: "#ffffff" }}>Schedule Builder</span>
           </div>
 
-          <div style={{ display: "flex", gap: "2.5rem", alignItems: "center" }}>
+          {/* Desktop Navigation */}
+          <div className="desktop-nav" style={{ display: "flex", gap: "2.5rem", alignItems: "center" }}>
             <button
               onClick={() => scrollToSection('how-it-works')}
               style={{
@@ -131,12 +131,124 @@ export default function LandingPage() {
               Get Started
             </button>
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="mobile-menu-button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            style={{
+              display: "none",
+              background: "none",
+              border: "none",
+              color: "#ffffff",
+              cursor: "pointer",
+              padding: "0.5rem"
+            }}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              {mobileMenuOpen ? (
+                <path d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path d="M3 12h18M3 6h18M3 18h18" />
+              )}
+            </svg>
+          </button>
         </div>
       </nav>
 
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div className="mobile-menu" style={{
+          position: "fixed",
+          top: "64px",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "#0a0f1a",
+          zIndex: 40,
+          padding: "2rem",
+          display: "flex",
+          flexDirection: "column",
+          gap: "1.5rem"
+        }}>
+          <button
+            onClick={() => {
+              scrollToSection('how-it-works');
+              setMobileMenuOpen(false);
+            }}
+            style={{
+              background: "none",
+              border: "none",
+              color: "rgba(255, 255, 255, 0.7)",
+              fontSize: "1.125rem",
+              cursor: "pointer",
+              padding: "1rem 0",
+              textAlign: "left",
+              transition: "color 0.2s"
+            }}
+          >
+            How it works
+          </button>
+          <button
+            onClick={() => {
+              scrollToSection('features');
+              setMobileMenuOpen(false);
+            }}
+            style={{
+              background: "none",
+              border: "none",
+              color: "rgba(255, 255, 255, 0.7)",
+              fontSize: "1.125rem",
+              cursor: "pointer",
+              padding: "1rem 0",
+              textAlign: "left",
+              transition: "color 0.2s"
+            }}
+          >
+            Features
+          </button>
+          <button
+            onClick={() => {
+              scrollToSection('faq');
+              setMobileMenuOpen(false);
+            }}
+            style={{
+              background: "none",
+              border: "none",
+              color: "rgba(255, 255, 255, 0.7)",
+              fontSize: "1.125rem",
+              cursor: "pointer",
+              padding: "1rem 0",
+              textAlign: "left",
+              transition: "color 0.2s"
+            }}
+          >
+            FAQ
+          </button>
+          <button
+            onClick={() => {
+              router.push('/register');
+              setMobileMenuOpen(false);
+            }}
+            style={{
+              padding: "0.875rem 1.5rem",
+              background: "#14b8a6",
+              color: "#ffffff",
+              border: "none",
+              borderRadius: "6px",
+              fontSize: "1rem",
+              fontWeight: "600",
+              cursor: "pointer",
+              marginTop: "1rem"
+            }}
+          >
+            Get Started
+          </button>
+        </div>
+      )}
+
       {/* Hero Section */}
-      <section style={{
-        padding: "8rem 2rem 4rem 2rem",
+      <section className="hero-section" style={{
         textAlign: "center",
         maxWidth: "1200px",
         margin: "0 auto",
@@ -158,12 +270,10 @@ export default function LandingPage() {
           Now in Beta
         </div>
 
-        <h1 style={{
-          fontSize: "5rem",
+        <h1 className="hero-title" style={{
           fontWeight: "400",
           color: "#ffffff",
           marginBottom: "1.5rem",
-          lineHeight: "1.1",
           letterSpacing: "-0.02em",
           fontFamily: "Georgia, 'Times New Roman', serif"
         }}>
@@ -185,16 +295,14 @@ export default function LandingPage() {
         </p>
 
         {/* Schedule Interface Preview */}
-        <div style={{
+        <div className="hero-preview" style={{
           width: "100%",
           maxWidth: "900px",
           margin: "0 auto",
-          padding: "4rem",
           background: "linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, rgba(6, 78, 59, 0.1) 100%)",
           borderRadius: "16px",
           border: "1px solid rgba(20, 184, 166, 0.2)",
           position: "relative",
-          minHeight: "400px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center"
@@ -229,14 +337,12 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" style={{
-        padding: "8rem 2rem",
+      <section id="how-it-works" className="section-padding" style={{
         maxWidth: "1200px",
         margin: "0 auto"
       }}>
         <div style={{ textAlign: "center", marginBottom: "5rem" }}>
-          <h2 style={{
-            fontSize: "3.5rem",
+          <h2 className="section-title" style={{
             fontWeight: "400",
             color: "#ffffff",
             marginBottom: "1rem",
@@ -253,9 +359,8 @@ export default function LandingPage() {
           </p>
         </div>
 
-        <div style={{
+        <div className="grid-3-cols" style={{
           display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
           gap: "2rem"
         }}>
           {/* Step 1 */}
@@ -266,8 +371,7 @@ export default function LandingPage() {
             border: "1px solid rgba(255, 255, 255, 0.1)",
             position: "relative"
           }}>
-            <div style={{
-              fontSize: "3.5rem",
+            <div className="step-number" style={{
               fontWeight: "300",
               color: "#14b8a6",
               marginBottom: "2rem",
@@ -301,8 +405,7 @@ export default function LandingPage() {
             border: "1px solid rgba(255, 255, 255, 0.1)",
             position: "relative"
           }}>
-            <div style={{
-              fontSize: "3.5rem",
+            <div className="step-number" style={{
               fontWeight: "300",
               color: "#14b8a6",
               marginBottom: "2rem",
@@ -336,8 +439,7 @@ export default function LandingPage() {
             border: "1px solid rgba(255, 255, 255, 0.1)",
             position: "relative"
           }}>
-            <div style={{
-              fontSize: "3.5rem",
+            <div className="step-number" style={{
               fontWeight: "300",
               color: "#14b8a6",
               marginBottom: "2rem",
@@ -366,16 +468,14 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section id="features" style={{
-        padding: "8rem 2rem",
+      <section id="features" className="section-padding" style={{
         backgroundColor: "rgba(20, 184, 166, 0.02)",
         borderTop: "1px solid rgba(255, 255, 255, 0.05)",
         borderBottom: "1px solid rgba(255, 255, 255, 0.05)"
       }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: "5rem" }}>
-            <h2 style={{
-              fontSize: "3.5rem",
+            <h2 className="section-title" style={{
               fontWeight: "400",
               color: "#ffffff",
               marginBottom: "1rem",
@@ -392,9 +492,8 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div style={{
+          <div className="grid-3-cols" style={{
             display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
             gap: "2.5rem"
           }}>
             {/* Feature 1 */}
@@ -645,8 +744,7 @@ export default function LandingPage() {
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" style={{
-        padding: "8rem 2rem",
+      <section id="faq" className="section-padding" style={{
         maxWidth: "900px",
         margin: "0 auto"
       }}>
@@ -665,8 +763,7 @@ export default function LandingPage() {
           }}>
             FAQs
           </div>
-          <h2 style={{
-            fontSize: "3rem",
+          <h2 className="section-title" style={{
             fontWeight: "400",
             color: "#ffffff",
             marginBottom: "1rem",

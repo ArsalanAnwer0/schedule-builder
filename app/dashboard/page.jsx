@@ -464,7 +464,7 @@ export default function StudentDashboard() {
             </div>
 
             {/* Schedule Table */}
-            <div style={{ overflowX: "auto" }}>
+            <div className="table-container" style={{ overflowX: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ borderBottom: "2px solid rgba(255, 255, 255, 0.1)" }}>
@@ -774,7 +774,7 @@ export default function StudentDashboard() {
           ) : (
             <form onSubmit={showEditForm ? handleSubmitEditRequest : handleSubmitAvailability} style={{ padding: "2rem" }}>
             {/* Time Grid */}
-            <div style={{ overflowX: "auto", marginBottom: "2rem" }}>
+            <div className="table-container" style={{ overflowX: "auto", marginBottom: "2rem" }}>
               <div style={{
                 display: "grid",
                 gridTemplateColumns: "120px repeat(5, 1fr)",

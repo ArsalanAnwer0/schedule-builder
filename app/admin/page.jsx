@@ -1050,7 +1050,7 @@ export default function Home() {
               {loadingAdmins ? (
                 <p style={{ color: "#8b949e" }}>Loading admins...</p>
               ) : (
-                <div style={{ overflowX: "auto" }}>
+                <div className="table-container" style={{ overflowX: "auto" }}>
                   <table style={{ width: "100%", borderCollapse: "collapse" }}>
                     <thead>
                       <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
@@ -1225,7 +1225,7 @@ export default function Home() {
             ) : students.length === 0 ? (
               <p style={{ color: "#8b949e" }}>No students yet. Add your first student to get started.</p>
             ) : (
-              <div style={{ overflowX: "auto" }}>
+              <div className="table-container" style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
@@ -1358,7 +1358,7 @@ export default function Home() {
                   Define the operating hours for your office (Monday - Friday)
                 </p>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem", maxWidth: "540px" }}>
+              <div className="grid-2-cols" style={{ display: "grid", gap: "1.25rem", maxWidth: "540px" }}>
                 <div>
                   <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", marginBottom: "0.625rem" }}>
                     Start time
@@ -1448,7 +1448,7 @@ export default function Home() {
                 </select>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem", maxWidth: "540px" }}>
+              <div className="grid-2-cols" style={{ display: "grid", gap: "1.25rem", maxWidth: "540px" }}>
                 <div>
                   <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", marginBottom: "0.625rem" }}>
                     Start date
@@ -1541,7 +1541,7 @@ export default function Home() {
                 </p>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "1.5rem", marginTop: "1.5rem" }}>
+              <div className="grid-2-cols" style={{ display: "grid", gap: "1.5rem", marginTop: "1.5rem" }}>
                 <div>
                   <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", marginBottom: "0.625rem" }}>
                     Minimum shift (hours)
@@ -1854,7 +1854,7 @@ export default function Home() {
                 <p style={{ margin: 0, color: "#8b949e" }}>Request availability from students using the Admin Dashboard or wait for them to submit.</p>
               </div>
             ) : (
-              <div style={{ overflowX: "auto" }}>
+              <div className="table-container" style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: "0" }}>
                   <thead>
                     <tr style={{ backgroundColor: "rgba(255, 255, 255, 0.05)" }}>
@@ -2303,7 +2303,7 @@ export default function Home() {
                     <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #414d5c" }}>
                       <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "#ffffff", margin: 0 }}>Weekly schedule</h2>
                     </div>
-                    <div style={{ overflowX: "auto" }}>
+                    <div className="table-container" style={{ overflowX: "auto" }}>
                       <table style={{ width: "100%", borderCollapse: "collapse" }}>
                         <thead style={{ backgroundColor: "#1f2937" }}>
                           <tr>
