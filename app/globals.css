@@ -120,6 +120,45 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
    MOBILE RESPONSIVE STYLES
    ============================================ */
 
+/* Desktop defaults (these apply on all screen sizes unless overridden) */
+.hero-section {
+  padding: 8rem 2rem 4rem 2rem;
+}
+
+.hero-title {
+  font-size: 5rem;
+  line-height: 1.1;
+}
+
+.hero-preview {
+  padding: 4rem;
+  min-height: 400px;
+}
+
+.section-padding {
+  padding: 8rem 2rem;
+}
+
+.section-title {
+  font-size: 3.5rem;
+}
+
+.grid-3-cols {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-2-cols {
+  grid-template-columns: 1fr 1fr;
+}
+
+.nav-padding {
+  padding: 1rem 2rem;
+}
+
+.step-number {
+  font-size: 3.5rem;
+}
+
 /* Mobile: Base styles (max-width: 768px) */
 @media (max-width: 768px) {
   /* Hide desktop navigation on mobile */
