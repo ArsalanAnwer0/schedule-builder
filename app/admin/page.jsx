@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { generateSchedule } from "../../lib/scheduler";
 import TimePicker from "../components/TimePicker";
+import NotificationBell from "../components/NotificationBell";
 // import { exportToCSV, downloadCSV } from "../lib/utils/export"; // Archived for later
 
 // Predefined semester dates for US universities
@@ -295,10 +296,12 @@ export default function Home() {
         return;
       }
 
-      setStudentSuccess(editingStudent ? 'Student updated successfully' : 'Student added successfully');
+      // Use custom message from API if available (includes set-password link)
+      const successMessage = data.message || (editingStudent ? 'Student updated successfully' : 'Student added successfully');
+      setStudentSuccess(successMessage);
       setShowAddStudentModal(false);
       loadStudents();
-      setTimeout(() => setStudentSuccess(''), 3000);
+      setTimeout(() => setStudentSuccess(''), 8000); // Longer timeout for the set-password message
     } catch (err) {
       setStudentError('Something went wrong. Please try again.');
     }
@@ -785,33 +788,36 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Modern Profile Dropdown */}
-          <div style={{ position: "relative" }}>
-            <button
-              onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-              style={{
-                padding: "0.625rem 1rem",
-                backgroundColor: "rgba(255, 255, 255, 0.05)",
-                color: "#ffffff",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-                borderRadius: "8px",
-                fontSize: "0.875rem",
-                fontWeight: "500",
-                cursor: "pointer",
-                transition: "all 0.15s ease",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.75rem"
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
-                e.currentTarget.style.borderColor = "#484f58";
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
-              }}
-            >
+          {/* Notification Bell and Profile Dropdown */}
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <NotificationBell />
+
+            <div style={{ position: "relative" }}>
+              <button
+                onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+                style={{
+                  padding: "0.625rem 1rem",
+                  backgroundColor: "rgba(255, 255, 255, 0.05)",
+                  color: "#ffffff",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  borderRadius: "8px",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  transition: "all 0.15s ease",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.75rem"
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                  e.currentTarget.style.borderColor = "#484f58";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                }}
+              >
               <div style={{
                 width: "32px",
                 height: "32px",
@@ -942,6 +948,7 @@ export default function Home() {
                 </div>
               </>
             )}
+            </div>
           </div>
         </div>
 

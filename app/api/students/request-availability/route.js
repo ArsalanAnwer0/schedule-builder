@@ -3,6 +3,7 @@ import { requireAuth } from '../../../../lib/auth/session';
 import dbConnect from '../../../../lib/db/connect';
 import User from '../../../../lib/db/models/User';
 import { sendAvailabilityRequest } from '../../../../lib/email/send';
+import { createBulkNotifications } from '../../../../lib/utils/notifications';
 
 export async function POST(request) {
   try {
@@ -82,6 +83,19 @@ export async function POST(request) {
     });
 
     const results = await Promise.all(emailPromises);
+
+    // Create notifications for all students
+    try {
+      await createBulkNotifications(
+        studentIds.map(id => id.toString()),
+        'availability_request',
+        `${admin.name} has requested your availability. Please submit your available hours.`,
+        '/dashboard'
+      );
+    } catch (notificationError) {
+      console.error('Failed to create notifications:', notificationError);
+      // Notification failure shouldn't prevent the request from succeeding
+    }
 
     // Check if any emails failed
     const failedEmails = results.filter(r => r.success === false);

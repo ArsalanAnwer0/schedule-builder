@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import NotificationBell from '../components/NotificationBell';
 
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
@@ -306,33 +307,36 @@ export default function StudentDashboard() {
             </p>
           </div>
 
-          {/* Modern Profile Dropdown */}
-          <div style={{ position: "relative" }}>
-            <button
-              onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-              style={{
-                padding: "0.625rem 1rem",
-                backgroundColor: "rgba(255, 255, 255, 0.05)",
-                color: "#ffffff",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
-                borderRadius: "8px",
-                fontSize: "0.875rem",
-                fontWeight: "500",
-                cursor: "pointer",
-                transition: "all 0.15s ease",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.75rem"
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
-                e.currentTarget.style.borderColor = "#484f58";
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
-              }}
-            >
+          {/* Notification Bell and Profile Dropdown */}
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <NotificationBell />
+
+            <div style={{ position: "relative" }}>
+              <button
+                onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+                style={{
+                  padding: "0.625rem 1rem",
+                  backgroundColor: "rgba(255, 255, 255, 0.05)",
+                  color: "#ffffff",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  borderRadius: "8px",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  transition: "all 0.15s ease",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.75rem"
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                  e.currentTarget.style.borderColor = "#484f58";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                }}
+              >
               <div style={{
                 width: "32px",
                 height: "32px",
@@ -429,6 +433,7 @@ export default function StudentDashboard() {
                 </div>
               </>
             )}
+            </div>
           </div>
         </div>
 

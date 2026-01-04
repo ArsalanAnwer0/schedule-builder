@@ -10,6 +10,8 @@ export default function RegisterPage() {
     name: '',
     email: '',
     organizationName: '',
+    password: '',
+    confirmPassword: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -28,6 +30,13 @@ export default function RegisterPage() {
     setError('');
     setSuccess(false);
 
+    // Validate passwords match
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
@@ -36,6 +45,7 @@ export default function RegisterPage() {
           name: formData.name,
           email: formData.email,
           organizationName: formData.organizationName,
+          password: formData.password,
         }),
       });
 
@@ -155,7 +165,7 @@ export default function RegisterPage() {
                 lineHeight: "1.6",
                 fontWeight: "300"
               }}>
-                Check your email for a verification code to login.
+                You can now login with your email and password.
               </p>
 
               <Link
@@ -194,7 +204,7 @@ export default function RegisterPage() {
                   lineHeight: "1.6",
                   fontWeight: "300"
                 }}>
-                  Passwordless authentication • We'll send you a verification code via email
+                  Create a primary admin account for your organization
                 </p>
               </div>
 
@@ -278,7 +288,7 @@ export default function RegisterPage() {
                 />
               </div>
 
-              <div style={{ marginBottom: "2rem" }}>
+              <div style={{ marginBottom: "1.5rem" }}>
                 <label style={{
                   display: "block",
                   fontSize: "0.875rem",
@@ -294,6 +304,88 @@ export default function RegisterPage() {
                   value={formData.email}
                   onChange={handleChange}
                   required
+                  style={{
+                    width: "100%",
+                    padding: "0.875rem 1rem",
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    borderRadius: "8px",
+                    fontSize: "0.9375rem",
+                    color: "#ffffff",
+                    outline: "none",
+                    fontWeight: "300",
+                    transition: "all 0.2s"
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "#14b8a6";
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: "1.5rem" }}>
+                <label style={{
+                  display: "block",
+                  fontSize: "0.875rem",
+                  fontWeight: "400",
+                  color: "rgba(255, 255, 255, 0.8)",
+                  marginBottom: "0.5rem"
+                }}>
+                  Password
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  minLength="6"
+                  placeholder="At least 6 characters"
+                  style={{
+                    width: "100%",
+                    padding: "0.875rem 1rem",
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    borderRadius: "8px",
+                    fontSize: "0.9375rem",
+                    color: "#ffffff",
+                    outline: "none",
+                    fontWeight: "300",
+                    transition: "all 0.2s"
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "#14b8a6";
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: "2rem" }}>
+                <label style={{
+                  display: "block",
+                  fontSize: "0.875rem",
+                  fontWeight: "400",
+                  color: "rgba(255, 255, 255, 0.8)",
+                  marginBottom: "0.5rem"
+                }}>
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                  minLength="6"
+                  placeholder="Re-enter your password"
                   style={{
                     width: "100%",
                     padding: "0.875rem 1rem",

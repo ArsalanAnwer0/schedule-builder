@@ -73,18 +73,39 @@ export async function POST(request) {
     });
 
     // Send email with verification code
-    await sendVerificationCode(email, code);
-    console.log('✅ Verification email sent successfully to:', email);
+    try {
+      await sendVerificationCode(email, code);
+      console.log('✅ Verification email sent successfully to:', email);
 
-    return NextResponse.json({
-      success: true,
-      message: 'Verification code sent to your email',
-    });
+      return NextResponse.json({
+        success: true,
+        message: 'Verification code sent to your email',
+      });
+    } catch (emailError) {
+      // Email sending failed - delete the verification code since we couldn't send it
+      await VerificationCode.deleteOne({ email: email.toLowerCase(), code });
+      console.error('❌ Failed to send verification email:', emailError);
+
+      // Provide specific error messages
+      let errorMessage = 'Failed to send verification code';
+      if (emailError.message.includes('SMTP')) {
+        errorMessage = 'Email service temporarily unavailable. Please try again in a few moments.';
+      } else if (emailError.message.includes('Invalid login')) {
+        errorMessage = 'Email configuration error. Please contact support.';
+      } else if (emailError.message.includes('recipient')) {
+        errorMessage = 'Unable to send email to this address. Please verify your email or try another one.';
+      }
+
+      return NextResponse.json(
+        { error: errorMessage },
+        { status: 500 }
+      );
+    }
 
   } catch (error) {
     console.error('Request code error:', error);
     return NextResponse.json(
-      { error: 'Failed to send verification code' },
+      { error: 'Failed to send verification code. Please try again.' },
       { status: 500 }
     );
   }

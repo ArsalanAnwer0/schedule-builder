@@ -3,6 +3,7 @@ import { requireAuth } from '../../../lib/auth/session';
 import dbConnect from '../../../lib/db/connect';
 import Availability from '../../../lib/db/models/Availability';
 import User from '../../../lib/db/models/User';
+import { createNotification } from '../../../lib/utils/notifications';
 
 // Helper function to send email notifications (will be imported from email/send.js)
 async function sendAvailabilitySubmittedNotification(adminEmail, studentName, studentEmail) {
@@ -84,6 +85,14 @@ export async function POST(request) {
             adminEmails,
             user.name,
             user.email
+          );
+
+          // Create notification for admin
+          await createNotification(
+            adminUser._id.toString(),
+            'availability_submitted',
+            `${user.name} has submitted their availability.`,
+            '/admin'
           );
 
           // Check if all students who were requested have now submitted

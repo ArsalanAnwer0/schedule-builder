@@ -5,6 +5,7 @@ import AvailabilityEditRequest from '../../../../../lib/db/models/AvailabilityEd
 import Availability from '../../../../../lib/db/models/Availability';
 import User from '../../../../../lib/db/models/User';
 import { sendAvailabilityEditDecisionToStudent } from '../../../../../lib/email/send';
+import { createNotification } from '../../../../../lib/utils/notifications';
 
 // POST - Approve or reject edit request (admin only)
 export async function POST(request, { params }) {
@@ -67,6 +68,16 @@ export async function POST(request, { params }) {
           studentEmails,
           student.name,
           action === 'approve'
+        );
+
+        // Create notification for student
+        await createNotification(
+          editRequest.userId.toString(),
+          action === 'approve' ? 'edit_request_approved' : 'edit_request_rejected',
+          action === 'approve'
+            ? 'Your availability edit request has been approved.'
+            : 'Your availability edit request was not approved.',
+          '/dashboard'
         );
       }
     } catch (emailError) {

@@ -1,16 +1,25 @@
 import { NextResponse } from 'next/server';
+import bcrypt from 'bcryptjs';
 import dbConnect from '../../../../lib/db/connect';
 import User from '../../../../lib/db/models/User';
 import { rateLimit } from '../../../../lib/utils/rateLimiter';
 
 export async function POST(request) {
   try {
-    const { email, name, organizationName } = await request.json();
+    const { email, name, organizationName, password } = await request.json();
 
     // Validation
-    if (!email || !name || !organizationName) {
+    if (!email || !name || !organizationName || !password) {
       return NextResponse.json(
         { error: 'All fields are required' },
+        { status: 400 }
+      );
+    }
+
+    // Validate password strength
+    if (password.length < 6) {
+      return NextResponse.json(
+        { error: 'Password must be at least 6 characters long' },
         { status: 400 }
       );
     }
@@ -55,10 +64,14 @@ export async function POST(request) {
       );
     }
 
-    // Create primary admin user (no password - will use passwordless auth)
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create primary admin user with password
     const user = await User.create({
       email,
       name,
+      password: hashedPassword,
       role: 'admin',
       adminType: 'primary',
       organizationName: normalizedOrgName, // Use normalized name
@@ -66,7 +79,7 @@ export async function POST(request) {
 
     return NextResponse.json({
       success: true,
-      message: 'Registration successful! You can now login using email verification.',
+      message: 'Registration successful! You can now login with your email and password.',
       user: {
         id: user._id,
         email: user.email,

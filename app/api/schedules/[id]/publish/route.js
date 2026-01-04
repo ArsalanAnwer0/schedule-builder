@@ -4,6 +4,7 @@ import dbConnect from '../../../../../lib/db/connect';
 import Schedule from '../../../../../lib/db/models/Schedule';
 import User from '../../../../../lib/db/models/User';
 import { sendSchedulePublishedNotification } from '../../../../../lib/email/send';
+import { createBulkNotifications } from '../../../../../lib/utils/notifications';
 
 // POST - Publish a schedule
 export async function POST(request, { params }) {
@@ -56,6 +57,19 @@ export async function POST(request, { params }) {
 
     const successfulEmails = emailResults.filter(r => r.status === 'fulfilled').length;
     const failedEmails = emailResults.filter(r => r.status === 'rejected').length;
+
+    // Create notifications for all students
+    try {
+      await createBulkNotifications(
+        students.map(s => s._id.toString()),
+        'schedule_published',
+        'A new schedule has been published! View your shifts on the dashboard.',
+        '/dashboard'
+      );
+    } catch (notificationError) {
+      console.error('Failed to create notifications:', notificationError);
+      // Notification failure shouldn't prevent the schedule from being published
+    }
 
     return NextResponse.json({
       success: true,

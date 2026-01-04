@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 function LoginForm() {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -13,6 +14,7 @@ function LoginForm() {
   const [codeSent, setCodeSent] = useState(false);
   const [canResend, setCanResend] = useState(false);
   const [resendCountdown, setResendCountdown] = useState(0);
+  const [usePasswordLogin, setUsePasswordLogin] = useState(true);
 
   const searchParams = useSearchParams();
   const urlError = searchParams.get('error');
@@ -32,6 +34,38 @@ function LoginForm() {
   const startResendCountdown = () => {
     setCanResend(false);
     setResendCountdown(90); // 90 seconds to match rate limit
+  };
+
+  const handlePasswordLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setMessage('');
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'Login failed');
+        setLoading(false);
+        return;
+      }
+
+      // Login successful - redirect based on role
+      if (data.redirectUrl) {
+        window.location.href = data.redirectUrl;
+      }
+
+    } catch (err) {
+      setError('Something went wrong. Please try again.');
+      setLoading(false);
+    }
   };
 
   const handleRequestCode = async (e) => {
@@ -244,8 +278,188 @@ function LoginForm() {
             </div>
           )}
 
-          {/* Email Step */}
-          {!codeSent && (
+          {/* Password Login Step */}
+          {!codeSent && usePasswordLogin && (
+            <form onSubmit={handlePasswordLogin}>
+              <div style={{ marginBottom: "1.5rem" }}>
+                <label style={{
+                  display: "block",
+                  fontSize: "0.875rem",
+                  fontWeight: "400",
+                  color: "rgba(255, 255, 255, 0.8)",
+                  marginBottom: "0.5rem"
+                }}>
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={loading}
+                  placeholder="you@example.com"
+                  style={{
+                    width: "100%",
+                    padding: "0.875rem 1rem",
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    borderRadius: "8px",
+                    fontSize: "0.9375rem",
+                    color: "#ffffff",
+                    outline: "none",
+                    fontWeight: "300",
+                    transition: "all 0.2s"
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "#14b8a6";
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: "2rem" }}>
+                <label style={{
+                  display: "block",
+                  fontSize: "0.875rem",
+                  fontWeight: "400",
+                  color: "rgba(255, 255, 255, 0.8)",
+                  marginBottom: "0.5rem"
+                }}>
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={loading}
+                  placeholder="Enter your password"
+                  style={{
+                    width: "100%",
+                    padding: "0.875rem 1rem",
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    borderRadius: "8px",
+                    fontSize: "0.9375rem",
+                    color: "#ffffff",
+                    outline: "none",
+                    fontWeight: "300",
+                    transition: "all 0.2s"
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "#14b8a6";
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                  }}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                style={{
+                  width: "100%",
+                  padding: "0.875rem 1.5rem",
+                  backgroundColor: loading ? "rgba(255, 255, 255, 0.1)" : "#14b8a6",
+                  color: "#ffffff",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontSize: "0.9375rem",
+                  fontWeight: "500",
+                  cursor: loading ? "not-allowed" : "pointer",
+                  marginBottom: "1.5rem",
+                  transition: "all 0.2s"
+                }}
+                onMouseOver={(e) => {
+                  if (!loading) e.currentTarget.style.backgroundColor = "#0d9488";
+                }}
+                onMouseOut={(e) => {
+                  if (!loading) e.currentTarget.style.backgroundColor = "#14b8a6";
+                }}
+              >
+                {loading ? 'Signing in...' : 'Sign In'}
+              </button>
+
+              {/* Alternative Login Option */}
+              <div style={{
+                textAlign: "center",
+                marginBottom: "1.5rem"
+              }}>
+                <button
+                  type="button"
+                  onClick={() => setUsePasswordLogin(false)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "#14b8a6",
+                    fontSize: "0.875rem",
+                    cursor: "pointer",
+                    padding: 0,
+                    textDecoration: "none",
+                    fontWeight: "300"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.textDecoration = "underline"}
+                  onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
+                >
+                  Use verification code instead
+                </button>
+              </div>
+
+              {/* Register/Set Password Links */}
+              <div style={{
+                textAlign: "center",
+                paddingTop: "1.5rem",
+                borderTop: "1px solid rgba(255, 255, 255, 0.1)"
+              }}>
+                <p style={{
+                  fontSize: "0.875rem",
+                  color: "rgba(255, 255, 255, 0.5)",
+                  marginBottom: "0.75rem",
+                  fontWeight: "300"
+                }}>
+                  First time here?
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                  <Link
+                    href="/set-password"
+                    style={{
+                      color: "#14b8a6",
+                      fontSize: "0.9375rem",
+                      textDecoration: "none",
+                      fontWeight: "300"
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.textDecoration = "underline"}
+                    onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
+                  >
+                    Set your password (Students)
+                  </Link>
+                  <Link
+                    href="/register"
+                    style={{
+                      color: "rgba(255, 255, 255, 0.5)",
+                      fontSize: "0.875rem",
+                      textDecoration: "none",
+                      fontWeight: "300"
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.7)"}
+                    onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)"}
+                  >
+                    Register as Admin
+                  </Link>
+                </div>
+              </div>
+            </form>
+          )}
+
+          {/* Email Step for Verification Code */}
+          {!codeSent && !usePasswordLogin && (
             <form onSubmit={handleRequestCode}>
               <div style={{ marginBottom: "2rem" }}>
                 <label style={{
@@ -319,7 +533,7 @@ function LoginForm() {
                 backgroundColor: "rgba(20, 184, 166, 0.05)",
                 border: "1px solid rgba(20, 184, 166, 0.15)",
                 borderRadius: "8px",
-                marginBottom: "1.5rem"
+                marginBottom: "1rem"
               }}>
                 <p style={{
                   color: "rgba(255, 255, 255, 0.6)",
@@ -332,7 +546,51 @@ function LoginForm() {
                 </p>
               </div>
 
-              {/* Register Link */}
+              {/* School Email Warning */}
+              <div style={{
+                padding: "1rem 1.25rem",
+                backgroundColor: "rgba(239, 68, 68, 0.05)",
+                border: "1px solid rgba(239, 68, 68, 0.15)",
+                borderRadius: "8px",
+                marginBottom: "1.5rem"
+              }}>
+                <p style={{
+                  color: "rgba(255, 152, 152, 0.8)",
+                  fontSize: "0.875rem",
+                  margin: 0,
+                  lineHeight: "1.6",
+                  fontWeight: "300"
+                }}>
+                  Note: Accounts with school/work email addresses may not receive email notifications due to spam filtering. Please use password login instead.
+                </p>
+              </div>
+
+              {/* Alternative Login Option */}
+              <div style={{
+                textAlign: "center",
+                marginBottom: "1.5rem"
+              }}>
+                <button
+                  type="button"
+                  onClick={() => setUsePasswordLogin(true)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "#14b8a6",
+                    fontSize: "0.875rem",
+                    cursor: "pointer",
+                    padding: 0,
+                    textDecoration: "none",
+                    fontWeight: "300"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.textDecoration = "underline"}
+                  onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
+                >
+                  Use password instead
+                </button>
+              </div>
+
+              {/* Register/Set Password Links */}
               <div style={{
                 textAlign: "center",
                 paddingTop: "1.5rem",
@@ -341,24 +599,39 @@ function LoginForm() {
                 <p style={{
                   fontSize: "0.875rem",
                   color: "rgba(255, 255, 255, 0.5)",
-                  marginBottom: "0.5rem",
+                  marginBottom: "0.75rem",
                   fontWeight: "300"
                 }}>
                   First time here?
                 </p>
-                <Link
-                  href="/register"
-                  style={{
-                    color: "#14b8a6",
-                    fontSize: "0.9375rem",
-                    textDecoration: "none",
-                    fontWeight: "300"
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.textDecoration = "underline"}
-                  onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
-                >
-                  Register as Primary Admin
-                </Link>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                  <Link
+                    href="/set-password"
+                    style={{
+                      color: "#14b8a6",
+                      fontSize: "0.9375rem",
+                      textDecoration: "none",
+                      fontWeight: "300"
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.textDecoration = "underline"}
+                    onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
+                  >
+                    Set your password (Students)
+                  </Link>
+                  <Link
+                    href="/register"
+                    style={{
+                      color: "rgba(255, 255, 255, 0.5)",
+                      fontSize: "0.875rem",
+                      textDecoration: "none",
+                      fontWeight: "300"
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.7)"}
+                    onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)"}
+                  >
+                    Register as Admin
+                  </Link>
+                </div>
               </div>
             </form>
           )}

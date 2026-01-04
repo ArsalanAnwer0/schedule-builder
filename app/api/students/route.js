@@ -3,6 +3,7 @@ import { requireAdmin } from '../../../lib/auth/session';
 import dbConnect from '../../../lib/db/connect';
 import User from '../../../lib/db/models/User';
 import { sendStudentWelcome } from '../../../lib/email/send';
+import { createNotification } from '../../../lib/utils/notifications';
 
 // GET all students
 export async function GET() {
@@ -107,6 +108,22 @@ export async function POST(request) {
       // Email failure shouldn't prevent student creation
     }
 
+    // Create notification for the student
+    try {
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001';
+      await createNotification(
+        student._id.toString(),
+        'student_added',
+        `Welcome to ${admin.organizationName}! You've been added as a student. Create your password to get started.`,
+        '/set-password'
+      );
+    } catch (notificationError) {
+      console.error('Failed to create notification:', notificationError);
+      // Notification failure shouldn't prevent student creation
+    }
+
+    // Return success with message to tell student to set password
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001';
     return NextResponse.json({
       student: {
         id: student._id.toString(),
@@ -115,6 +132,7 @@ export async function POST(request) {
         name: student.name,
         createdAt: student.createdAt,
       },
+      message: `Student added! Tell them to visit ${appUrl}/set-password to create their password.`,
     }, { status: 201 });
 
   } catch (error) {

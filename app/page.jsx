@@ -113,6 +113,28 @@ export default function LandingPage() {
               FAQ
             </button>
             <button
+              onClick={() => router.push('/login')}
+              style={{
+                padding: "0.625rem 1.5rem",
+                background: "transparent",
+                color: "#14b8a6",
+                border: "1px solid #14b8a6",
+                borderRadius: "6px",
+                fontSize: "0.9375rem",
+                fontWeight: "600",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = "rgba(20, 184, 166, 0.1)";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = "transparent";
+              }}
+            >
+              Login
+            </button>
+            <button
               onClick={() => router.push('/register')}
               style={{
                 padding: "0.625rem 1.5rem",
