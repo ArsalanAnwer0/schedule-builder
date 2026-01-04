@@ -1,19 +1,12 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '../../../lib/db/connect';
 import Notification from '../../../lib/db/models/Notification';
-import { getSessionUser } from '../../../lib/auth/session';
+import { requireAuth } from '../../../lib/auth/session';
 
 // GET /api/notifications - Fetch user's notifications
 export async function GET(request) {
   try {
-    const user = await getSessionUser();
-
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const { user } = await requireAuth();
 
     const { searchParams } = new URL(request.url);
     const filter = searchParams.get('filter') || 'unread'; // 'unread', 'read', or 'all'
@@ -21,7 +14,7 @@ export async function GET(request) {
 
     await dbConnect();
 
-    let query = { userId: user.id };
+    let query = { userId: user._id };
 
     if (filter === 'unread') {
       query.read = false;
@@ -37,7 +30,7 @@ export async function GET(request) {
 
     // Get unread count
     const unreadCount = await Notification.countDocuments({
-      userId: user.id,
+      userId: user._id,
       read: false,
     });
 

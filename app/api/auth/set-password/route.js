@@ -17,11 +17,11 @@ export async function POST(request) {
       );
     }
 
-    // Rate limiting: 5 attempts per email per 15 minutes
+    // Rate limiting: 10 attempts per email per 5 minutes
     const rateLimitKey = `set-password:${email.toLowerCase()}`;
-    if (!rateLimit(rateLimitKey, 5, 15 * 60 * 1000)) {
+    if (!rateLimit(rateLimitKey, 10, 5 * 60 * 1000)) {
       return NextResponse.json(
-        { error: 'Too many attempts. Please try again in 15 minutes.' },
+        { error: 'Too many attempts. Please try again in 5 minutes.' },
         { status: 429 }
       );
     }

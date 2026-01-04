@@ -1,19 +1,12 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '../../../../lib/db/connect';
 import Notification from '../../../../lib/db/models/Notification';
-import { getSessionUser } from '../../../../lib/auth/session';
+import { requireAuth } from '../../../../lib/auth/session';
 
 // POST /api/notifications/mark-read - Mark notification(s) as read
 export async function POST(request) {
   try {
-    const user = await getSessionUser();
-
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const { user } = await requireAuth();
 
     const { notificationIds, markAll } = await request.json();
 
@@ -22,7 +15,7 @@ export async function POST(request) {
     if (markAll) {
       // Mark all unread notifications as read for this user
       await Notification.updateMany(
-        { userId: user.id, read: false },
+        { userId: user._id, read: false },
         { $set: { read: true } }
       );
 
@@ -43,7 +36,7 @@ export async function POST(request) {
     await Notification.updateMany(
       {
         _id: { $in: notificationIds },
-        userId: user.id,
+        userId: user._id,
       },
       { $set: { read: true } }
     );
