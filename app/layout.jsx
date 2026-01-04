@@ -12,8 +12,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Office Schedule Builder",
-  description: "Create optimized work schedules in minutes - balance worker hours, ensure office coverage, and manage shift constraints",
+  title: "Schedule Builder - Student Worker Schedule Management",
+  description: "Modern SaaS platform for managing student worker schedules at universities. Collect availability, generate optimized schedules, and manage your student workforce efficiently.",
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+  },
 };
 
 export default function RootLayout({ children }) {
