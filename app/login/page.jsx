@@ -57,6 +57,12 @@ function LoginForm() {
         return;
       }
 
+      // Check if 2FA is required
+      if (data.requires2FA) {
+        window.location.href = `/verify-2fa?userId=${data.userId}`;
+        return;
+      }
+
       // Login successful - redirect based on role
       if (data.redirectUrl) {
         window.location.href = data.redirectUrl;

@@ -402,6 +402,36 @@ export default function StudentDashboard() {
                     <button
                       onClick={() => {
                         setShowProfileDropdown(false);
+                        router.push('/settings/security');
+                      }}
+                      style={{
+                        width: "100%",
+                        padding: "0.625rem 0.75rem",
+                        backgroundColor: "transparent",
+                        color: "#d1d5db",
+                        border: "none",
+                        borderRadius: "6px",
+                        fontSize: "0.875rem",
+                        fontWeight: "400",
+                        cursor: "pointer",
+                        transition: "all 0.15s ease",
+                        textAlign: "left",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.75rem"
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)"}
+                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 11C9.65685 11 11 9.65685 11 8C11 6.34315 9.65685 5 8 5C6.34315 5 5 6.34315 5 8C5 9.65685 6.34315 11 8 11Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M13.5 8C13.5 8 11.5 11.5 8 11.5C4.5 11.5 2.5 8 2.5 8C2.5 8 4.5 4.5 8 4.5C11.5 4.5 13.5 8 13.5 8Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      Security Settings
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowProfileDropdown(false);
                         handleLogout();
                       }}
                       style={{
