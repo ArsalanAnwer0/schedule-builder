@@ -60,7 +60,18 @@ export async function POST(request) {
       );
     }
 
-    // Create session
+    // Check if 2FA is enabled
+    if (user.twoFactorEnabled) {
+      // Don't create session yet - user needs to verify 2FA first
+      return NextResponse.json({
+        success: true,
+        requires2FA: true,
+        userId: user._id.toString(),
+        message: 'Please enter your 2FA code',
+      });
+    }
+
+    // Create session (only if 2FA is not enabled)
     const session = await createSession(user._id.toString());
     await setSessionCookie(session.token, session.expiresAt);
 
