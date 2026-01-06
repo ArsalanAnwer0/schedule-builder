@@ -69,22 +69,7 @@ export async function POST(request) {
       availabilityRequested: s.availabilityRequested
     })));
 
-    // Send availability request emails to all selected students (both primary and secondary emails)
-    const emailPromises = students.map(student => {
-      const emails = [student.email];
-      if (student.secondaryEmail) {
-        emails.push(student.secondaryEmail);
-      }
-      return sendAvailabilityRequest(emails, student.name)
-        .catch(err => {
-          console.error(`Failed to send email to ${emails.join(', ')}:`, err);
-          return { success: false, email: emails.join(', ') };
-        });
-    });
-
-    const results = await Promise.all(emailPromises);
-
-    // Create notifications for all students
+    // Create notifications for all students (primary communication method)
     try {
       await createBulkNotifications(
         studentIds.map(id => id.toString()),
@@ -94,25 +79,35 @@ export async function POST(request) {
       );
     } catch (notificationError) {
       console.error('Failed to create notifications:', notificationError);
-      // Notification failure shouldn't prevent the request from succeeding
+      return NextResponse.json(
+        { error: 'Failed to send notifications to students' },
+        { status: 500 }
+      );
     }
 
-    // Check if any emails failed
-    const failedEmails = results.filter(r => r.success === false);
+    // Send availability request emails as optional backup (don't block on failures)
+    const emailPromises = students.map(async student => {
+      const emails = [student.email];
+      if (student.secondaryEmail) {
+        emails.push(student.secondaryEmail);
+      }
+      try {
+        await sendAvailabilityRequest(emails, student.name);
+        return { success: true };
+      } catch (err) {
+        console.error(`Optional email notification failed for ${emails.join(', ')}:`, err);
+        return { success: false };
+      }
+    });
 
-    if (failedEmails.length > 0) {
-      return NextResponse.json({
-        success: true,
-        message: `Availability requests sent to ${students.length - failedEmails.length} student(s). ${failedEmails.length} email(s) failed.`,
-        partialFailure: true,
-        sentCount: students.length - failedEmails.length,
-        failedCount: failedEmails.length,
-      });
-    }
+    // Don't wait for emails, let them send in background
+    Promise.all(emailPromises).catch(err => {
+      console.error('Some email notifications failed (non-critical):', err);
+    });
 
     return NextResponse.json({
       success: true,
-      message: `Availability requests sent to ${students.length} student(s)`,
+      message: `Availability requested from ${students.length} student(s). Notifications sent successfully.`,
       sentCount: students.length,
     });
 

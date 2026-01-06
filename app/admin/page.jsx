@@ -2589,6 +2589,19 @@ export default function Home() {
                 {editingStudent ? 'Edit Student' : 'Add New Student'}
               </h3>
 
+              {studentError && (
+                <div style={{
+                  padding: "0.75rem 1rem",
+                  backgroundColor: "#2d1517",
+                  border: "1px solid #5c2d30",
+                  borderLeft: "4px solid #dc2626",
+                  borderRadius: "6px",
+                  marginBottom: "1.5rem"
+                }}>
+                  <p style={{ color: "#ff6b6b", margin: 0, fontSize: "0.875rem" }}>{studentError}</p>
+                </div>
+              )}
+
               <form onSubmit={handleSubmitStudent}>
                 <div style={{ marginBottom: "1.5rem" }}>
                   <label style={{
