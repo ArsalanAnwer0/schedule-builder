@@ -361,6 +361,27 @@ function LoginForm() {
                 />
               </div>
 
+              {/* Forgot Password Link */}
+              <div style={{
+                textAlign: "right",
+                marginBottom: "1rem"
+              }}>
+                <Link
+                  href="/forgot-password"
+                  style={{
+                    fontSize: "0.875rem",
+                    color: "#14b8a6",
+                    textDecoration: "none",
+                    fontWeight: "400",
+                    transition: "color 0.2s"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = "#0d9488"}
+                  onMouseOut={(e) => e.currentTarget.style.color = "#14b8a6"}
+                >
+                  Forgot Password?
+                </Link>
+              </div>
+
               <button
                 type="submit"
                 disabled={loading}
