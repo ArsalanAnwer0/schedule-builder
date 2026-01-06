@@ -50,10 +50,8 @@ export default function SetPasswordPage() {
         return;
       }
 
-      // Auto-login successful - redirect to dashboard
-      if (data.redirectUrl) {
-        window.location.href = data.redirectUrl;
-      }
+      // Auto-login successful - redirect to email verification
+      window.location.href = `/verify-email?email=${encodeURIComponent(formData.email)}&type=primary`;
     } catch (err) {
       setError('Something went wrong. Please try again.');
       setLoading(false);

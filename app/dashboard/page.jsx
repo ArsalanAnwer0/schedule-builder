@@ -437,6 +437,58 @@ export default function StudentDashboard() {
           </div>
         </div>
 
+        {/* Email Verification Banner */}
+        {user && !user.emailVerified && (
+          <div style={{
+            backgroundColor: "rgba(251, 191, 36, 0.1)",
+            border: "1px solid rgba(251, 191, 36, 0.3)",
+            borderRadius: "8px",
+            padding: "1rem 1.25rem",
+            marginBottom: "2rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "1rem"
+          }}>
+            <div style={{ flex: 1 }}>
+              <div style={{
+                fontSize: "0.9375rem",
+                fontWeight: "500",
+                color: "#fbbf24",
+                marginBottom: "0.25rem"
+              }}>
+                Email Not Verified
+              </div>
+              <div style={{
+                fontSize: "0.875rem",
+                color: "#fde68a",
+                lineHeight: "1.5"
+              }}>
+                Please verify your email address to secure your account and receive important notifications.
+              </div>
+            </div>
+            <button
+              onClick={() => router.push(`/verify-email?email=${encodeURIComponent(user.email)}&type=primary`)}
+              style={{
+                padding: "0.625rem 1.25rem",
+                backgroundColor: "#fbbf24",
+                color: "#1a1a1a",
+                border: "none",
+                borderRadius: "6px",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+                transition: "all 0.2s"
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#f59e0b"}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#fbbf24"}
+            >
+              Verify Email
+            </button>
+          </div>
+        )}
+
         {/* Published Schedule Section */}
         {!loadingSchedule && publishedSchedule && (
           <div style={{
