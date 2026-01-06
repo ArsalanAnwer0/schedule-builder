@@ -42,6 +42,22 @@ export async function POST(request) {
       );
     }
 
+    // Check if account is locked
+    if (user.lockedUntil && user.lockedUntil > new Date()) {
+      const minutesLeft = Math.ceil((user.lockedUntil - new Date()) / 1000 / 60);
+      return NextResponse.json(
+        { error: `Account locked due to multiple failed login attempts. Try again in ${minutesLeft} minute${minutesLeft > 1 ? 's' : ''}.` },
+        { status: 403 }
+      );
+    }
+
+    // Reset lockout if time has passed
+    if (user.lockedUntil && user.lockedUntil <= new Date()) {
+      user.failedLoginAttempts = 0;
+      user.lockedUntil = null;
+      await user.save();
+    }
+
     // Check if user has a password set
     if (!user.password) {
       return NextResponse.json(
@@ -54,10 +70,31 @@ export async function POST(request) {
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
+      // Increment failed login attempts
+      user.failedLoginAttempts += 1;
+
+      // Lock account after 5 failed attempts for 15 minutes
+      if (user.failedLoginAttempts >= 5) {
+        user.lockedUntil = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+        await user.save();
+        return NextResponse.json(
+          { error: 'Too many failed login attempts. Your account has been locked for 15 minutes.' },
+          { status: 403 }
+        );
+      }
+
+      await user.save();
       return NextResponse.json(
         { error: 'Invalid email or password' },
         { status: 401 }
       );
+    }
+
+    // Reset failed attempts on successful login
+    if (user.failedLoginAttempts > 0) {
+      user.failedLoginAttempts = 0;
+      user.lockedUntil = null;
+      await user.save();
     }
 
     // Check if 2FA is enabled
