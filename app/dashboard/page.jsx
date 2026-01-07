@@ -3,11 +3,13 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import NotificationBell from '../components/NotificationBell';
+import { useToast } from '../components/Toast';
 
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
 export default function StudentDashboard() {
   const router = useRouter();
+  const toast = useToast();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -21,8 +23,6 @@ export default function StudentDashboard() {
   });
   const [availabilityNotes, setAvailabilityNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState('');
-  const [submitError, setSubmitError] = useState('');
 
   // Published schedule state
   const [publishedSchedule, setPublishedSchedule] = useState(null);
@@ -156,8 +156,6 @@ export default function StudentDashboard() {
   const handleSubmitAvailability = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    setSubmitError('');
-    setSubmitSuccess('');
 
     try {
       const res = await fetch('/api/availability', {
@@ -172,15 +170,14 @@ export default function StudentDashboard() {
       const data = await res.json();
 
       if (!res.ok) {
-        setSubmitError(data.error || 'Failed to submit availability');
+        toast.error(data.error || 'Failed to submit availability');
         return;
       }
 
-      setSubmitSuccess('Availability submitted successfully!');
+      toast.success('Availability submitted successfully!');
       setHasSubmitted(true);
-      setTimeout(() => setSubmitSuccess(''), 5000);
     } catch (err) {
-      setSubmitError('Failed to submit availability. Please check your connection and try again.');
+      toast.error('Failed to submit availability. Please check your connection and try again.');
     } finally {
       setSubmitting(false);
     }
@@ -189,11 +186,9 @@ export default function StudentDashboard() {
   const handleSubmitEditRequest = async (e) => {
     e.preventDefault();
     setSubmittingEdit(true);
-    setSubmitError('');
-    setSubmitSuccess('');
 
     if (!editReason.trim()) {
-      setSubmitError('Please provide a reason for the edit');
+      toast.error('Please provide a reason for the edit');
       setSubmittingEdit(false);
       return;
     }
@@ -212,12 +207,11 @@ export default function StudentDashboard() {
       const data = await res.json();
 
       if (!res.ok) {
-        setSubmitError(data.error || 'Failed to submit edit request');
+        toast.error(data.error || 'Failed to submit edit request');
         return;
       }
 
-      setSubmitSuccess(data.message);
-      setTimeout(() => setSubmitSuccess(''), 5000);
+      toast.success(data.message);
       setShowEditForm(false);
       setEditReason('');
 
@@ -228,7 +222,7 @@ export default function StudentDashboard() {
         setEditRequests(editData.requests);
       }
     } catch (err) {
-      setSubmitError('Failed to submit edit request. Please check your connection and try again.');
+      toast.error('Failed to submit edit request. Please check your connection and try again.');
     } finally {
       setSubmittingEdit(false);
     }
@@ -813,33 +807,6 @@ export default function StudentDashboard() {
             <p style={{ color: "#8b949e", fontSize: "0.875rem", margin: 0 }}>
               No schedule has been published yet. You'll see your work schedule here once it's published by your manager.
             </p>
-          </div>
-        )}
-
-        {/* Success/Error Messages */}
-        {submitSuccess && (
-          <div style={{
-            padding: "1rem 1.5rem",
-            backgroundColor: "#0d1f17",
-            border: "1px solid #1e4d2b",
-            borderLeft: "4px solid #047857",
-            borderRadius: "6px",
-            marginBottom: "1.5rem"
-          }}>
-            <p style={{ color: "#10b981", margin: 0, fontSize: "0.875rem" }}>✓ {submitSuccess}</p>
-          </div>
-        )}
-
-        {submitError && (
-          <div style={{
-            padding: "1rem 1.5rem",
-            backgroundColor: "#2d1517",
-            border: "1px solid #5c2d30",
-            borderLeft: "4px solid #dc2626",
-            borderRadius: "6px",
-            marginBottom: "1.5rem"
-          }}>
-            <p style={{ color: "#ff6b6b", margin: 0, fontSize: "0.875rem" }}>{submitError}</p>
           </div>
         )}
 
