@@ -270,7 +270,7 @@ export default function StudentDashboard() {
   }
 
   return (
-    <div style={{
+    <div className="page-container" style={{
       minHeight: "100vh",
       backgroundColor: "#0a0f1a",
       padding: "2rem 1.5rem"
@@ -278,6 +278,30 @@ export default function StudentDashboard() {
       <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
 
         {/* Header */}
+        <style jsx>{`
+          @media (max-width: 768px) {
+            .page-container {
+              padding: 1rem 0.75rem !important;
+            }
+            .page-title {
+              font-size: 1.5rem !important;
+            }
+            .profile-text {
+              display: none !important;
+            }
+            .profile-chevron {
+              display: none !important;
+            }
+          }
+          @media (min-width: 769px) and (max-width: 1024px) {
+            .page-container {
+              padding: 1.5rem 1rem !important;
+            }
+            .page-title {
+              font-size: 1.75rem !important;
+            }
+          }
+        `}</style>
         <div style={{
           marginBottom: "1.5rem",
           display: "flex",
@@ -287,7 +311,7 @@ export default function StudentDashboard() {
           gap: "1rem"
         }}>
           <div>
-            <h1 style={{
+            <h1 className="page-title" style={{
               fontSize: "1.875rem",
               fontWeight: "400",
               color: "#ffffff",
@@ -351,11 +375,11 @@ export default function StudentDashboard() {
               }}>
                 {user?.name?.charAt(0).toUpperCase()}
               </div>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", textAlign: "left" }}>
+              <div className="profile-text" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", textAlign: "left" }}>
                 <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff" }}>{user?.name}</span>
                 <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>Student</span>
               </div>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ marginLeft: "0.25rem" }}>
+              <svg className="profile-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ marginLeft: "0.25rem" }}>
                 <path d="M4 6L8 10L12 6" stroke="#8b949e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
@@ -551,7 +575,24 @@ export default function StudentDashboard() {
             </div>
 
             {/* Schedule Table */}
-            <div className="table-container" style={{ overflowX: "auto" }}>
+            <style jsx>{`
+              @media (max-width: 768px) {
+                .schedule-table-desktop {
+                  display: none !important;
+                }
+                .schedule-mobile {
+                  display: block !important;
+                }
+              }
+              @media (min-width: 769px) {
+                .schedule-mobile {
+                  display: none !important;
+                }
+              }
+            `}</style>
+
+            {/* Desktop Table */}
+            <div className="schedule-table-desktop table-container" style={{ overflowX: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ borderBottom: "2px solid rgba(255, 255, 255, 0.1)" }}>
@@ -673,6 +714,94 @@ export default function StudentDashboard() {
                   })}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Cards */}
+            <div className="schedule-mobile">
+              {['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].map((day) => {
+                const dayShifts = publishedSchedule.shifts[day] || [];
+
+                return (
+                  <div key={day} style={{
+                    marginBottom: "1.5rem",
+                    backgroundColor: "rgba(255, 255, 255, 0.03)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    borderRadius: "8px",
+                    padding: "1rem"
+                  }}>
+                    <h3 style={{
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      color: "#ffffff",
+                      textTransform: "capitalize",
+                      margin: 0,
+                      marginBottom: "1rem"
+                    }}>
+                      {day}
+                    </h3>
+
+                    {dayShifts.length === 0 ? (
+                      <p style={{
+                        color: "#6e7681",
+                        fontSize: "0.875rem",
+                        fontStyle: "italic",
+                        margin: 0
+                      }}>
+                        No shifts scheduled
+                      </p>
+                    ) : (
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                        {dayShifts.map((shift, index) => (
+                          <div key={`${day}-${index}-mobile`} style={{
+                            padding: "0.875rem",
+                            backgroundColor: shift.studentId === user?.id ? "rgba(20, 184, 166, 0.1)" : "rgba(255, 255, 255, 0.03)",
+                            border: `1px solid ${shift.studentId === user?.id ? "rgba(20, 184, 166, 0.3)" : "rgba(255, 255, 255, 0.1)"}`,
+                            borderRadius: "6px"
+                          }}>
+                            <div style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "flex-start",
+                              marginBottom: "0.5rem"
+                            }}>
+                              <span style={{
+                                color: shift.studentId === user?.id ? "#14b8a6" : "#c9d1d9",
+                                fontSize: "0.9375rem",
+                                fontWeight: "600"
+                              }}>
+                                {shift.studentName}
+                                {shift.studentId === user?.id && (
+                                  <span style={{
+                                    marginLeft: "0.5rem",
+                                    fontSize: "0.75rem",
+                                    color: "#14b8a6",
+                                    fontWeight: "400"
+                                  }}>
+                                    (You)
+                                  </span>
+                                )}
+                              </span>
+                              <span style={{
+                                color: "#8b949e",
+                                fontSize: "0.875rem",
+                                fontWeight: "500"
+                              }}>
+                                {shift.hours}h
+                              </span>
+                            </div>
+                            <div style={{
+                              color: "#c9d1d9",
+                              fontSize: "0.875rem"
+                            }}>
+                              {shift.startTime} - {shift.endTime}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
@@ -861,7 +990,42 @@ export default function StudentDashboard() {
           ) : (
             <form onSubmit={showEditForm ? handleSubmitEditRequest : handleSubmitAvailability} style={{ padding: "2rem" }}>
             {/* Time Grid */}
-            <div className="table-container" style={{ overflowX: "auto", marginBottom: "2rem" }}>
+            <style jsx>{`
+              @media (max-width: 768px) {
+                .availability-grid-container {
+                  display: block !important;
+                }
+                .day-section {
+                  margin-bottom: 2rem;
+                }
+                .day-header {
+                  font-size: 1rem !important;
+                  margin-bottom: 1rem;
+                  padding: 0.75rem;
+                  background: rgba(255, 255, 255, 0.05);
+                  border-radius: 6px;
+                  text-align: center;
+                }
+                .time-slots-mobile {
+                  display: grid;
+                  grid-template-columns: repeat(2, 1fr);
+                  gap: 0.5rem;
+                }
+              }
+              @media (min-width: 769px) {
+                .day-section {
+                  display: none;
+                }
+              }
+              @media (max-width: 768px) {
+                .desktop-grid {
+                  display: none !important;
+                }
+              }
+            `}</style>
+
+            {/* Desktop Grid */}
+            <div className="desktop-grid table-container" style={{ overflowX: "auto", marginBottom: "2rem" }}>
               <div style={{
                 display: "grid",
                 gridTemplateColumns: "120px repeat(5, 1fr)",
@@ -940,6 +1104,67 @@ export default function StudentDashboard() {
                   </React.Fragment>
                 ))}
               </div>
+            </div>
+
+            {/* Mobile View - Day by Day */}
+            <div className="availability-grid-container">
+              {DAYS_OF_WEEK.map(day => (
+                <div key={day} className="day-section">
+                  <h3 className="day-header" style={{
+                    fontSize: "0.9375rem",
+                    fontWeight: "600",
+                    color: "#ffffff",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    margin: 0,
+                    marginBottom: "1rem"
+                  }}>
+                    {day}
+                  </h3>
+                  <div className="time-slots-mobile">
+                    {getTimeSlots().map(timeSlot => {
+                      const isSelected = availability[day].includes(timeSlot);
+                      const isDisabled = hasSubmitted && !showEditForm;
+                      return (
+                        <button
+                          key={`${day}-${timeSlot}-mobile`}
+                          type="button"
+                          onClick={() => !isDisabled && toggleTimeSlot(day, timeSlot)}
+                          disabled={isDisabled}
+                          style={{
+                            padding: "0.875rem",
+                            backgroundColor: isSelected ? "#0d4a2d" : "rgba(255, 255, 255, 0.05)",
+                            border: `1px solid ${isSelected ? "#1e7a4d" : "rgba(255, 255, 255, 0.1)"}`,
+                            borderRadius: "6px",
+                            fontSize: "0.875rem",
+                            color: isSelected ? "#86efac" : "#c9d1d9",
+                            cursor: isDisabled ? "not-allowed" : "pointer",
+                            transition: "all 0.15s",
+                            fontWeight: isSelected ? "500" : "400",
+                            opacity: isDisabled ? 0.6 : 1,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between"
+                          }}
+                          onMouseOver={(e) => {
+                            if (!isSelected && !isDisabled) {
+                              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                            }
+                          }}
+                          onMouseOut={(e) => {
+                            if (!isSelected && !isDisabled) {
+                              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                            }
+                          }}
+                        >
+                          <span>{timeSlot}</span>
+                          {isSelected && <span style={{ fontSize: "1rem" }}>✓</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
 
             {/* Reason for Edit (only show in edit mode) */}
