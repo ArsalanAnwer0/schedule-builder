@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { generateSchedule } from "../../lib/scheduler";
 import TimePicker from "../components/TimePicker";
 import NotificationBell from "../components/NotificationBell";
-// import { exportToCSV, downloadCSV } from "../lib/utils/export"; // Archived for later
+import { exportToCSV, downloadCSV } from "../../lib/utils/export";
 
 // Predefined semester dates for US universities
 const SEMESTER_PRESETS = {
@@ -2072,7 +2072,6 @@ export default function Home() {
                     {publishingScheduleId === savedScheduleIds[scheduleIndex] ? 'Publishing...' : 'Publish Schedule'}
                   </button>
 
-                  {/* Export CSV button - Archived for later
                   <button
                     onClick={() => {
                       const csv = exportToCSV(currentSchedule.schedule, currentSchedule.name);
@@ -2104,7 +2103,6 @@ export default function Home() {
                   >
                     Export CSV
                   </button>
-                  */}
                 </div>
 
                 <div style={{
