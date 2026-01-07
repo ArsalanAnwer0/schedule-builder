@@ -532,7 +532,7 @@ export default function LandingPage() {
                 color: "#ffffff",
                 marginBottom: "0.75rem"
               }}>
-                Passwordless email login
+                Flexible authentication
               </h3>
               <p style={{
                 fontSize: "0.9375rem",
@@ -540,7 +540,7 @@ export default function LandingPage() {
                 lineHeight: "1.7",
                 fontWeight: "300"
               }}>
-                No passwords to remember. Admins and students login with email verification codes sent instantly. Secure and simple.
+                Choose passwordless email verification or secure password-based login. Add two-factor authentication for extra security. Includes forgot password recovery and email verification.
               </p>
             </div>
 
@@ -848,17 +848,224 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer style={{
-        padding: "3rem 2rem",
-        borderTop: "1px solid rgba(255, 255, 255, 0.1)",
-        textAlign: "center"
+        padding: "4rem 2rem 3rem 2rem",
+        borderTop: "1px solid rgba(255, 255, 255, 0.1)"
       }}>
-        <p style={{
-          fontSize: "0.875rem",
-          color: "rgba(255, 255, 255, 0.4)",
-          fontWeight: "300"
+        <div style={{
+          maxWidth: "1200px",
+          margin: "0 auto"
         }}>
-          © 2026 Schedule Builder. Built to make scheduling simple.
-        </p>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+            gap: "3rem",
+            marginBottom: "3rem"
+          }}>
+            {/* About */}
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2.5">
+                  <path d="M3 12h18M3 6h18M3 18h18" />
+                </svg>
+                <span style={{ fontSize: "1.125rem", fontWeight: "600", color: "#ffffff" }}>Schedule Builder</span>
+              </div>
+              <p style={{
+                fontSize: "0.875rem",
+                color: "rgba(255, 255, 255, 0.5)",
+                lineHeight: "1.6",
+                fontWeight: "300"
+              }}>
+                Simplifying team scheduling with intelligent availability collection and automated schedule generation.
+              </p>
+            </div>
+
+            {/* Product */}
+            <div>
+              <h4 style={{
+                fontSize: "0.875rem",
+                fontWeight: "600",
+                color: "#ffffff",
+                marginBottom: "1rem",
+                textTransform: "uppercase",
+                letterSpacing: "0.05em"
+              }}>
+                Product
+              </h4>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                <button
+                  onClick={() => scrollToSection('how-it-works')}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "rgba(255, 255, 255, 0.6)",
+                    fontSize: "0.875rem",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    padding: 0,
+                    fontWeight: "300",
+                    transition: "color 0.2s"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
+                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                >
+                  How it works
+                </button>
+                <button
+                  onClick={() => scrollToSection('features')}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "rgba(255, 255, 255, 0.6)",
+                    fontSize: "0.875rem",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    padding: 0,
+                    fontWeight: "300",
+                    transition: "color 0.2s"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
+                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                >
+                  Features
+                </button>
+                <button
+                  onClick={() => scrollToSection('faq')}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "rgba(255, 255, 255, 0.6)",
+                    fontSize: "0.875rem",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    padding: 0,
+                    fontWeight: "300",
+                    transition: "color 0.2s"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
+                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                >
+                  FAQ
+                </button>
+              </div>
+            </div>
+
+            {/* Legal */}
+            <div>
+              <h4 style={{
+                fontSize: "0.875rem",
+                fontWeight: "600",
+                color: "#ffffff",
+                marginBottom: "1rem",
+                textTransform: "uppercase",
+                letterSpacing: "0.05em"
+              }}>
+                Legal
+              </h4>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                <button
+                  onClick={() => router.push('/privacy')}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "rgba(255, 255, 255, 0.6)",
+                    fontSize: "0.875rem",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    padding: 0,
+                    fontWeight: "300",
+                    transition: "color 0.2s"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
+                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                >
+                  Privacy Policy
+                </button>
+                <button
+                  onClick={() => router.push('/terms')}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "rgba(255, 255, 255, 0.6)",
+                    fontSize: "0.875rem",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    padding: 0,
+                    fontWeight: "300",
+                    transition: "color 0.2s"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
+                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                >
+                  Terms of Use
+                </button>
+              </div>
+            </div>
+
+            {/* Connect */}
+            <div>
+              <h4 style={{
+                fontSize: "0.875rem",
+                fontWeight: "600",
+                color: "#ffffff",
+                marginBottom: "1rem",
+                textTransform: "uppercase",
+                letterSpacing: "0.05em"
+              }}>
+                Connect
+              </h4>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                <a
+                  href="https://github.com/ArsalanAnwer0/schedule-builder"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: "rgba(255, 255, 255, 0.6)",
+                    fontSize: "0.875rem",
+                    textDecoration: "none",
+                    fontWeight: "300",
+                    transition: "color 0.2s"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
+                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                >
+                  GitHub
+                </a>
+                <button
+                  onClick={() => router.push('/contact')}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "rgba(255, 255, 255, 0.6)",
+                    fontSize: "0.875rem",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    padding: 0,
+                    fontWeight: "300",
+                    transition: "color 0.2s"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
+                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                >
+                  Contact
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div style={{
+            paddingTop: "2rem",
+            borderTop: "1px solid rgba(255, 255, 255, 0.05)",
+            textAlign: "center"
+          }}>
+            <p style={{
+              fontSize: "0.875rem",
+              color: "rgba(255, 255, 255, 0.4)",
+              fontWeight: "300"
+            }}>
+              © 2026 Schedule Builder. Built to make scheduling simple.
+            </p>
+          </div>
+        </div>
       </footer>
 
       {/* Feedback Modal */}
