@@ -427,8 +427,7 @@ export default function Home() {
           // Refresh the students list to update the UI
           await fetchStudents();
         } catch (err) {
-          console.error('Reset availability error:', err);
-          setStudentError('Something went wrong. Please try again.');
+          setStudentError('Failed to reset availability. Please try again.');
         }
       },
       onCancel: () => {
@@ -508,7 +507,7 @@ export default function Home() {
         }
         setFormData(mergedData);
       } catch (e) {
-        console.error('Failed to load saved data:', e);
+        // Failed to load saved data from localStorage - not critical
       }
     }
   }, []);
@@ -650,16 +649,9 @@ export default function Home() {
       workers: workers
     };
 
-    // Log the converted data for debugging
-    console.log('=== Schedule Generation Debug ===');
-    console.log('Students with availability:', studentsWithAvailability.length);
-    console.log('Converted workers:', workers);
-    console.log('Schedule data being sent to generator:', scheduleData);
-
     setIsGenerating(true);
     setTimeout(async () => {
       const result = generateSchedule(scheduleData);
-      console.log('Schedule generation result:', result);
       setScheduleResult(result);
 
       // Save schedules to database
@@ -684,10 +676,9 @@ export default function Home() {
           if (saveData.success) {
             // Store the schedule IDs so we can publish them later
             setSavedScheduleIds(saveData.schedules.map(s => s.id));
-            console.log('Schedules saved to database:', saveData.schedules);
           }
         } catch (error) {
-          console.error('Error saving schedules:', error);
+          // Schedule generation succeeded but saving failed - user can still see results
         }
       }
 

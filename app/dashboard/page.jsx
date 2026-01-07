@@ -159,8 +159,6 @@ export default function StudentDashboard() {
     setSubmitError('');
     setSubmitSuccess('');
 
-    console.log('Submitting availability:', availability);
-
     try {
       const res = await fetch('/api/availability', {
         method: 'POST',
@@ -172,7 +170,6 @@ export default function StudentDashboard() {
       });
 
       const data = await res.json();
-      console.log('Response:', res.status, data);
 
       if (!res.ok) {
         setSubmitError(data.error || 'Failed to submit availability');
@@ -180,11 +177,10 @@ export default function StudentDashboard() {
       }
 
       setSubmitSuccess('Availability submitted successfully!');
-      setHasSubmitted(true); // Mark as submitted after successful submission
+      setHasSubmitted(true);
       setTimeout(() => setSubmitSuccess(''), 5000);
     } catch (err) {
-      console.error('Submit error:', err);
-      setSubmitError('Something went wrong. Please try again.');
+      setSubmitError('Failed to submit availability. Please check your connection and try again.');
     } finally {
       setSubmitting(false);
     }
@@ -232,8 +228,7 @@ export default function StudentDashboard() {
         setEditRequests(editData.requests);
       }
     } catch (err) {
-      console.error('Submit edit error:', err);
-      setSubmitError('Something went wrong. Please try again.');
+      setSubmitError('Failed to submit edit request. Please check your connection and try again.');
     } finally {
       setSubmittingEdit(false);
     }
@@ -1271,43 +1266,6 @@ export default function StudentDashboard() {
             )}
           </form>
           )}
-        </div>
-
-        {/* Schedule Section */}
-        <div style={{
-          backgroundColor: "rgba(255, 255, 255, 0.03)",
-          border: "1px solid rgba(255, 255, 255, 0.1)",
-          borderRadius: "8px",
-          overflow: "hidden"
-        }}>
-          <div style={{
-            padding: "1.5rem",
-            borderBottom: "1px solid rgba(255, 255, 255, 0.1)"
-          }}>
-            <h2 style={{
-              fontSize: "1.125rem",
-              fontWeight: "500",
-              color: "#ffffff",
-              margin: 0,
-              marginBottom: "0.5rem"
-            }}>
-              Your Schedule
-            </h2>
-            <p style={{
-              fontSize: "0.875rem",
-              color: "#8b949e",
-              margin: 0,
-              lineHeight: "1.5"
-            }}>
-              View your assigned work schedule
-            </p>
-          </div>
-
-          <div style={{ padding: "2rem" }}>
-            <p style={{ color: "#8b949e", fontSize: "0.875rem" }}>
-              No schedule available yet. Your office manager will publish schedules after collecting availability from all students.
-            </p>
-          </div>
         </div>
 
       </div>
