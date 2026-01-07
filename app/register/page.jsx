@@ -57,8 +57,8 @@ export default function RegisterPage() {
         return;
       }
 
-      // Registration successful - show success message
-      setSuccess(true);
+      // Registration successful - redirect to email verification
+      window.location.href = `/verify-email?email=${encodeURIComponent(formData.email)}&type=primary`;
       setLoading(false);
 
     } catch (err) {

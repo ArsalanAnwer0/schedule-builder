@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { validatePasswordStrength, getStrengthDisplay } from '../../lib/utils/passwordStrength';
 
 export default function SetPasswordPage() {
   const router = useRouter();
@@ -12,6 +13,7 @@ export default function SetPasswordPage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [passwordStrength, setPasswordStrength] = useState(null);
 
   const handleChange = (e) => {
     setFormData({
@@ -20,10 +22,28 @@ export default function SetPasswordPage() {
     });
   };
 
+  // Check password strength when password changes
+  useEffect(() => {
+    if (formData.password) {
+      const strength = validatePasswordStrength(formData.password);
+      setPasswordStrength(strength);
+    } else {
+      setPasswordStrength(null);
+    }
+  }, [formData.password]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    // Validate password strength
+    const strength = validatePasswordStrength(formData.password);
+    if (!strength.isValid) {
+      setError(strength.errors[0]);
+      setLoading(false);
+      return;
+    }
 
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
@@ -50,10 +70,8 @@ export default function SetPasswordPage() {
         return;
       }
 
-      // Auto-login successful - redirect to dashboard
-      if (data.redirectUrl) {
-        window.location.href = data.redirectUrl;
-      }
+      // Auto-login successful - redirect to email verification
+      window.location.href = `/verify-email?email=${encodeURIComponent(formData.email)}&type=primary`;
     } catch (err) {
       setError('Something went wrong. Please try again.');
       setLoading(false);
@@ -186,8 +204,8 @@ export default function SetPasswordPage() {
               value={formData.password}
               onChange={handleChange}
               required
-              minLength="6"
-              placeholder="At least 6 characters"
+              minLength="8"
+              placeholder="At least 8 characters with uppercase, number, and special character"
               style={{
                 width: "100%",
                 padding: "0.75rem 1rem",
@@ -202,6 +220,72 @@ export default function SetPasswordPage() {
               onFocus={(e) => e.target.style.borderColor = "#14b8a6"}
               onBlur={(e) => e.target.style.borderColor = "rgba(255, 255, 255, 0.1)"}
             />
+
+            {/* Password Strength Indicator */}
+            {passwordStrength && formData.password && (
+              <div style={{ marginTop: "0.75rem" }}>
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: "0.5rem"
+                }}>
+                  <span style={{
+                    fontSize: "0.75rem",
+                    color: "rgba(255, 255, 255, 0.6)"
+                  }}>
+                    Password Strength:
+                  </span>
+                  <span style={{
+                    fontSize: "0.75rem",
+                    fontWeight: "600",
+                    color: getStrengthDisplay(passwordStrength.strength).color
+                  }}>
+                    {getStrengthDisplay(passwordStrength.strength).label}
+                  </span>
+                </div>
+
+                {/* Strength Bar */}
+                <div style={{
+                  height: "4px",
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  borderRadius: "2px",
+                  overflow: "hidden",
+                  marginBottom: "0.75rem"
+                }}>
+                  <div style={{
+                    height: "100%",
+                    width: `${(passwordStrength.score / 6) * 100}%`,
+                    backgroundColor: getStrengthDisplay(passwordStrength.strength).color,
+                    transition: "all 0.3s ease"
+                  }}></div>
+                </div>
+
+                {/* Requirement Checklist */}
+                {passwordStrength.errors.length > 0 && (
+                  <div style={{
+                    padding: "0.75rem",
+                    backgroundColor: "rgba(255, 255, 255, 0.03)",
+                    borderRadius: "6px",
+                    border: "1px solid rgba(255, 255, 255, 0.1)"
+                  }}>
+                    <ul style={{
+                      margin: 0,
+                      paddingLeft: "1.25rem",
+                      fontSize: "0.75rem",
+                      color: "rgba(255, 255, 255, 0.6)",
+                      lineHeight: "1.6"
+                    }}>
+                      {passwordStrength.errors.map((err, idx) => (
+                        <li key={idx} style={{ marginBottom: idx < passwordStrength.errors.length - 1 ? "0.25rem" : 0 }}>
+                          {err}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Confirm Password */}

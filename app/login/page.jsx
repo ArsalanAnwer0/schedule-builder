@@ -57,6 +57,12 @@ function LoginForm() {
         return;
       }
 
+      // Check if 2FA is required
+      if (data.requires2FA) {
+        window.location.href = `/verify-2fa?userId=${data.userId}`;
+        return;
+      }
+
       // Login successful - redirect based on role
       if (data.redirectUrl) {
         window.location.href = data.redirectUrl;
@@ -359,6 +365,27 @@ function LoginForm() {
                     e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
                   }}
                 />
+              </div>
+
+              {/* Forgot Password Link */}
+              <div style={{
+                textAlign: "right",
+                marginBottom: "1rem"
+              }}>
+                <Link
+                  href="/forgot-password"
+                  style={{
+                    fontSize: "0.875rem",
+                    color: "#14b8a6",
+                    textDecoration: "none",
+                    fontWeight: "400",
+                    transition: "color 0.2s"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = "#0d9488"}
+                  onMouseOut={(e) => e.currentTarget.style.color = "#14b8a6"}
+                >
+                  Forgot Password?
+                </Link>
               </div>
 
               <button

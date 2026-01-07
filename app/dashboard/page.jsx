@@ -3,11 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import NotificationBell from '../components/NotificationBell';
+import { useToast } from '../components/Toast';
+import './dashboard.css';
 
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
 export default function StudentDashboard() {
   const router = useRouter();
+  const toast = useToast();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -21,8 +24,6 @@ export default function StudentDashboard() {
   });
   const [availabilityNotes, setAvailabilityNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState('');
-  const [submitError, setSubmitError] = useState('');
 
   // Published schedule state
   const [publishedSchedule, setPublishedSchedule] = useState(null);
@@ -156,10 +157,6 @@ export default function StudentDashboard() {
   const handleSubmitAvailability = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    setSubmitError('');
-    setSubmitSuccess('');
-
-    console.log('Submitting availability:', availability);
 
     try {
       const res = await fetch('/api/availability', {
@@ -172,19 +169,16 @@ export default function StudentDashboard() {
       });
 
       const data = await res.json();
-      console.log('Response:', res.status, data);
 
       if (!res.ok) {
-        setSubmitError(data.error || 'Failed to submit availability');
+        toast.error(data.error || 'Failed to submit availability');
         return;
       }
 
-      setSubmitSuccess('Availability submitted successfully!');
-      setHasSubmitted(true); // Mark as submitted after successful submission
-      setTimeout(() => setSubmitSuccess(''), 5000);
+      toast.success('Availability submitted successfully!');
+      setHasSubmitted(true);
     } catch (err) {
-      console.error('Submit error:', err);
-      setSubmitError('Something went wrong. Please try again.');
+      toast.error('Failed to submit availability. Please check your connection and try again.');
     } finally {
       setSubmitting(false);
     }
@@ -193,11 +187,9 @@ export default function StudentDashboard() {
   const handleSubmitEditRequest = async (e) => {
     e.preventDefault();
     setSubmittingEdit(true);
-    setSubmitError('');
-    setSubmitSuccess('');
 
     if (!editReason.trim()) {
-      setSubmitError('Please provide a reason for the edit');
+      toast.error('Please provide a reason for the edit');
       setSubmittingEdit(false);
       return;
     }
@@ -216,12 +208,11 @@ export default function StudentDashboard() {
       const data = await res.json();
 
       if (!res.ok) {
-        setSubmitError(data.error || 'Failed to submit edit request');
+        toast.error(data.error || 'Failed to submit edit request');
         return;
       }
 
-      setSubmitSuccess(data.message);
-      setTimeout(() => setSubmitSuccess(''), 5000);
+      toast.success(data.message);
       setShowEditForm(false);
       setEditReason('');
 
@@ -232,8 +223,7 @@ export default function StudentDashboard() {
         setEditRequests(editData.requests);
       }
     } catch (err) {
-      console.error('Submit edit error:', err);
-      setSubmitError('Something went wrong. Please try again.');
+      toast.error('Failed to submit edit request. Please check your connection and try again.');
     } finally {
       setSubmittingEdit(false);
     }
@@ -270,7 +260,7 @@ export default function StudentDashboard() {
   }
 
   return (
-    <div style={{
+    <div className="page-container" style={{
       minHeight: "100vh",
       backgroundColor: "#0a0f1a",
       padding: "2rem 1.5rem"
@@ -287,7 +277,7 @@ export default function StudentDashboard() {
           gap: "1rem"
         }}>
           <div>
-            <h1 style={{
+            <h1 className="page-title" style={{
               fontSize: "1.875rem",
               fontWeight: "400",
               color: "#ffffff",
@@ -351,11 +341,11 @@ export default function StudentDashboard() {
               }}>
                 {user?.name?.charAt(0).toUpperCase()}
               </div>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", textAlign: "left" }}>
+              <div className="profile-text" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", textAlign: "left" }}>
                 <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff" }}>{user?.name}</span>
                 <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>Student</span>
               </div>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ marginLeft: "0.25rem" }}>
+              <svg className="profile-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ marginLeft: "0.25rem" }}>
                 <path d="M4 6L8 10L12 6" stroke="#8b949e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
@@ -402,6 +392,36 @@ export default function StudentDashboard() {
                     <button
                       onClick={() => {
                         setShowProfileDropdown(false);
+                        router.push('/settings/security');
+                      }}
+                      style={{
+                        width: "100%",
+                        padding: "0.625rem 0.75rem",
+                        backgroundColor: "transparent",
+                        color: "#d1d5db",
+                        border: "none",
+                        borderRadius: "6px",
+                        fontSize: "0.875rem",
+                        fontWeight: "400",
+                        cursor: "pointer",
+                        transition: "all 0.15s ease",
+                        textAlign: "left",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.75rem"
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)"}
+                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 11C9.65685 11 11 9.65685 11 8C11 6.34315 9.65685 5 8 5C6.34315 5 5 6.34315 5 8C5 9.65685 6.34315 11 8 11Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M13.5 8C13.5 8 11.5 11.5 8 11.5C4.5 11.5 2.5 8 2.5 8C2.5 8 4.5 4.5 8 4.5C11.5 4.5 13.5 8 13.5 8Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      Security Settings
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowProfileDropdown(false);
                         handleLogout();
                       }}
                       style={{
@@ -437,6 +457,58 @@ export default function StudentDashboard() {
           </div>
         </div>
 
+        {/* Email Verification Banner */}
+        {user && !user.emailVerified && (
+          <div style={{
+            backgroundColor: "rgba(251, 191, 36, 0.1)",
+            border: "1px solid rgba(251, 191, 36, 0.3)",
+            borderRadius: "8px",
+            padding: "1rem 1.25rem",
+            marginBottom: "2rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "1rem"
+          }}>
+            <div style={{ flex: 1 }}>
+              <div style={{
+                fontSize: "0.9375rem",
+                fontWeight: "500",
+                color: "#fbbf24",
+                marginBottom: "0.25rem"
+              }}>
+                Email Not Verified
+              </div>
+              <div style={{
+                fontSize: "0.875rem",
+                color: "#fde68a",
+                lineHeight: "1.5"
+              }}>
+                Please verify your email address to secure your account and receive important notifications.
+              </div>
+            </div>
+            <button
+              onClick={() => router.push(`/verify-email?email=${encodeURIComponent(user.email)}&type=primary`)}
+              style={{
+                padding: "0.625rem 1.25rem",
+                backgroundColor: "#fbbf24",
+                color: "#1a1a1a",
+                border: "none",
+                borderRadius: "6px",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+                transition: "all 0.2s"
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#f59e0b"}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#fbbf24"}
+            >
+              Verify Email
+            </button>
+          </div>
+        )}
+
         {/* Published Schedule Section */}
         {!loadingSchedule && publishedSchedule && (
           <div style={{
@@ -469,7 +541,8 @@ export default function StudentDashboard() {
             </div>
 
             {/* Schedule Table */}
-            <div className="table-container" style={{ overflowX: "auto" }}>
+            {/* Desktop Table */}
+            <div className="schedule-table-desktop table-container" style={{ overflowX: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ borderBottom: "2px solid rgba(255, 255, 255, 0.1)" }}>
@@ -592,6 +665,94 @@ export default function StudentDashboard() {
                 </tbody>
               </table>
             </div>
+
+            {/* Mobile Cards */}
+            <div className="schedule-mobile">
+              {['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].map((day) => {
+                const dayShifts = publishedSchedule.shifts[day] || [];
+
+                return (
+                  <div key={day} style={{
+                    marginBottom: "1.5rem",
+                    backgroundColor: "rgba(255, 255, 255, 0.03)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    borderRadius: "8px",
+                    padding: "1rem"
+                  }}>
+                    <h3 style={{
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      color: "#ffffff",
+                      textTransform: "capitalize",
+                      margin: 0,
+                      marginBottom: "1rem"
+                    }}>
+                      {day}
+                    </h3>
+
+                    {dayShifts.length === 0 ? (
+                      <p style={{
+                        color: "#6e7681",
+                        fontSize: "0.875rem",
+                        fontStyle: "italic",
+                        margin: 0
+                      }}>
+                        No shifts scheduled
+                      </p>
+                    ) : (
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                        {dayShifts.map((shift, index) => (
+                          <div key={`${day}-${index}-mobile`} style={{
+                            padding: "0.875rem",
+                            backgroundColor: shift.studentId === user?.id ? "rgba(20, 184, 166, 0.1)" : "rgba(255, 255, 255, 0.03)",
+                            border: `1px solid ${shift.studentId === user?.id ? "rgba(20, 184, 166, 0.3)" : "rgba(255, 255, 255, 0.1)"}`,
+                            borderRadius: "6px"
+                          }}>
+                            <div style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "flex-start",
+                              marginBottom: "0.5rem"
+                            }}>
+                              <span style={{
+                                color: shift.studentId === user?.id ? "#14b8a6" : "#c9d1d9",
+                                fontSize: "0.9375rem",
+                                fontWeight: "600"
+                              }}>
+                                {shift.studentName}
+                                {shift.studentId === user?.id && (
+                                  <span style={{
+                                    marginLeft: "0.5rem",
+                                    fontSize: "0.75rem",
+                                    color: "#14b8a6",
+                                    fontWeight: "400"
+                                  }}>
+                                    (You)
+                                  </span>
+                                )}
+                              </span>
+                              <span style={{
+                                color: "#8b949e",
+                                fontSize: "0.875rem",
+                                fontWeight: "500"
+                              }}>
+                                {shift.hours}h
+                              </span>
+                            </div>
+                            <div style={{
+                              color: "#c9d1d9",
+                              fontSize: "0.875rem"
+                            }}>
+                              {shift.startTime} - {shift.endTime}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 
@@ -607,33 +768,6 @@ export default function StudentDashboard() {
             <p style={{ color: "#8b949e", fontSize: "0.875rem", margin: 0 }}>
               No schedule has been published yet. You'll see your work schedule here once it's published by your manager.
             </p>
-          </div>
-        )}
-
-        {/* Success/Error Messages */}
-        {submitSuccess && (
-          <div style={{
-            padding: "1rem 1.5rem",
-            backgroundColor: "#0d1f17",
-            border: "1px solid #1e4d2b",
-            borderLeft: "4px solid #047857",
-            borderRadius: "6px",
-            marginBottom: "1.5rem"
-          }}>
-            <p style={{ color: "#10b981", margin: 0, fontSize: "0.875rem" }}>✓ {submitSuccess}</p>
-          </div>
-        )}
-
-        {submitError && (
-          <div style={{
-            padding: "1rem 1.5rem",
-            backgroundColor: "#2d1517",
-            border: "1px solid #5c2d30",
-            borderLeft: "4px solid #dc2626",
-            borderRadius: "6px",
-            marginBottom: "1.5rem"
-          }}>
-            <p style={{ color: "#ff6b6b", margin: 0, fontSize: "0.875rem" }}>{submitError}</p>
           </div>
         )}
 
@@ -779,7 +913,8 @@ export default function StudentDashboard() {
           ) : (
             <form onSubmit={showEditForm ? handleSubmitEditRequest : handleSubmitAvailability} style={{ padding: "2rem" }}>
             {/* Time Grid */}
-            <div className="table-container" style={{ overflowX: "auto", marginBottom: "2rem" }}>
+            {/* Desktop Grid */}
+            <div className="desktop-grid table-container" style={{ overflowX: "auto", marginBottom: "2rem" }}>
               <div style={{
                 display: "grid",
                 gridTemplateColumns: "120px repeat(5, 1fr)",
@@ -858,6 +993,67 @@ export default function StudentDashboard() {
                   </React.Fragment>
                 ))}
               </div>
+            </div>
+
+            {/* Mobile View - Day by Day */}
+            <div className="availability-grid-container">
+              {DAYS_OF_WEEK.map(day => (
+                <div key={day} className="day-section">
+                  <h3 className="day-header" style={{
+                    fontSize: "0.9375rem",
+                    fontWeight: "600",
+                    color: "#ffffff",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    margin: 0,
+                    marginBottom: "1rem"
+                  }}>
+                    {day}
+                  </h3>
+                  <div className="time-slots-mobile">
+                    {getTimeSlots().map(timeSlot => {
+                      const isSelected = availability[day].includes(timeSlot);
+                      const isDisabled = hasSubmitted && !showEditForm;
+                      return (
+                        <button
+                          key={`${day}-${timeSlot}-mobile`}
+                          type="button"
+                          onClick={() => !isDisabled && toggleTimeSlot(day, timeSlot)}
+                          disabled={isDisabled}
+                          style={{
+                            padding: "0.875rem",
+                            backgroundColor: isSelected ? "#0d4a2d" : "rgba(255, 255, 255, 0.05)",
+                            border: `1px solid ${isSelected ? "#1e7a4d" : "rgba(255, 255, 255, 0.1)"}`,
+                            borderRadius: "6px",
+                            fontSize: "0.875rem",
+                            color: isSelected ? "#86efac" : "#c9d1d9",
+                            cursor: isDisabled ? "not-allowed" : "pointer",
+                            transition: "all 0.15s",
+                            fontWeight: isSelected ? "500" : "400",
+                            opacity: isDisabled ? 0.6 : 1,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between"
+                          }}
+                          onMouseOver={(e) => {
+                            if (!isSelected && !isDisabled) {
+                              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                            }
+                          }}
+                          onMouseOut={(e) => {
+                            if (!isSelected && !isDisabled) {
+                              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                            }
+                          }}
+                        >
+                          <span>{timeSlot}</span>
+                          {isSelected && <span style={{ fontSize: "1rem" }}>✓</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
 
             {/* Reason for Edit (only show in edit mode) */}
@@ -964,43 +1160,6 @@ export default function StudentDashboard() {
             )}
           </form>
           )}
-        </div>
-
-        {/* Schedule Section */}
-        <div style={{
-          backgroundColor: "rgba(255, 255, 255, 0.03)",
-          border: "1px solid rgba(255, 255, 255, 0.1)",
-          borderRadius: "8px",
-          overflow: "hidden"
-        }}>
-          <div style={{
-            padding: "1.5rem",
-            borderBottom: "1px solid rgba(255, 255, 255, 0.1)"
-          }}>
-            <h2 style={{
-              fontSize: "1.125rem",
-              fontWeight: "500",
-              color: "#ffffff",
-              margin: 0,
-              marginBottom: "0.5rem"
-            }}>
-              Your Schedule
-            </h2>
-            <p style={{
-              fontSize: "0.875rem",
-              color: "#8b949e",
-              margin: 0,
-              lineHeight: "1.5"
-            }}>
-              View your assigned work schedule
-            </p>
-          </div>
-
-          <div style={{ padding: "2rem" }}>
-            <p style={{ color: "#8b949e", fontSize: "0.875rem" }}>
-              No schedule available yet. Your office manager will publish schedules after collecting availability from all students.
-            </p>
-          </div>
         </div>
 
       </div>

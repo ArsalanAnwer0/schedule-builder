@@ -3,6 +3,7 @@ import { requireAdmin } from '../../../../lib/auth/session';
 import dbConnect from '../../../../lib/db/connect';
 import User from '../../../../lib/db/models/User';
 import { sendAvailabilityRequest } from '../../../../lib/email/send';
+import { createBulkNotifications } from '../../../../lib/utils/notifications';
 
 // POST request availability from students
 export async function POST(request) {
@@ -56,27 +57,49 @@ export async function POST(request) {
       availabilityRequested: s.availabilityRequested
     })));
 
-    // Send availability request emails to all students (both primary and secondary emails)
-    const emailResults = await Promise.allSettled(
-      students.map(student => {
-        const emails = [student.email];
-        if (student.secondaryEmail) {
-          emails.push(student.secondaryEmail);
-        }
-        return sendAvailabilityRequest(emails, student.name);
-      })
-    );
+    // Get admin info for notification
+    const admin = await User.findById(adminCheck.user._id);
 
-    // Count successes and failures
-    const successful = emailResults.filter(r => r.status === 'fulfilled').length;
-    const failed = emailResults.filter(r => r.status === 'rejected').length;
+    // Create notifications for all students (primary communication method)
+    try {
+      await createBulkNotifications(
+        studentIds.map(id => id.toString()),
+        'availability_request',
+        `${admin.name} has requested your availability. Please submit your available hours.`,
+        '/dashboard'
+      );
+    } catch (notificationError) {
+      console.error('Failed to create notifications:', notificationError);
+      return NextResponse.json(
+        { error: 'Failed to send notifications to students' },
+        { status: 500 }
+      );
+    }
+
+    // Send availability request emails as optional backup (don't block on failures)
+    const emailPromises = students.map(async student => {
+      const emails = [student.email];
+      if (student.secondaryEmail) {
+        emails.push(student.secondaryEmail);
+      }
+      try {
+        await sendAvailabilityRequest(emails, student.name);
+        return { success: true };
+      } catch (err) {
+        console.error(`Optional email notification failed for ${emails.join(', ')}:`, err);
+        return { success: false };
+      }
+    });
+
+    // Don't wait for emails, let them send in background
+    Promise.all(emailPromises).catch(err => {
+      console.error('Some email notifications failed (non-critical):', err);
+    });
 
     return NextResponse.json({
       success: true,
-      message: `Availability requests sent to ${successful} student(s)${failed > 0 ? `, ${failed} failed` : ''}`,
-      successful,
-      failed,
-      total: students.length,
+      message: `Availability requested from ${students.length} student(s). Notifications sent successfully.`,
+      sentCount: students.length,
     });
 
   } catch (error) {

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { generateSchedule } from "../../lib/scheduler";
 import TimePicker from "../components/TimePicker";
 import NotificationBell from "../components/NotificationBell";
-// import { exportToCSV, downloadCSV } from "../lib/utils/export"; // Archived for later
+import { exportToCSV, downloadCSV } from "../../lib/utils/export";
 
 // Predefined semester dates for US universities
 const SEMESTER_PRESETS = {
@@ -427,8 +427,7 @@ export default function Home() {
           // Refresh the students list to update the UI
           await fetchStudents();
         } catch (err) {
-          console.error('Reset availability error:', err);
-          setStudentError('Something went wrong. Please try again.');
+          setStudentError('Failed to reset availability. Please try again.');
         }
       },
       onCancel: () => {
@@ -508,7 +507,7 @@ export default function Home() {
         }
         setFormData(mergedData);
       } catch (e) {
-        console.error('Failed to load saved data:', e);
+        // Failed to load saved data from localStorage - not critical
       }
     }
   }, []);
@@ -650,16 +649,9 @@ export default function Home() {
       workers: workers
     };
 
-    // Log the converted data for debugging
-    console.log('=== Schedule Generation Debug ===');
-    console.log('Students with availability:', studentsWithAvailability.length);
-    console.log('Converted workers:', workers);
-    console.log('Schedule data being sent to generator:', scheduleData);
-
     setIsGenerating(true);
     setTimeout(async () => {
       const result = generateSchedule(scheduleData);
-      console.log('Schedule generation result:', result);
       setScheduleResult(result);
 
       // Save schedules to database
@@ -684,10 +676,9 @@ export default function Home() {
           if (saveData.success) {
             // Store the schedule IDs so we can publish them later
             setSavedScheduleIds(saveData.schedules.map(s => s.id));
-            console.log('Schedules saved to database:', saveData.schedules);
           }
         } catch (error) {
-          console.error('Error saving schedules:', error);
+          // Schedule generation succeeded but saving failed - user can still see results
         }
       }
 
@@ -2081,7 +2072,6 @@ export default function Home() {
                     {publishingScheduleId === savedScheduleIds[scheduleIndex] ? 'Publishing...' : 'Publish Schedule'}
                   </button>
 
-                  {/* Export CSV button - Archived for later
                   <button
                     onClick={() => {
                       const csv = exportToCSV(currentSchedule.schedule, currentSchedule.name);
@@ -2113,7 +2103,6 @@ export default function Home() {
                   >
                     Export CSV
                   </button>
-                  */}
                 </div>
 
                 <div style={{
@@ -2588,6 +2577,19 @@ export default function Home() {
               <h3 style={{ fontSize: "1.25rem", fontWeight: "500", color: "#ffffff", marginBottom: "1.5rem" }}>
                 {editingStudent ? 'Edit Student' : 'Add New Student'}
               </h3>
+
+              {studentError && (
+                <div style={{
+                  padding: "0.75rem 1rem",
+                  backgroundColor: "#2d1517",
+                  border: "1px solid #5c2d30",
+                  borderLeft: "4px solid #dc2626",
+                  borderRadius: "6px",
+                  marginBottom: "1.5rem"
+                }}>
+                  <p style={{ color: "#ff6b6b", margin: 0, fontSize: "0.875rem" }}>{studentError}</p>
+                </div>
+              )}
 
               <form onSubmit={handleSubmitStudent}>
                 <div style={{ marginBottom: "1.5rem" }}>
