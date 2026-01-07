@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import NotificationBell from '../components/NotificationBell';
 import { useToast } from '../components/Toast';
+import './dashboard.css';
 
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
@@ -267,30 +268,6 @@ export default function StudentDashboard() {
       <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
 
         {/* Header */}
-        <style jsx>{`
-          @media (max-width: 768px) {
-            .page-container {
-              padding: 1rem 0.75rem !important;
-            }
-            .page-title {
-              font-size: 1.5rem !important;
-            }
-            .profile-text {
-              display: none !important;
-            }
-            .profile-chevron {
-              display: none !important;
-            }
-          }
-          @media (min-width: 769px) and (max-width: 1024px) {
-            .page-container {
-              padding: 1.5rem 1rem !important;
-            }
-            .page-title {
-              font-size: 1.75rem !important;
-            }
-          }
-        `}</style>
         <div style={{
           marginBottom: "1.5rem",
           display: "flex",
@@ -564,22 +541,6 @@ export default function StudentDashboard() {
             </div>
 
             {/* Schedule Table */}
-            <style jsx>{`
-              @media (max-width: 768px) {
-                .schedule-table-desktop {
-                  display: none !important;
-                }
-                .schedule-mobile {
-                  display: block !important;
-                }
-              }
-              @media (min-width: 769px) {
-                .schedule-mobile {
-                  display: none !important;
-                }
-              }
-            `}</style>
-
             {/* Desktop Table */}
             <div className="schedule-table-desktop table-container" style={{ overflowX: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -952,40 +913,6 @@ export default function StudentDashboard() {
           ) : (
             <form onSubmit={showEditForm ? handleSubmitEditRequest : handleSubmitAvailability} style={{ padding: "2rem" }}>
             {/* Time Grid */}
-            <style jsx>{`
-              @media (max-width: 768px) {
-                .availability-grid-container {
-                  display: block !important;
-                }
-                .day-section {
-                  margin-bottom: 2rem;
-                }
-                .day-header {
-                  font-size: 1rem !important;
-                  margin-bottom: 1rem;
-                  padding: 0.75rem;
-                  background: rgba(255, 255, 255, 0.05);
-                  border-radius: 6px;
-                  text-align: center;
-                }
-                .time-slots-mobile {
-                  display: grid;
-                  grid-template-columns: repeat(2, 1fr);
-                  gap: 0.5rem;
-                }
-              }
-              @media (min-width: 769px) {
-                .day-section {
-                  display: none;
-                }
-              }
-              @media (max-width: 768px) {
-                .desktop-grid {
-                  display: none !important;
-                }
-              }
-            `}</style>
-
             {/* Desktop Grid */}
             <div className="desktop-grid table-container" style={{ overflowX: "auto", marginBottom: "2rem" }}>
               <div style={{

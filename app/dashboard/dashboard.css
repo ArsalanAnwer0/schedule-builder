@@ -1,0 +1,69 @@
+/* Dashboard Responsive Styles */
+
+/* Mobile styles for page container */
+@media (max-width: 768px) {
+  .page-container {
+    padding: 1rem 0.75rem !important;
+  }
+  .page-title {
+    font-size: 1.5rem !important;
+  }
+  .profile-text {
+    display: none !important;
+  }
+  .profile-chevron {
+    display: none !important;
+  }
+
+  /* Schedule table responsive */
+  .schedule-table-desktop {
+    display: none !important;
+  }
+  .schedule-mobile {
+    display: block !important;
+  }
+
+  /* Availability grid responsive */
+  .availability-grid-container {
+    display: block !important;
+  }
+  .day-section {
+    margin-bottom: 2rem;
+  }
+  .day-header {
+    font-size: 1rem !important;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    text-align: center;
+  }
+  .time-slots-mobile {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  .desktop-grid {
+    display: none !important;
+  }
+}
+
+/* Tablet styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .page-container {
+    padding: 1.5rem 1rem !important;
+  }
+  .page-title {
+    font-size: 1.75rem !important;
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 769px) {
+  .schedule-mobile {
+    display: none !important;
+  }
+  .day-section {
+    display: none;
+  }
+}
