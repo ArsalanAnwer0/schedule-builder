@@ -4,7 +4,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -15,17 +19,34 @@ export default function ForgotPasswordPage() {
     setError('');
     setSuccess(false);
 
+    // Validate passwords match
+    if (formData.newPassword !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    // Validate password strength
+    if (formData.newPassword.length < 6) {
+      setError('Password must be at least 6 characters long');
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await fetch('/api/auth/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({
+          email: formData.email,
+          newPassword: formData.newPassword
+        }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'Failed to send reset email');
+        setError(data.error || 'Failed to submit password reset request');
         setLoading(false);
         return;
       }
@@ -69,10 +90,10 @@ export default function ForgotPasswordPage() {
             </div>
           </Link>
           <h2 style={{ fontSize: "1.25rem", fontWeight: "500", color: "#ffffff", margin: "0 0 0.5rem 0" }}>
-            Reset Your Password
+            Request Password Reset
           </h2>
           <p style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.5)", margin: 0 }}>
-            Enter your email to receive a password reset link
+            Enter your email and new password. An admin will approve your request.
           </p>
         </div>
 
@@ -86,7 +107,7 @@ export default function ForgotPasswordPage() {
               marginBottom: "1.5rem"
             }}>
               <p style={{ color: "#10b981", margin: 0, fontSize: "0.875rem" }}>
-                ✓ Password reset link sent! Check your email for instructions.
+                ✓ Password reset request submitted! An admin will review and approve your request.
               </p>
             </div>
             <Link href="/login" style={{
@@ -126,10 +147,76 @@ export default function ForgotPasswordPage() {
               <input
                 type="email"
                 name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
                 placeholder="your@email.com"
+                style={{
+                  width: "100%",
+                  padding: "0.75rem",
+                  backgroundColor: "rgba(255, 255, 255, 0.05)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  borderRadius: "8px",
+                  fontSize: "0.875rem",
+                  color: "#ffffff",
+                  outline: "none",
+                  transition: "border-color 0.15s ease"
+                }}
+                onFocus={(e) => e.target.style.borderColor = "#14b8a6"}
+                onBlur={(e) => e.target.style.borderColor = "rgba(255, 255, 255, 0.1)"}
+              />
+            </div>
+
+            <div style={{ marginBottom: "1.5rem" }}>
+              <label style={{
+                display: "block",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+                color: "#c9d1d9",
+                marginBottom: "0.5rem"
+              }}>
+                New Password
+              </label>
+              <input
+                type="password"
+                name="newPassword"
+                value={formData.newPassword}
+                onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
+                required
+                placeholder="Enter new password"
+                style={{
+                  width: "100%",
+                  padding: "0.75rem",
+                  backgroundColor: "rgba(255, 255, 255, 0.05)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  borderRadius: "8px",
+                  fontSize: "0.875rem",
+                  color: "#ffffff",
+                  outline: "none",
+                  transition: "border-color 0.15s ease"
+                }}
+                onFocus={(e) => e.target.style.borderColor = "#14b8a6"}
+                onBlur={(e) => e.target.style.borderColor = "rgba(255, 255, 255, 0.1)"}
+              />
+            </div>
+
+            <div style={{ marginBottom: "1.5rem" }}>
+              <label style={{
+                display: "block",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+                color: "#c9d1d9",
+                marginBottom: "0.5rem"
+              }}>
+                Confirm New Password
+              </label>
+              <input
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                required
+                placeholder="Confirm new password"
                 style={{
                   width: "100%",
                   padding: "0.75rem",
@@ -165,7 +252,7 @@ export default function ForgotPasswordPage() {
               onMouseOver={(e) => !loading && (e.target.style.backgroundColor = "#0d9488")}
               onMouseOut={(e) => !loading && (e.target.style.backgroundColor = "#14b8a6")}
             >
-              {loading ? 'Sending...' : 'Send Reset Link'}
+              {loading ? 'Submitting...' : 'Submit Reset Request'}
             </button>
 
             <div style={{
