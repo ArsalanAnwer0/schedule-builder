@@ -71,6 +71,18 @@ export async function POST(request) {
     });
 
     if (existingUser) {
+      // Provide specific error message based on existing user role
+      if (existingUser.role === 'admin') {
+        return NextResponse.json(
+          { error: 'This email is already registered as an admin. One email can only have one role.' },
+          { status: 400 }
+        );
+      } else if (existingUser.role === 'student') {
+        return NextResponse.json(
+          { error: 'This email is already registered as a student.' },
+          { status: 400 }
+        );
+      }
       return NextResponse.json(
         { error: 'A user with this primary email already exists' },
         { status: 400 }
