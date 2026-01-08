@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import ScreenshotCarousel from './components/ScreenshotCarousel';
+import ScreenshotGrid from './components/ScreenshotCarousel';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -600,14 +600,14 @@ export default function LandingPage() {
           </p>
         </div>
 
-        {/* Admin Portal Carousel */}
+        {/* Admin Portal Screenshots */}
         <div style={{ marginBottom: "8rem" }}>
-          <ScreenshotCarousel screenshots={adminScreenshots} sectionTitle="Admin Portal" />
+          <ScreenshotGrid screenshots={adminScreenshots} sectionTitle="Admin Portal" />
         </div>
 
-        {/* Student Portal Carousel */}
+        {/* Student Portal Screenshots */}
         <div style={{ marginBottom: "4rem" }}>
-          <ScreenshotCarousel screenshots={studentScreenshots} sectionTitle="Student Portal" />
+          <ScreenshotGrid screenshots={studentScreenshots} sectionTitle="Student Portal" />
         </div>
       </section>
 
