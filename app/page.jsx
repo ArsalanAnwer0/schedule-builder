@@ -601,13 +601,13 @@ export default function LandingPage() {
         </div>
 
         {/* Admin Portal Carousel */}
-        <div style={{ marginBottom: "6rem" }}>
-          <ScreenshotCarousel screenshots={adminScreenshots} title="Admin Portal" />
+        <div style={{ marginBottom: "8rem" }}>
+          <ScreenshotCarousel screenshots={adminScreenshots} sectionTitle="Admin Portal" />
         </div>
 
         {/* Student Portal Carousel */}
-        <div>
-          <ScreenshotCarousel screenshots={studentScreenshots} title="Student Portal" />
+        <div style={{ marginBottom: "4rem" }}>
+          <ScreenshotCarousel screenshots={studentScreenshots} sectionTitle="Student Portal" />
         </div>
       </section>
 
