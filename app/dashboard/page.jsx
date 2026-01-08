@@ -457,8 +457,9 @@ export default function StudentDashboard() {
           </div>
         </div>
 
+        {/* TODO: Email verification disabled for now */}
         {/* Email Verification Banner */}
-        {user && !user.emailVerified && (
+        {/* {user && !user.emailVerified && (
           <div style={{
             backgroundColor: "rgba(251, 191, 36, 0.1)",
             border: "1px solid rgba(251, 191, 36, 0.3)",
@@ -507,7 +508,7 @@ export default function StudentDashboard() {
               Verify Email
             </button>
           </div>
-        )}
+        )} */}
 
         {/* Published Schedule Section */}
         {!loadingSchedule && publishedSchedule && (

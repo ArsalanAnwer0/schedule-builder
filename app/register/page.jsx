@@ -57,8 +57,10 @@ export default function RegisterPage() {
         return;
       }
 
-      // Registration successful - redirect to email verification
-      window.location.href = `/verify-email?email=${encodeURIComponent(formData.email)}&type=primary`;
+      // Registration successful - redirect to login
+      // TODO: Email verification disabled for now
+      // window.location.href = `/verify-email?email=${encodeURIComponent(formData.email)}&type=primary`;
+      window.location.href = '/login';
       setLoading(false);
 
     } catch (err) {

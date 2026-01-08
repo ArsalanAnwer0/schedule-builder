@@ -142,7 +142,13 @@ export default function ProfilePage() {
                 Role
               </label>
               <p style={{ fontSize: "1rem", color: "#ffffff", margin: 0 }}>
-                {user?.adminType === 'primary' ? 'Primary Admin' : user?.adminType === 'secondary' ? 'Secondary Admin' : 'Admin'}
+                {user?.role === 'student'
+                  ? 'Student'
+                  : user?.adminType === 'primary'
+                    ? 'Primary Admin'
+                    : user?.adminType === 'secondary'
+                      ? 'Secondary Admin'
+                      : 'Admin'}
               </p>
             </div>
           </div>

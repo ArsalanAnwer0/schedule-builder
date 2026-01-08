@@ -59,9 +59,17 @@ export async function POST(request) {
     }
 
     // Check if user has a password set
+    // TODO: Email verification disabled for now
+    // if (!user.password) {
+    //   return NextResponse.json(
+    //     { error: 'This account uses email verification. Please use "Send Verification Code" to login.' },
+    //     { status: 400 }
+    //   );
+    // }
+
     if (!user.password) {
       return NextResponse.json(
-        { error: 'This account uses email verification. Please use "Send Verification Code" to login.' },
+        { error: 'Password not set for this account. Please contact administrator.' },
         { status: 400 }
       );
     }
