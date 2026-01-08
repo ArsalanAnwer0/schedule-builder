@@ -74,6 +74,8 @@ export default function Home() {
   const [publishingScheduleId, setPublishingScheduleId] = useState(null); // Track which schedule is being published
   const [editRequests, setEditRequests] = useState([]); // Pending edit requests
   const [processingRequestId, setProcessingRequestId] = useState(null); // Track which request is being processed
+  const [passwordResetRequests, setPasswordResetRequests] = useState([]); // Pending password reset requests
+  const [loadingPasswordResets, setLoadingPasswordResets] = useState(false);
 
   // Confirmation modal state
   const [confirmModal, setConfirmModal] = useState({
@@ -98,6 +100,7 @@ export default function Home() {
           setUser(data.user);
           loadStudents();
           loadEditRequests();
+          loadPasswordResetRequests();
           loadAdmins();
         } else {
           router.push('/login');
@@ -137,6 +140,22 @@ export default function Home() {
       }
     } catch (err) {
       console.error('Failed to load edit requests:', err);
+    }
+  };
+
+  // Load password reset requests
+  const loadPasswordResetRequests = async () => {
+    setLoadingPasswordResets(true);
+    try {
+      const res = await fetch('/api/password-reset-requests');
+      const data = await res.json();
+      if (res.ok && data.requests) {
+        setPasswordResetRequests(data.requests);
+      }
+    } catch (err) {
+      console.error('Failed to load password reset requests:', err);
+    } finally {
+      setLoadingPasswordResets(false);
     }
   };
 
@@ -749,6 +768,66 @@ export default function Home() {
       // Reload both students and edit requests
       await loadStudents();
       await loadEditRequests();
+    } catch (err) {
+      setStudentError('Something went wrong. Please try again.');
+    } finally {
+      setProcessingRequestId(null);
+    }
+  };
+
+  // Handle password reset approval
+  const handleApprovePasswordReset = async (requestId) => {
+    setProcessingRequestId(requestId);
+    setStudentError('');
+    setStudentSuccess('');
+
+    try {
+      const response = await fetch(`/api/password-reset-requests/${requestId}/approve`, {
+        method: 'POST'
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setStudentError(data.error || 'Failed to approve password reset');
+        return;
+      }
+
+      setStudentSuccess('Password reset request approved successfully');
+      setTimeout(() => setStudentSuccess(''), 5000);
+
+      // Reload password reset requests
+      await loadPasswordResetRequests();
+    } catch (err) {
+      setStudentError('Something went wrong. Please try again.');
+    } finally {
+      setProcessingRequestId(null);
+    }
+  };
+
+  // Handle password reset denial
+  const handleDenyPasswordReset = async (requestId) => {
+    setProcessingRequestId(requestId);
+    setStudentError('');
+    setStudentSuccess('');
+
+    try {
+      const response = await fetch(`/api/password-reset-requests/${requestId}/deny`, {
+        method: 'POST'
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setStudentError(data.error || 'Failed to deny password reset');
+        return;
+      }
+
+      setStudentSuccess('Password reset request denied');
+      setTimeout(() => setStudentSuccess(''), 5000);
+
+      // Reload password reset requests
+      await loadPasswordResetRequests();
     } catch (err) {
       setStudentError('Something went wrong. Please try again.');
     } finally {
@@ -1825,6 +1904,106 @@ export default function Home() {
                           No changes detected in availability
                         </div>
                       )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Pending Password Reset Requests Section */}
+        {passwordResetRequests.length > 0 && (
+          <div style={{ backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
+            <div style={{ padding: "1.5rem", borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
+              <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
+                Password Reset Requests ({passwordResetRequests.length})
+              </h2>
+              <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
+                Review and approve password reset requests from students
+              </p>
+            </div>
+
+            <div style={{ padding: "1.5rem" }}>
+              {passwordResetRequests.map((request) => (
+                <div key={request.id} style={{ backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "8px", overflow: "hidden", marginBottom: "1rem" }}>
+                  {/* Request Header */}
+                  <div style={{ padding: "1rem 1.25rem", backgroundColor: "#1f2937", borderBottom: "1px solid rgba(255, 255, 255, 0.1)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+                    <div>
+                      <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.25rem" }}>
+                        {request.userName}
+                      </h3>
+                      <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0 }}>
+                        {request.userEmail}
+                      </p>
+                    </div>
+                    <div style={{ display: "flex", gap: "0.75rem" }}>
+                      <button
+                        onClick={() => handleApprovePasswordReset(request.id)}
+                        disabled={processingRequestId === request.id}
+                        style={{
+                          padding: "0.5rem 1rem",
+                          backgroundColor: processingRequestId === request.id ? "#374151" : "#10b981",
+                          color: "#ffffff",
+                          border: "none",
+                          borderRadius: "6px",
+                          fontSize: "0.875rem",
+                          fontWeight: "500",
+                          cursor: processingRequestId === request.id ? "not-allowed" : "pointer",
+                          transition: "all 0.15s ease"
+                        }}
+                        onMouseOver={(e) => {
+                          if (processingRequestId !== request.id) {
+                            e.currentTarget.style.backgroundColor = "#059669";
+                          }
+                        }}
+                        onMouseOut={(e) => {
+                          if (processingRequestId !== request.id) {
+                            e.currentTarget.style.backgroundColor = "#10b981";
+                          }
+                        }}
+                      >
+                        ✓ Approve
+                      </button>
+                      <button
+                        onClick={() => handleDenyPasswordReset(request.id)}
+                        disabled={processingRequestId === request.id}
+                        style={{
+                          padding: "0.5rem 1rem",
+                          backgroundColor: processingRequestId === request.id ? "#374151" : "#dc2626",
+                          color: "#ffffff",
+                          border: "none",
+                          borderRadius: "6px",
+                          fontSize: "0.875rem",
+                          fontWeight: "500",
+                          cursor: processingRequestId === request.id ? "not-allowed" : "pointer",
+                          transition: "all 0.15s ease"
+                        }}
+                        onMouseOver={(e) => {
+                          if (processingRequestId !== request.id) {
+                            e.currentTarget.style.backgroundColor = "#b91c1c";
+                          }
+                        }}
+                        onMouseOut={(e) => {
+                          if (processingRequestId !== request.id) {
+                            e.currentTarget.style.backgroundColor = "#dc2626";
+                          }
+                        }}
+                      >
+                        × Deny
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Request Details */}
+                  <div style={{ padding: "1.25rem" }}>
+                    <div style={{ display: "flex", gap: "1rem", fontSize: "0.875rem", color: "#8b949e" }}>
+                      <div>
+                        <strong>Requested:</strong> {new Date(request.createdAt).toLocaleDateString()} at {new Date(request.createdAt).toLocaleTimeString()}
+                      </div>
+                      <div>
+                        <strong>Expires:</strong> {new Date(request.expiresAt).toLocaleDateString()}
+                      </div>
                     </div>
                   </div>
                 </div>
