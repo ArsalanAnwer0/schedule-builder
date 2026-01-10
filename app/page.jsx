@@ -103,6 +103,9 @@ export default function LandingPage() {
         <SplashScreen onComplete={handleSplashComplete} />
       )}
 
+      {/* Homepage content - only show after intro completes */}
+      {!showIntro && (
+        <>
       {/* Fixed Navigation */}
       <nav className="nav-padding" style={{
         position: "sticky",
@@ -1254,6 +1257,8 @@ export default function LandingPage() {
             </form>
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );
