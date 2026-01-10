@@ -67,6 +67,20 @@ export default function Contact() {
         margin: "0 auto",
         padding: "4rem 2rem"
       }}>
+        <Link
+          href="/"
+          style={{
+            color: "#14b8a6",
+            textDecoration: "none",
+            fontSize: "0.9375rem",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            marginBottom: "2rem"
+          }}
+        >
+          ← Back to Home
+        </Link>
         <div style={{ marginBottom: "3rem" }}>
           <h1 style={{
             fontSize: "2.5rem",
