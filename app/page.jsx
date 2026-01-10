@@ -3,6 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import ScreenshotGrid from './components/ScreenshotCarousel';
+import SplashScreen from './components/SplashScreen';
+import FadeInSection from './components/FadeInSection';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -24,8 +26,8 @@ export default function LandingPage() {
     },
     {
       image: '/screenshots/admin-2.png',
-      alt: 'Schedule Generation Interface',
-      caption: 'Create multiple schedule options with our AI-powered algorithm that considers all student availability and constraints.'
+      alt: 'Admin Invite Interface',
+      caption: 'Invite and manage multiple administrators with different permission levels to collaborate on schedule management.'
     },
     {
       image: '/screenshots/admin-3.png',
@@ -48,8 +50,8 @@ export default function LandingPage() {
     },
     {
       image: '/screenshots/student-3.png',
-      alt: 'Published Schedule View',
-      caption: 'View assigned shifts in a clear, organized format once the admin publishes the final schedule.'
+      alt: 'Availability Submission',
+      caption: 'Students can easily submit their available hours using an intuitive interface with time selection and notes.'
     }
   ];
 
@@ -58,15 +60,13 @@ export default function LandingPage() {
     const hasSeenIntro = sessionStorage.getItem('hasSeenIntro');
     if (hasSeenIntro) {
       setShowIntro(false);
-    } else {
-      // Auto-fade intro after 2 seconds
-      const timer = setTimeout(() => {
-        sessionStorage.setItem('hasSeenIntro', 'true');
-        setShowIntro(false);
-      }, 2000);
-      return () => clearTimeout(timer);
     }
   }, []);
+
+  const handleSplashComplete = () => {
+    sessionStorage.setItem('hasSeenIntro', 'true');
+    setShowIntro(false);
+  };
 
   const handleFeedbackSubmit = async (e) => {
     e.preventDefault();
@@ -98,54 +98,10 @@ export default function LandingPage() {
       minHeight: "100vh",
       position: "relative"
     }}>
-      {/* Intro Overlay - Dissolves to reveal content */}
+      {/* Splash Screen - Fades in and out */}
       {showIntro && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "#0a0f1a",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 10000,
-          animation: "dissolve 0.8s ease-out 1.2s forwards"
-        }}>
-          <h1 style={{
-            fontSize: "3.5rem",
-            fontWeight: "600",
-            color: "#ffffff",
-            letterSpacing: "-0.02em",
-            margin: 0,
-            animation: "fadeIn 0.8s ease-out"
-          }}>
-            Schedule Builder
-          </h1>
-        </div>
+        <SplashScreen onComplete={handleSplashComplete} />
       )}
-
-      <style jsx>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        @keyframes dissolve {
-          0% {
-            opacity: 1;
-          }
-          100% {
-            opacity: 0;
-            pointer-events: none;
-          }
-        }
-      `}</style>
 
       {/* Fixed Navigation */}
       <nav className="nav-padding" style={{
@@ -449,23 +405,25 @@ export default function LandingPage() {
         margin: "0 auto",
         paddingTop: "8rem"
       }}>
-        <div style={{ textAlign: "center", marginBottom: "5rem" }}>
-          <h2 className="section-title" style={{
-            fontWeight: "400",
-            color: "#ffffff",
-            marginBottom: "1rem",
-            fontFamily: "Georgia, 'Times New Roman', serif"
-          }}>
-            How it works
-          </h2>
-          <p style={{
-            fontSize: "1.125rem",
-            color: "rgba(255, 255, 255, 0.5)",
-            fontWeight: "300"
-          }}>
-            Three steps to transform your scheduling workflow
-          </p>
-        </div>
+        <FadeInSection>
+          <div style={{ textAlign: "center", marginBottom: "5rem" }}>
+            <h2 className="section-title" style={{
+              fontWeight: "400",
+              color: "#ffffff",
+              marginBottom: "1rem",
+              fontFamily: "Georgia, 'Times New Roman', serif"
+            }}>
+              How it works
+            </h2>
+            <p style={{
+              fontSize: "1.125rem",
+              color: "rgba(255, 255, 255, 0.5)",
+              fontWeight: "300"
+            }}>
+              Three steps to transform your scheduling workflow
+            </p>
+          </div>
+        </FadeInSection>
 
         <div className="grid-3-cols" style={{
           display: "grid",
@@ -582,33 +540,39 @@ export default function LandingPage() {
         paddingTop: "8rem",
         paddingBottom: "8rem"
       }}>
-        <div style={{ textAlign: "center", marginBottom: "5rem" }}>
-          <h2 className="section-title" style={{
-            fontWeight: "400",
-            color: "#ffffff",
-            marginBottom: "1rem",
-            fontFamily: "Georgia, 'Times New Roman', serif"
-          }}>
-            See it in action
-          </h2>
-          <p style={{
-            fontSize: "1.125rem",
-            color: "rgba(255, 255, 255, 0.5)",
-            fontWeight: "300"
-          }}>
-            Explore the admin and student interfaces
-          </p>
-        </div>
+        <FadeInSection>
+          <div style={{ textAlign: "center", marginBottom: "5rem" }}>
+            <h2 className="section-title" style={{
+              fontWeight: "400",
+              color: "#ffffff",
+              marginBottom: "1rem",
+              fontFamily: "Georgia, 'Times New Roman', serif"
+            }}>
+              See it in action
+            </h2>
+            <p style={{
+              fontSize: "1.125rem",
+              color: "rgba(255, 255, 255, 0.5)",
+              fontWeight: "300"
+            }}>
+              Explore the admin and student interfaces
+            </p>
+          </div>
+        </FadeInSection>
 
         {/* Admin Portal Screenshots */}
-        <div style={{ marginBottom: "8rem" }}>
-          <ScreenshotGrid screenshots={adminScreenshots} sectionTitle="Admin Portal" />
-        </div>
+        <FadeInSection delay={100}>
+          <div style={{ marginBottom: "8rem" }}>
+            <ScreenshotGrid screenshots={adminScreenshots} sectionTitle="Admin Portal" />
+          </div>
+        </FadeInSection>
 
         {/* Student Portal Screenshots */}
-        <div style={{ marginBottom: "4rem" }}>
-          <ScreenshotGrid screenshots={studentScreenshots} sectionTitle="Student Portal" />
-        </div>
+        <FadeInSection delay={200}>
+          <div style={{ marginBottom: "4rem" }}>
+            <ScreenshotGrid screenshots={studentScreenshots} sectionTitle="Student Portal" />
+          </div>
+        </FadeInSection>
       </section>
 
       {/* Features Section */}
@@ -890,41 +854,44 @@ export default function LandingPage() {
         maxWidth: "900px",
         margin: "0 auto"
       }}>
-        <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-          <div style={{
-            display: "inline-block",
-            padding: "0.5rem 1rem",
-            backgroundColor: "rgba(20, 184, 166, 0.1)",
-            border: "1px solid rgba(20, 184, 166, 0.3)",
-            borderRadius: "20px",
-            color: "#14b8a6",
-            fontSize: "0.75rem",
-            fontWeight: "500",
-            marginBottom: "2rem",
-            letterSpacing: "0.1em"
-          }}>
-            FAQs
+        <FadeInSection>
+          <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+            <div style={{
+              display: "inline-block",
+              padding: "0.5rem 1rem",
+              backgroundColor: "rgba(20, 184, 166, 0.1)",
+              border: "1px solid rgba(20, 184, 166, 0.3)",
+              borderRadius: "20px",
+              color: "#14b8a6",
+              fontSize: "0.75rem",
+              fontWeight: "500",
+              marginBottom: "2rem",
+              letterSpacing: "0.1em"
+            }}>
+              FAQs
+            </div>
+            <h2 className="section-title" style={{
+              fontWeight: "400",
+              color: "#ffffff",
+              marginBottom: "1rem",
+              fontFamily: "Georgia, 'Times New Roman', serif"
+            }}>
+              Got questions?
+              <br />
+              Here's the answers.
+            </h2>
           </div>
-          <h2 className="section-title" style={{
-            fontWeight: "400",
-            color: "#ffffff",
-            marginBottom: "1rem",
-            fontFamily: "Georgia, 'Times New Roman', serif"
-          }}>
-            Got questions?
-            <br />
-            Here's the answers.
-          </h2>
-        </div>
+        </FadeInSection>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "4rem" }}>
           {[
             { q: "How do admins register and login?", a: "Admins register with their organization name and email. After registration, they receive a verification code via email. Simply enter the code to access your admin portal. You can login anytime using your email - we'll send you a new code each time." },
             { q: "How do students register and login?", a: "Students don't register themselves - admins add them to the system. When an admin adds a student, they automatically receive an email invitation with a login link. Students click the link, enter the verification code from their email, and access their dashboard." },
+            { q: "What if a student forgets their password or can't access their account?", a: "Students can request a password reset from the login page. The request is sent to all admins for approval. Once an admin approves it, the student receives a secure link to set a new password. This ensures account security while giving students an easy recovery option." },
             { q: "How does the invite admin feature work?", a: "Primary admins can invite secondary admins to help manage scheduling. Just add their name and email in the Invite Admin section. They'll receive an invitation email and can login immediately. Secondary admins have the same access as primary admins." },
             { q: "How do I add students to my organization?", a: "In your admin portal, use the Add Student section. Enter the student's name, primary email, and optionally a secondary email (like a school email). Click Request Availability, and they'll instantly receive an invitation email to submit their hours." },
             { q: "Can students use multiple email addresses?", a: "Yes! When adding a student, you can provide both a primary and secondary email. Students receive invitations at both addresses and can login using either email - both access the same account and availability." },
-            { q: "What happens after students submit availability?", a: "Once students submit their available hours, you'll see their status change to \"Submitted\" in your admin portal. You can then generate a schedule using the scheduling tool, which creates a balanced, conflict-free schedule automatically based on all submitted availability." }
+            { q: "What happens after students submit availability?", a: "Once students submit their available hours, you'll see their status change to \"Submitted\" in your admin portal. You'll also receive a notification when all students have submitted. You can then generate a schedule using the scheduling tool, which creates a balanced, conflict-free schedule automatically based on all submitted availability." }
           ].map((faq, index) => (
             <div
               key={index}
