@@ -70,8 +70,10 @@ export default function SetPasswordPage() {
         return;
       }
 
-      // Auto-login successful - redirect to email verification
-      window.location.href = `/verify-email?email=${encodeURIComponent(formData.email)}&type=primary`;
+      // Auto-login successful - redirect to login
+      // TODO: Email verification disabled for now
+      // window.location.href = `/verify-email?email=${encodeURIComponent(formData.email)}&type=primary`;
+      window.location.href = '/login';
     } catch (err) {
       setError('Something went wrong. Please try again.');
       setLoading(false);

@@ -108,6 +108,14 @@ export async function POST(request) {
           // If all requested students have submitted, send summary email to both admin emails
           if (submittedCount === requestedStudents.length) {
             await sendAllSubmittedNotification(adminEmails, requestedStudents.length);
+
+            // Create notification for admin
+            await createNotification(
+              adminUser._id.toString(),
+              'all_availability_submitted',
+              `All ${requestedStudents.length} students have submitted their availability!`,
+              '/admin'
+            );
           }
         }
       } catch (emailError) {

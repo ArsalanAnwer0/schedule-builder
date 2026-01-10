@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import ScreenshotGrid from './components/ScreenshotCarousel';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -13,6 +14,44 @@ export default function LandingPage() {
   const [feedbackError, setFeedbackError] = useState('');
   const [expandedFaq, setExpandedFaq] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Screenshot data for Admin Portal
+  const adminScreenshots = [
+    {
+      image: '/screenshots/admin-1.png',
+      alt: 'Admin Dashboard Overview',
+      caption: 'Manage students, track availability submissions, and generate optimal schedules from a centralized dashboard.'
+    },
+    {
+      image: '/screenshots/admin-2.png',
+      alt: 'Schedule Generation Interface',
+      caption: 'Create multiple schedule options with our AI-powered algorithm that considers all student availability and constraints.'
+    },
+    {
+      image: '/screenshots/admin-3.png',
+      alt: 'Student Management',
+      caption: 'Easily add students, request availability, and monitor submission status in real-time.'
+    }
+  ];
+
+  // Screenshot data for Student Portal
+  const studentScreenshots = [
+    {
+      image: '/screenshots/student-1.png',
+      alt: 'Student Dashboard',
+      caption: 'Students receive notifications and can quickly access their availability submission form from a clean, intuitive dashboard.'
+    },
+    {
+      image: '/screenshots/student-2.png',
+      alt: 'Availability Grid',
+      caption: 'Submit available hours using an interactive weekly grid. Students can easily select time blocks and add notes.'
+    },
+    {
+      image: '/screenshots/student-3.png',
+      alt: 'Published Schedule View',
+      caption: 'View assigned shifts in a clear, organized format once the admin publishes the final schedule.'
+    }
+  ];
 
   // Check if user has already seen intro in this session
   useEffect(() => {
@@ -402,30 +441,6 @@ export default function LandingPage() {
           Collect availability, create schedules, and manage changes automatically without the chaos.
         </p>
 
-        {/* Schedule Interface Preview */}
-        <div className="hero-preview" style={{
-          width: "100%",
-          maxWidth: "900px",
-          margin: "10rem auto 0 auto",
-          background: "linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, rgba(6, 78, 59, 0.1) 100%)",
-          borderRadius: "16px",
-          border: "1px solid rgba(20, 184, 166, 0.2)",
-          position: "relative",
-          overflow: "hidden",
-          padding: "1.5rem"
-        }}>
-          <img
-            src="/availability-grid.png"
-            alt="Schedule Builder Availability Grid Interface"
-            style={{
-              width: "100%",
-              height: "auto",
-              display: "block",
-              borderRadius: "8px",
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)"
-            }}
-          />
-        </div>
       </section>
 
       {/* How It Works Section */}
@@ -557,6 +572,42 @@ export default function LandingPage() {
               Our algorithm creates conflict-free schedules in seconds. Review, adjust, and share with your team.
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* Screenshot Carousel Section */}
+      <section className="section-padding" style={{
+        maxWidth: "1200px",
+        margin: "0 auto",
+        paddingTop: "8rem",
+        paddingBottom: "8rem"
+      }}>
+        <div style={{ textAlign: "center", marginBottom: "5rem" }}>
+          <h2 className="section-title" style={{
+            fontWeight: "400",
+            color: "#ffffff",
+            marginBottom: "1rem",
+            fontFamily: "Georgia, 'Times New Roman', serif"
+          }}>
+            See it in action
+          </h2>
+          <p style={{
+            fontSize: "1.125rem",
+            color: "rgba(255, 255, 255, 0.5)",
+            fontWeight: "300"
+          }}>
+            Explore the admin and student interfaces
+          </p>
+        </div>
+
+        {/* Admin Portal Screenshots */}
+        <div style={{ marginBottom: "8rem" }}>
+          <ScreenshotGrid screenshots={adminScreenshots} sectionTitle="Admin Portal" />
+        </div>
+
+        {/* Student Portal Screenshots */}
+        <div style={{ marginBottom: "4rem" }}>
+          <ScreenshotGrid screenshots={studentScreenshots} sectionTitle="Student Portal" />
         </div>
       </section>
 

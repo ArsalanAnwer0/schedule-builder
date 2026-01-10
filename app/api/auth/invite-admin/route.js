@@ -55,6 +55,18 @@ export async function POST(request) {
     // Check if primary email already exists
     const existingUser = await User.findOne({ email: primaryEmail.toLowerCase() });
     if (existingUser) {
+      // Provide specific error message based on existing user role
+      if (existingUser.role === 'student') {
+        return NextResponse.json(
+          { error: 'This email is already registered as a student. One email can only have one role.' },
+          { status: 400 }
+        );
+      } else if (existingUser.role === 'admin') {
+        return NextResponse.json(
+          { error: 'This email is already registered as an admin.' },
+          { status: 400 }
+        );
+      }
       return NextResponse.json(
         { error: 'This email is already registered' },
         { status: 400 }

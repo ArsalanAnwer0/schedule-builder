@@ -18,6 +18,8 @@ export async function GET() {
         email: sessionData.user.email,
         name: sessionData.user.name,
         role: sessionData.user.role,
+        adminType: sessionData.user.adminType,
+        organizationName: sessionData.user.organizationName,
         availabilityRequested: sessionData.user.availabilityRequested || false,
       },
     });
