@@ -6,6 +6,7 @@ import { generateSchedule } from "../../lib/scheduler";
 import TimePicker from "../components/TimePicker";
 import NotificationBell from "../components/NotificationBell";
 import { exportToCSV, downloadCSV } from "../../lib/utils/export";
+import AvailabilityGrid from "../components/AvailabilityGrid";
 
 // Predefined semester dates for US universities
 const SEMESTER_PRESETS = {
@@ -2043,80 +2044,10 @@ export default function Home() {
                 <p style={{ margin: 0, color: "#8b949e" }}>Request availability from students using the Admin Dashboard or wait for them to submit.</p>
               </div>
             ) : (
-              <div className="table-container" style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: "0" }}>
-                  <thead>
-                    <tr style={{ backgroundColor: "rgba(255, 255, 255, 0.05)" }}>
-                      <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "600", color: "#8b949e", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid rgba(255, 255, 255, 0.1)", position: "sticky", left: 0, backgroundColor: "rgba(255, 255, 255, 0.05)", zIndex: 10 }}>
-                        Student
-                      </th>
-                      {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => (
-                        <th key={day} style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "600", color: "#8b949e", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid rgba(255, 255, 255, 0.1)", minWidth: "180px" }}>
-                          {day}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {students.filter(s => s.hasSubmitted).map((student) => (
-                      <tr key={student.id} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.08)" }}>
-                        <td style={{ padding: "1rem", borderRight: "1px solid rgba(255, 255, 255, 0.08)", position: "sticky", left: 0, backgroundColor: "rgba(255, 255, 255, 0.05)", zIndex: 5 }}>
-                          <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-                            <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff" }}>
-                              {student.name}
-                            </span>
-                            <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>
-                              {student.email}
-                            </span>
-                            <span style={{ fontSize: "0.7rem", color: "#6b7280", marginTop: "0.25rem" }}>
-                              Submitted {new Date(student.availability.submittedAt).toLocaleDateString()}
-                            </span>
-                            {student.availability.notes && (
-                              <div style={{ marginTop: "0.5rem", padding: "0.5rem", backgroundColor: "rgba(255, 255, 255, 0.05)", borderRadius: "4px", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
-                                <span style={{ fontSize: "0.7rem", color: "#6b7280", fontWeight: "500" }}>Note: </span>
-                                <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>{student.availability.notes}</span>
-                              </div>
-                            )}
-                          </div>
-                        </td>
-                        {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => {
-                          const dayAvail = student.availability.availability[day];
-                          const hasAvailability = dayAvail && dayAvail.length > 0;
-
-                          return (
-                            <td key={day} style={{ padding: "1rem", verticalAlign: "top" }}>
-                              {hasAvailability ? (
-                                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.375rem" }}>
-                                  {dayAvail.map((slot, idx) => (
-                                    <span key={idx} style={{
-                                      fontSize: "0.75rem",
-                                      color: "#10b981",
-                                      padding: "0.25rem 0.5rem",
-                                      backgroundColor: "#0d3320",
-                                      border: "1px solid #1f5e3a",
-                                      borderRadius: "4px",
-                                      whiteSpace: "nowrap"
-                                    }}>
-                                      {slot}
-                                    </span>
-                                  ))}
-                                </div>
-                              ) : (
-                                <span style={{
-                                  fontSize: "0.75rem",
-                                  color: "#6b7280",
-                                  fontStyle: "italic"
-                                }}>
-                                  Not available
-                                </span>
-                              )}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                {students.filter(s => s.hasSubmitted).map((student) => (
+                  <AvailabilityGrid key={student.id} student={student} />
+                ))}
               </div>
             )}
           </div>

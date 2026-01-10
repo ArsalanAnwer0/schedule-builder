@@ -3,6 +3,7 @@ import { requireAdmin } from '../../../../lib/auth/session';
 import dbConnect from '../../../../lib/db/connect';
 import Availability from '../../../../lib/db/models/Availability';
 import User from '../../../../lib/db/models/User';
+import Notification from '../../../../lib/db/models/Notification';
 
 // POST - Reset student availability (admin only)
 export async function POST(request) {
@@ -22,6 +23,12 @@ export async function POST(request) {
 
     await dbConnect();
 
+    // Get student info for notification
+    const student = await User.findById(studentId);
+    if (!student) {
+      return NextResponse.json({ error: 'Student not found' }, { status: 404 });
+    }
+
     // Delete the student's availability
     await Availability.findOneAndDelete({ userId: studentId });
 
@@ -29,6 +36,14 @@ export async function POST(request) {
     // Admin must request availability again to unlock
     await User.findByIdAndUpdate(studentId, {
       $set: { availabilityRequested: false }
+    });
+
+    // Create notification for the student
+    await Notification.create({
+      userId: studentId,
+      type: 'availability_reset',
+      message: 'Your availability has been reset by an admin. You will need to wait for a new availability request to submit again.',
+      actionUrl: '/student/dashboard'
     });
 
     return NextResponse.json({

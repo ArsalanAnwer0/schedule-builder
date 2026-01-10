@@ -3,6 +3,7 @@ import { requireAdmin } from '../../../../lib/auth/session';
 import dbConnect from '../../../../lib/db/connect';
 import Availability from '../../../../lib/db/models/Availability';
 import User from '../../../../lib/db/models/User';
+import Notification from '../../../../lib/db/models/Notification';
 
 export async function POST(request) {
   try {
@@ -54,6 +55,15 @@ export async function POST(request) {
       { _id: { $in: studentIds } },
       { $set: { availabilityRequested: false } }
     );
+
+    // Create notifications for all students
+    const notifications = studentIds.map(studentId => ({
+      userId: studentId,
+      type: 'availability_reset',
+      message: 'Your availability has been reset by an admin. You will need to wait for a new availability request to submit again.',
+      actionUrl: '/student/dashboard'
+    }));
+    await Notification.insertMany(notifications);
 
     return NextResponse.json({
       success: true,
