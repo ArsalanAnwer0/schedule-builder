@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import ScreenshotGrid from './components/ScreenshotCarousel';
 import SplashScreen from './components/SplashScreen';
+import FadeInSection from './components/FadeInSection';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -404,23 +405,25 @@ export default function LandingPage() {
         margin: "0 auto",
         paddingTop: "8rem"
       }}>
-        <div style={{ textAlign: "center", marginBottom: "5rem" }}>
-          <h2 className="section-title" style={{
-            fontWeight: "400",
-            color: "#ffffff",
-            marginBottom: "1rem",
-            fontFamily: "Georgia, 'Times New Roman', serif"
-          }}>
-            How it works
-          </h2>
-          <p style={{
-            fontSize: "1.125rem",
-            color: "rgba(255, 255, 255, 0.5)",
-            fontWeight: "300"
-          }}>
-            Three steps to transform your scheduling workflow
-          </p>
-        </div>
+        <FadeInSection>
+          <div style={{ textAlign: "center", marginBottom: "5rem" }}>
+            <h2 className="section-title" style={{
+              fontWeight: "400",
+              color: "#ffffff",
+              marginBottom: "1rem",
+              fontFamily: "Georgia, 'Times New Roman', serif"
+            }}>
+              How it works
+            </h2>
+            <p style={{
+              fontSize: "1.125rem",
+              color: "rgba(255, 255, 255, 0.5)",
+              fontWeight: "300"
+            }}>
+              Three steps to transform your scheduling workflow
+            </p>
+          </div>
+        </FadeInSection>
 
         <div className="grid-3-cols" style={{
           display: "grid",
@@ -537,33 +540,39 @@ export default function LandingPage() {
         paddingTop: "8rem",
         paddingBottom: "8rem"
       }}>
-        <div style={{ textAlign: "center", marginBottom: "5rem" }}>
-          <h2 className="section-title" style={{
-            fontWeight: "400",
-            color: "#ffffff",
-            marginBottom: "1rem",
-            fontFamily: "Georgia, 'Times New Roman', serif"
-          }}>
-            See it in action
-          </h2>
-          <p style={{
-            fontSize: "1.125rem",
-            color: "rgba(255, 255, 255, 0.5)",
-            fontWeight: "300"
-          }}>
-            Explore the admin and student interfaces
-          </p>
-        </div>
+        <FadeInSection>
+          <div style={{ textAlign: "center", marginBottom: "5rem" }}>
+            <h2 className="section-title" style={{
+              fontWeight: "400",
+              color: "#ffffff",
+              marginBottom: "1rem",
+              fontFamily: "Georgia, 'Times New Roman', serif"
+            }}>
+              See it in action
+            </h2>
+            <p style={{
+              fontSize: "1.125rem",
+              color: "rgba(255, 255, 255, 0.5)",
+              fontWeight: "300"
+            }}>
+              Explore the admin and student interfaces
+            </p>
+          </div>
+        </FadeInSection>
 
         {/* Admin Portal Screenshots */}
-        <div style={{ marginBottom: "8rem" }}>
-          <ScreenshotGrid screenshots={adminScreenshots} sectionTitle="Admin Portal" />
-        </div>
+        <FadeInSection delay={100}>
+          <div style={{ marginBottom: "8rem" }}>
+            <ScreenshotGrid screenshots={adminScreenshots} sectionTitle="Admin Portal" />
+          </div>
+        </FadeInSection>
 
         {/* Student Portal Screenshots */}
-        <div style={{ marginBottom: "4rem" }}>
-          <ScreenshotGrid screenshots={studentScreenshots} sectionTitle="Student Portal" />
-        </div>
+        <FadeInSection delay={200}>
+          <div style={{ marginBottom: "4rem" }}>
+            <ScreenshotGrid screenshots={studentScreenshots} sectionTitle="Student Portal" />
+          </div>
+        </FadeInSection>
       </section>
 
       {/* Features Section */}
@@ -845,32 +854,34 @@ export default function LandingPage() {
         maxWidth: "900px",
         margin: "0 auto"
       }}>
-        <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-          <div style={{
-            display: "inline-block",
-            padding: "0.5rem 1rem",
-            backgroundColor: "rgba(20, 184, 166, 0.1)",
-            border: "1px solid rgba(20, 184, 166, 0.3)",
-            borderRadius: "20px",
-            color: "#14b8a6",
-            fontSize: "0.75rem",
-            fontWeight: "500",
-            marginBottom: "2rem",
-            letterSpacing: "0.1em"
-          }}>
-            FAQs
+        <FadeInSection>
+          <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+            <div style={{
+              display: "inline-block",
+              padding: "0.5rem 1rem",
+              backgroundColor: "rgba(20, 184, 166, 0.1)",
+              border: "1px solid rgba(20, 184, 166, 0.3)",
+              borderRadius: "20px",
+              color: "#14b8a6",
+              fontSize: "0.75rem",
+              fontWeight: "500",
+              marginBottom: "2rem",
+              letterSpacing: "0.1em"
+            }}>
+              FAQs
+            </div>
+            <h2 className="section-title" style={{
+              fontWeight: "400",
+              color: "#ffffff",
+              marginBottom: "1rem",
+              fontFamily: "Georgia, 'Times New Roman', serif"
+            }}>
+              Got questions?
+              <br />
+              Here's the answers.
+            </h2>
           </div>
-          <h2 className="section-title" style={{
-            fontWeight: "400",
-            color: "#ffffff",
-            marginBottom: "1rem",
-            fontFamily: "Georgia, 'Times New Roman', serif"
-          }}>
-            Got questions?
-            <br />
-            Here's the answers.
-          </h2>
-        </div>
+        </FadeInSection>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "4rem" }}>
           {[
