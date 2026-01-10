@@ -41,6 +41,7 @@ export default function Home() {
   const [studentFormData, setStudentFormData] = useState({ name: '', email: '', secondaryEmail: '' });
   const [studentError, setStudentError] = useState('');
   const [studentSuccess, setStudentSuccess] = useState('');
+  const [submittingStudent, setSubmittingStudent] = useState(false);
 
   // Admin management state
   const [admins, setAdmins] = useState([]);
@@ -49,6 +50,7 @@ export default function Home() {
   const [adminFormData, setAdminFormData] = useState({ name: '', email: '', secondaryEmail: '' });
   const [adminError, setAdminError] = useState('');
   const [adminSuccess, setAdminSuccess] = useState('');
+  const [submittingAdmin, setSubmittingAdmin] = useState(false);
 
   // Default form data
   const defaultFormData = {
@@ -187,6 +189,7 @@ export default function Home() {
     e.preventDefault();
     setAdminError('');
     setAdminSuccess('');
+    setSubmittingAdmin(true);
 
     try {
       const res = await fetch('/api/auth/invite-admin', {
@@ -199,15 +202,19 @@ export default function Home() {
 
       if (!res.ok) {
         setAdminError(data.error || 'Failed to send invitation');
+        setSubmittingAdmin(false);
         return;
       }
 
       setAdminSuccess(data.message);
       setShowInviteAdminModal(false);
+      setAdminFormData({ name: '', email: '', secondaryEmail: '' });
       loadAdmins();
       setTimeout(() => setAdminSuccess(''), 5000);
     } catch (err) {
       setAdminError('Something went wrong. Please try again.');
+    } finally {
+      setSubmittingAdmin(false);
     }
   };
 
@@ -295,6 +302,7 @@ export default function Home() {
     e.preventDefault();
     setStudentError('');
     setStudentSuccess('');
+    setSubmittingStudent(true);
 
     try {
       const url = editingStudent
@@ -312,6 +320,7 @@ export default function Home() {
 
       if (!res.ok) {
         setStudentError(data.error || 'Failed to save student');
+        setSubmittingStudent(false);
         return;
       }
 
@@ -319,10 +328,13 @@ export default function Home() {
       const successMessage = data.message || (editingStudent ? 'Student updated successfully' : 'Student added successfully');
       setStudentSuccess(successMessage);
       setShowAddStudentModal(false);
+      setStudentFormData({ name: '', email: '', secondaryEmail: '' });
       loadStudents();
       setTimeout(() => setStudentSuccess(''), 8000); // Longer timeout for the set-password message
     } catch (err) {
       setStudentError('Something went wrong. Please try again.');
+    } finally {
+      setSubmittingStudent(false);
     }
   };
 
@@ -2702,27 +2714,33 @@ export default function Home() {
                   </button>
                   <button
                     type="submit"
+                    disabled={submittingAdmin}
                     style={{
                       padding: "0.625rem 1.25rem",
-                      backgroundColor: "#14b8a6",
+                      backgroundColor: submittingAdmin ? "#6b7280" : "#14b8a6",
                       color: "#ffffff",
-                      border: "1px solid #14b8a6",
+                      border: submittingAdmin ? "1px solid #6b7280" : "1px solid #14b8a6",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       fontWeight: "500",
-                      cursor: "pointer",
-                      transition: "all 0.15s ease"
+                      cursor: submittingAdmin ? "not-allowed" : "pointer",
+                      transition: "all 0.15s ease",
+                      opacity: submittingAdmin ? 0.6 : 1
                     }}
                     onMouseOver={(e) => {
-                      e.currentTarget.style.backgroundColor = "#0d9488";
-                      e.currentTarget.style.borderColor = "#0d9488";
+                      if (!submittingAdmin) {
+                        e.currentTarget.style.backgroundColor = "#0d9488";
+                        e.currentTarget.style.borderColor = "#0d9488";
+                      }
                     }}
                     onMouseOut={(e) => {
-                      e.currentTarget.style.backgroundColor = "#14b8a6";
-                      e.currentTarget.style.borderColor = "#14b8a6";
+                      if (!submittingAdmin) {
+                        e.currentTarget.style.backgroundColor = "#14b8a6";
+                        e.currentTarget.style.borderColor = "#14b8a6";
+                      }
                     }}
                   >
-                    Send Invitation
+                    {submittingAdmin ? 'Sending...' : 'Send Invitation'}
                   </button>
                 </div>
               </form>
@@ -2893,27 +2911,33 @@ export default function Home() {
                   </button>
                   <button
                     type="submit"
+                    disabled={submittingStudent}
                     style={{
                       padding: "0.625rem 1.25rem",
-                      backgroundColor: "#14b8a6",
+                      backgroundColor: submittingStudent ? "#6b7280" : "#14b8a6",
                       color: "#ffffff",
-                      border: "1px solid #14b8a6",
+                      border: submittingStudent ? "1px solid #6b7280" : "1px solid #14b8a6",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       fontWeight: "500",
-                      cursor: "pointer",
-                      transition: "all 0.15s ease"
+                      cursor: submittingStudent ? "not-allowed" : "pointer",
+                      transition: "all 0.15s ease",
+                      opacity: submittingStudent ? 0.6 : 1
                     }}
                     onMouseOver={(e) => {
-                      e.currentTarget.style.backgroundColor = "#0d9488";
-                      e.currentTarget.style.borderColor = "#0d9488";
+                      if (!submittingStudent) {
+                        e.currentTarget.style.backgroundColor = "#0d9488";
+                        e.currentTarget.style.borderColor = "#0d9488";
+                      }
                     }}
                     onMouseOut={(e) => {
-                      e.currentTarget.style.backgroundColor = "#14b8a6";
-                      e.currentTarget.style.borderColor = "#14b8a6";
+                      if (!submittingStudent) {
+                        e.currentTarget.style.backgroundColor = "#14b8a6";
+                        e.currentTarget.style.borderColor = "#14b8a6";
+                      }
                     }}
                   >
-                    {editingStudent ? 'Update' : 'Add'} Student
+                    {submittingStudent ? 'Saving...' : (editingStudent ? 'Update' : 'Add') + ' Student'}
                   </button>
                 </div>
               </form>
