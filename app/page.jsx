@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import ScreenshotGrid from './components/ScreenshotCarousel';
+import SplashScreen from './components/SplashScreen';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -58,15 +59,13 @@ export default function LandingPage() {
     const hasSeenIntro = sessionStorage.getItem('hasSeenIntro');
     if (hasSeenIntro) {
       setShowIntro(false);
-    } else {
-      // Auto-fade intro after 2 seconds
-      const timer = setTimeout(() => {
-        sessionStorage.setItem('hasSeenIntro', 'true');
-        setShowIntro(false);
-      }, 2000);
-      return () => clearTimeout(timer);
     }
   }, []);
+
+  const handleSplashComplete = () => {
+    sessionStorage.setItem('hasSeenIntro', 'true');
+    setShowIntro(false);
+  };
 
   const handleFeedbackSubmit = async (e) => {
     e.preventDefault();
@@ -98,54 +97,10 @@ export default function LandingPage() {
       minHeight: "100vh",
       position: "relative"
     }}>
-      {/* Intro Overlay - Dissolves to reveal content */}
+      {/* Splash Screen - Fades in and out */}
       {showIntro && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "#0a0f1a",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 10000,
-          animation: "dissolve 0.8s ease-out 1.2s forwards"
-        }}>
-          <h1 style={{
-            fontSize: "3.5rem",
-            fontWeight: "600",
-            color: "#ffffff",
-            letterSpacing: "-0.02em",
-            margin: 0,
-            animation: "fadeIn 0.8s ease-out"
-          }}>
-            Schedule Builder
-          </h1>
-        </div>
+        <SplashScreen onComplete={handleSplashComplete} />
       )}
-
-      <style jsx>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        @keyframes dissolve {
-          0% {
-            opacity: 1;
-          }
-          100% {
-            opacity: 0;
-            pointer-events: none;
-          }
-        }
-      `}</style>
 
       {/* Fixed Navigation */}
       <nav className="nav-padding" style={{
