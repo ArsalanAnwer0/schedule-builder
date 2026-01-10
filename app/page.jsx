@@ -24,8 +24,8 @@ export default function LandingPage() {
     },
     {
       image: '/screenshots/admin-2.png',
-      alt: 'Schedule Generation Interface',
-      caption: 'Create multiple schedule options with our AI-powered algorithm that considers all student availability and constraints.'
+      alt: 'Admin Invite Interface',
+      caption: 'Invite and manage multiple administrators with different permission levels to collaborate on schedule management.'
     },
     {
       image: '/screenshots/admin-3.png',
@@ -48,8 +48,8 @@ export default function LandingPage() {
     },
     {
       image: '/screenshots/student-3.png',
-      alt: 'Published Schedule View',
-      caption: 'View assigned shifts in a clear, organized format once the admin publishes the final schedule.'
+      alt: 'Availability Submission',
+      caption: 'Students can easily submit their available hours using an intuitive interface with time selection and notes.'
     }
   ];
 
