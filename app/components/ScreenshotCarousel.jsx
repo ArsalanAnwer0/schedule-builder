@@ -37,12 +37,16 @@ export default function ScreenshotGrid({ screenshots, sectionTitle }) {
             {/* Screenshot Image */}
             <div style={{
               width: "100%",
+              height: "500px",
               borderRadius: "8px",
               overflow: "hidden",
               boxShadow: "0 8px 24px rgba(0, 0, 0, 0.4)",
               border: "1px solid rgba(255, 255, 255, 0.1)",
               backgroundColor: "rgba(0, 0, 0, 0.2)",
-              transition: "transform 0.3s ease, box-shadow 0.3s ease"
+              transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.transform = "translateY(-4px)";
@@ -58,8 +62,9 @@ export default function ScreenshotGrid({ screenshots, sectionTitle }) {
                 alt={screenshot.alt}
                 style={{
                   width: "100%",
-                  height: "auto",
-                  display: "block"
+                  height: "100%",
+                  display: "block",
+                  objectFit: "contain"
                 }}
               />
             </div>
