@@ -53,6 +53,7 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('Reset availability error:', error);
-    return NextResponse.json({ error: 'Failed to reset availability' }, { status: 500 });
+    console.error('Error stack:', error.stack);
+    return NextResponse.json({ error: `Failed to reset availability: ${error.message}` }, { status: 500 });
   }
 }

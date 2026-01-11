@@ -440,6 +440,7 @@ export default function Home() {
         setStudentSuccess('');
 
         try {
+          console.log('Resetting availability for student:', studentId);
           const res = await fetch('/api/availability/reset', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -447,8 +448,10 @@ export default function Home() {
           });
 
           const data = await res.json();
+          console.log('Reset response:', { status: res.status, data });
 
           if (!res.ok) {
+            console.error('Reset failed:', data);
             setStudentError(data.error || 'Failed to reset availability');
             return;
           }
@@ -459,6 +462,7 @@ export default function Home() {
           // Refresh the students list to update the UI
           await fetchStudents();
         } catch (err) {
+          console.error('Reset availability exception:', err);
           setStudentError('Failed to reset availability. Please try again.');
         }
       },
@@ -488,6 +492,7 @@ export default function Home() {
 
         try {
           const allStudentIds = students.map(s => s.id);
+          console.log('Resetting availability for all students:', allStudentIds);
           const res = await fetch('/api/availability/reset-all', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -495,8 +500,10 @@ export default function Home() {
           });
 
           const data = await res.json();
+          console.log('Reset all response:', { status: res.status, data });
 
           if (!res.ok) {
+            console.error('Reset all failed:', data);
             setStudentError(data.error || 'Failed to reset availability');
             return;
           }
@@ -505,8 +512,9 @@ export default function Home() {
           setTimeout(() => setStudentSuccess(''), 5000);
 
           // Refresh the students list to update the UI
-          fetchStudents();
+          await fetchStudents();
         } catch (err) {
+          console.error('Reset all availability exception:', err);
           setStudentError('Something went wrong. Please try again.');
         }
       },
