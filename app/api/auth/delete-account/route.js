@@ -43,9 +43,8 @@ export async function DELETE(request) {
       // Delete availability edit requests
       AvailabilityEditRequest.deleteMany({ userId: { $in: orgUserIds } }),
 
-      // Delete schedules (no organization field, so this deletes all)
-      // Note: If schedules should be scoped to organization in the future, update this
-      Schedule.deleteMany({}),
+      // Delete schedules for this organization only (SECURITY FIX)
+      Schedule.deleteMany({ organizationName: currentAdmin.organizationName }),
 
       // Delete verification codes
       VerificationCode.deleteMany({ email: { $in: orgEmails } }),

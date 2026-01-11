@@ -60,7 +60,14 @@ export async function POST(request) {
 
     // Send email notification to admin (both primary and secondary emails)
     try {
-      const adminUser = await User.findOne({ role: 'admin' }).select('email secondaryEmail');
+      // Get student's organization to find the correct admin (SECURITY FIX)
+      const student = await User.findById(sessionData.user._id);
+
+      const adminUser = await User.findOne({
+        role: 'admin',
+        organizationName: student.organizationName
+      }).select('email secondaryEmail');
+
       if (adminUser) {
         const adminEmails = [adminUser.email];
         if (adminUser.secondaryEmail) {
@@ -106,8 +113,19 @@ export async function GET(request) {
 
     let query;
     if (isAdmin) {
-      // Admin sees all pending requests
-      query = { status: 'pending' };
+      // Admin sees only pending requests from their organization (SECURITY FIX)
+      const admin = await User.findById(sessionData.user._id);
+
+      // Get all students in the admin's organization
+      const orgStudentIds = (await User.find({
+        organizationName: admin.organizationName,
+        role: 'student'
+      }).select('_id')).map(u => u._id);
+
+      query = {
+        status: 'pending',
+        userId: { $in: orgStudentIds }
+      };
     } else {
       // Students see their own requests
       query = { userId: sessionData.user._id };
