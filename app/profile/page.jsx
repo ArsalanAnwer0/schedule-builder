@@ -84,7 +84,7 @@ export default function ProfilePage() {
             </p>
           </div>
           <Link
-            href="/"
+            href="/admin"
             style={{
               padding: "0.625rem 1.25rem",
               backgroundColor: "#16191f",

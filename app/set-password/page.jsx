@@ -70,10 +70,10 @@ export default function SetPasswordPage() {
         return;
       }
 
-      // Auto-login successful - redirect to login
+      // Auto-login successful - redirect to appropriate dashboard
       // TODO: Email verification disabled for now
       // window.location.href = `/verify-email?email=${encodeURIComponent(formData.email)}&type=primary`;
-      window.location.href = '/login';
+      window.location.href = data.redirectUrl || '/login';
     } catch (err) {
       setError('Something went wrong. Please try again.');
       setLoading(false);
@@ -112,7 +112,7 @@ export default function SetPasswordPage() {
             Create Your Password
           </h2>
           <p style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.5)", margin: 0 }}>
-            For students only - Make sure your admin has registered you first
+            For students and secondary admins - Make sure you've been added to the system first
           </p>
         </div>
 
@@ -130,7 +130,7 @@ export default function SetPasswordPage() {
             margin: 0,
             lineHeight: "1.5"
           }}>
-            Your admin must add your email to the system before you can create a password. If you haven't been added yet, please contact your admin.
+            Your email must be added to the system before you can create a password. Students: contact your admin. Secondary admins: make sure the primary admin has invited you.
           </p>
         </div>
 
@@ -172,7 +172,7 @@ export default function SetPasswordPage() {
               value={formData.email}
               onChange={handleChange}
               required
-              placeholder="student@university.edu"
+              placeholder="your.email@university.edu"
               style={{
                 width: "100%",
                 padding: "0.75rem 1rem",

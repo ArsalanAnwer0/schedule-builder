@@ -49,10 +49,18 @@ export async function POST(request) {
       );
     }
 
-    // Check if user is a student
-    if (user.role !== 'student') {
+    // Check if user is a student or secondary admin
+    if (user.role !== 'student' && user.role !== 'admin') {
       return NextResponse.json(
-        { error: 'Only students can use this page. Admins should use the registration page.' },
+        { error: 'Invalid user role. Please contact support.' },
+        { status: 403 }
+      );
+    }
+
+    // Primary admins should use the registration page
+    if (user.role === 'admin' && user.isPrimaryAdmin) {
+      return NextResponse.json(
+        { error: 'Primary admins should use the registration page.' },
         { status: 403 }
       );
     }
@@ -76,10 +84,13 @@ export async function POST(request) {
     const session = await createSession(user._id.toString());
     await setSessionCookie(session.token, session.expiresAt);
 
+    // Determine redirect URL based on role
+    const redirectUrl = user.role === 'admin' ? '/admin' : '/dashboard';
+
     return NextResponse.json({
       success: true,
       message: 'Password created successfully!',
-      redirectUrl: '/dashboard',
+      redirectUrl: redirectUrl,
     });
   } catch (error) {
     console.error('Set password error:', error);

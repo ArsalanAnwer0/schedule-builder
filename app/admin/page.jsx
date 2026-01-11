@@ -6,6 +6,7 @@ import { generateSchedule } from "../../lib/scheduler";
 import TimePicker from "../components/TimePicker";
 import NotificationBell from "../components/NotificationBell";
 import { exportToCSV, downloadCSV } from "../../lib/utils/export";
+import AvailabilityGrid from "../components/AvailabilityGrid";
 
 // Predefined semester dates for US universities
 const SEMESTER_PRESETS = {
@@ -41,6 +42,7 @@ export default function Home() {
   const [studentFormData, setStudentFormData] = useState({ name: '', email: '', secondaryEmail: '' });
   const [studentError, setStudentError] = useState('');
   const [studentSuccess, setStudentSuccess] = useState('');
+  const [submittingStudent, setSubmittingStudent] = useState(false);
 
   // Admin management state
   const [admins, setAdmins] = useState([]);
@@ -49,6 +51,7 @@ export default function Home() {
   const [adminFormData, setAdminFormData] = useState({ name: '', email: '', secondaryEmail: '' });
   const [adminError, setAdminError] = useState('');
   const [adminSuccess, setAdminSuccess] = useState('');
+  const [submittingAdmin, setSubmittingAdmin] = useState(false);
 
   // Default form data
   const defaultFormData = {
@@ -187,6 +190,7 @@ export default function Home() {
     e.preventDefault();
     setAdminError('');
     setAdminSuccess('');
+    setSubmittingAdmin(true);
 
     try {
       const res = await fetch('/api/auth/invite-admin', {
@@ -199,15 +203,19 @@ export default function Home() {
 
       if (!res.ok) {
         setAdminError(data.error || 'Failed to send invitation');
+        setSubmittingAdmin(false);
         return;
       }
 
       setAdminSuccess(data.message);
       setShowInviteAdminModal(false);
+      setAdminFormData({ name: '', email: '', secondaryEmail: '' });
       loadAdmins();
       setTimeout(() => setAdminSuccess(''), 5000);
     } catch (err) {
       setAdminError('Something went wrong. Please try again.');
+    } finally {
+      setSubmittingAdmin(false);
     }
   };
 
@@ -295,6 +303,7 @@ export default function Home() {
     e.preventDefault();
     setStudentError('');
     setStudentSuccess('');
+    setSubmittingStudent(true);
 
     try {
       const url = editingStudent
@@ -312,6 +321,7 @@ export default function Home() {
 
       if (!res.ok) {
         setStudentError(data.error || 'Failed to save student');
+        setSubmittingStudent(false);
         return;
       }
 
@@ -319,10 +329,13 @@ export default function Home() {
       const successMessage = data.message || (editingStudent ? 'Student updated successfully' : 'Student added successfully');
       setStudentSuccess(successMessage);
       setShowAddStudentModal(false);
+      setStudentFormData({ name: '', email: '', secondaryEmail: '' });
       loadStudents();
       setTimeout(() => setStudentSuccess(''), 8000); // Longer timeout for the set-password message
     } catch (err) {
       setStudentError('Something went wrong. Please try again.');
+    } finally {
+      setSubmittingStudent(false);
     }
   };
 
@@ -427,6 +440,7 @@ export default function Home() {
         setStudentSuccess('');
 
         try {
+          console.log('Resetting availability for student:', studentId);
           const res = await fetch('/api/availability/reset', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -434,8 +448,10 @@ export default function Home() {
           });
 
           const data = await res.json();
+          console.log('Reset response:', { status: res.status, data });
 
           if (!res.ok) {
+            console.error('Reset failed:', data);
             setStudentError(data.error || 'Failed to reset availability');
             return;
           }
@@ -446,6 +462,7 @@ export default function Home() {
           // Refresh the students list to update the UI
           await fetchStudents();
         } catch (err) {
+          console.error('Reset availability exception:', err);
           setStudentError('Failed to reset availability. Please try again.');
         }
       },
@@ -475,6 +492,7 @@ export default function Home() {
 
         try {
           const allStudentIds = students.map(s => s.id);
+          console.log('Resetting availability for all students:', allStudentIds);
           const res = await fetch('/api/availability/reset-all', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -482,8 +500,10 @@ export default function Home() {
           });
 
           const data = await res.json();
+          console.log('Reset all response:', { status: res.status, data });
 
           if (!res.ok) {
+            console.error('Reset all failed:', data);
             setStudentError(data.error || 'Failed to reset availability');
             return;
           }
@@ -492,8 +512,9 @@ export default function Home() {
           setTimeout(() => setStudentSuccess(''), 5000);
 
           // Refresh the students list to update the UI
-          fetchStudents();
+          await fetchStudents();
         } catch (err) {
+          console.error('Reset all availability exception:', err);
           setStudentError('Something went wrong. Please try again.');
         }
       },
@@ -2031,80 +2052,10 @@ export default function Home() {
                 <p style={{ margin: 0, color: "#8b949e" }}>Request availability from students using the Admin Dashboard or wait for them to submit.</p>
               </div>
             ) : (
-              <div className="table-container" style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: "0" }}>
-                  <thead>
-                    <tr style={{ backgroundColor: "rgba(255, 255, 255, 0.05)" }}>
-                      <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "600", color: "#8b949e", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid rgba(255, 255, 255, 0.1)", position: "sticky", left: 0, backgroundColor: "rgba(255, 255, 255, 0.05)", zIndex: 10 }}>
-                        Student
-                      </th>
-                      {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => (
-                        <th key={day} style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "600", color: "#8b949e", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid rgba(255, 255, 255, 0.1)", minWidth: "180px" }}>
-                          {day}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {students.filter(s => s.hasSubmitted).map((student) => (
-                      <tr key={student.id} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.08)" }}>
-                        <td style={{ padding: "1rem", borderRight: "1px solid rgba(255, 255, 255, 0.08)", position: "sticky", left: 0, backgroundColor: "rgba(255, 255, 255, 0.05)", zIndex: 5 }}>
-                          <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-                            <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff" }}>
-                              {student.name}
-                            </span>
-                            <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>
-                              {student.email}
-                            </span>
-                            <span style={{ fontSize: "0.7rem", color: "#6b7280", marginTop: "0.25rem" }}>
-                              Submitted {new Date(student.availability.submittedAt).toLocaleDateString()}
-                            </span>
-                            {student.availability.notes && (
-                              <div style={{ marginTop: "0.5rem", padding: "0.5rem", backgroundColor: "rgba(255, 255, 255, 0.05)", borderRadius: "4px", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
-                                <span style={{ fontSize: "0.7rem", color: "#6b7280", fontWeight: "500" }}>Note: </span>
-                                <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>{student.availability.notes}</span>
-                              </div>
-                            )}
-                          </div>
-                        </td>
-                        {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => {
-                          const dayAvail = student.availability.availability[day];
-                          const hasAvailability = dayAvail && dayAvail.length > 0;
-
-                          return (
-                            <td key={day} style={{ padding: "1rem", verticalAlign: "top" }}>
-                              {hasAvailability ? (
-                                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.375rem" }}>
-                                  {dayAvail.map((slot, idx) => (
-                                    <span key={idx} style={{
-                                      fontSize: "0.75rem",
-                                      color: "#10b981",
-                                      padding: "0.25rem 0.5rem",
-                                      backgroundColor: "#0d3320",
-                                      border: "1px solid #1f5e3a",
-                                      borderRadius: "4px",
-                                      whiteSpace: "nowrap"
-                                    }}>
-                                      {slot}
-                                    </span>
-                                  ))}
-                                </div>
-                              ) : (
-                                <span style={{
-                                  fontSize: "0.75rem",
-                                  color: "#6b7280",
-                                  fontStyle: "italic"
-                                }}>
-                                  Not available
-                                </span>
-                              )}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                {students.filter(s => s.hasSubmitted).map((student) => (
+                  <AvailabilityGrid key={student.id} student={student} />
+                ))}
               </div>
             )}
           </div>
@@ -2702,27 +2653,33 @@ export default function Home() {
                   </button>
                   <button
                     type="submit"
+                    disabled={submittingAdmin}
                     style={{
                       padding: "0.625rem 1.25rem",
-                      backgroundColor: "#14b8a6",
+                      backgroundColor: submittingAdmin ? "#6b7280" : "#14b8a6",
                       color: "#ffffff",
-                      border: "1px solid #14b8a6",
+                      border: submittingAdmin ? "1px solid #6b7280" : "1px solid #14b8a6",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       fontWeight: "500",
-                      cursor: "pointer",
-                      transition: "all 0.15s ease"
+                      cursor: submittingAdmin ? "not-allowed" : "pointer",
+                      transition: "all 0.15s ease",
+                      opacity: submittingAdmin ? 0.6 : 1
                     }}
                     onMouseOver={(e) => {
-                      e.currentTarget.style.backgroundColor = "#0d9488";
-                      e.currentTarget.style.borderColor = "#0d9488";
+                      if (!submittingAdmin) {
+                        e.currentTarget.style.backgroundColor = "#0d9488";
+                        e.currentTarget.style.borderColor = "#0d9488";
+                      }
                     }}
                     onMouseOut={(e) => {
-                      e.currentTarget.style.backgroundColor = "#14b8a6";
-                      e.currentTarget.style.borderColor = "#14b8a6";
+                      if (!submittingAdmin) {
+                        e.currentTarget.style.backgroundColor = "#14b8a6";
+                        e.currentTarget.style.borderColor = "#14b8a6";
+                      }
                     }}
                   >
-                    Send Invitation
+                    {submittingAdmin ? 'Sending...' : 'Send Invitation'}
                   </button>
                 </div>
               </form>
@@ -2893,27 +2850,33 @@ export default function Home() {
                   </button>
                   <button
                     type="submit"
+                    disabled={submittingStudent}
                     style={{
                       padding: "0.625rem 1.25rem",
-                      backgroundColor: "#14b8a6",
+                      backgroundColor: submittingStudent ? "#6b7280" : "#14b8a6",
                       color: "#ffffff",
-                      border: "1px solid #14b8a6",
+                      border: submittingStudent ? "1px solid #6b7280" : "1px solid #14b8a6",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       fontWeight: "500",
-                      cursor: "pointer",
-                      transition: "all 0.15s ease"
+                      cursor: submittingStudent ? "not-allowed" : "pointer",
+                      transition: "all 0.15s ease",
+                      opacity: submittingStudent ? 0.6 : 1
                     }}
                     onMouseOver={(e) => {
-                      e.currentTarget.style.backgroundColor = "#0d9488";
-                      e.currentTarget.style.borderColor = "#0d9488";
+                      if (!submittingStudent) {
+                        e.currentTarget.style.backgroundColor = "#0d9488";
+                        e.currentTarget.style.borderColor = "#0d9488";
+                      }
                     }}
                     onMouseOut={(e) => {
-                      e.currentTarget.style.backgroundColor = "#14b8a6";
-                      e.currentTarget.style.borderColor = "#14b8a6";
+                      if (!submittingStudent) {
+                        e.currentTarget.style.backgroundColor = "#14b8a6";
+                        e.currentTarget.style.borderColor = "#14b8a6";
+                      }
                     }}
                   >
-                    {editingStudent ? 'Update' : 'Add'} Student
+                    {submittingStudent ? 'Saving...' : (editingStudent ? 'Update' : 'Add') + ' Student'}
                   </button>
                 </div>
               </form>
