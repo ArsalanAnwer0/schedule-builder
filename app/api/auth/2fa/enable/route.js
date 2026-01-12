@@ -5,10 +5,25 @@ import crypto from 'crypto';
 import { requireAuth } from '../../../../../lib/auth/session';
 import dbConnect from '../../../../../lib/db/connect';
 import User from '../../../../../lib/db/models/User';
+import { rateLimit } from '../../../../../lib/utils/rateLimiter';
 
 export async function POST(request) {
   try {
     const { user } = await requireAuth();
+
+    // Rate limiting: 10 requests per user per 15 minutes
+    const rateLimitKey = `2fa-enable:${user._id}`;
+    const rateLimitResult = await rateLimit(rateLimitKey, 10, 15 * 60 * 1000);
+
+    if (!rateLimitResult.allowed) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again in 15 minutes.' },
+        {
+          status: 429,
+          headers: rateLimitResult.headers
+        }
+      );
+    }
 
     await dbConnect();
 

@@ -4,6 +4,7 @@ import dbConnect from '../../../../lib/db/connect';
 import User from '../../../../lib/db/models/User';
 import { sendAvailabilityRequest } from '../../../../lib/email/send';
 import { createBulkNotifications } from '../../../../lib/utils/notifications';
+import { rateLimit } from '../../../../lib/utils/rateLimiter';
 
 export async function POST(request) {
   try {
@@ -14,6 +15,20 @@ export async function POST(request) {
       return NextResponse.json(
         { error: 'Only admins can request availability' },
         { status: 403 }
+      );
+    }
+
+    // Rate limiting: 50 requests per admin per hour
+    const rateLimitKey = `students-request-availability:${user._id}`;
+    const rateLimitResult = await rateLimit(rateLimitKey, 50, 60 * 60 * 1000);
+
+    if (!rateLimitResult.allowed) {
+      return NextResponse.json(
+        { error: 'Too many availability requests. Please try again later.' },
+        {
+          status: 429,
+          headers: rateLimitResult.headers
+        }
       );
     }
 

@@ -6,6 +6,7 @@ import Session from '../../../../lib/db/models/Session';
 import Availability from '../../../../lib/db/models/Availability';
 import AvailabilityEditRequest from '../../../../lib/db/models/AvailabilityEditRequest';
 import VerificationCode from '../../../../lib/db/models/VerificationCode';
+import { rateLimit } from '../../../../lib/utils/rateLimiter';
 
 export async function DELETE(request) {
   try {
@@ -15,6 +16,20 @@ export async function DELETE(request) {
       sessionData = await requireAdmin();
     } catch (error) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Rate limiting: 5 removals per admin per hour
+    const rateLimitKey = `remove-admin:${sessionData.user._id}`;
+    const rateLimitResult = await rateLimit(rateLimitKey, 5, 60 * 60 * 1000);
+
+    if (!rateLimitResult.allowed) {
+      return NextResponse.json(
+        { error: 'Too many admin removal requests. Please try again later.' },
+        {
+          status: 429,
+          headers: rateLimitResult.headers
+        }
+      );
     }
 
     await dbConnect();

@@ -20,10 +20,15 @@ export async function POST(request) {
 
     // Rate limiting: 10 attempts per email per 5 minutes
     const rateLimitKey = `set-password:${email.toLowerCase()}`;
-    if (!rateLimit(rateLimitKey, 10, 5 * 60 * 1000)) {
+    const rateLimitResult = await rateLimit(rateLimitKey, 10, 5 * 60 * 1000);
+
+    if (!rateLimitResult.allowed) {
       return NextResponse.json(
         { error: 'Too many attempts. Please try again in 5 minutes.' },
-        { status: 429 }
+        {
+          status: 429,
+          headers: rateLimitResult.headers
+        }
       );
     }
 

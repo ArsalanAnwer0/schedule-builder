@@ -5,6 +5,7 @@ import AvailabilityEditRequest from '../../../../lib/db/models/AvailabilityEditR
 import Availability from '../../../../lib/db/models/Availability';
 import User from '../../../../lib/db/models/User';
 import { sendAvailabilityEditRequestToAdmin } from '../../../../lib/email/send';
+import { rateLimit } from '../../../../lib/utils/rateLimiter';
 
 // POST - Create a new edit request (student)
 export async function POST(request) {
@@ -14,6 +15,20 @@ export async function POST(request) {
       sessionData = await requireAuth();
     } catch (error) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Rate limiting: 20 requests per user per hour
+    const rateLimitKey = `availability-edit-request:${sessionData.user._id}`;
+    const rateLimitResult = await rateLimit(rateLimitKey, 20, 60 * 60 * 1000);
+
+    if (!rateLimitResult.allowed) {
+      return NextResponse.json(
+        { error: 'Too many edit requests. Please try again later.' },
+        {
+          status: 429,
+          headers: rateLimitResult.headers
+        }
+      );
     }
 
     const { newAvailability, newNotes, reason } = await request.json();

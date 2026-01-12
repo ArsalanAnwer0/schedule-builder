@@ -5,6 +5,7 @@ import Schedule from '../../../../../lib/db/models/Schedule';
 import User from '../../../../../lib/db/models/User';
 import { sendSchedulePublishedNotification } from '../../../../../lib/email/send';
 import { createBulkNotifications } from '../../../../../lib/utils/notifications';
+import { rateLimit } from '../../../../../lib/utils/rateLimiter';
 
 // POST - Publish a schedule
 export async function POST(request, { params }) {
@@ -12,6 +13,20 @@ export async function POST(request, { params }) {
     const adminCheck = await requireAdmin();
     if (adminCheck.error) {
       return NextResponse.json({ error: adminCheck.error }, { status: adminCheck.status });
+    }
+
+    // Rate limiting: 20 publishes per admin per hour
+    const rateLimitKey = `schedule-publish:${adminCheck.user._id}`;
+    const rateLimitResult = await rateLimit(rateLimitKey, 20, 60 * 60 * 1000);
+
+    if (!rateLimitResult.allowed) {
+      return NextResponse.json(
+        { error: 'Too many schedule publications. Please try again later.' },
+        {
+          status: 429,
+          headers: rateLimitResult.headers
+        }
+      );
     }
 
     const { id } = await params;

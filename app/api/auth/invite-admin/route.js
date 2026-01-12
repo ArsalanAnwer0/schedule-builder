@@ -3,6 +3,7 @@ import { requireAdmin } from '../../../../lib/auth/session';
 import dbConnect from '../../../../lib/db/connect';
 import User from '../../../../lib/db/models/User';
 import { sendAdminInvite } from '../../../../lib/email/send';
+import { rateLimit } from '../../../../lib/utils/rateLimiter';
 
 export async function POST(request) {
   try {
@@ -12,6 +13,20 @@ export async function POST(request) {
       sessionData = await requireAdmin();
     } catch (error) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Rate limiting: 10 invites per admin per hour
+    const rateLimitKey = `invite-admin:${sessionData.user._id}`;
+    const rateLimitResult = await rateLimit(rateLimitKey, 10, 60 * 60 * 1000);
+
+    if (!rateLimitResult.allowed) {
+      return NextResponse.json(
+        { error: 'Too many admin invitations. Please try again later.' },
+        {
+          status: 429,
+          headers: rateLimitResult.headers
+        }
+      );
     }
 
     const { email, secondaryEmail, name } = await request.json();

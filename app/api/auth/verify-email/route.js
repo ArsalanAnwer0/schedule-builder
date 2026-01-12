@@ -17,10 +17,15 @@ export async function POST(request) {
 
     // Rate limiting: 10 attempts per email per 15 minutes
     const rateLimitKey = `verify-email:${email.toLowerCase()}`;
-    if (!rateLimit(rateLimitKey, 10, 15 * 60 * 1000)) {
+    const rateLimitResult = await rateLimit(rateLimitKey, 10, 15 * 60 * 1000);
+
+    if (!rateLimitResult.allowed) {
       return NextResponse.json(
         { error: 'Too many verification attempts. Please try again in 15 minutes.' },
-        { status: 429 }
+        {
+          status: 429,
+          headers: rateLimitResult.headers
+        }
       );
     }
 

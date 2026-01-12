@@ -19,10 +19,15 @@ export async function POST(request) {
 
     // Rate limiting: 5 attempts per token per 15 minutes
     const rateLimitKey = `reset-password:${token}`;
-    if (!rateLimit(rateLimitKey, 5, 15 * 60 * 1000)) {
+    const rateLimitResult = await rateLimit(rateLimitKey, 5, 15 * 60 * 1000);
+
+    if (!rateLimitResult.allowed) {
       return NextResponse.json(
         { error: 'Too many reset attempts. Please request a new reset link.' },
-        { status: 429 }
+        {
+          status: 429,
+          headers: rateLimitResult.headers
+        }
       );
     }
 

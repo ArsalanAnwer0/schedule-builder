@@ -30,11 +30,15 @@ export async function POST(request) {
     const forwarded = request.headers.get('x-forwarded-for');
     const ip = forwarded ? forwarded.split(',')[0] : 'unknown';
     const rateLimitKey = `register:${ip}`;
+    const rateLimitResult = await rateLimit(rateLimitKey, 3, 60 * 60 * 1000);
 
-    if (!rateLimit(rateLimitKey, 3, 60 * 60 * 1000)) {
+    if (!rateLimitResult.allowed) {
       return NextResponse.json(
         { error: 'Too many registration attempts. Please try again later.' },
-        { status: 429 }
+        {
+          status: 429,
+          headers: rateLimitResult.headers
+        }
       );
     }
 

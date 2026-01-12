@@ -7,6 +7,7 @@ import Availability from '../../../../lib/db/models/Availability';
 import AvailabilityEditRequest from '../../../../lib/db/models/AvailabilityEditRequest';
 import Schedule from '../../../../lib/db/models/Schedule';
 import VerificationCode from '../../../../lib/db/models/VerificationCode';
+import { rateLimit } from '../../../../lib/utils/rateLimiter';
 
 export async function DELETE(request) {
   try {
@@ -16,6 +17,20 @@ export async function DELETE(request) {
       sessionData = await requireAdmin();
     } catch (error) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Rate limiting: 3 deletions per admin per day (86400000 ms = 24 hours)
+    const rateLimitKey = `delete-account:${sessionData.user._id}`;
+    const rateLimitResult = await rateLimit(rateLimitKey, 3, 24 * 60 * 60 * 1000);
+
+    if (!rateLimitResult.allowed) {
+      return NextResponse.json(
+        { error: 'Too many account deletion requests. Please try again tomorrow.' },
+        {
+          status: 429,
+          headers: rateLimitResult.headers
+        }
+      );
     }
 
     await dbConnect();

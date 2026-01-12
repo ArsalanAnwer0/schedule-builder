@@ -4,6 +4,7 @@ import dbConnect from '../../../lib/db/connect';
 import Availability from '../../../lib/db/models/Availability';
 import User from '../../../lib/db/models/User';
 import { createNotification } from '../../../lib/utils/notifications';
+import { rateLimit } from '../../../lib/utils/rateLimiter';
 
 // Helper function to send email notifications (will be imported from email/send.js)
 async function sendAvailabilitySubmittedNotification(adminEmail, studentName, studentEmail) {
@@ -30,7 +31,21 @@ export async function POST(request) {
       );
     }
 
-    const { availability, notes } = await request.json();
+    // Rate limiting: 30 submissions per student per hour
+    const rateLimitKey = `availability-submit:${user._id}`;
+    const rateLimitResult = await rateLimit(rateLimitKey, 30, 60 * 60 * 1000);
+
+    if (!rateLimitResult.allowed) {
+      return NextResponse.json(
+        { error: 'Too many availability submissions. Please try again later.' },
+        {
+          status: 429,
+          headers: rateLimitResult.headers
+        }
+      );
+    }
+
+    const { availability, notes} = await request.json();
 
     // Validate availability data
     if (!availability) {
