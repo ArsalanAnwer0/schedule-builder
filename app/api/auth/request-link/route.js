@@ -23,10 +23,15 @@ export async function POST(request) {
 
     // Rate limiting: 5 requests per email per 15 minutes
     const rateLimitKey = `request-link:${email.toLowerCase()}`;
-    if (!rateLimit(rateLimitKey, 5, 15 * 60 * 1000)) {
+    const rateLimitResult = await rateLimit(rateLimitKey, 5, 15 * 60 * 1000);
+
+    if (!rateLimitResult.allowed) {
       return NextResponse.json(
         { error: 'Too many requests. Please try again in 15 minutes.' },
-        { status: 429 }
+        {
+          status: 429,
+          headers: rateLimitResult.headers
+        }
       );
     }
 

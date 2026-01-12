@@ -5,6 +5,7 @@ import Schedule from '../../../../../lib/db/models/Schedule';
 import User from '../../../../../lib/db/models/User';
 import { sendSchedulePublishedNotification } from '../../../../../lib/email/send';
 import { createBulkNotifications } from '../../../../../lib/utils/notifications';
+import { rateLimit } from '../../../../../lib/utils/rateLimiter';
 
 // POST - Publish a schedule
 export async function POST(request, { params }) {
@@ -12,6 +13,20 @@ export async function POST(request, { params }) {
     const adminCheck = await requireAdmin();
     if (adminCheck.error) {
       return NextResponse.json({ error: adminCheck.error }, { status: adminCheck.status });
+    }
+
+    // Rate limiting: 20 publishes per admin per hour
+    const rateLimitKey = `schedule-publish:${adminCheck.user._id}`;
+    const rateLimitResult = await rateLimit(rateLimitKey, 20, 60 * 60 * 1000);
+
+    if (!rateLimitResult.allowed) {
+      return NextResponse.json(
+        { error: 'Too many schedule publications. Please try again later.' },
+        {
+          status: 429,
+          headers: rateLimitResult.headers
+        }
+      );
     }
 
     const { id } = await params;
@@ -36,8 +51,14 @@ export async function POST(request, { params }) {
     schedule.publishedAt = new Date();
     await schedule.save();
 
-    // Get all students to send notifications (including secondary emails)
-    const students = await User.find({ role: 'student' }).select('email secondaryEmail name');
+    // Get admin's organization to ensure we only notify students in the same org
+    const admin = await User.findById(adminCheck.user._id);
+
+    // Get students ONLY from the admin's organization (SECURITY FIX)
+    const students = await User.find({
+      role: 'student',
+      organizationName: admin.organizationName
+    }).select('email secondaryEmail name');
 
     // Send email notifications to all students (both primary and secondary emails)
     const emailResults = await Promise.allSettled(

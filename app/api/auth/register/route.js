@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import dbConnect from '../../../../lib/db/connect';
 import User from '../../../../lib/db/models/User';
 import { rateLimit } from '../../../../lib/utils/rateLimiter';
+import { validatePasswordStrength } from '../../../../lib/utils/passwordStrength';
 
 export async function POST(request) {
   try {
@@ -16,10 +17,11 @@ export async function POST(request) {
       );
     }
 
-    // Validate password strength
-    if (password.length < 6) {
+    // Validate password strength (SECURITY FIX: Use comprehensive validator)
+    const passwordValidation = validatePasswordStrength(password);
+    if (!passwordValidation.isValid) {
       return NextResponse.json(
-        { error: 'Password must be at least 6 characters long' },
+        { error: passwordValidation.errors[0] }, // Return first error
         { status: 400 }
       );
     }
@@ -28,11 +30,15 @@ export async function POST(request) {
     const forwarded = request.headers.get('x-forwarded-for');
     const ip = forwarded ? forwarded.split(',')[0] : 'unknown';
     const rateLimitKey = `register:${ip}`;
+    const rateLimitResult = await rateLimit(rateLimitKey, 3, 60 * 60 * 1000);
 
-    if (!rateLimit(rateLimitKey, 3, 60 * 60 * 1000)) {
+    if (!rateLimitResult.allowed) {
       return NextResponse.json(
         { error: 'Too many registration attempts. Please try again later.' },
-        { status: 429 }
+        {
+          status: 429,
+          headers: rateLimitResult.headers
+        }
       );
     }
 

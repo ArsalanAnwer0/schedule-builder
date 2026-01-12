@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { requireAdmin } from '../../../lib/auth/session';
 import dbConnect from '../../../lib/db/connect';
 import Schedule from '../../../lib/db/models/Schedule';
+import User from '../../../lib/db/models/User';
 
 // POST - Save generated schedules
 export async function POST(request) {
@@ -19,8 +20,14 @@ export async function POST(request) {
 
     await dbConnect();
 
-    // Delete any existing draft schedules before saving new ones
-    await Schedule.deleteMany({ status: 'draft' });
+    // Get admin's organization for scoping schedules (SECURITY FIX)
+    const admin = await User.findById(adminCheck.user._id);
+
+    // Delete only THIS organization's draft schedules before saving new ones (SECURITY FIX)
+    await Schedule.deleteMany({
+      status: 'draft',
+      organizationName: admin.organizationName
+    });
 
     // Save all 3 schedule options as drafts
     const savedSchedules = await Promise.all(
@@ -60,6 +67,7 @@ export async function POST(request) {
 
         const scheduleDoc = new Schedule({
           periodId: null, // We'll add period management later
+          organizationName: admin.organizationName, // SECURITY FIX: Scope to organization
           status: 'draft',
           strategyName,
           shifts,
@@ -101,8 +109,14 @@ export async function GET(request) {
 
     await dbConnect();
 
-    // Get the published schedule
-    const publishedSchedule = await Schedule.findOne({ status: 'published' })
+    // Get admin's organization to fetch only their schedules (SECURITY FIX)
+    const admin = await User.findById(adminCheck.user._id);
+
+    // Get the published schedule for this organization only
+    const publishedSchedule = await Schedule.findOne({
+      status: 'published',
+      organizationName: admin.organizationName
+    })
       .populate('shifts.studentId', 'name email')
       .sort({ publishedAt: -1 });
 

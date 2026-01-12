@@ -4,6 +4,7 @@ import dbConnect from '../../../../lib/db/connect';
 import User from '../../../../lib/db/models/User';
 import { createSession, setSessionCookie } from '../../../../lib/auth/session';
 import { rateLimit } from '../../../../lib/utils/rateLimiter';
+import { validatePasswordStrength } from '../../../../lib/utils/passwordStrength';
 
 export async function POST(request) {
   try {
@@ -19,17 +20,23 @@ export async function POST(request) {
 
     // Rate limiting: 10 attempts per email per 5 minutes
     const rateLimitKey = `set-password:${email.toLowerCase()}`;
-    if (!rateLimit(rateLimitKey, 10, 5 * 60 * 1000)) {
+    const rateLimitResult = await rateLimit(rateLimitKey, 10, 5 * 60 * 1000);
+
+    if (!rateLimitResult.allowed) {
       return NextResponse.json(
         { error: 'Too many attempts. Please try again in 5 minutes.' },
-        { status: 429 }
+        {
+          status: 429,
+          headers: rateLimitResult.headers
+        }
       );
     }
 
-    // Validate password strength
-    if (password.length < 6) {
+    // Validate password strength (SECURITY FIX: Use comprehensive validator)
+    const passwordValidation = validatePasswordStrength(password);
+    if (!passwordValidation.isValid) {
       return NextResponse.json(
-        { error: 'Password must be at least 6 characters long' },
+        { error: passwordValidation.errors[0] }, // Return first error
         { status: 400 }
       );
     }

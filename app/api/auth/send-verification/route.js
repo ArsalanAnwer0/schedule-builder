@@ -19,10 +19,15 @@ export async function POST(request) {
 
     // Rate limiting: 3 verification emails per email per 15 minutes
     const rateLimitKey = `send-verification:${email.toLowerCase()}`;
-    if (!rateLimit(rateLimitKey, 3, 15 * 60 * 1000)) {
+    const rateLimitResult = await rateLimit(rateLimitKey, 3, 15 * 60 * 1000);
+
+    if (!rateLimitResult.allowed) {
       return NextResponse.json(
         { error: 'Too many verification requests. Please try again in 15 minutes.' },
-        { status: 429 }
+        {
+          status: 429,
+          headers: rateLimitResult.headers
+        }
       );
     }
 
