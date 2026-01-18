@@ -675,8 +675,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Screenshot Carousel Section */}
-      <section className="section-padding" style={{
+      {/* Screenshot Carousel Section - COMMENTED OUT FOR NOW */}
+      {/* <section className="section-padding" style={{
         maxWidth: "1200px",
         margin: "0 auto",
         paddingTop: "8rem",
@@ -702,20 +702,18 @@ export default function LandingPage() {
           </div>
         </FadeInSection>
 
-        {/* Admin Portal Screenshots */}
         <FadeInSection delay={100}>
           <div style={{ marginBottom: "8rem" }}>
             <ScreenshotGrid screenshots={adminScreenshots} sectionTitle="Admin Portal" />
           </div>
         </FadeInSection>
 
-        {/* Student Portal Screenshots */}
         <FadeInSection delay={200}>
           <div style={{ marginBottom: "4rem" }}>
             <ScreenshotGrid screenshots={studentScreenshots} sectionTitle="Student Portal" />
           </div>
         </FadeInSection>
-      </section>
+      </section> */}
 
       {/* Features Section */}
       <section id="features" className="section-padding" style={{
