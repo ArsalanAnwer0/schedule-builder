@@ -45,7 +45,7 @@ export default function SplashScreen({ onComplete }) {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: '#0a0f1a',
+        backgroundColor: '#ffffff',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -61,7 +61,7 @@ export default function SplashScreen({ onComplete }) {
         <h1 style={{
           fontSize: '3.5rem',
           fontWeight: '300',
-          color: '#ffffff',
+          color: '#000000',
           letterSpacing: '-0.02em',
           fontFamily: "Georgia, 'Times New Roman', serif",
           margin: 0
