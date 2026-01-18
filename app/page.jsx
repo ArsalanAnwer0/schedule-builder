@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import ScreenshotGrid from './components/ScreenshotCarousel';
 import SplashScreen from './components/SplashScreen';
 import FadeInSection from './components/FadeInSection';
+import HeroAnimation from './components/HeroAnimation';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -473,45 +474,47 @@ export default function LandingPage() {
         margin: "0 auto",
         position: "relative"
       }}>
-        {/* Beta Badge */}
-        <div style={{
-          display: "inline-block",
-          padding: "0.5rem 1rem",
-          backgroundColor: "rgba(20, 184, 166, 0.1)",
-          border: "1px solid rgba(20, 184, 166, 0.3)",
-          borderRadius: "20px",
-          color: "#14b8a6",
-          fontSize: "0.8125rem",
-          fontWeight: "500",
-          marginBottom: "2rem",
-          letterSpacing: "0.05em"
-        }}>
-          Now in Beta
-        </div>
+        <HeroAnimation delay={100}>
+          {/* Beta Badge */}
+          <div style={{
+            display: "inline-block",
+            padding: "0.5rem 1rem",
+            backgroundColor: "rgba(20, 184, 166, 0.1)",
+            border: "1px solid rgba(20, 184, 166, 0.3)",
+            borderRadius: "20px",
+            color: "#14b8a6",
+            fontSize: "0.8125rem",
+            fontWeight: "500",
+            marginBottom: "2rem",
+            letterSpacing: "0.05em"
+          }}>
+            Now in Beta
+          </div>
 
-        <h1 className="hero-title" style={{
-          fontWeight: "400",
-          color: "#ffffff",
-          marginBottom: "1.5rem",
-          letterSpacing: "-0.02em",
-          fontFamily: "Georgia, 'Times New Roman', serif"
-        }}>
-          Scheduling office hours is broken.
-          <br />
-          We fixed it.
-        </h1>
+          <h1 className="hero-title" style={{
+            fontWeight: "400",
+            color: "#ffffff",
+            marginBottom: "1.5rem",
+            letterSpacing: "-0.02em",
+            fontFamily: "Georgia, 'Times New Roman', serif"
+          }}>
+            Scheduling office hours is broken.
+            <br />
+            We fixed it.
+          </h1>
 
-        <p style={{
-          fontSize: "1.25rem",
-          color: "rgba(255, 255, 255, 0.6)",
-          marginBottom: "3rem",
-          maxWidth: "750px",
-          margin: "2rem auto 3rem auto",
-          lineHeight: "1.7",
-          fontWeight: "300"
-        }}>
-          Collect availability, create schedules, and manage changes automatically without the chaos.
-        </p>
+          <p style={{
+            fontSize: "1.25rem",
+            color: "rgba(255, 255, 255, 0.6)",
+            marginBottom: "3rem",
+            maxWidth: "750px",
+            margin: "2rem auto 3rem auto",
+            lineHeight: "1.7",
+            fontWeight: "300"
+          }}>
+            Collect availability, create schedules, and manage changes automatically without the chaos.
+          </p>
+        </HeroAnimation>
 
       </section>
 
@@ -696,23 +699,25 @@ export default function LandingPage() {
         backgroundColor: "rgba(20, 184, 166, 0.02)"
       }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: "5rem" }}>
-            <h2 className="section-title" style={{
-              fontWeight: "400",
-              color: "#ffffff",
-              marginBottom: "1rem",
-              fontFamily: "Georgia, 'Times New Roman', serif"
-            }}>
-              Everything you need
-            </h2>
-            <p style={{
-              fontSize: "1.125rem",
-              color: "rgba(255, 255, 255, 0.5)",
-              fontWeight: "300"
-            }}>
-              Comprehensive tools designed for modern scheduling
-            </p>
-          </div>
+          <FadeInSection>
+            <div style={{ textAlign: "center", marginBottom: "5rem" }}>
+              <h2 className="section-title" style={{
+                fontWeight: "400",
+                color: "#ffffff",
+                marginBottom: "1rem",
+                fontFamily: "Georgia, 'Times New Roman', serif"
+              }}>
+                Everything you need
+              </h2>
+              <p style={{
+                fontSize: "1.125rem",
+                color: "rgba(255, 255, 255, 0.5)",
+                fontWeight: "300"
+              }}>
+                Comprehensive tools designed for modern scheduling
+              </p>
+            </div>
+          </FadeInSection>
 
           <div className="grid-3-cols" style={{
             display: "grid",
@@ -970,25 +975,26 @@ export default function LandingPage() {
         maxWidth: "700px",
         margin: "0 auto"
       }}>
-        <div style={{ textAlign: "center" }}>
-          <h2 style={{
-            fontSize: "2.5rem",
-            fontWeight: "400",
-            color: "#ffffff",
-            marginBottom: "1rem",
-            fontFamily: "Georgia, 'Times New Roman', serif",
-            letterSpacing: "-0.02em"
-          }}>
-            Join the Waitlist
-          </h2>
-          <p style={{
-            fontSize: "1.125rem",
-            color: "rgba(255, 255, 255, 0.6)",
-            marginBottom: "2.5rem",
-            lineHeight: "1.6"
-          }}>
-            Be the first to know when we launch new features
-          </p>
+        <FadeInSection>
+          <div style={{ textAlign: "center" }}>
+            <h2 style={{
+              fontSize: "2.5rem",
+              fontWeight: "400",
+              color: "#ffffff",
+              marginBottom: "1rem",
+              fontFamily: "Georgia, 'Times New Roman', serif",
+              letterSpacing: "-0.02em"
+            }}>
+              Join the Waitlist
+            </h2>
+            <p style={{
+              fontSize: "1.125rem",
+              color: "rgba(255, 255, 255, 0.6)",
+              marginBottom: "2.5rem",
+              lineHeight: "1.6"
+            }}>
+              Be the first to know when we launch new features
+            </p>
 
           <form onSubmit={handleWaitlistSubmit} style={{
             maxWidth: "500px",
@@ -1085,7 +1091,8 @@ export default function LandingPage() {
               </div>
             )}
           </form>
-        </div>
+          </div>
+        </FadeInSection>
       </section>
 
       {/* FAQ Section */}
