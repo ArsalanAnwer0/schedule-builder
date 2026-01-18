@@ -227,23 +227,6 @@ export default function LandingPage() {
               FAQ
             </button>
             <button
-              onClick={() => router.push('/login')}
-              style={{
-                background: "none",
-                border: "none",
-                color: "rgba(255, 255, 255, 0.65)",
-                fontSize: "0.9375rem",
-                cursor: "pointer",
-                padding: "0.5rem 0",
-                fontWeight: "400",
-                transition: "color 0.2s"
-              }}
-              onMouseOver={(e) => e.currentTarget.style.color = "#ffffff"}
-              onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
-            >
-              Login
-            </button>
-            <button
               onClick={() => router.push('/forum')}
               style={{
                 background: "none",
@@ -259,6 +242,23 @@ export default function LandingPage() {
               onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
             >
               Forum
+            </button>
+            <button
+              onClick={() => router.push('/login')}
+              style={{
+                background: "none",
+                border: "none",
+                color: "rgba(255, 255, 255, 0.65)",
+                fontSize: "0.9375rem",
+                cursor: "pointer",
+                padding: "0.5rem 0",
+                fontWeight: "400",
+                transition: "color 0.2s"
+              }}
+              onMouseOver={(e) => e.currentTarget.style.color = "#ffffff"}
+              onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
+            >
+              Login
             </button>
             <button
               onClick={() => router.push('/docs')}
@@ -392,24 +392,6 @@ export default function LandingPage() {
           </button>
           <button
             onClick={() => {
-              router.push('/login');
-              setMobileMenuOpen(false);
-            }}
-            style={{
-              background: "none",
-              border: "none",
-              color: "rgba(255, 255, 255, 0.7)",
-              fontSize: "1.125rem",
-              cursor: "pointer",
-              padding: "1rem 0",
-              textAlign: "left",
-              transition: "color 0.2s"
-            }}
-          >
-            Login
-          </button>
-          <button
-            onClick={() => {
               router.push('/forum');
               setMobileMenuOpen(false);
             }}
@@ -425,6 +407,24 @@ export default function LandingPage() {
             }}
           >
             Forum
+          </button>
+          <button
+            onClick={() => {
+              router.push('/login');
+              setMobileMenuOpen(false);
+            }}
+            style={{
+              background: "none",
+              border: "none",
+              color: "rgba(255, 255, 255, 0.7)",
+              fontSize: "1.125rem",
+              cursor: "pointer",
+              padding: "1rem 0",
+              textAlign: "left",
+              transition: "color 0.2s"
+            }}
+          >
+            Login
           </button>
           <button
             onClick={() => {
