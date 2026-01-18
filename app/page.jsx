@@ -12,6 +12,10 @@ export default function LandingPage() {
   const [feedbackError, setFeedbackError] = useState('');
   const [expandedFaq, setExpandedFaq] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [waitlistEmail, setWaitlistEmail] = useState('');
+  const [waitlistSubmitting, setWaitlistSubmitting] = useState(false);
+  const [waitlistSuccess, setWaitlistSuccess] = useState('');
+  const [waitlistError, setWaitlistError] = useState('');
 
   const handleFeedbackSubmit = async (e) => {
     e.preventDefault();
@@ -28,6 +32,44 @@ export default function LandingPage() {
         setFeedbackSuccess('');
       }, 2000);
     }, 1000);
+  };
+
+  const handleWaitlistSubmit = async (e) => {
+    e.preventDefault();
+    setWaitlistSubmitting(true);
+    setWaitlistError('');
+    setWaitlistSuccess('');
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(waitlistEmail)) {
+      setWaitlistError('Please enter a valid email address');
+      setWaitlistSubmitting(false);
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/waitlist/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: waitlistEmail }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setWaitlistError(data.error || 'Failed to join waitlist');
+        setWaitlistSubmitting(false);
+        return;
+      }
+
+      setWaitlistSuccess(data.message || 'Successfully joined the waitlist!');
+      setWaitlistEmail('');
+      setWaitlistSubmitting(false);
+    } catch (err) {
+      setWaitlistError('Something went wrong. Please try again.');
+      setWaitlistSubmitting(false);
+    }
   };
 
   const scrollToSection = (sectionId) => {
@@ -111,6 +153,28 @@ export default function LandingPage() {
               onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.7)"}
             >
               FAQ
+            </button>
+            <button
+              onClick={() => router.push('/login')}
+              style={{
+                padding: "0.625rem 1.5rem",
+                background: "transparent",
+                color: "#14b8a6",
+                border: "1px solid #14b8a6",
+                borderRadius: "6px",
+                fontSize: "0.9375rem",
+                fontWeight: "600",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = "rgba(20, 184, 166, 0.1)";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = "transparent";
+              }}
+            >
+              Login
             </button>
             <button
               onClick={() => router.push('/register')}
@@ -724,6 +788,129 @@ export default function LandingPage() {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Waitlist Section */}
+      <section id="waitlist" className="section-padding" style={{
+        maxWidth: "700px",
+        margin: "0 auto"
+      }}>
+        <div style={{ textAlign: "center" }}>
+          <h2 style={{
+            fontSize: "2.5rem",
+            fontWeight: "400",
+            color: "#ffffff",
+            marginBottom: "1rem",
+            fontFamily: "Georgia, 'Times New Roman', serif",
+            letterSpacing: "-0.02em"
+          }}>
+            Join the Waitlist
+          </h2>
+          <p style={{
+            fontSize: "1.125rem",
+            color: "rgba(255, 255, 255, 0.6)",
+            marginBottom: "2.5rem",
+            lineHeight: "1.6"
+          }}>
+            Be the first to know when we launch new features
+          </p>
+
+          <form onSubmit={handleWaitlistSubmit} style={{
+            maxWidth: "500px",
+            margin: "0 auto"
+          }}>
+            <div style={{
+              display: "flex",
+              gap: "0.75rem",
+              flexDirection: "column"
+            }}>
+              <input
+                type="email"
+                placeholder="Enter your email"
+                value={waitlistEmail}
+                onChange={(e) => setWaitlistEmail(e.target.value)}
+                disabled={waitlistSubmitting}
+                style={{
+                  width: "100%",
+                  padding: "0.875rem 1rem",
+                  backgroundColor: "rgba(255, 255, 255, 0.05)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  borderRadius: "8px",
+                  color: "#ffffff",
+                  fontSize: "1rem",
+                  outline: "none",
+                  transition: "all 0.2s",
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = "#14b8a6";
+                  e.target.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                  e.target.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                }}
+              />
+              <button
+                type="submit"
+                disabled={waitlistSubmitting}
+                style={{
+                  width: "100%",
+                  padding: "0.875rem 1.5rem",
+                  backgroundColor: waitlistSubmitting ? "rgba(20, 184, 166, 0.5)" : "#14b8a6",
+                  color: "#ffffff",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontSize: "1rem",
+                  fontWeight: "500",
+                  cursor: waitlistSubmitting ? "not-allowed" : "pointer",
+                  transition: "all 0.2s",
+                }}
+                onMouseOver={(e) => {
+                  if (!waitlistSubmitting) {
+                    e.target.style.backgroundColor = "#0d9488";
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (!waitlistSubmitting) {
+                    e.target.style.backgroundColor = "#14b8a6";
+                  }
+                }}
+              >
+                {waitlistSubmitting ? 'Joining...' : 'Join Waitlist'}
+              </button>
+            </div>
+
+            {waitlistSuccess && (
+              <div style={{
+                marginTop: "1rem",
+                padding: "0.875rem 1rem",
+                backgroundColor: "rgba(16, 185, 129, 0.1)",
+                border: "1px solid rgba(16, 185, 129, 0.3)",
+                borderRadius: "8px",
+                color: "#10b981",
+                fontSize: "0.9375rem",
+                textAlign: "center"
+              }}>
+                {waitlistSuccess}
+              </div>
+            )}
+
+            {waitlistError && (
+              <div style={{
+                marginTop: "1rem",
+                padding: "0.875rem 1rem",
+                backgroundColor: "rgba(239, 68, 68, 0.1)",
+                border: "1px solid rgba(239, 68, 68, 0.3)",
+                borderRadius: "8px",
+                color: "#ef4444",
+                fontSize: "0.9375rem",
+                textAlign: "center"
+              }}>
+                {waitlistError}
+              </div>
+            )}
+          </form>
         </div>
       </section>
 
