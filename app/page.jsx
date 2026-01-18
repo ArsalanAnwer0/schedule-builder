@@ -1190,126 +1190,289 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer style={{
-        padding: "5rem 2rem 2rem 2rem"
+        padding: "80px 20px 0"
       }}>
         <div style={{
           maxWidth: "1200px",
           margin: "0 auto"
         }}>
-          {/* Footer Links - Centered Single Row */}
-          <div style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: "1.5rem",
-            marginBottom: "2.5rem"
+          {/* Top Section - Link Columns */}
+          <div className="footer-columns" style={{
+            display: "grid",
+            gridTemplateColumns: "1.5fr 1fr 1fr",
+            gap: "80px",
+            marginBottom: "60px"
           }}>
-            <button
-              onClick={() => router.push('/privacy')}
-              style={{
-                background: "none",
-                border: "none",
+
+            {/* Brand Column */}
+            <div>
+              <h3 style={{
+                fontSize: "20px",
+                fontWeight: "600",
+                color: "rgba(255, 255, 255, 0.9)",
+                marginBottom: "12px",
+                letterSpacing: "-0.02em"
+              }}>
+                Schedule Builder
+              </h3>
+              <p style={{
+                fontSize: "16px",
                 color: "rgba(255, 255, 255, 0.5)",
-                fontSize: "0.9375rem",
-                cursor: "pointer",
-                padding: 0,
-                fontWeight: "400",
-                transition: "color 0.2s"
-              }}
-              onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
-              onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)"}
-            >
-              Privacy Policy
-            </button>
-            <button
-              onClick={() => router.push('/terms')}
-              style={{
-                background: "none",
-                border: "none",
-                color: "rgba(255, 255, 255, 0.5)",
-                fontSize: "0.9375rem",
-                cursor: "pointer",
-                padding: 0,
-                fontWeight: "400",
-                transition: "color 0.2s"
-              }}
-              onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
-              onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)"}
-            >
-              Terms of Use
-            </button>
-            <button
-              onClick={() => scrollToSection('faq')}
-              style={{
-                background: "none",
-                border: "none",
-                color: "rgba(255, 255, 255, 0.5)",
-                fontSize: "0.9375rem",
-                cursor: "pointer",
-                padding: 0,
-                fontWeight: "400",
-                transition: "color 0.2s"
-              }}
-              onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
-              onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)"}
-            >
-              FAQ
-            </button>
-            <button
-              onClick={() => router.push('/contact')}
-              style={{
-                background: "none",
-                border: "none",
-                color: "rgba(255, 255, 255, 0.5)",
-                fontSize: "0.9375rem",
-                cursor: "pointer",
-                padding: 0,
-                fontWeight: "400",
-                transition: "color 0.2s"
-              }}
-              onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
-              onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)"}
-            >
-              Contact
-            </button>
-            <a
-              href="https://github.com/ArsalanAnwer0/schedule-builder"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                color: "rgba(255, 255, 255, 0.5)",
-                fontSize: "0.9375rem",
-                textDecoration: "none",
-                fontWeight: "400",
-                transition: "color 0.2s",
+                fontWeight: "300",
+                lineHeight: "1.6",
+                margin: 0
+              }}>
+                Simplify team scheduling
+              </p>
+            </div>
+
+            {/* Product Column */}
+            <div>
+              <h4 style={{
+                fontSize: "14px",
+                fontWeight: "600",
+                color: "#9ca3af",
+                textTransform: "uppercase",
+                letterSpacing: "1.5px",
+                marginBottom: "20px"
+              }}>
+                Product
+              </h4>
+              <nav style={{
                 display: "flex",
-                alignItems: "center",
-                gap: "0.5rem"
-              }}
-              onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
-              onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)"}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-              </svg>
-              GitHub
-            </a>
+                flexDirection: "column",
+                gap: "12px"
+              }}>
+                <button
+                  onClick={() => scrollToSection('features')}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "rgba(255, 255, 255, 0.6)",
+                    fontSize: "15px",
+                    fontWeight: "400",
+                    cursor: "pointer",
+                    padding: 0,
+                    textAlign: "left",
+                    lineHeight: "1.8",
+                    transition: "color 0.2s ease"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
+                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                >
+                  Features
+                </button>
+                <button
+                  onClick={() => scrollToSection('how-it-works')}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "rgba(255, 255, 255, 0.6)",
+                    fontSize: "15px",
+                    fontWeight: "400",
+                    cursor: "pointer",
+                    padding: 0,
+                    textAlign: "left",
+                    lineHeight: "1.8",
+                    transition: "color 0.2s ease"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
+                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                >
+                  How It Works
+                </button>
+                <button
+                  onClick={() => router.push('/forum')}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "rgba(255, 255, 255, 0.6)",
+                    fontSize: "15px",
+                    fontWeight: "400",
+                    cursor: "pointer",
+                    padding: 0,
+                    textAlign: "left",
+                    lineHeight: "1.8",
+                    transition: "color 0.2s ease"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
+                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                >
+                  Forum
+                </button>
+                <button
+                  onClick={() => router.push('/docs')}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "rgba(255, 255, 255, 0.6)",
+                    fontSize: "15px",
+                    fontWeight: "400",
+                    cursor: "pointer",
+                    padding: 0,
+                    textAlign: "left",
+                    lineHeight: "1.8",
+                    transition: "color 0.2s ease"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
+                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                >
+                  Docs
+                </button>
+              </nav>
+            </div>
+
+            {/* Support Column */}
+            <div>
+              <h4 style={{
+                fontSize: "14px",
+                fontWeight: "600",
+                color: "#9ca3af",
+                textTransform: "uppercase",
+                letterSpacing: "1.5px",
+                marginBottom: "20px"
+              }}>
+                Support
+              </h4>
+              <nav style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "12px"
+              }}>
+                <button
+                  onClick={() => router.push('/contact')}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "rgba(255, 255, 255, 0.6)",
+                    fontSize: "15px",
+                    fontWeight: "400",
+                    cursor: "pointer",
+                    padding: 0,
+                    textAlign: "left",
+                    lineHeight: "1.8",
+                    transition: "color 0.2s ease"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
+                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                >
+                  Contact
+                </button>
+                <button
+                  onClick={() => scrollToSection('faq')}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "rgba(255, 255, 255, 0.6)",
+                    fontSize: "15px",
+                    fontWeight: "400",
+                    cursor: "pointer",
+                    padding: 0,
+                    textAlign: "left",
+                    lineHeight: "1.8",
+                    transition: "color 0.2s ease"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
+                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                >
+                  FAQ
+                </button>
+                <button
+                  onClick={() => router.push('/privacy')}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "rgba(255, 255, 255, 0.6)",
+                    fontSize: "15px",
+                    fontWeight: "400",
+                    cursor: "pointer",
+                    padding: 0,
+                    textAlign: "left",
+                    lineHeight: "1.8",
+                    transition: "color 0.2s ease"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
+                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                >
+                  Privacy Policy
+                </button>
+                <button
+                  onClick={() => router.push('/terms')}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "rgba(255, 255, 255, 0.6)",
+                    fontSize: "15px",
+                    fontWeight: "400",
+                    cursor: "pointer",
+                    padding: 0,
+                    textAlign: "left",
+                    lineHeight: "1.8",
+                    transition: "color 0.2s ease"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
+                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                >
+                  Terms of Use
+                </button>
+              </nav>
+            </div>
+
           </div>
 
-          {/* Copyright */}
+          {/* Divider */}
           <div style={{
-            textAlign: "center"
+            borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+            marginBottom: "30px"
+          }} />
+
+          {/* Bottom Bar */}
+          <div className="footer-bottom" style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            paddingBottom: "30px"
           }}>
             <p style={{
-              fontSize: "0.875rem",
+              fontSize: "14px",
               color: "rgba(255, 255, 255, 0.35)",
               fontWeight: "300",
               margin: 0
             }}>
               © 2026 Schedule Builder
             </p>
+
+            {/* Social Links */}
+            <div style={{
+              display: "flex",
+              gap: "24px",
+              alignItems: "center"
+            }}>
+              <a
+                href="https://github.com/ArsalanAnwer0/schedule-builder"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: "rgba(255, 255, 255, 0.5)",
+                  fontSize: "14px",
+                  textDecoration: "none",
+                  fontWeight: "400",
+                  transition: "color 0.2s ease",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px"
+                }}
+                onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
+                onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)"}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+                GitHub
+              </a>
+            </div>
           </div>
+
         </div>
       </footer>
 
