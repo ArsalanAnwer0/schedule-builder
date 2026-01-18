@@ -997,8 +997,7 @@ export default function LandingPage() {
       <section id="waitlist" className="section-padding" style={{
         maxWidth: "700px",
         margin: "0 auto",
-        padding: "8rem 2rem",
-        backgroundColor: "#faf9f6"
+        padding: "8rem 2rem"
       }}>
         <FadeInSection>
           <div style={{ textAlign: "center" }}>
