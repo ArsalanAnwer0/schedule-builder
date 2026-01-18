@@ -21,6 +21,7 @@ export default function LandingPage() {
   const [waitlistSubmitting, setWaitlistSubmitting] = useState(false);
   const [waitlistSuccess, setWaitlistSuccess] = useState('');
   const [waitlistError, setWaitlistError] = useState('');
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   // Screenshot data for Admin Portal
   const adminScreenshots = [
@@ -68,9 +69,43 @@ export default function LandingPage() {
     }
   }, []);
 
+  // Scroll listener for theme transition
+  useEffect(() => {
+    const handleScroll = () => {
+      const waitlistSection = document.getElementById('waitlist');
+      if (waitlistSection) {
+        const waitlistTop = waitlistSection.getBoundingClientRect().top;
+        const triggerPoint = window.innerHeight * 0.8; // Trigger when waitlist is 80% down the viewport
+
+        if (waitlistTop <= triggerPoint) {
+          setIsDarkMode(true);
+        } else {
+          setIsDarkMode(false);
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initial state
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const handleSplashComplete = () => {
     sessionStorage.setItem('hasSeenIntro', 'true');
     setShowIntro(false);
+  };
+
+  // Theme colors
+  const theme = {
+    background: isDarkMode ? '#0a0f1a' : '#ffffff',
+    text: isDarkMode ? '#ffffff' : '#000000',
+    textSecondary: isDarkMode ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.65)',
+    textMuted: isDarkMode ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)',
+    navBackground: isDarkMode ? 'rgba(10, 15, 26, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+    border: isDarkMode ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+    cardBackground: isDarkMode ? '#1a1d29' : '#f9fafb',
+    accent: '#14b8a6'
   };
 
   const handleFeedbackSubmit = async (e) => {
@@ -137,9 +172,10 @@ export default function LandingPage() {
 
   return (
     <div style={{
-      backgroundColor: "#0a0f1a",
+      backgroundColor: theme.background,
       minHeight: "100vh",
-      position: "relative"
+      position: "relative",
+      transition: "background-color 0.6s ease"
     }}>
       {/* Splash Screen - Fades in and out */}
       {showIntro && (
@@ -154,10 +190,11 @@ export default function LandingPage() {
         position: "sticky",
         top: 0,
         zIndex: 50,
-        backgroundColor: "rgba(10, 15, 26, 0.95)",
+        backgroundColor: theme.navBackground,
         backdropFilter: "blur(10px)",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-        padding: "1rem 2rem"
+        borderBottom: `1px solid ${theme.border}`,
+        padding: "1rem 2rem",
+        transition: "background-color 0.6s ease, border-color 0.6s ease"
       }}>
         <div style={{
           maxWidth: "1400px",
@@ -168,10 +205,16 @@ export default function LandingPage() {
         }}>
           {/* Logo/Brand */}
           <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2.5">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={theme.accent} strokeWidth="2.5">
               <path d="M3 12h18M3 6h18M3 18h18" />
             </svg>
-            <span style={{ fontSize: "1.125rem", fontWeight: "600", color: "#ffffff", letterSpacing: "-0.01em" }}>Schedule Builder</span>
+            <span style={{
+              fontSize: "1.125rem",
+              fontWeight: "600",
+              color: theme.text,
+              letterSpacing: "-0.01em",
+              transition: "color 0.6s ease"
+            }}>Schedule Builder</span>
           </div>
 
           {/* Desktop Navigation */}
@@ -181,15 +224,15 @@ export default function LandingPage() {
               style={{
                 background: "none",
                 border: "none",
-                color: "rgba(255, 255, 255, 0.65)",
+                color: theme.textSecondary,
                 fontSize: "0.9375rem",
                 cursor: "pointer",
                 padding: "0.5rem 0",
                 fontWeight: "400",
-                transition: "color 0.2s"
+                transition: "color 0.6s ease"
               }}
-              onMouseOver={(e) => e.currentTarget.style.color = "#ffffff"}
-              onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
+              onMouseOver={(e) => e.currentTarget.style.color = theme.text}
+              onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
             >
               How it works
             </button>
@@ -198,15 +241,15 @@ export default function LandingPage() {
               style={{
                 background: "none",
                 border: "none",
-                color: "rgba(255, 255, 255, 0.65)",
+                color: theme.textSecondary,
                 fontSize: "0.9375rem",
                 cursor: "pointer",
                 padding: "0.5rem 0",
                 fontWeight: "400",
-                transition: "color 0.2s"
+                transition: "color 0.6s ease"
               }}
-              onMouseOver={(e) => e.currentTarget.style.color = "#ffffff"}
-              onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
+              onMouseOver={(e) => e.currentTarget.style.color = theme.text}
+              onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
             >
               Features
             </button>
@@ -215,15 +258,15 @@ export default function LandingPage() {
               style={{
                 background: "none",
                 border: "none",
-                color: "rgba(255, 255, 255, 0.65)",
+                color: theme.textSecondary,
                 fontSize: "0.9375rem",
                 cursor: "pointer",
                 padding: "0.5rem 0",
                 fontWeight: "400",
-                transition: "color 0.2s"
+                transition: "color 0.6s ease"
               }}
-              onMouseOver={(e) => e.currentTarget.style.color = "#ffffff"}
-              onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
+              onMouseOver={(e) => e.currentTarget.style.color = theme.text}
+              onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
             >
               FAQ
             </button>
@@ -232,15 +275,15 @@ export default function LandingPage() {
               style={{
                 background: "none",
                 border: "none",
-                color: "rgba(255, 255, 255, 0.65)",
+                color: theme.textSecondary,
                 fontSize: "0.9375rem",
                 cursor: "pointer",
                 padding: "0.5rem 0",
                 fontWeight: "400",
-                transition: "color 0.2s"
+                transition: "color 0.6s ease"
               }}
-              onMouseOver={(e) => e.currentTarget.style.color = "#ffffff"}
-              onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
+              onMouseOver={(e) => e.currentTarget.style.color = theme.text}
+              onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
             >
               Forum
             </button>
@@ -249,15 +292,15 @@ export default function LandingPage() {
               style={{
                 background: "none",
                 border: "none",
-                color: "rgba(255, 255, 255, 0.65)",
+                color: theme.textSecondary,
                 fontSize: "0.9375rem",
                 cursor: "pointer",
                 padding: "0.5rem 0",
                 fontWeight: "400",
-                transition: "color 0.2s"
+                transition: "color 0.6s ease"
               }}
-              onMouseOver={(e) => e.currentTarget.style.color = "#ffffff"}
-              onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
+              onMouseOver={(e) => e.currentTarget.style.color = theme.text}
+              onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
             >
               Docs
             </button>
@@ -266,15 +309,15 @@ export default function LandingPage() {
               style={{
                 background: "none",
                 border: "none",
-                color: "rgba(255, 255, 255, 0.65)",
+                color: theme.textSecondary,
                 fontSize: "0.9375rem",
                 cursor: "pointer",
                 padding: "0.5rem 0",
                 fontWeight: "400",
-                transition: "color 0.2s"
+                transition: "color 0.6s ease"
               }}
-              onMouseOver={(e) => e.currentTarget.style.color = "#ffffff"}
-              onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.65)"}
+              onMouseOver={(e) => e.currentTarget.style.color = theme.text}
+              onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
             >
               Login
             </button>
@@ -282,8 +325,9 @@ export default function LandingPage() {
               onClick={() => router.push('/register')}
               style={{
                 padding: "0.5rem 1.25rem",
-                background: "#14b8a6",
-                color: "#ffffff",
+                background: theme.accent,
+                color: theme.text,
+            transition: "color 0.6s ease",
                 border: "none",
                 borderRadius: "6px",
                 fontSize: "0.9375rem",
@@ -292,7 +336,7 @@ export default function LandingPage() {
                 transition: "all 0.2s ease"
               }}
               onMouseOver={(e) => e.currentTarget.style.background = "#0d9488"}
-              onMouseOut={(e) => e.currentTarget.style.background = "#14b8a6"}
+              onMouseOut={(e) => e.currentTarget.style.background = theme.accent}
             >
               Get Started
             </button>
@@ -306,9 +350,10 @@ export default function LandingPage() {
               display: "none",
               background: "none",
               border: "none",
-              color: "#ffffff",
+              color: theme.text,
               cursor: "pointer",
-              padding: "0.5rem"
+              padding: "0.5rem",
+              transition: "color 0.6s ease"
             }}
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -330,12 +375,13 @@ export default function LandingPage() {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: "#0a0f1a",
+          backgroundColor: theme.background,
           zIndex: 40,
           padding: "2rem",
           display: "flex",
           flexDirection: "column",
-          gap: "1.5rem"
+          gap: "1.5rem",
+          transition: "background-color 0.6s ease"
         }}>
           <button
             onClick={() => {
@@ -345,12 +391,12 @@ export default function LandingPage() {
             style={{
               background: "none",
               border: "none",
-              color: "rgba(255, 255, 255, 0.7)",
+              color: theme.textSecondary,
               fontSize: "1.125rem",
               cursor: "pointer",
               padding: "1rem 0",
               textAlign: "left",
-              transition: "color 0.2s"
+              transition: "color 0.6s ease"
             }}
           >
             How it works
@@ -363,12 +409,12 @@ export default function LandingPage() {
             style={{
               background: "none",
               border: "none",
-              color: "rgba(255, 255, 255, 0.7)",
+              color: theme.textSecondary,
               fontSize: "1.125rem",
               cursor: "pointer",
               padding: "1rem 0",
               textAlign: "left",
-              transition: "color 0.2s"
+              transition: "color 0.6s ease"
             }}
           >
             Features
@@ -381,12 +427,12 @@ export default function LandingPage() {
             style={{
               background: "none",
               border: "none",
-              color: "rgba(255, 255, 255, 0.7)",
+              color: theme.textSecondary,
               fontSize: "1.125rem",
               cursor: "pointer",
               padding: "1rem 0",
               textAlign: "left",
-              transition: "color 0.2s"
+              transition: "color 0.6s ease"
             }}
           >
             FAQ
@@ -399,12 +445,12 @@ export default function LandingPage() {
             style={{
               background: "none",
               border: "none",
-              color: "rgba(255, 255, 255, 0.7)",
+              color: theme.textSecondary,
               fontSize: "1.125rem",
               cursor: "pointer",
               padding: "1rem 0",
               textAlign: "left",
-              transition: "color 0.2s"
+              transition: "color 0.6s ease"
             }}
           >
             Forum
@@ -417,12 +463,12 @@ export default function LandingPage() {
             style={{
               background: "none",
               border: "none",
-              color: "rgba(255, 255, 255, 0.7)",
+              color: theme.textSecondary,
               fontSize: "1.125rem",
               cursor: "pointer",
               padding: "1rem 0",
               textAlign: "left",
-              transition: "color 0.2s"
+              transition: "color 0.6s ease"
             }}
           >
             Docs
@@ -435,12 +481,12 @@ export default function LandingPage() {
             style={{
               background: "none",
               border: "none",
-              color: "rgba(255, 255, 255, 0.7)",
+              color: theme.textSecondary,
               fontSize: "1.125rem",
               cursor: "pointer",
               padding: "1rem 0",
               textAlign: "left",
-              transition: "color 0.2s"
+              transition: "color 0.6s ease"
             }}
           >
             Login
@@ -452,8 +498,9 @@ export default function LandingPage() {
             }}
             style={{
               padding: "0.875rem 1.5rem",
-              background: "#14b8a6",
-              color: "#ffffff",
+              background: theme.accent,
+              color: theme.text,
+            transition: "color 0.6s ease",
               border: "none",
               borderRadius: "6px",
               fontSize: "1rem",
@@ -493,10 +540,11 @@ export default function LandingPage() {
 
           <h1 className="hero-title" style={{
             fontWeight: "400",
-            color: "#ffffff",
+            color: theme.text,
             marginBottom: "1.5rem",
             letterSpacing: "-0.02em",
-            fontFamily: "Georgia, 'Times New Roman', serif"
+            fontFamily: "Georgia, 'Times New Roman', serif",
+            transition: "color 0.6s ease"
           }}>
             Scheduling office hours is broken.
             <br />
@@ -505,12 +553,13 @@ export default function LandingPage() {
 
           <p style={{
             fontSize: "1.25rem",
-            color: "rgba(255, 255, 255, 0.6)",
+            color: theme.textSecondary,
             marginBottom: "3rem",
             maxWidth: "750px",
             margin: "2rem auto 3rem auto",
             lineHeight: "1.7",
-            fontWeight: "300"
+            fontWeight: "300",
+            transition: "color 0.6s ease"
           }}>
             Collect availability, create schedules, and manage changes automatically without the chaos.
           </p>
@@ -528,16 +577,18 @@ export default function LandingPage() {
           <div style={{ textAlign: "center", marginBottom: "5rem" }}>
             <h2 className="section-title" style={{
               fontWeight: "400",
-              color: "#ffffff",
+              color: theme.text,
               marginBottom: "1rem",
-              fontFamily: "Georgia, 'Times New Roman', serif"
+              fontFamily: "Georgia, 'Times New Roman', serif",
+              transition: "color 0.6s ease"
             }}>
               How it works
             </h2>
             <p style={{
               fontSize: "1.125rem",
-              color: "rgba(255, 255, 255, 0.5)",
-              fontWeight: "300"
+              color: theme.textMuted,
+              fontWeight: "300",
+              transition: "color 0.6s ease"
             }}>
               Three steps to transform your scheduling workflow
             </p>
@@ -551,9 +602,11 @@ export default function LandingPage() {
           {/* Step 1 */}
           <div style={{
             padding: "3rem 2rem",
-            background: "rgba(255, 255, 255, 0.03)",
+            background: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
+            transition: "background 0.6s ease",
             borderRadius: "12px",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
+            border: `1px solid ${theme.border}`,
+            transition: "border-color 0.6s ease",
             position: "relative"
           }}>
             <div className="step-number" style={{
@@ -567,14 +620,16 @@ export default function LandingPage() {
             <h3 style={{
               fontSize: "1.5rem",
               fontWeight: "600",
-              color: "#ffffff",
+              color: theme.text,
+            transition: "color 0.6s ease",
               marginBottom: "1rem"
             }}>
               Admin requests availability
             </h3>
             <p style={{
               fontSize: "1rem",
-              color: "rgba(255, 255, 255, 0.6)",
+              color: theme.textSecondary,
+              transition: "color 0.6s ease",
               lineHeight: "1.7",
               fontWeight: "300"
             }}>
@@ -585,9 +640,11 @@ export default function LandingPage() {
           {/* Step 2 */}
           <div style={{
             padding: "3rem 2rem",
-            background: "rgba(255, 255, 255, 0.03)",
+            background: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
+            transition: "background 0.6s ease",
             borderRadius: "12px",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
+            border: `1px solid ${theme.border}`,
+            transition: "border-color 0.6s ease",
             position: "relative"
           }}>
             <div className="step-number" style={{
@@ -601,14 +658,16 @@ export default function LandingPage() {
             <h3 style={{
               fontSize: "1.5rem",
               fontWeight: "600",
-              color: "#ffffff",
+              color: theme.text,
+            transition: "color 0.6s ease",
               marginBottom: "1rem"
             }}>
               Students submit availability
             </h3>
             <p style={{
               fontSize: "1rem",
-              color: "rgba(255, 255, 255, 0.6)",
+              color: theme.textSecondary,
+              transition: "color 0.6s ease",
               lineHeight: "1.7",
               fontWeight: "300"
             }}>
@@ -619,9 +678,11 @@ export default function LandingPage() {
           {/* Step 3 */}
           <div style={{
             padding: "3rem 2rem",
-            background: "rgba(255, 255, 255, 0.03)",
+            background: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
+            transition: "background 0.6s ease",
             borderRadius: "12px",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
+            border: `1px solid ${theme.border}`,
+            transition: "border-color 0.6s ease",
             position: "relative"
           }}>
             <div className="step-number" style={{
@@ -635,14 +696,16 @@ export default function LandingPage() {
             <h3 style={{
               fontSize: "1.5rem",
               fontWeight: "600",
-              color: "#ffffff",
+              color: theme.text,
+            transition: "color 0.6s ease",
               marginBottom: "1rem"
             }}>
               Tool generates schedule
             </h3>
             <p style={{
               fontSize: "1rem",
-              color: "rgba(255, 255, 255, 0.6)",
+              color: theme.textSecondary,
+              transition: "color 0.6s ease",
               lineHeight: "1.7",
               fontWeight: "300"
             }}>
@@ -663,7 +726,8 @@ export default function LandingPage() {
           <div style={{ textAlign: "center", marginBottom: "5rem" }}>
             <h2 className="section-title" style={{
               fontWeight: "400",
-              color: "#ffffff",
+              color: theme.text,
+            transition: "color 0.6s ease",
               marginBottom: "1rem",
               fontFamily: "Georgia, 'Times New Roman', serif"
             }}>
@@ -671,7 +735,8 @@ export default function LandingPage() {
             </h2>
             <p style={{
               fontSize: "1.125rem",
-              color: "rgba(255, 255, 255, 0.5)",
+              color: theme.textMuted,
+            transition: "color 0.6s ease",
               fontWeight: "300"
             }}>
               Explore the admin and student interfaces
@@ -703,7 +768,8 @@ export default function LandingPage() {
             <div style={{ textAlign: "center", marginBottom: "5rem" }}>
               <h2 className="section-title" style={{
                 fontWeight: "400",
-                color: "#ffffff",
+                color: theme.text,
+            transition: "color 0.6s ease",
                 marginBottom: "1rem",
                 fontFamily: "Georgia, 'Times New Roman', serif"
               }}>
@@ -711,7 +777,8 @@ export default function LandingPage() {
               </h2>
               <p style={{
                 fontSize: "1.125rem",
-                color: "rgba(255, 255, 255, 0.5)",
+                color: theme.textMuted,
+            transition: "color 0.6s ease",
                 fontWeight: "300"
               }}>
                 Comprehensive tools designed for modern scheduling
@@ -726,7 +793,8 @@ export default function LandingPage() {
             {/* Feature 1 */}
             <div style={{
               padding: "2rem",
-              background: "rgba(255, 255, 255, 0.03)",
+              background: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
+            transition: "background 0.6s ease",
               borderRadius: "12px",
               border: "1px solid rgba(255, 255, 255, 0.1)"
             }}>
@@ -750,14 +818,16 @@ export default function LandingPage() {
               <h3 style={{
                 fontSize: "1.25rem",
                 fontWeight: "600",
-                color: "#ffffff",
+                color: theme.text,
+            transition: "color 0.6s ease",
                 marginBottom: "0.75rem"
               }}>
                 Flexible authentication
               </h3>
               <p style={{
                 fontSize: "0.9375rem",
-                color: "rgba(255, 255, 255, 0.6)",
+                color: theme.textSecondary,
+              transition: "color 0.6s ease",
                 lineHeight: "1.7",
                 fontWeight: "300"
               }}>
@@ -768,7 +838,8 @@ export default function LandingPage() {
             {/* Feature 2 */}
             <div style={{
               padding: "2rem",
-              background: "rgba(255, 255, 255, 0.03)",
+              background: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
+            transition: "background 0.6s ease",
               borderRadius: "12px",
               border: "1px solid rgba(255, 255, 255, 0.1)"
             }}>
@@ -792,14 +863,16 @@ export default function LandingPage() {
               <h3 style={{
                 fontSize: "1.25rem",
                 fontWeight: "600",
-                color: "#ffffff",
+                color: theme.text,
+            transition: "color 0.6s ease",
                 marginBottom: "0.75rem"
               }}>
                 Multi-admin support
               </h3>
               <p style={{
                 fontSize: "0.9375rem",
-                color: "rgba(255, 255, 255, 0.6)",
+                color: theme.textSecondary,
+              transition: "color 0.6s ease",
                 lineHeight: "1.7",
                 fontWeight: "300"
               }}>
@@ -810,7 +883,8 @@ export default function LandingPage() {
             {/* Feature 3 */}
             <div style={{
               padding: "2rem",
-              background: "rgba(255, 255, 255, 0.03)",
+              background: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
+            transition: "background 0.6s ease",
               borderRadius: "12px",
               border: "1px solid rgba(255, 255, 255, 0.1)"
             }}>
@@ -832,14 +906,16 @@ export default function LandingPage() {
               <h3 style={{
                 fontSize: "1.25rem",
                 fontWeight: "600",
-                color: "#ffffff",
+                color: theme.text,
+            transition: "color 0.6s ease",
                 marginBottom: "0.75rem"
               }}>
                 Automated email invitations
               </h3>
               <p style={{
                 fontSize: "0.9375rem",
-                color: "rgba(255, 255, 255, 0.6)",
+                color: theme.textSecondary,
+              transition: "color 0.6s ease",
                 lineHeight: "1.7",
                 fontWeight: "300"
               }}>
@@ -850,7 +926,8 @@ export default function LandingPage() {
             {/* Feature 4 */}
             <div style={{
               padding: "2rem",
-              background: "rgba(255, 255, 255, 0.03)",
+              background: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
+            transition: "background 0.6s ease",
               borderRadius: "12px",
               border: "1px solid rgba(255, 255, 255, 0.1)"
             }}>
@@ -874,14 +951,16 @@ export default function LandingPage() {
               <h3 style={{
                 fontSize: "1.25rem",
                 fontWeight: "600",
-                color: "#ffffff",
+                color: theme.text,
+            transition: "color 0.6s ease",
                 marginBottom: "0.75rem"
               }}>
                 Simple availability form
               </h3>
               <p style={{
                 fontSize: "0.9375rem",
-                color: "rgba(255, 255, 255, 0.6)",
+                color: theme.textSecondary,
+              transition: "color 0.6s ease",
                 lineHeight: "1.7",
                 fontWeight: "300"
               }}>
@@ -892,7 +971,8 @@ export default function LandingPage() {
             {/* Feature 5 */}
             <div style={{
               padding: "2rem",
-              background: "rgba(255, 255, 255, 0.03)",
+              background: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
+            transition: "background 0.6s ease",
               borderRadius: "12px",
               border: "1px solid rgba(255, 255, 255, 0.1)"
             }}>
@@ -913,14 +993,16 @@ export default function LandingPage() {
               <h3 style={{
                 fontSize: "1.25rem",
                 fontWeight: "600",
-                color: "#ffffff",
+                color: theme.text,
+            transition: "color 0.6s ease",
                 marginBottom: "0.75rem"
               }}>
                 Instant schedule generation
               </h3>
               <p style={{
                 fontSize: "0.9375rem",
-                color: "rgba(255, 255, 255, 0.6)",
+                color: theme.textSecondary,
+              transition: "color 0.6s ease",
                 lineHeight: "1.7",
                 fontWeight: "300"
               }}>
@@ -931,7 +1013,8 @@ export default function LandingPage() {
             {/* Feature 6 */}
             <div style={{
               padding: "2rem",
-              background: "rgba(255, 255, 255, 0.03)",
+              background: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
+            transition: "background 0.6s ease",
               borderRadius: "12px",
               border: "1px solid rgba(255, 255, 255, 0.1)"
             }}>
@@ -952,14 +1035,16 @@ export default function LandingPage() {
               <h3 style={{
                 fontSize: "1.25rem",
                 fontWeight: "600",
-                color: "#ffffff",
+                color: theme.text,
+            transition: "color 0.6s ease",
                 marginBottom: "0.75rem"
               }}>
                 Reset and regenerate anytime
               </h3>
               <p style={{
                 fontSize: "0.9375rem",
-                color: "rgba(255, 255, 255, 0.6)",
+                color: theme.textSecondary,
+              transition: "color 0.6s ease",
                 lineHeight: "1.7",
                 fontWeight: "300"
               }}>
@@ -980,7 +1065,8 @@ export default function LandingPage() {
             <h2 style={{
               fontSize: "2.5rem",
               fontWeight: "400",
-              color: "#ffffff",
+              color: theme.text,
+            transition: "color 0.6s ease",
               marginBottom: "1rem",
               fontFamily: "Georgia, 'Times New Roman', serif",
               letterSpacing: "-0.02em"
@@ -989,7 +1075,8 @@ export default function LandingPage() {
             </h2>
             <p style={{
               fontSize: "1.125rem",
-              color: "rgba(255, 255, 255, 0.6)",
+              color: theme.textSecondary,
+              transition: "color 0.6s ease",
               marginBottom: "2.5rem",
               lineHeight: "1.6"
             }}>
@@ -1015,9 +1102,11 @@ export default function LandingPage() {
                   width: "100%",
                   padding: "0.875rem 1rem",
                   backgroundColor: "rgba(255, 255, 255, 0.05)",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  border: `1px solid ${theme.border}`,
+            transition: "border-color 0.6s ease",
                   borderRadius: "8px",
-                  color: "#ffffff",
+                  color: theme.text,
+            transition: "color 0.6s ease",
                   fontSize: "1rem",
                   outline: "none",
                   transition: "all 0.2s",
@@ -1038,7 +1127,8 @@ export default function LandingPage() {
                   width: "100%",
                   padding: "0.875rem 1.5rem",
                   backgroundColor: waitlistSubmitting ? "rgba(20, 184, 166, 0.5)" : "#14b8a6",
-                  color: "#ffffff",
+                  color: theme.text,
+            transition: "color 0.6s ease",
                   border: "none",
                   borderRadius: "8px",
                   fontSize: "1rem",
@@ -1118,7 +1208,8 @@ export default function LandingPage() {
             </div>
             <h2 className="section-title" style={{
               fontWeight: "400",
-              color: "#ffffff",
+              color: theme.text,
+            transition: "color 0.6s ease",
               marginBottom: "1rem",
               fontFamily: "Georgia, 'Times New Roman', serif"
             }}>
@@ -1142,8 +1233,10 @@ export default function LandingPage() {
             <div
               key={index}
               style={{
-                background: "rgba(255, 255, 255, 0.03)",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
+                background: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
+            transition: "background 0.6s ease",
+                border: `1px solid ${theme.border}`,
+            transition: "border-color 0.6s ease",
                 borderRadius: "8px",
                 overflow: "hidden"
               }}
@@ -1155,7 +1248,8 @@ export default function LandingPage() {
                   padding: "1.5rem",
                   background: "none",
                   border: "none",
-                  color: "#ffffff",
+                  color: theme.text,
+            transition: "color 0.6s ease",
                   fontSize: "1.0625rem",
                   fontWeight: "500",
                   textAlign: "left",
@@ -1182,7 +1276,8 @@ export default function LandingPage() {
               {expandedFaq === index && (
                 <div style={{
                   padding: "0 1.5rem 1.5rem 1.5rem",
-                  color: "rgba(255, 255, 255, 0.6)",
+                  color: theme.textSecondary,
+              transition: "color 0.6s ease",
                   fontSize: "0.9375rem",
                   lineHeight: "1.7",
                   fontWeight: "300"
@@ -1216,7 +1311,8 @@ export default function LandingPage() {
               <h3 style={{
                 fontSize: "20px",
                 fontWeight: "600",
-                color: "rgba(255, 255, 255, 0.9)",
+                color: theme.text,
+              transition: "color 0.6s ease",
                 marginBottom: "12px",
                 letterSpacing: "-0.02em"
               }}>
@@ -1224,7 +1320,8 @@ export default function LandingPage() {
               </h3>
               <p style={{
                 fontSize: "16px",
-                color: "rgba(255, 255, 255, 0.5)",
+                color: theme.textMuted,
+            transition: "color 0.6s ease",
                 fontWeight: "300",
                 lineHeight: "1.6",
                 margin: 0
@@ -1255,7 +1352,8 @@ export default function LandingPage() {
                   style={{
                     background: "none",
                     border: "none",
-                    color: "rgba(255, 255, 255, 0.6)",
+                    color: theme.textSecondary,
+              transition: "color 0.6s ease",
                     fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
@@ -1274,7 +1372,8 @@ export default function LandingPage() {
                   style={{
                     background: "none",
                     border: "none",
-                    color: "rgba(255, 255, 255, 0.6)",
+                    color: theme.textSecondary,
+              transition: "color 0.6s ease",
                     fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
@@ -1293,7 +1392,8 @@ export default function LandingPage() {
                   style={{
                     background: "none",
                     border: "none",
-                    color: "rgba(255, 255, 255, 0.6)",
+                    color: theme.textSecondary,
+              transition: "color 0.6s ease",
                     fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
@@ -1312,7 +1412,8 @@ export default function LandingPage() {
                   style={{
                     background: "none",
                     border: "none",
-                    color: "rgba(255, 255, 255, 0.6)",
+                    color: theme.textSecondary,
+              transition: "color 0.6s ease",
                     fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
@@ -1351,7 +1452,8 @@ export default function LandingPage() {
                   style={{
                     background: "none",
                     border: "none",
-                    color: "rgba(255, 255, 255, 0.6)",
+                    color: theme.textSecondary,
+              transition: "color 0.6s ease",
                     fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
@@ -1370,7 +1472,8 @@ export default function LandingPage() {
                   style={{
                     background: "none",
                     border: "none",
-                    color: "rgba(255, 255, 255, 0.6)",
+                    color: theme.textSecondary,
+              transition: "color 0.6s ease",
                     fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
@@ -1389,7 +1492,8 @@ export default function LandingPage() {
                   style={{
                     background: "none",
                     border: "none",
-                    color: "rgba(255, 255, 255, 0.6)",
+                    color: theme.textSecondary,
+              transition: "color 0.6s ease",
                     fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
@@ -1408,7 +1512,8 @@ export default function LandingPage() {
                   style={{
                     background: "none",
                     border: "none",
-                    color: "rgba(255, 255, 255, 0.6)",
+                    color: theme.textSecondary,
+              transition: "color 0.6s ease",
                     fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
@@ -1442,7 +1547,8 @@ export default function LandingPage() {
           }}>
             <p style={{
               fontSize: "14px",
-              color: "rgba(255, 255, 255, 0.35)",
+              color: theme.textMuted,
+            transition: "color 0.6s ease",
               fontWeight: "300",
               margin: 0
             }}>
@@ -1460,7 +1566,8 @@ export default function LandingPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                  color: "rgba(255, 255, 255, 0.5)",
+                  color: theme.textMuted,
+            transition: "color 0.6s ease",
                   fontSize: "14px",
                   textDecoration: "none",
                   fontWeight: "400",
@@ -1498,17 +1605,19 @@ export default function LandingPage() {
           zIndex: 100
         }}>
           <div style={{
-            backgroundColor: "#0f1419",
+            backgroundColor: isDarkMode ? "#0f1419" : "#ffffff",
             borderRadius: "12px",
             padding: "2.5rem",
             maxWidth: "500px",
             width: "90%",
-            border: "1px solid rgba(255, 255, 255, 0.1)"
+            border: `1px solid ${theme.border}`,
+            transition: "background-color 0.6s ease, border-color 0.6s ease"
           }}>
             <h2 style={{
               fontSize: "1.5rem",
               fontWeight: "600",
-              color: "#ffffff",
+              color: theme.text,
+            transition: "color 0.6s ease",
               marginBottom: "1.5rem"
             }}>
               Send us feedback
@@ -1520,7 +1629,8 @@ export default function LandingPage() {
                   display: "block",
                   fontSize: "0.875rem",
                   fontWeight: "500",
-                  color: "rgba(255, 255, 255, 0.9)",
+                  color: theme.text,
+              transition: "color 0.6s ease",
                   marginBottom: "0.5rem"
                 }}>
                   Name
@@ -1533,10 +1643,12 @@ export default function LandingPage() {
                   style={{
                     width: "100%",
                     padding: "0.75rem",
-                    backgroundColor: "#0a0f1a",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    backgroundColor: isDarkMode ? "#0a0f1a" : "#f9fafb",
+                    border: `1px solid ${theme.border}`,
+            transition: "border-color 0.6s ease",
                     borderRadius: "6px",
-                    color: "#ffffff",
+                    color: theme.text,
+            transition: "color 0.6s ease",
                     fontSize: "1rem"
                   }}
                 />
@@ -1547,7 +1659,8 @@ export default function LandingPage() {
                   display: "block",
                   fontSize: "0.875rem",
                   fontWeight: "500",
-                  color: "rgba(255, 255, 255, 0.9)",
+                  color: theme.text,
+              transition: "color 0.6s ease",
                   marginBottom: "0.5rem"
                 }}>
                   Email
@@ -1560,10 +1673,12 @@ export default function LandingPage() {
                   style={{
                     width: "100%",
                     padding: "0.75rem",
-                    backgroundColor: "#0a0f1a",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    backgroundColor: isDarkMode ? "#0a0f1a" : "#f9fafb",
+                    border: `1px solid ${theme.border}`,
+            transition: "border-color 0.6s ease",
                     borderRadius: "6px",
-                    color: "#ffffff",
+                    color: theme.text,
+            transition: "color 0.6s ease",
                     fontSize: "1rem"
                   }}
                 />
@@ -1574,7 +1689,8 @@ export default function LandingPage() {
                   display: "block",
                   fontSize: "0.875rem",
                   fontWeight: "500",
-                  color: "rgba(255, 255, 255, 0.9)",
+                  color: theme.text,
+              transition: "color 0.6s ease",
                   marginBottom: "0.5rem"
                 }}>
                   Message
@@ -1587,10 +1703,12 @@ export default function LandingPage() {
                   style={{
                     width: "100%",
                     padding: "0.75rem",
-                    backgroundColor: "#0a0f1a",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    backgroundColor: isDarkMode ? "#0a0f1a" : "#f9fafb",
+                    border: `1px solid ${theme.border}`,
+            transition: "border-color 0.6s ease",
                     borderRadius: "6px",
-                    color: "#ffffff",
+                    color: theme.text,
+            transition: "color 0.6s ease",
                     fontSize: "1rem",
                     resize: "vertical"
                   }}
@@ -1632,8 +1750,10 @@ export default function LandingPage() {
                   style={{
                     padding: "0.75rem 1.5rem",
                     background: "transparent",
-                    color: "#ffffff",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    color: theme.text,
+            transition: "color 0.6s ease",
+                    border: `1px solid ${theme.border}`,
+            transition: "border-color 0.6s ease",
                     borderRadius: "6px",
                     fontSize: "0.875rem",
                     fontWeight: "500",
@@ -1648,7 +1768,8 @@ export default function LandingPage() {
                   style={{
                     padding: "0.75rem 1.5rem",
                     background: "#14b8a6",
-                    color: "#ffffff",
+                    color: theme.text,
+            transition: "color 0.6s ease",
                     border: "none",
                     borderRadius: "6px",
                     fontSize: "0.875rem",
