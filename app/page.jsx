@@ -21,7 +21,6 @@ export default function LandingPage() {
   const [waitlistSubmitting, setWaitlistSubmitting] = useState(false);
   const [waitlistSuccess, setWaitlistSuccess] = useState('');
   const [waitlistError, setWaitlistError] = useState('');
-  const [isDarkMode, setIsDarkMode] = useState(false);
 
   // Screenshot data for Admin Portal
   const adminScreenshots = [
@@ -69,42 +68,20 @@ export default function LandingPage() {
     }
   }, []);
 
-  // Scroll listener for theme transition
-  useEffect(() => {
-    const handleScroll = () => {
-      const waitlistSection = document.getElementById('waitlist');
-      if (waitlistSection) {
-        const waitlistTop = waitlistSection.getBoundingClientRect().top;
-        const triggerPoint = window.innerHeight * 0.8; // Trigger when waitlist is 80% down the viewport
-
-        if (waitlistTop <= triggerPoint) {
-          setIsDarkMode(true);
-        } else {
-          setIsDarkMode(false);
-        }
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Check initial state
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   const handleSplashComplete = () => {
     sessionStorage.setItem('hasSeenIntro', 'true');
     setShowIntro(false);
   };
 
-  // Theme colors
+  // Theme colors - Light mode
   const theme = {
-    background: isDarkMode ? '#0a0f1a' : '#ffffff',
-    text: isDarkMode ? '#ffffff' : '#000000',
-    textSecondary: isDarkMode ? 'rgba(255, 255, 255, 0.65)' : 'rgba(0, 0, 0, 0.65)',
-    textMuted: isDarkMode ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)',
-    navBackground: isDarkMode ? 'rgba(10, 15, 26, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-    border: isDarkMode ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
-    cardBackground: isDarkMode ? '#1a1d29' : '#f9fafb',
+    background: '#ffffff',
+    text: '#000000',
+    textSecondary: 'rgba(0, 0, 0, 0.65)',
+    textMuted: 'rgba(0, 0, 0, 0.4)',
+    navBackground: 'rgba(255, 255, 255, 0.95)',
+    border: 'rgba(0, 0, 0, 0.08)',
+    cardBackground: '#f9fafb',
     accent: '#14b8a6'
   };
 
@@ -175,7 +152,6 @@ export default function LandingPage() {
       backgroundColor: theme.background,
       minHeight: "100vh",
       position: "relative",
-      transition: "background-color 0.6s ease"
     }}>
       {/* Splash Screen - Fades in and out */}
       {showIntro && (
@@ -194,7 +170,6 @@ export default function LandingPage() {
         backdropFilter: "blur(10px)",
         borderBottom: `1px solid ${theme.border}`,
         padding: "1rem 2rem",
-        transition: "background-color 0.6s ease, border-color 0.6s ease"
       }}>
         <div style={{
           maxWidth: "1400px",
@@ -327,7 +302,6 @@ export default function LandingPage() {
                 padding: "0.5rem 1.25rem",
                 background: theme.accent,
                 color: theme.text,
-            transition: "color 0.6s ease",
                 border: "none",
                 borderRadius: "6px",
                 fontSize: "0.9375rem",
@@ -381,8 +355,7 @@ export default function LandingPage() {
           display: "flex",
           flexDirection: "column",
           gap: "1.5rem",
-          transition: "background-color 0.6s ease"
-        }}>
+            }}>
           <button
             onClick={() => {
               scrollToSection('how-it-works');
@@ -500,7 +473,6 @@ export default function LandingPage() {
               padding: "0.875rem 1.5rem",
               background: theme.accent,
               color: theme.text,
-            transition: "color 0.6s ease",
               border: "none",
               borderRadius: "6px",
               fontSize: "1rem",
@@ -602,11 +574,9 @@ export default function LandingPage() {
           {/* Step 1 */}
           <div style={{
             padding: "3rem 2rem",
-            background: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
-            transition: "background 0.6s ease",
+            background: "rgba(0, 0, 0, 0.03)",
             borderRadius: "12px",
             border: `1px solid ${theme.border}`,
-            transition: "border-color 0.6s ease",
             position: "relative"
           }}>
             <div className="step-number" style={{
@@ -621,7 +591,6 @@ export default function LandingPage() {
               fontSize: "1.5rem",
               fontWeight: "600",
               color: theme.text,
-            transition: "color 0.6s ease",
               marginBottom: "1rem"
             }}>
               Admin requests availability
@@ -629,8 +598,7 @@ export default function LandingPage() {
             <p style={{
               fontSize: "1rem",
               color: theme.textSecondary,
-              transition: "color 0.6s ease",
-              lineHeight: "1.7",
+                lineHeight: "1.7",
               fontWeight: "300"
             }}>
               Add your students and send automated availability requests. Students receive email invitations instantly.
@@ -640,11 +608,9 @@ export default function LandingPage() {
           {/* Step 2 */}
           <div style={{
             padding: "3rem 2rem",
-            background: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
-            transition: "background 0.6s ease",
+            background: "rgba(0, 0, 0, 0.03)",
             borderRadius: "12px",
             border: `1px solid ${theme.border}`,
-            transition: "border-color 0.6s ease",
             position: "relative"
           }}>
             <div className="step-number" style={{
@@ -659,7 +625,6 @@ export default function LandingPage() {
               fontSize: "1.5rem",
               fontWeight: "600",
               color: theme.text,
-            transition: "color 0.6s ease",
               marginBottom: "1rem"
             }}>
               Students submit availability
@@ -667,8 +632,7 @@ export default function LandingPage() {
             <p style={{
               fontSize: "1rem",
               color: theme.textSecondary,
-              transition: "color 0.6s ease",
-              lineHeight: "1.7",
+                lineHeight: "1.7",
               fontWeight: "300"
             }}>
               Students fill out a simple form with their available hours. No back-and-forth emails or phone calls needed.
@@ -678,11 +642,9 @@ export default function LandingPage() {
           {/* Step 3 */}
           <div style={{
             padding: "3rem 2rem",
-            background: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
-            transition: "background 0.6s ease",
+            background: "rgba(0, 0, 0, 0.03)",
             borderRadius: "12px",
             border: `1px solid ${theme.border}`,
-            transition: "border-color 0.6s ease",
             position: "relative"
           }}>
             <div className="step-number" style={{
@@ -697,7 +659,6 @@ export default function LandingPage() {
               fontSize: "1.5rem",
               fontWeight: "600",
               color: theme.text,
-            transition: "color 0.6s ease",
               marginBottom: "1rem"
             }}>
               Tool generates schedule
@@ -705,8 +666,7 @@ export default function LandingPage() {
             <p style={{
               fontSize: "1rem",
               color: theme.textSecondary,
-              transition: "color 0.6s ease",
-              lineHeight: "1.7",
+                lineHeight: "1.7",
               fontWeight: "300"
             }}>
               Our algorithm creates conflict-free schedules in seconds. Review, adjust, and share with your team.
@@ -727,7 +687,6 @@ export default function LandingPage() {
             <h2 className="section-title" style={{
               fontWeight: "400",
               color: theme.text,
-            transition: "color 0.6s ease",
               marginBottom: "1rem",
               fontFamily: "Georgia, 'Times New Roman', serif"
             }}>
@@ -736,7 +695,6 @@ export default function LandingPage() {
             <p style={{
               fontSize: "1.125rem",
               color: theme.textMuted,
-            transition: "color 0.6s ease",
               fontWeight: "300"
             }}>
               Explore the admin and student interfaces
@@ -769,7 +727,6 @@ export default function LandingPage() {
               <h2 className="section-title" style={{
                 fontWeight: "400",
                 color: theme.text,
-            transition: "color 0.6s ease",
                 marginBottom: "1rem",
                 fontFamily: "Georgia, 'Times New Roman', serif"
               }}>
@@ -778,7 +735,6 @@ export default function LandingPage() {
               <p style={{
                 fontSize: "1.125rem",
                 color: theme.textMuted,
-            transition: "color 0.6s ease",
                 fontWeight: "300"
               }}>
                 Comprehensive tools designed for modern scheduling
@@ -793,8 +749,7 @@ export default function LandingPage() {
             {/* Feature 1 */}
             <div style={{
               padding: "2rem",
-              background: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
-            transition: "background 0.6s ease",
+              background: "rgba(0, 0, 0, 0.03)",
               borderRadius: "12px",
               border: "1px solid rgba(255, 255, 255, 0.1)"
             }}>
@@ -819,7 +774,6 @@ export default function LandingPage() {
                 fontSize: "1.25rem",
                 fontWeight: "600",
                 color: theme.text,
-            transition: "color 0.6s ease",
                 marginBottom: "0.75rem"
               }}>
                 Flexible authentication
@@ -827,8 +781,7 @@ export default function LandingPage() {
               <p style={{
                 fontSize: "0.9375rem",
                 color: theme.textSecondary,
-              transition: "color 0.6s ease",
-                lineHeight: "1.7",
+                  lineHeight: "1.7",
                 fontWeight: "300"
               }}>
                 Choose passwordless email verification or secure password-based login. Add two-factor authentication for extra security. Includes forgot password recovery and email verification.
@@ -838,8 +791,7 @@ export default function LandingPage() {
             {/* Feature 2 */}
             <div style={{
               padding: "2rem",
-              background: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
-            transition: "background 0.6s ease",
+              background: "rgba(0, 0, 0, 0.03)",
               borderRadius: "12px",
               border: "1px solid rgba(255, 255, 255, 0.1)"
             }}>
@@ -864,7 +816,6 @@ export default function LandingPage() {
                 fontSize: "1.25rem",
                 fontWeight: "600",
                 color: theme.text,
-            transition: "color 0.6s ease",
                 marginBottom: "0.75rem"
               }}>
                 Multi-admin support
@@ -872,8 +823,7 @@ export default function LandingPage() {
               <p style={{
                 fontSize: "0.9375rem",
                 color: theme.textSecondary,
-              transition: "color 0.6s ease",
-                lineHeight: "1.7",
+                  lineHeight: "1.7",
                 fontWeight: "300"
               }}>
                 Primary admins can invite secondary admins to help manage scheduling. Perfect for teams with multiple managers.
@@ -883,8 +833,7 @@ export default function LandingPage() {
             {/* Feature 3 */}
             <div style={{
               padding: "2rem",
-              background: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
-            transition: "background 0.6s ease",
+              background: "rgba(0, 0, 0, 0.03)",
               borderRadius: "12px",
               border: "1px solid rgba(255, 255, 255, 0.1)"
             }}>
@@ -907,7 +856,6 @@ export default function LandingPage() {
                 fontSize: "1.25rem",
                 fontWeight: "600",
                 color: theme.text,
-            transition: "color 0.6s ease",
                 marginBottom: "0.75rem"
               }}>
                 Automated email invitations
@@ -915,8 +863,7 @@ export default function LandingPage() {
               <p style={{
                 fontSize: "0.9375rem",
                 color: theme.textSecondary,
-              transition: "color 0.6s ease",
-                lineHeight: "1.7",
+                  lineHeight: "1.7",
                 fontWeight: "300"
               }}>
                 Students automatically receive email invitations when added. Support for both primary and secondary email addresses.
@@ -926,8 +873,7 @@ export default function LandingPage() {
             {/* Feature 4 */}
             <div style={{
               padding: "2rem",
-              background: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
-            transition: "background 0.6s ease",
+              background: "rgba(0, 0, 0, 0.03)",
               borderRadius: "12px",
               border: "1px solid rgba(255, 255, 255, 0.1)"
             }}>
@@ -952,7 +898,6 @@ export default function LandingPage() {
                 fontSize: "1.25rem",
                 fontWeight: "600",
                 color: theme.text,
-            transition: "color 0.6s ease",
                 marginBottom: "0.75rem"
               }}>
                 Simple availability form
@@ -960,8 +905,7 @@ export default function LandingPage() {
               <p style={{
                 fontSize: "0.9375rem",
                 color: theme.textSecondary,
-              transition: "color 0.6s ease",
-                lineHeight: "1.7",
+                  lineHeight: "1.7",
                 fontWeight: "300"
               }}>
                 Students select their available hours on an intuitive weekly calendar. Takes less than 2 minutes to complete.
@@ -971,8 +915,7 @@ export default function LandingPage() {
             {/* Feature 5 */}
             <div style={{
               padding: "2rem",
-              background: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
-            transition: "background 0.6s ease",
+              background: "rgba(0, 0, 0, 0.03)",
               borderRadius: "12px",
               border: "1px solid rgba(255, 255, 255, 0.1)"
             }}>
@@ -994,7 +937,6 @@ export default function LandingPage() {
                 fontSize: "1.25rem",
                 fontWeight: "600",
                 color: theme.text,
-            transition: "color 0.6s ease",
                 marginBottom: "0.75rem"
               }}>
                 Instant schedule generation
@@ -1002,8 +944,7 @@ export default function LandingPage() {
               <p style={{
                 fontSize: "0.9375rem",
                 color: theme.textSecondary,
-              transition: "color 0.6s ease",
-                lineHeight: "1.7",
+                  lineHeight: "1.7",
                 fontWeight: "300"
               }}>
                 Our algorithm creates balanced, conflict-free schedules in seconds based on student availability. No manual work required.
@@ -1013,8 +954,7 @@ export default function LandingPage() {
             {/* Feature 6 */}
             <div style={{
               padding: "2rem",
-              background: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
-            transition: "background 0.6s ease",
+              background: "rgba(0, 0, 0, 0.03)",
               borderRadius: "12px",
               border: "1px solid rgba(255, 255, 255, 0.1)"
             }}>
@@ -1036,7 +976,6 @@ export default function LandingPage() {
                 fontSize: "1.25rem",
                 fontWeight: "600",
                 color: theme.text,
-            transition: "color 0.6s ease",
                 marginBottom: "0.75rem"
               }}>
                 Reset and regenerate anytime
@@ -1044,8 +983,7 @@ export default function LandingPage() {
               <p style={{
                 fontSize: "0.9375rem",
                 color: theme.textSecondary,
-              transition: "color 0.6s ease",
-                lineHeight: "1.7",
+                  lineHeight: "1.7",
                 fontWeight: "300"
               }}>
                 Need to make changes? Reset student availability and request new submissions. Generate fresh schedules whenever needed.
@@ -1066,7 +1004,6 @@ export default function LandingPage() {
               fontSize: "2.5rem",
               fontWeight: "400",
               color: theme.text,
-            transition: "color 0.6s ease",
               marginBottom: "1rem",
               fontFamily: "Georgia, 'Times New Roman', serif",
               letterSpacing: "-0.02em"
@@ -1076,8 +1013,7 @@ export default function LandingPage() {
             <p style={{
               fontSize: "1.125rem",
               color: theme.textSecondary,
-              transition: "color 0.6s ease",
-              marginBottom: "2.5rem",
+                marginBottom: "2.5rem",
               lineHeight: "1.6"
             }}>
               Be the first to know when we launch new features
@@ -1103,10 +1039,8 @@ export default function LandingPage() {
                   padding: "0.875rem 1rem",
                   backgroundColor: "rgba(255, 255, 255, 0.05)",
                   border: `1px solid ${theme.border}`,
-            transition: "border-color 0.6s ease",
                   borderRadius: "8px",
                   color: theme.text,
-            transition: "color 0.6s ease",
                   fontSize: "1rem",
                   outline: "none",
                   transition: "all 0.2s",
@@ -1128,7 +1062,6 @@ export default function LandingPage() {
                   padding: "0.875rem 1.5rem",
                   backgroundColor: waitlistSubmitting ? "rgba(20, 184, 166, 0.5)" : "#14b8a6",
                   color: theme.text,
-            transition: "color 0.6s ease",
                   border: "none",
                   borderRadius: "8px",
                   fontSize: "1rem",
@@ -1209,7 +1142,6 @@ export default function LandingPage() {
             <h2 className="section-title" style={{
               fontWeight: "400",
               color: theme.text,
-            transition: "color 0.6s ease",
               marginBottom: "1rem",
               fontFamily: "Georgia, 'Times New Roman', serif"
             }}>
@@ -1233,10 +1165,8 @@ export default function LandingPage() {
             <div
               key={index}
               style={{
-                background: isDarkMode ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)",
-            transition: "background 0.6s ease",
+                background: "rgba(0, 0, 0, 0.03)",
                 border: `1px solid ${theme.border}`,
-            transition: "border-color 0.6s ease",
                 borderRadius: "8px",
                 overflow: "hidden"
               }}
@@ -1249,7 +1179,6 @@ export default function LandingPage() {
                   background: "none",
                   border: "none",
                   color: theme.text,
-            transition: "color 0.6s ease",
                   fontSize: "1.0625rem",
                   fontWeight: "500",
                   textAlign: "left",
@@ -1277,8 +1206,7 @@ export default function LandingPage() {
                 <div style={{
                   padding: "0 1.5rem 1.5rem 1.5rem",
                   color: theme.textSecondary,
-              transition: "color 0.6s ease",
-                  fontSize: "0.9375rem",
+                    fontSize: "0.9375rem",
                   lineHeight: "1.7",
                   fontWeight: "300"
                 }}>
@@ -1312,8 +1240,7 @@ export default function LandingPage() {
                 fontSize: "20px",
                 fontWeight: "600",
                 color: theme.text,
-              transition: "color 0.6s ease",
-                marginBottom: "12px",
+                  marginBottom: "12px",
                 letterSpacing: "-0.02em"
               }}>
                 Schedule Builder
@@ -1321,7 +1248,6 @@ export default function LandingPage() {
               <p style={{
                 fontSize: "16px",
                 color: theme.textMuted,
-            transition: "color 0.6s ease",
                 fontWeight: "300",
                 lineHeight: "1.6",
                 margin: 0
@@ -1353,8 +1279,7 @@ export default function LandingPage() {
                     background: "none",
                     border: "none",
                     color: theme.textSecondary,
-              transition: "color 0.6s ease",
-                    fontSize: "15px",
+                      fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
                     padding: 0,
@@ -1373,8 +1298,7 @@ export default function LandingPage() {
                     background: "none",
                     border: "none",
                     color: theme.textSecondary,
-              transition: "color 0.6s ease",
-                    fontSize: "15px",
+                      fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
                     padding: 0,
@@ -1393,8 +1317,7 @@ export default function LandingPage() {
                     background: "none",
                     border: "none",
                     color: theme.textSecondary,
-              transition: "color 0.6s ease",
-                    fontSize: "15px",
+                      fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
                     padding: 0,
@@ -1413,8 +1336,7 @@ export default function LandingPage() {
                     background: "none",
                     border: "none",
                     color: theme.textSecondary,
-              transition: "color 0.6s ease",
-                    fontSize: "15px",
+                      fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
                     padding: 0,
@@ -1453,8 +1375,7 @@ export default function LandingPage() {
                     background: "none",
                     border: "none",
                     color: theme.textSecondary,
-              transition: "color 0.6s ease",
-                    fontSize: "15px",
+                      fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
                     padding: 0,
@@ -1473,8 +1394,7 @@ export default function LandingPage() {
                     background: "none",
                     border: "none",
                     color: theme.textSecondary,
-              transition: "color 0.6s ease",
-                    fontSize: "15px",
+                      fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
                     padding: 0,
@@ -1493,8 +1413,7 @@ export default function LandingPage() {
                     background: "none",
                     border: "none",
                     color: theme.textSecondary,
-              transition: "color 0.6s ease",
-                    fontSize: "15px",
+                      fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
                     padding: 0,
@@ -1513,8 +1432,7 @@ export default function LandingPage() {
                     background: "none",
                     border: "none",
                     color: theme.textSecondary,
-              transition: "color 0.6s ease",
-                    fontSize: "15px",
+                      fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
                     padding: 0,
@@ -1548,7 +1466,6 @@ export default function LandingPage() {
             <p style={{
               fontSize: "14px",
               color: theme.textMuted,
-            transition: "color 0.6s ease",
               fontWeight: "300",
               margin: 0
             }}>
@@ -1567,7 +1484,6 @@ export default function LandingPage() {
                 rel="noopener noreferrer"
                 style={{
                   color: theme.textMuted,
-            transition: "color 0.6s ease",
                   fontSize: "14px",
                   textDecoration: "none",
                   fontWeight: "400",
@@ -1605,19 +1521,17 @@ export default function LandingPage() {
           zIndex: 100
         }}>
           <div style={{
-            backgroundColor: isDarkMode ? "#0f1419" : "#ffffff",
+            backgroundColor: "#ffffff",
             borderRadius: "12px",
             padding: "2.5rem",
             maxWidth: "500px",
             width: "90%",
             border: `1px solid ${theme.border}`,
-            transition: "background-color 0.6s ease, border-color 0.6s ease"
-          }}>
+              }}>
             <h2 style={{
               fontSize: "1.5rem",
               fontWeight: "600",
               color: theme.text,
-            transition: "color 0.6s ease",
               marginBottom: "1.5rem"
             }}>
               Send us feedback
@@ -1630,8 +1544,7 @@ export default function LandingPage() {
                   fontSize: "0.875rem",
                   fontWeight: "500",
                   color: theme.text,
-              transition: "color 0.6s ease",
-                  marginBottom: "0.5rem"
+                    marginBottom: "0.5rem"
                 }}>
                   Name
                 </label>
@@ -1643,12 +1556,10 @@ export default function LandingPage() {
                   style={{
                     width: "100%",
                     padding: "0.75rem",
-                    backgroundColor: isDarkMode ? "#0a0f1a" : "#f9fafb",
+                    backgroundColor: "#f9fafb",
                     border: `1px solid ${theme.border}`,
-            transition: "border-color 0.6s ease",
                     borderRadius: "6px",
                     color: theme.text,
-            transition: "color 0.6s ease",
                     fontSize: "1rem"
                   }}
                 />
@@ -1660,8 +1571,7 @@ export default function LandingPage() {
                   fontSize: "0.875rem",
                   fontWeight: "500",
                   color: theme.text,
-              transition: "color 0.6s ease",
-                  marginBottom: "0.5rem"
+                    marginBottom: "0.5rem"
                 }}>
                   Email
                 </label>
@@ -1673,12 +1583,10 @@ export default function LandingPage() {
                   style={{
                     width: "100%",
                     padding: "0.75rem",
-                    backgroundColor: isDarkMode ? "#0a0f1a" : "#f9fafb",
+                    backgroundColor: "#f9fafb",
                     border: `1px solid ${theme.border}`,
-            transition: "border-color 0.6s ease",
                     borderRadius: "6px",
                     color: theme.text,
-            transition: "color 0.6s ease",
                     fontSize: "1rem"
                   }}
                 />
@@ -1690,8 +1598,7 @@ export default function LandingPage() {
                   fontSize: "0.875rem",
                   fontWeight: "500",
                   color: theme.text,
-              transition: "color 0.6s ease",
-                  marginBottom: "0.5rem"
+                    marginBottom: "0.5rem"
                 }}>
                   Message
                 </label>
@@ -1703,12 +1610,10 @@ export default function LandingPage() {
                   style={{
                     width: "100%",
                     padding: "0.75rem",
-                    backgroundColor: isDarkMode ? "#0a0f1a" : "#f9fafb",
+                    backgroundColor: "#f9fafb",
                     border: `1px solid ${theme.border}`,
-            transition: "border-color 0.6s ease",
                     borderRadius: "6px",
                     color: theme.text,
-            transition: "color 0.6s ease",
                     fontSize: "1rem",
                     resize: "vertical"
                   }}
@@ -1751,9 +1656,7 @@ export default function LandingPage() {
                     padding: "0.75rem 1.5rem",
                     background: "transparent",
                     color: theme.text,
-            transition: "color 0.6s ease",
                     border: `1px solid ${theme.border}`,
-            transition: "border-color 0.6s ease",
                     borderRadius: "6px",
                     fontSize: "0.875rem",
                     fontWeight: "500",
@@ -1769,7 +1672,6 @@ export default function LandingPage() {
                     padding: "0.75rem 1.5rem",
                     background: "#14b8a6",
                     color: theme.text,
-            transition: "color 0.6s ease",
                     border: "none",
                     borderRadius: "6px",
                     fontSize: "0.875rem",
