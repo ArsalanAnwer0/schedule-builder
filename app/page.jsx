@@ -675,8 +675,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Screenshot Carousel Section */}
-      <section className="section-padding" style={{
+      {/* Screenshot Carousel Section - COMMENTED OUT FOR NOW */}
+      {/* <section className="section-padding" style={{
         maxWidth: "1200px",
         margin: "0 auto",
         paddingTop: "8rem",
@@ -702,20 +702,18 @@ export default function LandingPage() {
           </div>
         </FadeInSection>
 
-        {/* Admin Portal Screenshots */}
         <FadeInSection delay={100}>
           <div style={{ marginBottom: "8rem" }}>
             <ScreenshotGrid screenshots={adminScreenshots} sectionTitle="Admin Portal" />
           </div>
         </FadeInSection>
 
-        {/* Student Portal Screenshots */}
         <FadeInSection delay={200}>
           <div style={{ marginBottom: "4rem" }}>
             <ScreenshotGrid screenshots={studentScreenshots} sectionTitle="Student Portal" />
           </div>
         </FadeInSection>
-      </section>
+      </section> */}
 
       {/* Features Section */}
       <section id="features" className="section-padding" style={{
@@ -996,104 +994,128 @@ export default function LandingPage() {
       {/* Waitlist Section */}
       <section id="waitlist" className="section-padding" style={{
         maxWidth: "700px",
-        margin: "0 auto"
+        margin: "0 auto",
+        padding: "8rem 2rem"
       }}>
         <FadeInSection>
           <div style={{ textAlign: "center" }}>
+            {/* Small tagline at top */}
+            <div style={{
+              fontSize: "0.6875rem",
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              color: "rgba(0, 0, 0, 0.5)",
+              marginBottom: "2.5rem",
+              fontWeight: "400"
+            }}>
+              Simplify team scheduling. Join our community.
+            </div>
+
+            {/* Large headline in serif */}
             <h2 style={{
-              fontSize: "2.5rem",
+              fontSize: "4rem",
               fontWeight: "400",
-              color: theme.text,
-              marginBottom: "1rem",
+              color: "#000000",
+              marginBottom: "3.5rem",
               fontFamily: "Georgia, 'Times New Roman', serif",
-              letterSpacing: "-0.02em"
+              letterSpacing: "-0.01em",
+              lineHeight: "1.1"
             }}>
-              Join the Waitlist
+              JOIN THE SCHEDULE
+              <br />
+              BUILDER COMMUNITY
             </h2>
+
+            {/* Horizontal dividing line */}
+            <div style={{
+              width: "100%",
+              height: "1px",
+              backgroundColor: "rgba(0, 0, 0, 0.15)",
+              margin: "0 auto 2.5rem auto"
+            }} />
+
+            {/* Subheadline */}
             <p style={{
-              fontSize: "1.125rem",
-              color: theme.textSecondary,
-                marginBottom: "2.5rem",
-              lineHeight: "1.6"
+              fontSize: "0.9375rem",
+              color: "rgba(0, 0, 0, 0.7)",
+              marginBottom: "2.5rem",
+              lineHeight: "1.6",
+              maxWidth: "450px",
+              margin: "0 auto 2.5rem auto"
             }}>
-              Be the first to know when we launch new features
+              Join our waitlist for exclusive community events, content, and more.
             </p>
 
           <form onSubmit={handleWaitlistSubmit} style={{
-            maxWidth: "500px",
+            maxWidth: "450px",
             margin: "0 auto"
           }}>
+            {/* Email input with arrow button */}
             <div style={{
               display: "flex",
-              gap: "0.75rem",
-              flexDirection: "column"
+              gap: "0",
+              alignItems: "stretch",
+              backgroundColor: "#ffffff",
+              border: "1px solid rgba(0, 0, 0, 0.15)"
             }}>
               <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder="ENTER YOUR EMAIL"
                 value={waitlistEmail}
                 onChange={(e) => setWaitlistEmail(e.target.value)}
                 disabled={waitlistSubmitting}
+                required
                 style={{
-                  width: "100%",
-                  padding: "0.875rem 1rem",
-                  backgroundColor: "rgba(255, 255, 255, 0.05)",
-                  border: `1px solid ${theme.border}`,
-                  borderRadius: "8px",
-                  color: theme.text,
-                  fontSize: "1rem",
+                  flex: 1,
+                  padding: "1rem 1.25rem",
+                  backgroundColor: "transparent",
+                  border: "none",
+                  color: "#000000",
+                  fontSize: "0.8125rem",
+                  letterSpacing: "0.05em",
                   outline: "none",
-                  transition: "all 0.2s",
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = "#14b8a6";
-                  e.target.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = "rgba(255, 255, 255, 0.1)";
-                  e.target.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                  fontFamily: "inherit"
                 }}
               />
               <button
                 type="submit"
                 disabled={waitlistSubmitting}
                 style={{
-                  width: "100%",
-                  padding: "0.875rem 1.5rem",
-                  backgroundColor: waitlistSubmitting ? "rgba(20, 184, 166, 0.5)" : "#14b8a6",
-                  color: theme.text,
+                  padding: "1rem 1.5rem",
+                  backgroundColor: "#000000",
+                  color: "#ffffff",
                   border: "none",
-                  borderRadius: "8px",
-                  fontSize: "1rem",
-                  fontWeight: "500",
                   cursor: waitlistSubmitting ? "not-allowed" : "pointer",
-                  transition: "all 0.2s",
+                  fontSize: "1.25rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  opacity: waitlistSubmitting ? 0.7 : 1,
+                  transition: "opacity 0.2s"
                 }}
                 onMouseOver={(e) => {
                   if (!waitlistSubmitting) {
-                    e.target.style.backgroundColor = "#0d9488";
+                    e.target.style.opacity = "0.8";
                   }
                 }}
                 onMouseOut={(e) => {
                   if (!waitlistSubmitting) {
-                    e.target.style.backgroundColor = "#14b8a6";
+                    e.target.style.opacity = "1";
                   }
                 }}
               >
-                {waitlistSubmitting ? 'Joining...' : 'Join Waitlist'}
+                {waitlistSubmitting ? '...' : '→'}
               </button>
             </div>
 
             {waitlistSuccess && (
               <div style={{
-                marginTop: "1rem",
-                padding: "0.875rem 1rem",
-                backgroundColor: "rgba(16, 185, 129, 0.1)",
-                border: "1px solid rgba(16, 185, 129, 0.3)",
-                borderRadius: "8px",
+                marginTop: "1.5rem",
+                padding: "0.875rem",
                 color: "#10b981",
-                fontSize: "0.9375rem",
-                textAlign: "center"
+                fontSize: "0.8125rem",
+                textAlign: "center",
+                letterSpacing: "0.02em"
               }}>
                 {waitlistSuccess}
               </div>
@@ -1101,14 +1123,12 @@ export default function LandingPage() {
 
             {waitlistError && (
               <div style={{
-                marginTop: "1rem",
-                padding: "0.875rem 1rem",
-                backgroundColor: "rgba(239, 68, 68, 0.1)",
-                border: "1px solid rgba(239, 68, 68, 0.3)",
-                borderRadius: "8px",
+                marginTop: "1.5rem",
+                padding: "0.875rem",
                 color: "#ef4444",
-                fontSize: "0.9375rem",
-                textAlign: "center"
+                fontSize: "0.8125rem",
+                textAlign: "center",
+                letterSpacing: "0.02em"
               }}>
                 {waitlistError}
               </div>
