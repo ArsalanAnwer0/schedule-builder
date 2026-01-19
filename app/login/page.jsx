@@ -185,22 +185,23 @@ function LoginForm() {
       flexDirection: 'row'
     }}>
 
-      {/* LEFT PANEL - Dark Gray */}
+      {/* LEFT PANEL - White */}
       <div style={{
         flex: 1,
-        backgroundColor: '#2a2a2a',
+        backgroundColor: '#ffffff',
         padding: '4rem',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        position: 'relative'
+        position: 'relative',
+        borderRight: '1px solid rgba(0, 0, 0, 0.1)'
       }}
       className="left-panel">
         {/* Logo */}
         <div>
           <Link href="/" style={{ textDecoration: 'none' }}>
             <h1 style={{
-              color: '#fff',
+              color: 'rgba(0, 0, 0, 0.87)',
               fontFamily: 'Georgia, serif',
               fontSize: '24px',
               fontWeight: '400',
@@ -217,7 +218,7 @@ function LoginForm() {
           <p style={{
             fontSize: '20px',
             fontStyle: 'italic',
-            color: 'rgba(255, 255, 255, 0.9)',
+            color: 'rgba(0, 0, 0, 0.87)',
             lineHeight: '1.6',
             margin: 0,
             marginBottom: '1.5rem'
@@ -226,7 +227,7 @@ function LoginForm() {
           </p>
           <p style={{
             fontSize: '14px',
-            color: 'rgba(255, 255, 255, 0.5)',
+            color: 'rgba(0, 0, 0, 0.5)',
             margin: 0
           }}>
             Schedule Builder Team
