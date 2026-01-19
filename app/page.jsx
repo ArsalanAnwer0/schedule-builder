@@ -1404,7 +1404,7 @@ export default function LandingPage() {
                     transition: "color 0.2s ease"
                   }}
                   onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
-                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                  onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
                 >
                   Contact
                 </button>
@@ -1423,7 +1423,7 @@ export default function LandingPage() {
                     transition: "color 0.2s ease"
                   }}
                   onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
-                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                  onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
                 >
                   FAQ
                 </button>
@@ -1442,7 +1442,7 @@ export default function LandingPage() {
                     transition: "color 0.2s ease"
                   }}
                   onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
-                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                  onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
                 >
                   Privacy Policy
                 </button>
@@ -1461,7 +1461,7 @@ export default function LandingPage() {
                     transition: "color 0.2s ease"
                   }}
                   onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
-                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                  onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
                 >
                   Terms of Use
                 </button>
