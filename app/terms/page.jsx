@@ -7,14 +7,15 @@ export default function TermsOfUse() {
   const router = useRouter();
 
   return (
-    <div style={{ backgroundColor: "#0a0f1a", minHeight: "100vh" }}>
+    <div style={{ backgroundColor: "#ffffff", minHeight: "100vh" }}>
       {/* Navigation */}
       <nav style={{
         position: "sticky",
         top: 0,
         zIndex: 50,
-        backgroundColor: "#0a0f1a",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+        backgroundColor: "rgba(255, 255, 255, 0.95)",
+        backdropFilter: "blur(10px)",
+        borderBottom: "1px solid rgba(0, 0, 0, 0.08)",
         padding: "1rem 2rem"
       }}>
         <div style={{
@@ -33,7 +34,12 @@ export default function TermsOfUse() {
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2.5">
               <path d="M3 12h18M3 6h18M3 18h18" />
             </svg>
-            <span style={{ fontSize: "1.25rem", fontWeight: "600", color: "#ffffff" }}>Schedule Builder</span>
+            <span style={{
+              fontSize: "1.25rem",
+              fontWeight: "600",
+              color: "rgba(0, 0, 0, 0.87)",
+              fontFamily: "Georgia, serif"
+            }}>Schedule Builder</span>
           </Link>
         </div>
       </nav>
@@ -53,23 +59,29 @@ export default function TermsOfUse() {
             display: "flex",
             alignItems: "center",
             gap: "0.5rem",
-            marginBottom: "2rem"
+            marginBottom: "2.5rem",
+            fontWeight: "400"
           }}
+          onMouseOver={(e) => e.currentTarget.style.color = "#0d9488"}
+          onMouseOut={(e) => e.currentTarget.style.color = "#14b8a6"}
         >
           ← Back to Home
         </Link>
         <h1 style={{
+          fontFamily: "Georgia, serif",
           fontSize: "2.5rem",
-          fontWeight: "600",
-          color: "#ffffff",
-          marginBottom: "1rem"
+          fontWeight: "400",
+          color: "rgba(0, 0, 0, 0.87)",
+          marginBottom: "1rem",
+          letterSpacing: "-0.02em"
         }}>
           Terms of Use
         </h1>
         <p style={{
           fontSize: "0.9375rem",
-          color: "rgba(255, 255, 255, 0.5)",
-          marginBottom: "3rem"
+          color: "rgba(0, 0, 0, 0.4)",
+          marginBottom: "3rem",
+          fontWeight: "400"
         }}>
           Last updated: January 2026
         </p>
@@ -78,15 +90,17 @@ export default function TermsOfUse() {
           display: "flex",
           flexDirection: "column",
           gap: "2.5rem",
-          color: "rgba(255, 255, 255, 0.7)",
+          color: "rgba(0, 0, 0, 0.65)",
           fontSize: "1rem",
-          lineHeight: "1.8"
+          lineHeight: "1.8",
+          fontWeight: "400"
         }}>
           <section>
             <h2 style={{
-              fontSize: "1.5rem",
-              fontWeight: "600",
-              color: "#ffffff",
+              fontFamily: "Georgia, serif",
+              fontSize: "1.75rem",
+              fontWeight: "400",
+              color: "rgba(0, 0, 0, 0.87)",
               marginBottom: "1rem"
             }}>
               1. Acceptance of Terms
@@ -98,9 +112,10 @@ export default function TermsOfUse() {
 
           <section>
             <h2 style={{
-              fontSize: "1.5rem",
-              fontWeight: "600",
-              color: "#ffffff",
+              fontFamily: "Georgia, serif",
+              fontSize: "1.75rem",
+              fontWeight: "400",
+              color: "rgba(0, 0, 0, 0.87)",
               marginBottom: "1rem"
             }}>
               2. Description of Service
@@ -112,9 +127,10 @@ export default function TermsOfUse() {
 
           <section>
             <h2 style={{
-              fontSize: "1.5rem",
-              fontWeight: "600",
-              color: "#ffffff",
+              fontFamily: "Georgia, serif",
+              fontSize: "1.75rem",
+              fontWeight: "400",
+              color: "rgba(0, 0, 0, 0.87)",
               marginBottom: "1rem"
             }}>
               3. User Accounts
@@ -132,9 +148,10 @@ export default function TermsOfUse() {
 
           <section>
             <h2 style={{
-              fontSize: "1.5rem",
-              fontWeight: "600",
-              color: "#ffffff",
+              fontFamily: "Georgia, serif",
+              fontSize: "1.75rem",
+              fontWeight: "400",
+              color: "rgba(0, 0, 0, 0.87)",
               marginBottom: "1rem"
             }}>
               4. Acceptable Use
@@ -154,9 +171,10 @@ export default function TermsOfUse() {
 
           <section>
             <h2 style={{
-              fontSize: "1.5rem",
-              fontWeight: "600",
-              color: "#ffffff",
+              fontFamily: "Georgia, serif",
+              fontSize: "1.75rem",
+              fontWeight: "400",
+              color: "rgba(0, 0, 0, 0.87)",
               marginBottom: "1rem"
             }}>
               5. Data and Privacy
@@ -171,9 +189,10 @@ export default function TermsOfUse() {
 
           <section>
             <h2 style={{
-              fontSize: "1.5rem",
-              fontWeight: "600",
-              color: "#ffffff",
+              fontFamily: "Georgia, serif",
+              fontSize: "1.75rem",
+              fontWeight: "400",
+              color: "rgba(0, 0, 0, 0.87)",
               marginBottom: "1rem"
             }}>
               6. Intellectual Property
@@ -185,9 +204,10 @@ export default function TermsOfUse() {
 
           <section>
             <h2 style={{
-              fontSize: "1.5rem",
-              fontWeight: "600",
-              color: "#ffffff",
+              fontFamily: "Georgia, serif",
+              fontSize: "1.75rem",
+              fontWeight: "400",
+              color: "rgba(0, 0, 0, 0.87)",
               marginBottom: "1rem"
             }}>
               7. Service Availability
@@ -199,9 +219,10 @@ export default function TermsOfUse() {
 
           <section>
             <h2 style={{
-              fontSize: "1.5rem",
-              fontWeight: "600",
-              color: "#ffffff",
+              fontFamily: "Georgia, serif",
+              fontSize: "1.75rem",
+              fontWeight: "400",
+              color: "rgba(0, 0, 0, 0.87)",
               marginBottom: "1rem"
             }}>
               8. Limitation of Liability
@@ -213,9 +234,10 @@ export default function TermsOfUse() {
 
           <section>
             <h2 style={{
-              fontSize: "1.5rem",
-              fontWeight: "600",
-              color: "#ffffff",
+              fontFamily: "Georgia, serif",
+              fontSize: "1.75rem",
+              fontWeight: "400",
+              color: "rgba(0, 0, 0, 0.87)",
               marginBottom: "1rem"
             }}>
               9. Termination
@@ -227,9 +249,10 @@ export default function TermsOfUse() {
 
           <section>
             <h2 style={{
-              fontSize: "1.5rem",
-              fontWeight: "600",
-              color: "#ffffff",
+              fontFamily: "Georgia, serif",
+              fontSize: "1.75rem",
+              fontWeight: "400",
+              color: "rgba(0, 0, 0, 0.87)",
               marginBottom: "1rem"
             }}>
               10. Changes to Terms
@@ -241,9 +264,10 @@ export default function TermsOfUse() {
 
           <section>
             <h2 style={{
-              fontSize: "1.5rem",
-              fontWeight: "600",
-              color: "#ffffff",
+              fontFamily: "Georgia, serif",
+              fontSize: "1.75rem",
+              fontWeight: "400",
+              color: "rgba(0, 0, 0, 0.87)",
               marginBottom: "1rem"
             }}>
               11. Governing Law
@@ -255,9 +279,10 @@ export default function TermsOfUse() {
 
           <section>
             <h2 style={{
-              fontSize: "1.5rem",
-              fontWeight: "600",
-              color: "#ffffff",
+              fontFamily: "Georgia, serif",
+              fontSize: "1.75rem",
+              fontWeight: "400",
+              color: "rgba(0, 0, 0, 0.87)",
               marginBottom: "1rem"
             }}>
               12. Contact
