@@ -1308,7 +1308,7 @@ export default function LandingPage() {
                     transition: "color 0.2s ease"
                   }}
                   onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
-                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                  onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
                 >
                   Features
                 </button>
@@ -1327,7 +1327,7 @@ export default function LandingPage() {
                     transition: "color 0.2s ease"
                   }}
                   onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
-                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                  onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
                 >
                   How It Works
                 </button>
@@ -1346,7 +1346,7 @@ export default function LandingPage() {
                     transition: "color 0.2s ease"
                   }}
                   onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
-                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                  onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
                 >
                   Forum
                 </button>
@@ -1365,7 +1365,7 @@ export default function LandingPage() {
                     transition: "color 0.2s ease"
                   }}
                   onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
-                  onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
+                  onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
                 >
                   Docs
                 </button>
