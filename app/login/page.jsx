@@ -179,63 +179,111 @@ function LoginForm() {
 
   return (
     <div style={{
-      minHeight: "100vh",
-      backgroundColor: "#0a0f1a",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: "2rem",
-      fontFamily: "system-ui, -apple-system, sans-serif"
+      display: 'flex',
+      minHeight: '100vh',
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      flexDirection: 'row'
     }}>
+
+      {/* LEFT PANEL - Dark Gray */}
       <div style={{
-        width: "100%",
-        maxWidth: "520px"
-      }}>
-        {/* Header */}
-        <div style={{ marginBottom: "3rem", textAlign: "center" }}>
-          <Link href="/" style={{ textDecoration: "none" }}>
+        flex: 1,
+        backgroundColor: '#2a2a2a',
+        padding: '4rem',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        position: 'relative'
+      }}
+      className="left-panel">
+        {/* Logo */}
+        <div>
+          <Link href="/" style={{ textDecoration: 'none' }}>
             <h1 style={{
-              fontSize: "2rem",
-              fontWeight: "400",
-              color: "#ffffff",
-              marginBottom: "0.75rem",
-              fontFamily: "Georgia, 'Times New Roman', serif",
-              letterSpacing: "-0.01em"
+              color: '#fff',
+              fontFamily: 'Georgia, serif',
+              fontSize: '24px',
+              fontWeight: '400',
+              margin: 0,
+              letterSpacing: '-0.01em'
             }}>
               Schedule Builder
             </h1>
           </Link>
+        </div>
+
+        {/* Quote */}
+        <div>
           <p style={{
-            fontSize: "1rem",
-            color: "rgba(255, 255, 255, 0.5)",
-            fontWeight: "300"
+            fontSize: '20px',
+            fontStyle: 'italic',
+            color: 'rgba(255, 255, 255, 0.9)',
+            lineHeight: '1.6',
+            margin: 0,
+            marginBottom: '1.5rem'
           }}>
-            {codeSent ? 'Enter verification code' : 'Sign in to your account'}
+            "Make and manage schedules and shifts."
+          </p>
+          <p style={{
+            fontSize: '14px',
+            color: 'rgba(255, 255, 255, 0.5)',
+            margin: 0
+          }}>
+            Schedule Builder Team
           </p>
         </div>
 
-        {/* Main Card */}
-        <div style={{
-          backgroundColor: "rgba(255, 255, 255, 0.03)",
-          border: "1px solid rgba(255, 255, 255, 0.1)",
-          borderRadius: "12px",
-          padding: "2.5rem",
-          backdropFilter: "blur(10px)"
-        }}>
+        {/* Responsive styles will be added via <style> tag below */}
+      </div>
+
+      {/* RIGHT PANEL - White */}
+      <div style={{
+        flex: 1,
+        backgroundColor: '#ffffff',
+        padding: '4rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflowY: 'auto'
+      }}
+      className="right-panel">
+        <div style={{ maxWidth: '420px', width: '100%' }}>
+
+          {/* Header */}
+          <div style={{ marginBottom: '2.5rem' }}>
+            <h2 style={{
+              fontSize: '32px',
+              fontWeight: '600',
+              color: 'rgba(0, 0, 0, 0.87)',
+              marginBottom: '0.5rem',
+              margin: 0
+            }}>
+              {codeSent ? 'Enter verification code' : 'Sign in to your account'}
+            </h2>
+            <p style={{
+              fontSize: '16px',
+              color: 'rgba(0, 0, 0, 0.5)',
+              fontWeight: '300',
+              margin: '0.5rem 0 0 0'
+            }}>
+              {!codeSent && 'Welcome back to Schedule Builder'}
+            </p>
+          </div>
+
           {/* URL Error */}
           {urlError && (
             <div style={{
-              padding: "1rem 1.25rem",
-              backgroundColor: "rgba(239, 68, 68, 0.1)",
-              border: "1px solid rgba(239, 68, 68, 0.3)",
-              borderRadius: "8px",
-              marginBottom: "1.5rem"
+              padding: '1rem 1.25rem',
+              backgroundColor: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              borderRadius: '8px',
+              marginBottom: '1.5rem'
             }}>
               <p style={{
-                color: "#fca5a5",
-                fontSize: "0.9375rem",
+                color: '#dc2626',
+                fontSize: '0.9375rem',
                 margin: 0,
-                fontWeight: "300"
+                fontWeight: '400'
               }}>
                 {urlError === 'invalid_token' && 'Invalid login link'}
                 {urlError === 'expired_or_invalid' && 'Login link expired or invalid'}
@@ -247,17 +295,17 @@ function LoginForm() {
           {/* Error Message */}
           {error && (
             <div style={{
-              padding: "1rem 1.25rem",
-              backgroundColor: "rgba(239, 68, 68, 0.1)",
-              border: "1px solid rgba(239, 68, 68, 0.3)",
-              borderRadius: "8px",
-              marginBottom: "1.5rem"
+              padding: '1rem 1.25rem',
+              backgroundColor: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              borderRadius: '8px',
+              marginBottom: '1.5rem'
             }}>
               <p style={{
-                color: "#fca5a5",
-                fontSize: "0.9375rem",
+                color: '#dc2626',
+                fontSize: '0.9375rem',
                 margin: 0,
-                fontWeight: "300"
+                fontWeight: '400'
               }}>
                 {error}
               </p>
@@ -267,17 +315,17 @@ function LoginForm() {
           {/* Success Message */}
           {message && (
             <div style={{
-              padding: "1rem 1.25rem",
-              backgroundColor: "rgba(20, 184, 166, 0.1)",
-              border: "1px solid rgba(20, 184, 166, 0.3)",
-              borderRadius: "8px",
-              marginBottom: "1.5rem"
+              padding: '1rem 1.25rem',
+              backgroundColor: 'rgba(20, 184, 166, 0.1)',
+              border: '1px solid rgba(20, 184, 166, 0.3)',
+              borderRadius: '8px',
+              marginBottom: '1.5rem'
             }}>
               <p style={{
-                color: "#14b8a6",
-                fontSize: "0.9375rem",
+                color: '#14b8a6',
+                fontSize: '0.9375rem',
                 margin: 0,
-                fontWeight: "300"
+                fontWeight: '400'
               }}>
                 {message}
               </p>
@@ -287,13 +335,13 @@ function LoginForm() {
           {/* Password Login Step */}
           {!codeSent && usePasswordLogin && (
             <form onSubmit={handlePasswordLogin}>
-              <div style={{ marginBottom: "1.5rem" }}>
+              <div style={{ marginBottom: '1.5rem' }}>
                 <label style={{
-                  display: "block",
-                  fontSize: "0.875rem",
-                  fontWeight: "400",
-                  color: "rgba(255, 255, 255, 0.8)",
-                  marginBottom: "0.5rem"
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: 'rgba(0, 0, 0, 0.65)',
+                  marginBottom: '0.5rem'
                 }}>
                   Email Address
                 </label>
@@ -305,35 +353,36 @@ function LoginForm() {
                   disabled={loading}
                   placeholder="you@example.com"
                   style={{
-                    width: "100%",
-                    padding: "0.875rem 1rem",
-                    backgroundColor: "rgba(255, 255, 255, 0.05)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                    borderRadius: "8px",
-                    fontSize: "0.9375rem",
-                    color: "#ffffff",
-                    outline: "none",
-                    fontWeight: "300",
-                    transition: "all 0.2s"
+                    width: '100%',
+                    padding: '0.875rem 1rem',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid rgba(0, 0, 0, 0.2)',
+                    borderRadius: '8px',
+                    fontSize: '0.9375rem',
+                    color: 'rgba(0, 0, 0, 0.87)',
+                    outline: 'none',
+                    fontWeight: '400',
+                    transition: 'all 0.2s',
+                    boxSizing: 'border-box'
                   }}
                   onFocus={(e) => {
-                    e.currentTarget.style.borderColor = "#14b8a6";
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                    e.currentTarget.style.borderColor = '#14b8a6';
+                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(20, 184, 166, 0.1)';
                   }}
                   onBlur={(e) => {
-                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                    e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)';
+                    e.currentTarget.style.boxShadow = 'none';
                   }}
                 />
               </div>
 
-              <div style={{ marginBottom: "2rem" }}>
+              <div style={{ marginBottom: '1rem' }}>
                 <label style={{
-                  display: "block",
-                  fontSize: "0.875rem",
-                  fontWeight: "400",
-                  color: "rgba(255, 255, 255, 0.8)",
-                  marginBottom: "0.5rem"
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: 'rgba(0, 0, 0, 0.65)',
+                  marginBottom: '0.5rem'
                 }}>
                   Password
                 </label>
@@ -345,44 +394,45 @@ function LoginForm() {
                   disabled={loading}
                   placeholder="Enter your password"
                   style={{
-                    width: "100%",
-                    padding: "0.875rem 1rem",
-                    backgroundColor: "rgba(255, 255, 255, 0.05)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                    borderRadius: "8px",
-                    fontSize: "0.9375rem",
-                    color: "#ffffff",
-                    outline: "none",
-                    fontWeight: "300",
-                    transition: "all 0.2s"
+                    width: '100%',
+                    padding: '0.875rem 1rem',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid rgba(0, 0, 0, 0.2)',
+                    borderRadius: '8px',
+                    fontSize: '0.9375rem',
+                    color: 'rgba(0, 0, 0, 0.87)',
+                    outline: 'none',
+                    fontWeight: '400',
+                    transition: 'all 0.2s',
+                    boxSizing: 'border-box'
                   }}
                   onFocus={(e) => {
-                    e.currentTarget.style.borderColor = "#14b8a6";
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                    e.currentTarget.style.borderColor = '#14b8a6';
+                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(20, 184, 166, 0.1)';
                   }}
                   onBlur={(e) => {
-                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                    e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)';
+                    e.currentTarget.style.boxShadow = 'none';
                   }}
                 />
               </div>
 
               {/* Forgot Password Link */}
               <div style={{
-                textAlign: "right",
-                marginBottom: "1rem"
+                textAlign: 'right',
+                marginBottom: '1.5rem'
               }}>
                 <Link
                   href="/forgot-password"
                   style={{
-                    fontSize: "0.875rem",
-                    color: "#14b8a6",
-                    textDecoration: "none",
-                    fontWeight: "400",
-                    transition: "color 0.2s"
+                    fontSize: '0.875rem',
+                    color: '#14b8a6',
+                    textDecoration: 'none',
+                    fontWeight: '400',
+                    transition: 'color 0.2s'
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.color = "#0d9488"}
-                  onMouseOut={(e) => e.currentTarget.style.color = "#14b8a6"}
+                  onMouseOver={(e) => e.currentTarget.style.color = '#0d9488'}
+                  onMouseOut={(e) => e.currentTarget.style.color = '#14b8a6'}
                 >
                   Forgot Password?
                 </Link>
@@ -392,23 +442,23 @@ function LoginForm() {
                 type="submit"
                 disabled={loading}
                 style={{
-                  width: "100%",
-                  padding: "0.875rem 1.5rem",
-                  backgroundColor: loading ? "rgba(255, 255, 255, 0.1)" : "#14b8a6",
-                  color: "#ffffff",
-                  border: "none",
-                  borderRadius: "8px",
-                  fontSize: "0.9375rem",
-                  fontWeight: "500",
-                  cursor: loading ? "not-allowed" : "pointer",
-                  marginBottom: "1.5rem",
-                  transition: "all 0.2s"
+                  width: '100%',
+                  padding: '0.875rem 1.5rem',
+                  backgroundColor: loading ? 'rgba(20, 184, 166, 0.5)' : '#14b8a6',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  marginBottom: '1.5rem',
+                  transition: 'all 0.2s'
                 }}
                 onMouseOver={(e) => {
-                  if (!loading) e.currentTarget.style.backgroundColor = "#0d9488";
+                  if (!loading) e.currentTarget.style.backgroundColor = '#0d9488';
                 }}
                 onMouseOut={(e) => {
-                  if (!loading) e.currentTarget.style.backgroundColor = "#14b8a6";
+                  if (!loading) e.currentTarget.style.backgroundColor = '#14b8a6';
                 }}
               >
                 {loading ? 'Signing in...' : 'Sign In'}
@@ -416,24 +466,24 @@ function LoginForm() {
 
               {/* Alternative Login Option */}
               <div style={{
-                textAlign: "center",
-                marginBottom: "1.5rem"
+                textAlign: 'center',
+                marginBottom: '1.5rem'
               }}>
                 <button
                   type="button"
                   onClick={() => setUsePasswordLogin(false)}
                   style={{
-                    background: "none",
-                    border: "none",
-                    color: "#14b8a6",
-                    fontSize: "0.875rem",
-                    cursor: "pointer",
+                    background: 'none',
+                    border: 'none',
+                    color: '#14b8a6',
+                    fontSize: '0.875rem',
+                    cursor: 'pointer',
                     padding: 0,
-                    textDecoration: "none",
-                    fontWeight: "300"
+                    textDecoration: 'none',
+                    fontWeight: '400'
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.textDecoration = "underline"}
-                  onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
+                  onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                  onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
                 >
                   Use verification code instead
                 </button>
@@ -441,42 +491,42 @@ function LoginForm() {
 
               {/* Register/Set Password Links */}
               <div style={{
-                textAlign: "center",
-                paddingTop: "1.5rem",
-                borderTop: "1px solid rgba(255, 255, 255, 0.1)"
+                textAlign: 'center',
+                paddingTop: '1.5rem',
+                borderTop: '1px solid rgba(0, 0, 0, 0.1)'
               }}>
                 <p style={{
-                  fontSize: "0.875rem",
-                  color: "rgba(255, 255, 255, 0.5)",
-                  marginBottom: "0.75rem",
-                  fontWeight: "300"
+                  fontSize: '0.875rem',
+                  color: 'rgba(0, 0, 0, 0.5)',
+                  marginBottom: '0.75rem',
+                  fontWeight: '400'
                 }}>
                   First time here?
                 </p>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                   <Link
                     href="/set-password"
                     style={{
-                      color: "#14b8a6",
-                      fontSize: "0.9375rem",
-                      textDecoration: "none",
-                      fontWeight: "300"
+                      color: '#14b8a6',
+                      fontSize: '0.9375rem',
+                      textDecoration: 'none',
+                      fontWeight: '400'
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.textDecoration = "underline"}
-                    onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
+                    onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                    onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
                   >
                     Set your password (Students)
                   </Link>
                   <Link
                     href="/register"
                     style={{
-                      color: "rgba(255, 255, 255, 0.5)",
-                      fontSize: "0.875rem",
-                      textDecoration: "none",
-                      fontWeight: "300"
+                      color: 'rgba(0, 0, 0, 0.5)',
+                      fontSize: '0.875rem',
+                      textDecoration: 'none',
+                      fontWeight: '400'
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.7)"}
-                    onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)"}
+                    onMouseOver={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.7)'}
+                    onMouseOut={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.5)'}
                   >
                     Register as Admin
                   </Link>
@@ -488,13 +538,13 @@ function LoginForm() {
           {/* Email Step for Verification Code */}
           {!codeSent && !usePasswordLogin && (
             <form onSubmit={handleRequestCode}>
-              <div style={{ marginBottom: "2rem" }}>
+              <div style={{ marginBottom: '2rem' }}>
                 <label style={{
-                  display: "block",
-                  fontSize: "0.875rem",
-                  fontWeight: "400",
-                  color: "rgba(255, 255, 255, 0.8)",
-                  marginBottom: "0.5rem"
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: 'rgba(0, 0, 0, 0.65)',
+                  marginBottom: '0.5rem'
                 }}>
                   Email Address
                 </label>
@@ -506,24 +556,25 @@ function LoginForm() {
                   disabled={loading}
                   placeholder="you@example.com"
                   style={{
-                    width: "100%",
-                    padding: "0.875rem 1rem",
-                    backgroundColor: "rgba(255, 255, 255, 0.05)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                    borderRadius: "8px",
-                    fontSize: "0.9375rem",
-                    color: "#ffffff",
-                    outline: "none",
-                    fontWeight: "300",
-                    transition: "all 0.2s"
+                    width: '100%',
+                    padding: '0.875rem 1rem',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid rgba(0, 0, 0, 0.2)',
+                    borderRadius: '8px',
+                    fontSize: '0.9375rem',
+                    color: 'rgba(0, 0, 0, 0.87)',
+                    outline: 'none',
+                    fontWeight: '400',
+                    transition: 'all 0.2s',
+                    boxSizing: 'border-box'
                   }}
                   onFocus={(e) => {
-                    e.currentTarget.style.borderColor = "#14b8a6";
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                    e.currentTarget.style.borderColor = '#14b8a6';
+                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(20, 184, 166, 0.1)';
                   }}
                   onBlur={(e) => {
-                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                    e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)';
+                    e.currentTarget.style.boxShadow = 'none';
                   }}
                 />
               </div>
@@ -532,23 +583,23 @@ function LoginForm() {
                 type="submit"
                 disabled={loading}
                 style={{
-                  width: "100%",
-                  padding: "0.875rem 1.5rem",
-                  backgroundColor: loading ? "rgba(255, 255, 255, 0.1)" : "#14b8a6",
-                  color: "#ffffff",
-                  border: "none",
-                  borderRadius: "8px",
-                  fontSize: "0.9375rem",
-                  fontWeight: "500",
-                  cursor: loading ? "not-allowed" : "pointer",
-                  marginBottom: "1.5rem",
-                  transition: "all 0.2s"
+                  width: '100%',
+                  padding: '0.875rem 1.5rem',
+                  backgroundColor: loading ? 'rgba(20, 184, 166, 0.5)' : '#14b8a6',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  marginBottom: '1.5rem',
+                  transition: 'all 0.2s'
                 }}
                 onMouseOver={(e) => {
-                  if (!loading) e.currentTarget.style.backgroundColor = "#0d9488";
+                  if (!loading) e.currentTarget.style.backgroundColor = '#0d9488';
                 }}
                 onMouseOut={(e) => {
-                  if (!loading) e.currentTarget.style.backgroundColor = "#14b8a6";
+                  if (!loading) e.currentTarget.style.backgroundColor = '#14b8a6';
                 }}
               >
                 {loading ? 'Sending code...' : 'Send Verification Code'}
@@ -556,18 +607,18 @@ function LoginForm() {
 
               {/* Info */}
               <div style={{
-                padding: "1rem 1.25rem",
-                backgroundColor: "rgba(20, 184, 166, 0.05)",
-                border: "1px solid rgba(20, 184, 166, 0.15)",
-                borderRadius: "8px",
-                marginBottom: "1rem"
+                padding: '1rem 1.25rem',
+                backgroundColor: 'rgba(20, 184, 166, 0.05)',
+                border: '1px solid rgba(20, 184, 166, 0.2)',
+                borderRadius: '8px',
+                marginBottom: '1rem'
               }}>
                 <p style={{
-                  color: "rgba(255, 255, 255, 0.6)",
-                  fontSize: "0.875rem",
+                  color: 'rgba(0, 0, 0, 0.6)',
+                  fontSize: '0.875rem',
                   margin: 0,
-                  lineHeight: "1.6",
-                  fontWeight: "300"
+                  lineHeight: '1.6',
+                  fontWeight: '400'
                 }}>
                   We'll send a 6-digit code to your email. Code expires in 10 minutes.
                 </p>
@@ -575,18 +626,18 @@ function LoginForm() {
 
               {/* School Email Warning */}
               <div style={{
-                padding: "1rem 1.25rem",
-                backgroundColor: "rgba(239, 68, 68, 0.05)",
-                border: "1px solid rgba(239, 68, 68, 0.15)",
-                borderRadius: "8px",
-                marginBottom: "1.5rem"
+                padding: '1rem 1.25rem',
+                backgroundColor: 'rgba(239, 68, 68, 0.05)',
+                border: '1px solid rgba(239, 68, 68, 0.2)',
+                borderRadius: '8px',
+                marginBottom: '1.5rem'
               }}>
                 <p style={{
-                  color: "rgba(255, 152, 152, 0.8)",
-                  fontSize: "0.875rem",
+                  color: 'rgba(220, 38, 38, 0.8)',
+                  fontSize: '0.875rem',
                   margin: 0,
-                  lineHeight: "1.6",
-                  fontWeight: "300"
+                  lineHeight: '1.6',
+                  fontWeight: '400'
                 }}>
                   Note: Accounts with school/work email addresses may not receive email notifications due to spam filtering. Please use password login instead.
                 </p>
@@ -594,24 +645,24 @@ function LoginForm() {
 
               {/* Alternative Login Option */}
               <div style={{
-                textAlign: "center",
-                marginBottom: "1.5rem"
+                textAlign: 'center',
+                marginBottom: '1.5rem'
               }}>
                 <button
                   type="button"
                   onClick={() => setUsePasswordLogin(true)}
                   style={{
-                    background: "none",
-                    border: "none",
-                    color: "#14b8a6",
-                    fontSize: "0.875rem",
-                    cursor: "pointer",
+                    background: 'none',
+                    border: 'none',
+                    color: '#14b8a6',
+                    fontSize: '0.875rem',
+                    cursor: 'pointer',
                     padding: 0,
-                    textDecoration: "none",
-                    fontWeight: "300"
+                    textDecoration: 'none',
+                    fontWeight: '400'
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.textDecoration = "underline"}
-                  onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
+                  onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                  onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
                 >
                   Use password instead
                 </button>
@@ -619,42 +670,42 @@ function LoginForm() {
 
               {/* Register/Set Password Links */}
               <div style={{
-                textAlign: "center",
-                paddingTop: "1.5rem",
-                borderTop: "1px solid rgba(255, 255, 255, 0.1)"
+                textAlign: 'center',
+                paddingTop: '1.5rem',
+                borderTop: '1px solid rgba(0, 0, 0, 0.1)'
               }}>
                 <p style={{
-                  fontSize: "0.875rem",
-                  color: "rgba(255, 255, 255, 0.5)",
-                  marginBottom: "0.75rem",
-                  fontWeight: "300"
+                  fontSize: '0.875rem',
+                  color: 'rgba(0, 0, 0, 0.5)',
+                  marginBottom: '0.75rem',
+                  fontWeight: '400'
                 }}>
                   First time here?
                 </p>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                   <Link
                     href="/set-password"
                     style={{
-                      color: "#14b8a6",
-                      fontSize: "0.9375rem",
-                      textDecoration: "none",
-                      fontWeight: "300"
+                      color: '#14b8a6',
+                      fontSize: '0.9375rem',
+                      textDecoration: 'none',
+                      fontWeight: '400'
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.textDecoration = "underline"}
-                    onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
+                    onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                    onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
                   >
                     Set your password (Students)
                   </Link>
                   <Link
                     href="/register"
                     style={{
-                      color: "rgba(255, 255, 255, 0.5)",
-                      fontSize: "0.875rem",
-                      textDecoration: "none",
-                      fontWeight: "300"
+                      color: 'rgba(0, 0, 0, 0.5)',
+                      fontSize: '0.875rem',
+                      textDecoration: 'none',
+                      fontWeight: '400'
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.7)"}
-                    onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)"}
+                    onMouseOver={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.7)'}
+                    onMouseOut={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.5)'}
                   >
                     Register as Admin
                   </Link>
@@ -667,43 +718,43 @@ function LoginForm() {
           {codeSent && (
             <form onSubmit={handleVerifyCode}>
               {/* Email Display */}
-              <div style={{ marginBottom: "1.5rem" }}>
+              <div style={{ marginBottom: '1.5rem' }}>
                 <p style={{
-                  fontSize: "0.875rem",
-                  color: "rgba(255, 255, 255, 0.6)",
-                  margin: "0 0 0.5rem 0",
-                  fontWeight: "300"
+                  fontSize: '0.875rem',
+                  color: 'rgba(0, 0, 0, 0.6)',
+                  margin: '0 0 0.5rem 0',
+                  fontWeight: '400'
                 }}>
-                  Signing in as: <strong style={{ color: "#14b8a6", fontWeight: "400" }}>{email}</strong>
+                  Signing in as: <strong style={{ color: '#14b8a6', fontWeight: '500' }}>{email}</strong>
                 </p>
                 <button
                   type="button"
                   onClick={handleBackToEmail}
                   style={{
-                    background: "none",
-                    border: "none",
-                    color: "#14b8a6",
-                    fontSize: "0.875rem",
-                    cursor: "pointer",
+                    background: 'none',
+                    border: 'none',
+                    color: '#14b8a6',
+                    fontSize: '0.875rem',
+                    cursor: 'pointer',
                     padding: 0,
-                    textDecoration: "none",
-                    fontWeight: "300"
+                    textDecoration: 'none',
+                    fontWeight: '400'
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.textDecoration = "underline"}
-                  onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
+                  onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                  onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
                 >
                   Change email
                 </button>
               </div>
 
               {/* Code Input */}
-              <div style={{ marginBottom: "2rem" }}>
+              <div style={{ marginBottom: '2rem' }}>
                 <label style={{
-                  display: "block",
-                  fontSize: "0.875rem",
-                  fontWeight: "400",
-                  color: "rgba(255, 255, 255, 0.8)",
-                  marginBottom: "0.5rem"
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: 'rgba(0, 0, 0, 0.65)',
+                  marginBottom: '0.5rem'
                 }}>
                   Verification Code
                 </label>
@@ -718,27 +769,28 @@ function LoginForm() {
                   autoComplete="off"
                   autoFocus
                   style={{
-                    width: "100%",
-                    padding: "0.875rem 1rem",
-                    backgroundColor: "rgba(255, 255, 255, 0.05)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                    borderRadius: "8px",
-                    fontSize: "1.5rem",
-                    color: "#ffffff",
-                    outline: "none",
-                    fontWeight: "300",
-                    transition: "all 0.2s",
-                    letterSpacing: "0.5rem",
-                    textAlign: "center",
-                    fontFamily: "monospace"
+                    width: '100%',
+                    padding: '0.875rem 1rem',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid rgba(0, 0, 0, 0.2)',
+                    borderRadius: '8px',
+                    fontSize: '1.5rem',
+                    color: 'rgba(0, 0, 0, 0.87)',
+                    outline: 'none',
+                    fontWeight: '400',
+                    transition: 'all 0.2s',
+                    letterSpacing: '0.5rem',
+                    textAlign: 'center',
+                    fontFamily: 'monospace',
+                    boxSizing: 'border-box'
                   }}
                   onFocus={(e) => {
-                    e.currentTarget.style.borderColor = "#14b8a6";
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                    e.currentTarget.style.borderColor = '#14b8a6';
+                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(20, 184, 166, 0.1)';
                   }}
                   onBlur={(e) => {
-                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                    e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)';
+                    e.currentTarget.style.boxShadow = 'none';
                   }}
                 />
               </div>
@@ -748,23 +800,23 @@ function LoginForm() {
                 type="submit"
                 disabled={loading || code.length !== 6}
                 style={{
-                  width: "100%",
-                  padding: "0.875rem 1.5rem",
-                  backgroundColor: (loading || code.length !== 6) ? "rgba(255, 255, 255, 0.1)" : "#14b8a6",
-                  color: "#ffffff",
-                  border: "none",
-                  borderRadius: "8px",
-                  fontSize: "0.9375rem",
-                  fontWeight: "500",
-                  cursor: (loading || code.length !== 6) ? "not-allowed" : "pointer",
-                  marginBottom: "1.5rem",
-                  transition: "all 0.2s"
+                  width: '100%',
+                  padding: '0.875rem 1.5rem',
+                  backgroundColor: (loading || code.length !== 6) ? 'rgba(20, 184, 166, 0.5)' : '#14b8a6',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  cursor: (loading || code.length !== 6) ? 'not-allowed' : 'pointer',
+                  marginBottom: '1.5rem',
+                  transition: 'all 0.2s'
                 }}
                 onMouseOver={(e) => {
-                  if (!loading && code.length === 6) e.currentTarget.style.backgroundColor = "#0d9488";
+                  if (!loading && code.length === 6) e.currentTarget.style.backgroundColor = '#0d9488';
                 }}
                 onMouseOut={(e) => {
-                  if (!loading && code.length === 6) e.currentTarget.style.backgroundColor = "#14b8a6";
+                  if (!loading && code.length === 6) e.currentTarget.style.backgroundColor = '#14b8a6';
                 }}
               >
                 {loading ? 'Verifying...' : 'Verify & Sign In'}
@@ -772,18 +824,18 @@ function LoginForm() {
 
               {/* Info */}
               <div style={{
-                padding: "1rem 1.25rem",
-                backgroundColor: "rgba(20, 184, 166, 0.05)",
-                border: "1px solid rgba(20, 184, 166, 0.15)",
-                borderRadius: "8px",
-                marginBottom: "1.5rem"
+                padding: '1rem 1.25rem',
+                backgroundColor: 'rgba(20, 184, 166, 0.05)',
+                border: '1px solid rgba(20, 184, 166, 0.2)',
+                borderRadius: '8px',
+                marginBottom: '1.5rem'
               }}>
                 <p style={{
-                  color: "rgba(255, 255, 255, 0.6)",
-                  fontSize: "0.875rem",
-                  margin: "0 0 0.5rem 0",
-                  lineHeight: "1.6",
-                  fontWeight: "300"
+                  color: 'rgba(0, 0, 0, 0.6)',
+                  fontSize: '0.875rem',
+                  margin: '0 0 0.5rem 0',
+                  lineHeight: '1.6',
+                  fontWeight: '400'
                 }}>
                   Check your email for the 6-digit code. Code expires in 10 minutes.
                 </p>
@@ -791,9 +843,9 @@ function LoginForm() {
 
               {/* Resend */}
               <div style={{
-                textAlign: "center",
-                paddingTop: "1.5rem",
-                borderTop: "1px solid rgba(255, 255, 255, 0.1)"
+                textAlign: 'center',
+                paddingTop: '1.5rem',
+                borderTop: '1px solid rgba(0, 0, 0, 0.1)'
               }}>
                 {canResend ? (
                   <button
@@ -801,28 +853,28 @@ function LoginForm() {
                     onClick={handleResendCode}
                     disabled={loading}
                     style={{
-                      background: "none",
-                      border: "none",
-                      color: "#14b8a6",
-                      fontSize: "0.9375rem",
-                      cursor: loading ? "not-allowed" : "pointer",
+                      background: 'none',
+                      border: 'none',
+                      color: '#14b8a6',
+                      fontSize: '0.9375rem',
+                      cursor: loading ? 'not-allowed' : 'pointer',
                       padding: 0,
-                      textDecoration: "none",
-                      fontWeight: "300"
+                      textDecoration: 'none',
+                      fontWeight: '400'
                     }}
                     onMouseOver={(e) => {
-                      if (!loading) e.currentTarget.style.textDecoration = "underline";
+                      if (!loading) e.currentTarget.style.textDecoration = 'underline';
                     }}
-                    onMouseOut={(e) => e.currentTarget.style.textDecoration = "none"}
+                    onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
                   >
                     Resend verification code
                   </button>
                 ) : (
                   <p style={{
-                    fontSize: "0.875rem",
-                    color: "rgba(255, 255, 255, 0.4)",
+                    fontSize: '0.875rem',
+                    color: 'rgba(0, 0, 0, 0.4)',
                     margin: 0,
-                    fontWeight: "300"
+                    fontWeight: '400'
                   }}>
                     Resend code in {resendCountdown}s
                   </p>
@@ -830,25 +882,38 @@ function LoginForm() {
               </div>
             </form>
           )}
-        </div>
 
-        {/* Footer */}
-        <div style={{ marginTop: "2rem", textAlign: "center" }}>
-          <Link
-            href="/"
-            style={{
-              color: "rgba(255, 255, 255, 0.4)",
-              fontSize: "0.875rem",
-              textDecoration: "none",
-              fontWeight: "300"
-            }}
-            onMouseOver={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)"}
-            onMouseOut={(e) => e.currentTarget.style.color = "rgba(255, 255, 255, 0.4)"}
-          >
-            ← Back to home
-          </Link>
+          {/* Footer */}
+          <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+            <Link
+              href="/"
+              style={{
+                color: 'rgba(0, 0, 0, 0.4)',
+                fontSize: '0.875rem',
+                textDecoration: 'none',
+                fontWeight: '400'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.6)'}
+              onMouseOut={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.4)'}
+            >
+              Back to home
+            </Link>
+          </div>
+
         </div>
       </div>
+
+      {/* Responsive Styles */}
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .left-panel {
+            display: none !important;
+          }
+          .right-panel {
+            padding: 2rem !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
@@ -857,16 +922,16 @@ export default function LoginPage() {
   return (
     <Suspense fallback={
       <div style={{
-        minHeight: "100vh",
-        backgroundColor: "#0a0f1a",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center"
+        minHeight: '100vh',
+        backgroundColor: '#ffffff',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
       }}>
         <div style={{
-          color: "rgba(255, 255, 255, 0.6)",
-          fontSize: "1rem",
-          fontWeight: "300"
+          color: 'rgba(0, 0, 0, 0.6)',
+          fontSize: '1rem',
+          fontWeight: '400'
         }}>
           Loading...
         </div>
