@@ -30,14 +30,15 @@ export default function Contact() {
   };
 
   return (
-    <div style={{ backgroundColor: "#0a0f1a", minHeight: "100vh" }}>
+    <div style={{ backgroundColor: "#ffffff", minHeight: "100vh" }}>
       {/* Navigation */}
       <nav style={{
         position: "sticky",
         top: 0,
         zIndex: 50,
-        backgroundColor: "#0a0f1a",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+        backgroundColor: "rgba(255, 255, 255, 0.95)",
+        backdropFilter: "blur(10px)",
+        borderBottom: "1px solid rgba(0, 0, 0, 0.08)",
         padding: "1rem 2rem"
       }}>
         <div style={{
@@ -56,7 +57,12 @@ export default function Contact() {
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2.5">
               <path d="M3 12h18M3 6h18M3 18h18" />
             </svg>
-            <span style={{ fontSize: "1.25rem", fontWeight: "600", color: "#ffffff" }}>Schedule Builder</span>
+            <span style={{
+              fontSize: "1.25rem",
+              fontWeight: "600",
+              color: "rgba(0, 0, 0, 0.87)",
+              fontFamily: "Georgia, serif"
+            }}>Schedule Builder</span>
           </Link>
         </div>
       </nav>
@@ -76,24 +82,30 @@ export default function Contact() {
             display: "flex",
             alignItems: "center",
             gap: "0.5rem",
-            marginBottom: "2rem"
+            marginBottom: "2.5rem",
+            fontWeight: "400"
           }}
+          onMouseOver={(e) => e.currentTarget.style.color = "#0d9488"}
+          onMouseOut={(e) => e.currentTarget.style.color = "#14b8a6"}
         >
           ← Back to Home
         </Link>
-        <div style={{ marginBottom: "3rem" }}>
+        <div style={{ marginBottom: "4rem" }}>
           <h1 style={{
+            fontFamily: "Georgia, serif",
             fontSize: "2.5rem",
-            fontWeight: "600",
-            color: "#ffffff",
-            marginBottom: "1rem"
+            fontWeight: "400",
+            color: "rgba(0, 0, 0, 0.87)",
+            marginBottom: "1rem",
+            letterSpacing: "-0.02em"
           }}>
             Get in Touch
           </h1>
           <p style={{
             fontSize: "1.125rem",
-            color: "rgba(255, 255, 255, 0.6)",
-            lineHeight: "1.7"
+            color: "rgba(0, 0, 0, 0.65)",
+            fontWeight: "300",
+            lineHeight: "1.6"
           }}>
             Have a question, suggestion, or feedback? We'd love to hear from you.
           </p>
@@ -108,14 +120,14 @@ export default function Contact() {
           {/* GitHub */}
           <div style={{
             padding: "2rem",
-            backgroundColor: "rgba(255, 255, 255, 0.03)",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
+            backgroundColor: "#f9fafb",
+            border: "1px solid rgba(0, 0, 0, 0.08)",
             borderRadius: "12px"
           }}>
             <div style={{
               width: "48px",
               height: "48px",
-              backgroundColor: "rgba(20, 184, 166, 0.15)",
+              backgroundColor: "rgba(20, 184, 166, 0.1)",
               borderRadius: "8px",
               display: "flex",
               alignItems: "center",
@@ -129,16 +141,17 @@ export default function Contact() {
             <h3 style={{
               fontSize: "1.125rem",
               fontWeight: "600",
-              color: "#ffffff",
+              color: "rgba(0, 0, 0, 0.87)",
               marginBottom: "0.5rem"
             }}>
               GitHub
             </h3>
             <p style={{
               fontSize: "0.9375rem",
-              color: "rgba(255, 255, 255, 0.6)",
+              color: "rgba(0, 0, 0, 0.65)",
               marginBottom: "1rem",
-              lineHeight: "1.6"
+              lineHeight: "1.6",
+              fontWeight: "400"
             }}>
               View the source code, report issues, or contribute to the project.
             </p>
@@ -160,14 +173,14 @@ export default function Contact() {
           {/* Developer */}
           <div style={{
             padding: "2rem",
-            backgroundColor: "rgba(255, 255, 255, 0.03)",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
+            backgroundColor: "#f9fafb",
+            border: "1px solid rgba(0, 0, 0, 0.08)",
             borderRadius: "12px"
           }}>
             <div style={{
               width: "48px",
               height: "48px",
-              backgroundColor: "rgba(20, 184, 166, 0.15)",
+              backgroundColor: "rgba(20, 184, 166, 0.1)",
               borderRadius: "8px",
               display: "flex",
               alignItems: "center",
@@ -182,16 +195,17 @@ export default function Contact() {
             <h3 style={{
               fontSize: "1.125rem",
               fontWeight: "600",
-              color: "#ffffff",
+              color: "rgba(0, 0, 0, 0.87)",
               marginBottom: "0.5rem"
             }}>
               Developer
             </h3>
             <p style={{
               fontSize: "0.9375rem",
-              color: "rgba(255, 255, 255, 0.6)",
+              color: "rgba(0, 0, 0, 0.65)",
               marginBottom: "1rem",
-              lineHeight: "1.6"
+              lineHeight: "1.6",
+              fontWeight: "400"
             }}>
               Connect with the developer for collaboration or questions.
             </p>
@@ -213,15 +227,16 @@ export default function Contact() {
 
         {/* Contact Form */}
         <div style={{
-          backgroundColor: "rgba(255, 255, 255, 0.03)",
-          border: "1px solid rgba(255, 255, 255, 0.1)",
+          backgroundColor: "#f9fafb",
+          border: "1px solid rgba(0, 0, 0, 0.08)",
           borderRadius: "12px",
           padding: "3rem"
         }}>
           <h2 style={{
-            fontSize: "1.5rem",
-            fontWeight: "600",
-            color: "#ffffff",
+            fontFamily: "Georgia, serif",
+            fontSize: "1.75rem",
+            fontWeight: "400",
+            color: "rgba(0, 0, 0, 0.87)",
             marginBottom: "2rem"
           }}>
             Send us a message
@@ -275,7 +290,7 @@ export default function Contact() {
                   display: "block",
                   fontSize: "0.875rem",
                   fontWeight: "500",
-                  color: "rgba(255, 255, 255, 0.9)",
+                  color: "rgba(0, 0, 0, 0.65)",
                   marginBottom: "0.5rem"
                 }}>
                   Name *
@@ -287,16 +302,24 @@ export default function Contact() {
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   style={{
                     width: "100%",
-                    padding: "0.75rem 1rem",
-                    backgroundColor: "#0a0f1a",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    padding: "0.875rem 1rem",
+                    backgroundColor: "#ffffff",
+                    border: "1px solid rgba(0, 0, 0, 0.2)",
                     borderRadius: "8px",
-                    color: "#ffffff",
-                    fontSize: "1rem",
-                    outline: "none"
+                    color: "rgba(0, 0, 0, 0.87)",
+                    fontSize: "0.9375rem",
+                    outline: "none",
+                    fontWeight: "400",
+                    boxSizing: "border-box"
                   }}
-                  onFocus={(e) => e.currentTarget.style.borderColor = "#14b8a6"}
-                  onBlur={(e) => e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)"}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "#14b8a6";
+                    e.currentTarget.style.boxShadow = "0 0 0 3px rgba(20, 184, 166, 0.1)";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(0, 0, 0, 0.2)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
                 />
               </div>
 
@@ -305,7 +328,7 @@ export default function Contact() {
                   display: "block",
                   fontSize: "0.875rem",
                   fontWeight: "500",
-                  color: "rgba(255, 255, 255, 0.9)",
+                  color: "rgba(0, 0, 0, 0.65)",
                   marginBottom: "0.5rem"
                 }}>
                   Email *
@@ -317,16 +340,24 @@ export default function Contact() {
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   style={{
                     width: "100%",
-                    padding: "0.75rem 1rem",
-                    backgroundColor: "#0a0f1a",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    padding: "0.875rem 1rem",
+                    backgroundColor: "#ffffff",
+                    border: "1px solid rgba(0, 0, 0, 0.2)",
                     borderRadius: "8px",
-                    color: "#ffffff",
-                    fontSize: "1rem",
-                    outline: "none"
+                    color: "rgba(0, 0, 0, 0.87)",
+                    fontSize: "0.9375rem",
+                    outline: "none",
+                    fontWeight: "400",
+                    boxSizing: "border-box"
                   }}
-                  onFocus={(e) => e.currentTarget.style.borderColor = "#14b8a6"}
-                  onBlur={(e) => e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)"}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "#14b8a6";
+                    e.currentTarget.style.boxShadow = "0 0 0 3px rgba(20, 184, 166, 0.1)";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(0, 0, 0, 0.2)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
                 />
               </div>
             </div>
@@ -336,7 +367,7 @@ export default function Contact() {
                 display: "block",
                 fontSize: "0.875rem",
                 fontWeight: "500",
-                color: "rgba(255, 255, 255, 0.9)",
+                color: "rgba(0, 0, 0, 0.65)",
                 marginBottom: "0.5rem"
               }}>
                 Subject *
@@ -348,16 +379,24 @@ export default function Contact() {
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                 style={{
                   width: "100%",
-                  padding: "0.75rem 1rem",
-                  backgroundColor: "#0a0f1a",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  padding: "0.875rem 1rem",
+                  backgroundColor: "#ffffff",
+                  border: "1px solid rgba(0, 0, 0, 0.2)",
                   borderRadius: "8px",
-                  color: "#ffffff",
-                  fontSize: "1rem",
-                  outline: "none"
+                  color: "rgba(0, 0, 0, 0.87)",
+                  fontSize: "0.9375rem",
+                  outline: "none",
+                  fontWeight: "400",
+                  boxSizing: "border-box"
                 }}
-                onFocus={(e) => e.currentTarget.style.borderColor = "#14b8a6"}
-                onBlur={(e) => e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)"}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "#14b8a6";
+                  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(20, 184, 166, 0.1)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(0, 0, 0, 0.2)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
               />
             </div>
 
@@ -366,7 +405,7 @@ export default function Contact() {
                 display: "block",
                 fontSize: "0.875rem",
                 fontWeight: "500",
-                color: "rgba(255, 255, 255, 0.9)",
+                color: "rgba(0, 0, 0, 0.65)",
                 marginBottom: "0.5rem"
               }}>
                 Message *
@@ -378,18 +417,26 @@ export default function Contact() {
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 style={{
                   width: "100%",
-                  padding: "0.75rem 1rem",
-                  backgroundColor: "#0a0f1a",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  padding: "0.875rem 1rem",
+                  backgroundColor: "#ffffff",
+                  border: "1px solid rgba(0, 0, 0, 0.2)",
                   borderRadius: "8px",
-                  color: "#ffffff",
-                  fontSize: "1rem",
+                  color: "rgba(0, 0, 0, 0.87)",
+                  fontSize: "0.9375rem",
                   resize: "vertical",
                   outline: "none",
-                  fontFamily: "inherit"
+                  fontFamily: "inherit",
+                  fontWeight: "400",
+                  boxSizing: "border-box"
                 }}
-                onFocus={(e) => e.currentTarget.style.borderColor = "#14b8a6"}
-                onBlur={(e) => e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)"}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "#14b8a6";
+                  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(20, 184, 166, 0.1)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(0, 0, 0, 0.2)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
               />
             </div>
 
@@ -397,13 +444,13 @@ export default function Contact() {
               type="submit"
               disabled={submitting}
               style={{
-                padding: "0.875rem 2rem",
-                backgroundColor: submitting ? "rgba(255, 255, 255, 0.1)" : "#14b8a6",
+                padding: "0.875rem 1.75rem",
+                backgroundColor: submitting ? "rgba(20, 184, 166, 0.5)" : "#14b8a6",
                 color: "#ffffff",
                 border: "none",
                 borderRadius: "8px",
                 fontSize: "1rem",
-                fontWeight: "600",
+                fontWeight: "500",
                 cursor: submitting ? "not-allowed" : "pointer",
                 transition: "all 0.2s"
               }}
