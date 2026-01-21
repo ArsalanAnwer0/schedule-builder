@@ -123,7 +123,7 @@ export default function SessionTimeout() {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
         zIndex: 9998,
         backdropFilter: 'blur(4px)'
       }}></div>
@@ -134,27 +134,27 @@ export default function SessionTimeout() {
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        backgroundColor: '#1a1f2e',
-        border: '1px solid rgba(251, 191, 36, 0.5)',
+        backgroundColor: '#ffffff',
+        border: '1px solid rgba(0, 0, 0, 0.08)',
         borderRadius: '12px',
         padding: '2rem',
         maxWidth: '450px',
         width: '90%',
         zIndex: 9999,
-        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)'
+        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.1)'
       }}>
         {/* Warning Icon */}
         <div style={{
           width: '64px',
           height: '64px',
           margin: '0 auto 1.5rem',
-          backgroundColor: 'rgba(251, 191, 36, 0.15)',
+          backgroundColor: 'rgba(20, 184, 166, 0.1)',
           borderRadius: '50%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center'
         }}>
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="2">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
             <path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </div>
@@ -163,7 +163,7 @@ export default function SessionTimeout() {
         <h2 style={{
           fontSize: '1.5rem',
           fontWeight: '600',
-          color: '#ffffff',
+          color: 'rgba(0, 0, 0, 0.87)',
           textAlign: 'center',
           marginBottom: '1rem'
         }}>
@@ -173,12 +173,12 @@ export default function SessionTimeout() {
         {/* Message */}
         <p style={{
           fontSize: '0.9375rem',
-          color: 'rgba(255, 255, 255, 0.7)',
+          color: 'rgba(0, 0, 0, 0.65)',
           textAlign: 'center',
           marginBottom: '1.5rem',
           lineHeight: '1.6'
         }}>
-          Your session will expire in <strong style={{ color: '#fbbf24' }}>{formatTime(timeRemaining)}</strong> due to inactivity. You'll be automatically logged out to protect your account.
+          Your session will expire in <strong style={{ color: '#14b8a6' }}>{formatTime(timeRemaining)}</strong> due to inactivity. You'll be automatically logged out to protect your account.
         </p>
 
         {/* Buttons */}
@@ -191,8 +191,8 @@ export default function SessionTimeout() {
             onClick={handleStayLoggedIn}
             style={{
               padding: '0.875rem 1.5rem',
-              backgroundColor: '#fbbf24',
-              color: '#1a1a1a',
+              backgroundColor: '#14b8a6',
+              color: '#ffffff',
               border: 'none',
               borderRadius: '8px',
               fontSize: '0.9375rem',
@@ -201,8 +201,8 @@ export default function SessionTimeout() {
               transition: 'all 0.2s',
               width: '100%'
             }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f59e0b'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#fbbf24'}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0d9488'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#14b8a6'}
           >
             Stay Logged In
           </button>
@@ -212,8 +212,8 @@ export default function SessionTimeout() {
             style={{
               padding: '0.875rem 1.5rem',
               backgroundColor: 'transparent',
-              color: 'rgba(255, 255, 255, 0.6)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
+              color: 'rgba(0, 0, 0, 0.5)',
+              border: '1px solid rgba(0, 0, 0, 0.2)',
               borderRadius: '8px',
               fontSize: '0.9375rem',
               fontWeight: '500',
@@ -222,12 +222,12 @@ export default function SessionTimeout() {
               width: '100%'
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+              e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
+              e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.3)';
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+              e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)';
             }}
           >
             Log Out Now
