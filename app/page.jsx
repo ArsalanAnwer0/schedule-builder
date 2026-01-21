@@ -17,6 +17,7 @@ export default function LandingPage() {
   const [feedbackError, setFeedbackError] = useState('');
   const [expandedFaq, setExpandedFaq] = useState(null);
   const [hoveredFaq, setHoveredFaq] = useState(null);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [waitlistEmail, setWaitlistEmail] = useState('');
   const [waitlistSubmitting, setWaitlistSubmitting] = useState(false);
@@ -67,6 +68,16 @@ export default function LandingPage() {
     if (hasSeenIntro) {
       setShowIntro(false);
     }
+  }, []);
+
+  // Track scroll position for navigation border
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleSplashComplete = () => {
@@ -169,7 +180,8 @@ export default function LandingPage() {
         zIndex: 50,
         backgroundColor: theme.navBackground,
         backdropFilter: "blur(10px)",
-        borderBottom: `1px solid ${theme.border}`,
+        borderBottom: isScrolled ? '1px solid rgba(0, 0, 0, 0.12)' : '1px solid transparent',
+        transition: 'border-color 0.2s ease',
         padding: "1rem 2rem",
       }}>
         <div style={{
