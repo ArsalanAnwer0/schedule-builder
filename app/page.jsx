@@ -16,6 +16,7 @@ export default function LandingPage() {
   const [feedbackSuccess, setFeedbackSuccess] = useState('');
   const [feedbackError, setFeedbackError] = useState('');
   const [expandedFaq, setExpandedFaq] = useState(null);
+  const [hoveredFaq, setHoveredFaq] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [waitlistEmail, setWaitlistEmail] = useState('');
   const [waitlistSubmitting, setWaitlistSubmitting] = useState(false);
@@ -1193,6 +1194,8 @@ export default function LandingPage() {
             >
               <button
                 onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
+                onMouseEnter={() => setHoveredFaq(index)}
+                onMouseLeave={() => setHoveredFaq(null)}
                 style={{
                   width: "100%",
                   padding: "1.5rem",
@@ -1215,14 +1218,14 @@ export default function LandingPage() {
                   viewBox="0 0 20 20"
                   fill="none"
                   style={{
-                    transform: expandedFaq === index ? "rotate(180deg)" : "rotate(0deg)",
+                    transform: (expandedFaq === index || hoveredFaq === index) ? "rotate(180deg)" : "rotate(0deg)",
                     transition: "transform 0.2s"
                   }}
                 >
                   <path d="M5 7.5L10 12.5L15 7.5" stroke="rgba(255, 255, 255, 0.5)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </button>
-              {expandedFaq === index && (
+              {(expandedFaq === index || hoveredFaq === index) && (
                 <div style={{
                   padding: "0 1.5rem 1.5rem 1.5rem",
                   color: theme.textSecondary,
