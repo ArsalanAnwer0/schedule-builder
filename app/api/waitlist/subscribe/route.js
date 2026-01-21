@@ -79,6 +79,11 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('Waitlist subscription error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
     return NextResponse.json(
       { error: 'Failed to join waitlist. Please try again.' },
       { status: 500 }
