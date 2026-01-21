@@ -17,6 +17,7 @@ export default function LandingPage() {
   const [feedbackError, setFeedbackError] = useState('');
   const [expandedFaq, setExpandedFaq] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [navScrolled, setNavScrolled] = useState(false);
   const [waitlistEmail, setWaitlistEmail] = useState('');
   const [waitlistSubmitting, setWaitlistSubmitting] = useState(false);
   const [waitlistSuccess, setWaitlistSuccess] = useState('');
@@ -66,6 +67,15 @@ export default function LandingPage() {
     if (hasSeenIntro) {
       setShowIntro(false);
     }
+  }, []);
+
+  // Add scroll listener for nav border
+  useEffect(() => {
+    const handleScroll = () => {
+      setNavScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleSplashComplete = () => {
@@ -168,8 +178,9 @@ export default function LandingPage() {
         zIndex: 50,
         backgroundColor: theme.navBackground,
         backdropFilter: "blur(10px)",
-        borderBottom: `1px solid ${theme.border}`,
+        borderBottom: navScrolled ? `1px solid ${theme.border}` : "1px solid transparent",
         padding: "1rem 2rem",
+        transition: "border-bottom 0.3s ease",
       }}>
         <div style={{
           maxWidth: "1400px",
