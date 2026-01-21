@@ -30,7 +30,8 @@ export async function POST(request) {
     const ip = forwarded ? forwarded.split(',')[0] : 'unknown';
     const rateLimitKey = `waitlist:${ip}`;
 
-    if (!rateLimit(rateLimitKey, 3, 60 * 60 * 1000)) {
+    const rateLimitResult = await rateLimit(rateLimitKey, 3, 60 * 60 * 1000);
+    if (!rateLimitResult.allowed) {
       return NextResponse.json(
         { error: 'Too many requests. Please try again later.' },
         { status: 429 }
