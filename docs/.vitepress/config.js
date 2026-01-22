@@ -2,6 +2,9 @@ export default {
   title: 'Schedule Builder Docs',
   description: 'Official documentation for Schedule Builder',
 
+  // Ignore dead links for now (pages under construction)
+  ignoreDeadLinks: true,
+
   // Theme configuration
   themeConfig: {
     // Logo and site title
