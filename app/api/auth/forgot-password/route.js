@@ -1,26 +1,18 @@
 import { NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import dbConnect from '../../../../lib/db/connect';
 import User from '../../../../lib/db/models/User';
 import PasswordReset from '../../../../lib/db/models/PasswordReset';
 import { rateLimit } from '../../../../lib/utils/rateLimiter';
-import { createNotification } from '../../../../lib/utils/notifications';
+import { sendPasswordResetEmail } from '../../../../lib/email/send';
 
 export async function POST(request) {
   try {
-    const { email, newPassword } = await request.json();
+    const { email } = await request.json();
 
-    if (!email || !newPassword) {
+    if (!email) {
       return NextResponse.json(
-        { error: 'Email and new password are required' },
-        { status: 400 }
-      );
-    }
-
-    // Validate password strength
-    if (newPassword.length < 6) {
-      return NextResponse.json(
-        { error: 'Password must be at least 6 characters long' },
+        { error: 'Email is required' },
         { status: 400 }
       );
     }
@@ -49,50 +41,46 @@ export async function POST(request) {
       ]
     });
 
-    // Always return success even if user not found (security best practice)
+    // Always return success even if user not found (security best practice - prevent email enumeration)
     if (!user) {
       return NextResponse.json({
         success: true,
-        message: 'Your password reset request has been submitted for admin approval.',
+        message: 'If an account exists with that email, you will receive a password reset link.',
       });
     }
 
-    // Hash the new password
-    const newPasswordHash = await bcrypt.hash(newPassword, 10);
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+    // Generate secure random token (32 bytes = 64 hex characters)
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
-    // Create password reset request requiring admin approval
+    // Delete any existing unused tokens for this user
+    await PasswordReset.deleteMany({
+      userId: user._id,
+      used: false
+    });
+
+    // Create new password reset token
     await PasswordReset.create({
       userId: user._id,
-      newPasswordHash,
-      requiresAdminApproval: true,
-      status: 'pending',
+      token,
       expiresAt,
+      used: false,
     });
 
-    // Find all admins in the user's organization to notify them
-    const admins = await User.find({
-      role: 'admin',
-      organizationName: user.organizationName,
-    });
-
-    // Create notification for all admins
+    // Send password reset email
     try {
-      for (const admin of admins) {
-        await createNotification(
-          admin._id.toString(),
-          'password_reset_request',
-          `${user.name} (${user.email}) has requested a password reset.`,
-          '/admin'
-        );
-      }
-    } catch (notificationError) {
-      console.error('Failed to create admin notifications:', notificationError);
+      await sendPasswordResetEmail(user.email, user.name, token);
+    } catch (emailError) {
+      console.error('Failed to send password reset email:', emailError);
+      return NextResponse.json(
+        { error: 'Failed to send password reset email. Please try again.' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Your password reset request has been submitted for admin approval.',
+      message: 'Password reset link sent to your email',
     });
 
   } catch (error) {
