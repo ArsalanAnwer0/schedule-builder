@@ -1,6 +1,6 @@
 /**
- * Customize default theme styling by overriding CSS variables:
- * https://github.com/vuejs/vitepress/blob/main/src/client/theme-default/styles/vars.css
+ * Schedule Builder Documentation - Custom Styling
+ * Professional, clean design inspired by modern documentation sites
  */
 
 /**
@@ -14,10 +14,10 @@
   --vp-c-brand-3: #14b8a6;
   --vp-c-brand-soft: rgba(20, 184, 166, 0.1);
 
-  /* Custom accent colors */
+  /* Text colors with improved readability */
   --vp-c-text-1: rgba(0, 0, 0, 0.87);
   --vp-c-text-2: rgba(0, 0, 0, 0.65);
-  --vp-c-text-3: rgba(0, 0, 0, 0.4);
+  --vp-c-text-3: rgba(0, 0, 0, 0.45);
 }
 
 /* Dark theme overrides */
@@ -27,24 +27,95 @@
   --vp-c-brand-3: #14b8a6;
   --vp-c-text-1: rgba(255, 255, 255, 0.87);
   --vp-c-text-2: rgba(255, 255, 255, 0.65);
+  --vp-c-text-3: rgba(255, 255, 255, 0.45);
 }
 
 /**
- * Typography
+ * Typography - Professional & Readable
  * -------------------------------------------------------------------------- */
 
-/* Custom heading font to match main site */
-.vp-doc h1,
-.vp-doc h2,
-.vp-doc h3,
-.VPHero .name,
-.VPFeature .title {
-  font-family: Georgia, serif;
+/* Improved line height for better readability */
+.vp-doc {
+  line-height: 1.75;
+}
+
+.vp-doc p {
+  margin: 1.25rem 0;
+  line-height: 1.75;
+}
+
+/* Heading hierarchy with better spacing */
+.vp-doc h1 {
+  margin-top: 2.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
   letter-spacing: -0.02em;
 }
 
+.vp-doc h2 {
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--vp-c-divider);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.vp-doc h3 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.vp-doc h4 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+/* First h2 shouldn't have top border */
+.vp-doc h1 + h2,
+.vp-doc h2:first-of-type {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 1.5rem;
+}
+
 /**
- * Component: Home
+ * Links - Subtle and Professional
+ * -------------------------------------------------------------------------- */
+
+.vp-doc a {
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.vp-doc a:hover {
+  opacity: 0.8;
+}
+
+/**
+ * Lists - Better Spacing
+ * -------------------------------------------------------------------------- */
+
+.vp-doc ul,
+.vp-doc ol {
+  margin: 1.25rem 0;
+  padding-left: 1.5rem;
+}
+
+.vp-doc li {
+  margin: 0.5rem 0;
+  line-height: 1.75;
+}
+
+.vp-doc li > p {
+  margin: 0.5rem 0;
+}
+
+/**
+ * Component: Hero Section
  * -------------------------------------------------------------------------- */
 
 :root {
@@ -52,11 +123,143 @@
   --vp-home-hero-name-background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
 }
 
+.VPHero .name {
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+.VPHero .tagline {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
 /**
- * Component: Custom Block
+ * Component: Feature Cards
+ * -------------------------------------------------------------------------- */
+
+.VPFeature {
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.VPFeature:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(20, 184, 166, 0.12);
+}
+
+.VPFeature .title {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.5rem;
+}
+
+.VPFeature .details {
+  line-height: 1.7;
+  color: var(--vp-c-text-2);
+}
+
+/**
+ * Component: Custom Blocks (Tips, Warnings, etc.)
  * -------------------------------------------------------------------------- */
 
 :root {
   --vp-custom-block-tip-border: var(--vp-c-brand-1);
   --vp-custom-block-tip-bg: var(--vp-c-brand-soft);
+}
+
+.custom-block {
+  margin: 1.5rem 0;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+}
+
+.custom-block p {
+  margin: 0.5rem 0;
+  line-height: 1.7;
+}
+
+.custom-block p:first-child {
+  margin-top: 0;
+}
+
+.custom-block p:last-child {
+  margin-bottom: 0;
+}
+
+/**
+ * Component: Code Blocks
+ * -------------------------------------------------------------------------- */
+
+.vp-doc div[class*='language-'] {
+  margin: 1.5rem 0;
+  border-radius: 8px;
+}
+
+.vp-doc code {
+  border-radius: 4px;
+  padding: 0.2em 0.4em;
+  font-size: 0.9em;
+}
+
+/**
+ * Component: Tables
+ * -------------------------------------------------------------------------- */
+
+.vp-doc table {
+  margin: 1.5rem 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.vp-doc th {
+  font-weight: 600;
+  text-align: left;
+}
+
+.vp-doc td,
+.vp-doc th {
+  padding: 0.75rem 1rem;
+}
+
+/**
+ * Sidebar Navigation - Cleaner Appearance
+ * -------------------------------------------------------------------------- */
+
+.VPSidebarItem.level-1 .text {
+  font-weight: 600;
+}
+
+.VPSidebarItem .text {
+  line-height: 1.6;
+}
+
+/**
+ * Layout - More Whitespace
+ * -------------------------------------------------------------------------- */
+
+.vp-doc > div > *:first-child {
+  margin-top: 0;
+}
+
+.vp-doc > div > *:last-child {
+  margin-bottom: 0;
+}
+
+/**
+ * Responsive Improvements
+ * -------------------------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .vp-doc h1 {
+    font-size: 1.75rem;
+  }
+
+  .vp-doc h2 {
+    font-size: 1.5rem;
+  }
+
+  .VPHero .tagline {
+    padding: 0 1rem;
+  }
 }

@@ -47,19 +47,19 @@ Use email when you need to:
 
 **Email Addresses:**
 
-📧 **General Support:** [support@schedule-builder.xyz](mailto:support@schedule-builder.xyz)
+**General Support:** [support@schedule-builder.xyz](mailto:support@schedule-builder.xyz)
 - For general questions, technical issues, and account help
 - Please check the forum first for common questions
 
-🔒 **Security Issues:** [security@schedule-builder.xyz](mailto:security@schedule-builder.xyz)
+**Security Issues:** [security@schedule-builder.xyz](mailto:security@schedule-builder.xyz)
 - For reporting security vulnerabilities or concerns
 - We follow responsible disclosure practices
 
-🔐 **Privacy Requests:** [privacy@schedule-builder.xyz](mailto:privacy@schedule-builder.xyz)
+**Privacy Requests:** [privacy@schedule-builder.xyz](mailto:privacy@schedule-builder.xyz)
 - For GDPR, CCPA, or other privacy-related requests
 - To exercise your data rights (access, deletion, portability)
 
-📄 **Legal Inquiries:** [legal@schedule-builder.xyz](mailto:legal@schedule-builder.xyz)
+**Legal Inquiries:** [legal@schedule-builder.xyz](mailto:legal@schedule-builder.xyz)
 - For legal questions, Terms of Service clarifications
 - DMCA takedown notices
 
@@ -101,7 +101,7 @@ If you've found a bug or have a feature request, GitHub Issues is the perfect pl
 - [Create a new issue](https://github.com/ArsalanAnwer0/schedule-builder/issues/new)
 - Choose the "Feature Request" template
 - Describe the feature and explain why it would be valuable
-- Upvote (👍) existing feature requests you'd like to see
+- Upvote existing feature requests you'd like to see
 
 **Why Use GitHub Issues?**
 - Public tracking of bugs and features
@@ -112,7 +112,7 @@ If you've found a bug or have a feature request, GitHub Issues is the perfect pl
 **Response Time:** We triage new issues within 1-2 business days and provide an initial response
 
 ::: tip Check Existing Issues First
-Before creating a new issue, search [existing issues](https://github.com/ArsalanAnwer0/schedule-builder/issues) to see if your bug or feature has already been reported. If it has, add a 👍 reaction and any additional context in a comment.
+Before creating a new issue, search [existing issues](https://github.com/ArsalanAnwer0/schedule-builder/issues) to see if your bug or feature has already been reported. If it has, upvote it and any additional context in a comment.
 :::
 
 ## Social Media
@@ -130,7 +130,7 @@ Follow us on social media for:
 - **GitHub:** [@ArsalanAnwer0](https://github.com/ArsalanAnwer0)
   - Follow our development progress
   - See our latest commits and releases
-  - Star the repository to show support ⭐
+  - Star the repository to show support
 
 - **LinkedIn:** [Schedule Builder](https://www.linkedin.com/company/schedule-builder) *(Coming Soon)*
   - Company updates and announcements
@@ -168,21 +168,21 @@ For critical issues affecting all users or security emergencies, email security@
 ## What Types of Inquiries We Accept
 
 **We Can Help With:**
-✅ Account setup and configuration
-✅ Technical issues and bugs
-✅ Feature questions and usage guidance
-✅ Billing and subscription management
-✅ Privacy and data requests
-✅ Security concerns
-✅ Feedback and suggestions
-✅ Partnership and collaboration inquiries
+- Account setup and configuration
+- Technical issues and bugs
+- Feature questions and usage guidance
+- Billing and subscription management
+- Privacy and data requests
+- Security concerns
+- Feedback and suggestions
+- Partnership and collaboration inquiries
 
 **We Cannot Help With:**
-❌ Legal advice (please consult your attorney)
-❌ Employment law or labor compliance guidance
-❌ Custom development for individual users (consider our Enterprise plan)
-❌ Issues with third-party services (contact those providers directly)
-❌ Requests to expedite development of specific features
+- Legal advice (please consult your attorney)
+- Employment law or labor compliance guidance
+- Custom development for individual users (consider our Enterprise plan)
+- Issues with third-party services (contact those providers directly)
+- Requests to expedite development of specific features
 
 ## Before You Contact Us
 

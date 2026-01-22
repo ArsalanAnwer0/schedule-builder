@@ -14,28 +14,22 @@ hero:
       link: https://github.com/ArsalanAnwer0/schedule-builder
 
 features:
-  - icon: 📅
-    title: Smart Scheduling
+  - title: Smart Scheduling
     details: Create optimized schedules based on availability, preferences, and business rules. Save time with automated schedule generation.
 
-  - icon: 👥
-    title: Team Collaboration
+  - title: Team Collaboration
     details: Keep your entire team in sync with real-time updates, shift notifications, and easy schedule sharing.
 
-  - icon: 🔔
-    title: Smart Notifications
+  - title: Smart Notifications
     details: Stay informed with email and in-app notifications for schedule changes, shift reminders, and important updates.
 
-  - icon: 📊
-    title: Insights & Reporting
+  - title: Insights & Reporting
     details: Track scheduling patterns, labor costs, and team availability with comprehensive reports and analytics.
 
-  - icon: 🔒
-    title: Secure & Private
+  - title: Secure & Private
     details: Your data is encrypted and protected. We're GDPR and CCPA compliant and never sell your information.
 
-  - icon: 📱
-    title: Works Everywhere
+  - title: Works Everywhere
     details: Access your schedules from any device - desktop, tablet, or mobile. Seamless experience across all platforms.
 ---
 
@@ -43,18 +37,18 @@ features:
 
 <div class="quick-links-grid">
 
-### 📚 Documentation
+### Documentation
 - [Getting Started Guide](/getting-started/) - New to Schedule Builder? Start here
 - [User Guide](/guide/) - Learn how to use all features
 - [Troubleshooting](/troubleshooting/) - Solutions to common issues
 - [FAQ](/faq) - Frequently asked questions
 
-### ⚖️ Legal
+### Legal
 - [Privacy Policy](/legal/privacy) - How we protect your data
 - [Terms of Service](/legal/terms) - Usage terms and conditions
 - [Contact Us](/legal/contact) - Get in touch with our team
 
-### 🚀 Main Application
+### Main Application
 - [Go to Schedule Builder App](https://schedule-builder.xyz) - Access the main application
 - [Create Account](https://schedule-builder.xyz/register) - Sign up for free
 - [Login](https://schedule-builder.xyz/login) - Access your account
@@ -86,10 +80,10 @@ Schedule Builder is trusted by:
 
 Need assistance? We're here to help:
 
-- **📖 Browse Documentation** - Find answers in our comprehensive guides
-- **💬 Community Forum** - Ask questions and connect with other users
-- **📧 Email Support** - Contact our support team directly
-- **🐛 Report Issues** - Found a bug? Report it on GitHub
+- **Browse Documentation** - Find answers in our comprehensive guides
+- **Community Forum** - Ask questions and connect with other users
+- **Email Support** - Contact our support team directly
+- **Report Issues** - Found a bug? Report it on GitHub
 
 Visit our [Contact page](/legal/contact) for all support options and response times.
 
@@ -106,9 +100,9 @@ Visit our [GitHub repository](https://github.com/ArsalanAnwer0/schedule-builder)
 
 ## Stay Updated
 
-- ⭐ [Star us on GitHub](https://github.com/ArsalanAnwer0/schedule-builder) to show support
-- 👀 Watch our repository for updates and releases
-- 📢 Follow our social media for announcements (links in footer)
+- [Star us on GitHub](https://github.com/ArsalanAnwer0/schedule-builder) to show support
+- Watch our repository for updates and releases
+- Follow our social media for announcements (links in footer)
 
 ---
 
