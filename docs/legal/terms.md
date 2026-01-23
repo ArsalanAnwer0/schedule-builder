@@ -5,15 +5,107 @@ lastUpdated: true
 outline: deep
 ---
 
+<style scoped>
+.legal-section {
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border-left: 3px solid var(--vp-c-brand-1);
+  background: var(--vp-c-bg-soft);
+  border-radius: 4px;
+}
+
+.legal-section h3 {
+  margin-top: 0;
+  color: var(--vp-c-brand-1);
+}
+
+.key-points {
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.05) 0%, rgba(20, 184, 166, 0.02) 100%);
+  border: 1px solid rgba(20, 184, 166, 0.2);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.key-points h4 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  color: var(--vp-c-brand-1);
+  font-size: 1rem;
+}
+
+.key-points ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.key-points li {
+  margin: 0.5rem 0;
+}
+
+.requirements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.requirement-card {
+  padding: 1.25rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+}
+
+.requirement-card h4 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: var(--vp-c-brand-1);
+  font-size: 1rem;
+}
+
+.requirement-card ul {
+  margin: 0.5rem 0 0 0;
+  padding-left: 1.25rem;
+}
+
+.requirement-card li {
+  margin: 0.375rem 0;
+  font-size: 0.875rem;
+}
+
+.last-updated {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: var(--vp-c-bg-soft);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--vp-c-text-2);
+  margin-bottom: 1.5rem;
+}
+
+.important-notice {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(239, 68, 68, 0.02) 100%);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+  font-weight: 500;
+}
+</style>
+
 # Terms of Service
 
-**Last Updated:** January 22, 2026
+<span class="last-updated">Last Updated: January 22, 2026</span>
 
 Please read these Terms of Service ("Terms", "Terms of Service") carefully before using the Schedule Builder application (the "Service") operated by Schedule Builder ("us", "we", or "our").
 
 Your access to and use of the Service is conditioned on your acceptance of and compliance with these Terms. These Terms apply to all visitors, users, and others who access or use the Service.
 
-**By accessing or using the Service you agree to be bound by these Terms. If you disagree with any part of the terms, then you may not access the Service.**
+<div class="important-notice">
+By accessing or using the Service you agree to be bound by these Terms. If you disagree with any part of the terms, then you may not access the Service.
+</div>
 
 ## 1. Introduction and Acceptance of Terms
 
