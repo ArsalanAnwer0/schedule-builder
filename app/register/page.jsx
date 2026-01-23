@@ -507,25 +507,34 @@ export default function RegisterPage() {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !isPasswordValid || formData.password !== formData.confirmPassword}
                 style={{
                   width: '100%',
                   padding: '0.875rem 1.5rem',
-                  backgroundColor: loading ? 'rgba(20, 184, 166, 0.5)' : '#14b8a6',
+                  backgroundColor: (loading || !isPasswordValid || formData.password !== formData.confirmPassword)
+                    ? 'rgba(20, 184, 166, 0.5)'
+                    : '#14b8a6',
                   color: '#ffffff',
                   border: 'none',
                   borderRadius: '8px',
                   fontSize: '16px',
                   fontWeight: '500',
-                  cursor: loading ? 'not-allowed' : 'pointer',
+                  cursor: (loading || !isPasswordValid || formData.password !== formData.confirmPassword)
+                    ? 'not-allowed'
+                    : 'pointer',
                   marginBottom: '1.5rem',
-                  transition: 'all 0.2s'
+                  transition: 'all 0.2s',
+                  opacity: (loading || !isPasswordValid || formData.password !== formData.confirmPassword) ? 0.6 : 1
                 }}
                 onMouseOver={(e) => {
-                  if (!loading) e.currentTarget.style.backgroundColor = '#0d9488';
+                  if (!loading && isPasswordValid && formData.password === formData.confirmPassword) {
+                    e.currentTarget.style.backgroundColor = '#0d9488';
+                  }
                 }}
                 onMouseOut={(e) => {
-                  if (!loading) e.currentTarget.style.backgroundColor = '#14b8a6';
+                  if (!loading && isPasswordValid && formData.password === formData.confirmPassword) {
+                    e.currentTarget.style.backgroundColor = '#14b8a6';
+                  }
                 }}
               >
                 {loading ? 'Creating account...' : 'Create Admin Account'}
