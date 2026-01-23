@@ -5,63 +5,211 @@ lastUpdated: true
 outline: deep
 ---
 
+<style scoped>
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.contact-card {
+  padding: 1.5rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+  transition: all 0.3s ease;
+}
+
+.contact-card:hover {
+  border-color: var(--vp-c-brand-1);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.contact-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  color: var(--vp-c-brand-1);
+  font-size: 1.25rem;
+}
+
+.contact-card p {
+  margin: 0.5rem 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+.contact-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.badge-fast {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.badge-moderate {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+
+.badge-slow {
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+}
+
+.email-list {
+  display: grid;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.email-item {
+  padding: 1rem 1.25rem;
+  border-left: 3px solid var(--vp-c-brand-1);
+  background: var(--vp-c-bg-soft);
+  border-radius: 4px;
+}
+
+.email-item strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--vp-c-text-1);
+}
+
+.email-item p {
+  margin: 0.25rem 0;
+  font-size: 0.875rem;
+  color: var(--vp-c-text-2);
+}
+
+.response-table {
+  width: 100%;
+  margin: 1.5rem 0;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.response-table th,
+.response-table td {
+  padding: 0.875rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+
+.response-table th {
+  background: var(--vp-c-bg-soft);
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+}
+
+.response-table tr:hover {
+  background: var(--vp-c-bg-soft);
+}
+</style>
+
 # Contact Us
 
 We're here to help! Whether you have questions about using Schedule Builder, need technical support, want to report a bug, or have feedback to share, we offer several ways to get in touch with our team.
 
 Please choose the contact method that best fits your needs based on the guidelines below.
 
-## User Forum & Community Discussions
+<div class="contact-grid">
 
-**Best for:** General questions, tips and tricks, feature discussions, connecting with other users
+<div class="contact-card">
+
+### User Forum & Community
+
+**Best for:** General questions, tips and tricks, feature discussions
 
 Our community forum is the best place to:
-- Ask "how-to" questions about using Schedule Builder features
-- Share scheduling best practices and workflows with other users
-- Discuss feature requests and see what others are asking for
-- Get answers from experienced community members and our support team
-- Browse existing discussions to find solutions to common questions
+- Ask "how-to" questions about features
+- Share scheduling best practices
+- Discuss feature requests
+- Get answers from the community
 
-**Access the Forum:**
-- [Schedule Builder Community Forum](https://github.com/ArsalanAnwer0/schedule-builder/discussions)
-- Create a free GitHub account if you don't have one (it takes less than a minute!)
-- Search existing discussions before posting - your question may already be answered
+[Visit Community Forum →](https://github.com/ArsalanAnwer0/schedule-builder/discussions)
 
-**Response Time:** Community-driven; responses typically within a few hours from community members or our team
+<span class="contact-badge badge-fast">Fastest Response</span>
+
+</div>
+
+<div class="contact-card">
+
+### Email Support
+
+**Best for:** Account issues, billing, privacy concerns
+
+Get personalized support for:
+- Account access problems
+- Billing and subscription questions
+- Data privacy rights
+- Security vulnerabilities
+
+[support@schedule-builder.xyz](mailto:support@schedule-builder.xyz)
+
+<span class="contact-badge badge-moderate">24-48 Hours</span>
+
+</div>
+
+<div class="contact-card">
+
+### GitHub Issues
+
+**Best for:** Bug reports, feature requests
+
+Report bugs or request features:
+- Public tracking of issues
+- Community upvoting
+- Transparent development
+- Progress updates
+
+[Create an Issue →](https://github.com/ArsalanAnwer0/schedule-builder/issues/new)
+
+<span class="contact-badge badge-moderate">1-2 Business Days</span>
+
+</div>
+
+</div>
 
 ::: tip Why Use the Forum?
 The forum is publicly searchable, which means your question and its answer can help other users facing the same issue. It's also the fastest way to get help since both our team and experienced community members can respond.
 :::
 
-## Email Support
+## Email Support Channels
 
-**Best for:** Account-specific issues, billing questions, privacy concerns, security reports
+<div class="email-list">
 
-Use email when you need to:
-- Resolve account access or login problems
-- Discuss billing, subscription, or payment issues
-- Request account deletion or data export
-- Report security vulnerabilities (please use security@ email below)
-- Exercise your data privacy rights (GDPR, CCPA)
-- Get help with issues that require sharing sensitive information
+<div class="email-item">
+<strong>General Support</strong>
+<p><a href="mailto:support@schedule-builder.xyz">support@schedule-builder.xyz</a></p>
+<p>For general questions, technical issues, and account help. Please check the forum first for common questions.</p>
+</div>
 
-**Email Addresses:**
+<div class="email-item">
+<strong>Security Issues</strong>
+<p><a href="mailto:security@schedule-builder.xyz">security@schedule-builder.xyz</a></p>
+<p>For reporting security vulnerabilities or concerns. We follow responsible disclosure practices.</p>
+</div>
 
-**General Support:** [support@schedule-builder.xyz](mailto:support@schedule-builder.xyz)
-- For general questions, technical issues, and account help
-- Please check the forum first for common questions
+<div class="email-item">
+<strong>Privacy Requests</strong>
+<p><a href="mailto:privacy@schedule-builder.xyz">privacy@schedule-builder.xyz</a></p>
+<p>For GDPR, CCPA, or other privacy-related requests. Exercise your data rights (access, deletion, portability).</p>
+</div>
 
-**Security Issues:** [security@schedule-builder.xyz](mailto:security@schedule-builder.xyz)
-- For reporting security vulnerabilities or concerns
-- We follow responsible disclosure practices
+<div class="email-item">
+<strong>Legal Inquiries</strong>
+<p><a href="mailto:legal@schedule-builder.xyz">legal@schedule-builder.xyz</a></p>
+<p>For legal questions, Terms of Service clarifications, and DMCA takedown notices.</p>
+</div>
 
-**Privacy Requests:** [privacy@schedule-builder.xyz](mailto:privacy@schedule-builder.xyz)
-- For GDPR, CCPA, or other privacy-related requests
-- To exercise your data rights (access, deletion, portability)
-
-**Legal Inquiries:** [legal@schedule-builder.xyz](mailto:legal@schedule-builder.xyz)
-- For legal questions, Terms of Service clarifications
-- DMCA takedown notices
+</div>
 
 **When Emailing, Please Include:**
 - Your registered email address
@@ -69,12 +217,6 @@ Use email when you need to:
 - Steps to reproduce the problem (for technical issues)
 - Screenshots if applicable (use [imgur.com](https://imgur.com) or similar)
 - Any error messages you received
-
-**Response Time:**
-- General support: 24-48 hours (business days)
-- Security issues: 24 hours or less
-- Privacy requests: Within 30 days (as required by law)
-- Legal inquiries: 3-5 business days
 
 ::: warning Before Emailing Support
 1. Check the [FAQ page](/faq) for common questions
@@ -84,78 +226,51 @@ Use email when you need to:
 This helps us respond faster to truly unique issues!
 :::
 
-## GitHub Issues
-
-**Best for:** Bug reports, feature requests, technical issues
-
-If you've found a bug or have a feature request, GitHub Issues is the perfect place to report it:
-
-**Report a Bug:**
-- [Create a new issue](https://github.com/ArsalanAnwer0/schedule-builder/issues/new)
-- Choose the "Bug Report" template
-- Provide detailed information about the bug
-- Include steps to reproduce, expected behavior, and actual behavior
-- Add screenshots or screen recordings if helpful
-
-**Request a Feature:**
-- [Create a new issue](https://github.com/ArsalanAnwer0/schedule-builder/issues/new)
-- Choose the "Feature Request" template
-- Describe the feature and explain why it would be valuable
-- Upvote existing feature requests you'd like to see
-
-**Why Use GitHub Issues?**
-- Public tracking of bugs and features
-- Community members can upvote and add context
-- You'll get updates when issues are addressed
-- Transparent development process
-
-**Response Time:** We triage new issues within 1-2 business days and provide an initial response
-
-::: tip Check Existing Issues First
-Before creating a new issue, search [existing issues](https://github.com/ArsalanAnwer0/schedule-builder/issues) to see if your bug or feature has already been reported. If it has, upvote it and any additional context in a comment.
-:::
-
-## Social Media
-
-**Best for:** Quick updates, announcements, sharing feedback
-
-Follow us on social media for:
-- Product announcements and feature launches
-- Scheduling tips and best practices
-- Community highlights
-- Behind-the-scenes content
-
-**Find Us On:**
-
-- **GitHub:** [@ArsalanAnwer0](https://github.com/ArsalanAnwer0)
-  - Follow our development progress
-  - See our latest commits and releases
-  - Star the repository to show support
-
-- **LinkedIn:** [Schedule Builder](https://www.linkedin.com/company/schedule-builder) *(Coming Soon)*
-  - Company updates and announcements
-  - Job postings and company news
-
-- **Twitter/X:** [@ScheduleBuilder](https://twitter.com/schedulebuilder) *(Coming Soon)*
-  - Quick updates and tips
-  - Community engagement
-
-::: info Social Media Response Times
-While we monitor our social media channels, they're not designed for support requests. For faster help, please use the Community Forum or email support instead.
-:::
-
 ## Response Time Expectations
 
 We strive to respond promptly, but response times vary by channel and issue complexity:
 
-| Contact Method | Initial Response Time | Issue Resolution Time |
-|---------------|----------------------|----------------------|
-| **Community Forum** | Few hours | Same day to 3 days |
-| **Email (General)** | 24-48 hours | 3-7 business days |
-| **Email (Security)** | Within 24 hours | Varies by severity |
-| **Email (Privacy)** | 5-10 business days | Within 30 days |
-| **GitHub Issues** | 1-2 business days | Varies by complexity |
-| **Social Media** | Not for support | N/A |
+<table class="response-table">
+<thead>
+<tr>
+<th>Contact Method</th>
+<th>Initial Response</th>
+<th>Resolution Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Community Forum</strong></td>
+<td>Few hours</td>
+<td>Same day to 3 days</td>
+</tr>
+<tr>
+<td><strong>Email (General)</strong></td>
+<td>24-48 hours</td>
+<td>3-7 business days</td>
+</tr>
+<tr>
+<td><strong>Email (Security)</strong></td>
+<td>Within 24 hours</td>
+<td>Varies by severity</td>
+</tr>
+<tr>
+<td><strong>Email (Privacy)</strong></td>
+<td>5-10 business days</td>
+<td>Within 30 days</td>
+</tr>
+<tr>
+<td><strong>GitHub Issues</strong></td>
+<td>1-2 business days</td>
+<td>Varies by complexity</td>
+</tr>
+<tr>
+<td><strong>Social Media</strong></td>
+<td>Not for support</td>
+<td>N/A</td>
+</tr>
+</tbody>
+</table>
 
 **Business Hours:** Monday - Friday, 9:00 AM - 5:00 PM Pacific Time (PT)
 
