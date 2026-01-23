@@ -217,4 +217,62 @@
   .VPHero .tagline {
     padding: 0 1rem;
   }
+
+  /* Responsive grid adjustments for custom components */
+  .contact-grid,
+  .rights-grid,
+  .requirements-grid,
+  .email-list {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Mobile padding adjustments */
+  .contact-card,
+  .rights-card,
+  .requirement-card,
+  .legal-section,
+  .key-points {
+    padding: 1rem !important;
+  }
+
+  /* Mobile table overflow */
+  .response-table,
+  .data-table {
+    font-size: 0.8125rem;
+  }
+}
+
+/**
+ * Print Styles
+ * -------------------------------------------------------------------------- */
+
+@media print {
+  /* Hide navigation elements */
+  .VPNav,
+  .VPSidebar,
+  .VPFooter,
+  .VPLocalNav {
+    display: none !important;
+  }
+
+  /* Optimize content for printing */
+  .vp-doc {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  /* Prevent page breaks inside cards */
+  .contact-card,
+  .rights-card,
+  .requirement-card,
+  .legal-section,
+  .key-points {
+    page-break-inside: avoid;
+    border: 1px solid #e5e7eb;
+  }
+
+  /* Remove interactive elements */
+  .contact-badge {
+    border: 1px solid currentColor;
+  }
 }
