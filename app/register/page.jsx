@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { usePasswordValidation } from '@/lib/hooks/usePasswordValidation';
+import PasswordRequirementsDisplay from '@/components/auth/PasswordRequirementsDisplay';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -16,6 +18,9 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  // Use password validation hook
+  const { validation: passwordValidation, isValid: isPasswordValid } = usePasswordValidation(formData.password);
 
   const handleChange = (e) => {
     setFormData({
@@ -393,8 +398,8 @@ export default function RegisterPage() {
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  minLength="6"
-                  placeholder="At least 6 characters"
+                  minLength="12"
+                  placeholder="12+ characters required"
                   style={{
                     width: '100%',
                     padding: '0.875rem 1rem',
@@ -435,7 +440,7 @@ export default function RegisterPage() {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   required
-                  minLength="6"
+                  minLength="12"
                   placeholder="Re-enter your password"
                   style={{
                     width: '100%',
