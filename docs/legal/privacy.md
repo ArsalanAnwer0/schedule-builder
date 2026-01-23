@@ -5,9 +5,110 @@ lastUpdated: true
 outline: deep
 ---
 
+<style scoped>
+.legal-section {
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border-left: 3px solid var(--vp-c-brand-1);
+  background: var(--vp-c-bg-soft);
+  border-radius: 4px;
+}
+
+.legal-section h3 {
+  margin-top: 0;
+  color: var(--vp-c-brand-1);
+}
+
+.key-points {
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.05) 0%, rgba(20, 184, 166, 0.02) 100%);
+  border: 1px solid rgba(20, 184, 166, 0.2);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.key-points h4 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  color: var(--vp-c-brand-1);
+  font-size: 1rem;
+}
+
+.key-points ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.key-points li {
+  margin: 0.5rem 0;
+}
+
+.data-table {
+  width: 100%;
+  margin: 1.5rem 0;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.data-table th,
+.data-table td {
+  padding: 0.875rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+
+.data-table th {
+  background: var(--vp-c-bg-soft);
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+}
+
+.data-table tr:hover {
+  background: var(--vp-c-bg-soft);
+}
+
+.rights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.rights-card {
+  padding: 1.25rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+}
+
+.rights-card h4 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: var(--vp-c-brand-1);
+  font-size: 1rem;
+}
+
+.rights-card p {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.last-updated {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: var(--vp-c-bg-soft);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--vp-c-text-2);
+  margin-bottom: 1.5rem;
+}
+</style>
+
 # Privacy Policy
 
-**Last Updated:** January 22, 2026
+<span class="last-updated">Last Updated: January 22, 2026</span>
 
 This Privacy Policy describes how Schedule Builder ("we", "us", or "our") collects, uses, and protects your personal information when you use our service. By using Schedule Builder, you agree to the collection and use of information in accordance with this policy.
 
@@ -25,11 +126,15 @@ For the purposes of this Privacy Policy, the following terms have the meanings s
 
 **Third Party** means any natural or legal person, public authority, agency, or body other than the data subject, controller, or persons authorized to process personal data under the direct authority of the controller.
 
-**Key Points:**
-- Personal data includes any information that can identify you directly or indirectly
-- We process your data only for specified, explicit, and legitimate purposes
-- You have specific rights regarding your personal data under applicable laws
-- We act as the data controller and are responsible for compliance with data protection regulations
+<div class="key-points">
+<h4>Key Points</h4>
+<ul>
+<li>Personal data includes any information that can identify you directly or indirectly</li>
+<li>We process your data only for specified, explicit, and legitimate purposes</li>
+<li>You have specific rights regarding your personal data under applicable laws</li>
+<li>We act as the data controller and are responsible for compliance with data protection regulations</li>
+</ul>
+</div>
 
 ## 2. General Information
 
