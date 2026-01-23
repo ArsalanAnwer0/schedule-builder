@@ -177,7 +177,7 @@ function ResetPasswordForm() {
                 onChange={handleChange}
                 required
                 minLength={12}
-                placeholder="12+ characters required"
+                placeholder="Enter new password"
                 style={{
                   width: "100%",
                   padding: "0.875rem 1rem",
