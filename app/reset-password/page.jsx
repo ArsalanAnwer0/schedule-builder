@@ -83,7 +83,7 @@ function ResetPasswordForm() {
   return (
     <div style={{
       minHeight: "100vh",
-      backgroundColor: "#0a0f1a",
+      backgroundColor: "#ffffff",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
@@ -92,11 +92,11 @@ function ResetPasswordForm() {
       <div style={{
         width: "100%",
         maxWidth: "450px",
-        backgroundColor: "rgba(255, 255, 255, 0.03)",
-        border: "1px solid rgba(255, 255, 255, 0.1)",
+        backgroundColor: "#ffffff",
+        border: "1px solid rgba(0, 0, 0, 0.1)",
         borderRadius: "12px",
         padding: "3rem",
-        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)"
+        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)"
       }}>
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
@@ -105,15 +105,15 @@ function ResetPasswordForm() {
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2.5">
                 <path d="M3 12h18M3 6h18M3 18h18" />
               </svg>
-              <h1 style={{ fontSize: "1.5rem", fontWeight: "600", color: "#ffffff", margin: 0 }}>
+              <h1 style={{ fontSize: "1.5rem", fontWeight: "600", color: "rgba(0, 0, 0, 0.87)", margin: 0 }}>
                 Schedule Builder
               </h1>
             </div>
           </Link>
-          <h2 style={{ fontSize: "1.25rem", fontWeight: "500", color: "#ffffff", margin: "0 0 0.5rem 0" }}>
+          <h2 style={{ fontSize: "1.25rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", margin: "0 0 0.5rem 0" }}>
             Create New Password
           </h2>
-          <p style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.5)", margin: 0 }}>
+          <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.6)", margin: 0 }}>
             Enter your new password below
           </p>
         </div>
@@ -121,13 +121,13 @@ function ResetPasswordForm() {
         {success ? (
           <div>
             <div style={{
-              padding: "1rem",
-              backgroundColor: "#064e3b",
-              border: "1px solid #10b981",
+              padding: "1rem 1.25rem",
+              backgroundColor: "rgba(16, 185, 129, 0.1)",
+              border: "1px solid rgba(16, 185, 129, 0.3)",
               borderRadius: "8px",
               marginBottom: "1.5rem"
             }}>
-              <p style={{ color: "#10b981", margin: 0, fontSize: "0.875rem" }}>
+              <p style={{ color: "#10b981", margin: 0, fontSize: "0.9375rem", fontWeight: "400" }}>
                 ✓ Password reset successful! Redirecting to login...
               </p>
             </div>
@@ -145,22 +145,22 @@ function ResetPasswordForm() {
           <form onSubmit={handleSubmit}>
             {error && (
               <div style={{
-                padding: "1rem",
-                backgroundColor: "#2d1517",
-                border: "1px solid #dc2626",
+                padding: "1rem 1.25rem",
+                backgroundColor: "rgba(239, 68, 68, 0.1)",
+                border: "1px solid rgba(239, 68, 68, 0.3)",
                 borderRadius: "8px",
                 marginBottom: "1.5rem"
               }}>
-                <p style={{ color: "#ff6b6b", margin: 0, fontSize: "0.875rem" }}>{error}</p>
+                <p style={{ color: "#dc2626", margin: 0, fontSize: "0.9375rem", fontWeight: "400" }}>{error}</p>
               </div>
             )}
 
             <div style={{ marginBottom: "1.5rem" }}>
               <label style={{
                 display: "block",
-                fontSize: "0.875rem",
+                fontSize: "14px",
                 fontWeight: "500",
-                color: "#c9d1d9",
+                color: "rgba(0, 0, 0, 0.65)",
                 marginBottom: "0.5rem"
               }}>
                 New Password
@@ -171,38 +171,38 @@ function ResetPasswordForm() {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                minLength={6}
-                placeholder="Enter new password"
+                minLength={12}
+                placeholder="12+ characters required"
                 style={{
                   width: "100%",
-                  padding: "0.75rem",
-                  backgroundColor: "rgba(255, 255, 255, 0.05)",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  padding: "0.875rem 1rem",
+                  backgroundColor: "#ffffff",
+                  border: "1px solid rgba(0, 0, 0, 0.2)",
                   borderRadius: "8px",
-                  fontSize: "0.875rem",
-                  color: "#ffffff",
+                  fontSize: "0.9375rem",
+                  color: "rgba(0, 0, 0, 0.87)",
                   outline: "none",
-                  transition: "border-color 0.15s ease"
+                  fontWeight: "400",
+                  transition: "all 0.2s",
+                  boxSizing: "border-box"
                 }}
-                onFocus={(e) => e.target.style.borderColor = "#14b8a6"}
-                onBlur={(e) => e.target.style.borderColor = "rgba(255, 255, 255, 0.1)"}
+                onFocus={(e) => {
+                  e.target.style.borderColor = "#14b8a6";
+                  e.target.style.boxShadow = "0 0 0 3px rgba(20, 184, 166, 0.1)";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "rgba(0, 0, 0, 0.2)";
+                  e.target.style.boxShadow = "none";
+                }}
               />
-              <small style={{
-                display: "block",
-                fontSize: "0.75rem",
-                color: "#8b949e",
-                marginTop: "0.25rem"
-              }}>
-                At least 6 characters
-              </small>
             </div>
 
             <div style={{ marginBottom: "1.5rem" }}>
               <label style={{
                 display: "block",
-                fontSize: "0.875rem",
+                fontSize: "14px",
                 fontWeight: "500",
-                color: "#c9d1d9",
+                color: "rgba(0, 0, 0, 0.65)",
                 marginBottom: "0.5rem"
               }}>
                 Confirm New Password
@@ -213,21 +213,29 @@ function ResetPasswordForm() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
-                minLength={6}
-                placeholder="Confirm new password"
+                minLength={12}
+                placeholder="Re-enter your password"
                 style={{
                   width: "100%",
-                  padding: "0.75rem",
-                  backgroundColor: "rgba(255, 255, 255, 0.05)",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  padding: "0.875rem 1rem",
+                  backgroundColor: "#ffffff",
+                  border: "1px solid rgba(0, 0, 0, 0.2)",
                   borderRadius: "8px",
-                  fontSize: "0.875rem",
-                  color: "#ffffff",
+                  fontSize: "0.9375rem",
+                  color: "rgba(0, 0, 0, 0.87)",
                   outline: "none",
-                  transition: "border-color 0.15s ease"
+                  fontWeight: "400",
+                  transition: "all 0.2s",
+                  boxSizing: "border-box"
                 }}
-                onFocus={(e) => e.target.style.borderColor = "#14b8a6"}
-                onBlur={(e) => e.target.style.borderColor = "rgba(255, 255, 255, 0.1)"}
+                onFocus={(e) => {
+                  e.target.style.borderColor = "#14b8a6";
+                  e.target.style.boxShadow = "0 0 0 3px rgba(20, 184, 166, 0.1)";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "rgba(0, 0, 0, 0.2)";
+                  e.target.style.boxShadow = "none";
+                }}
               />
             </div>
 
@@ -236,16 +244,16 @@ function ResetPasswordForm() {
               disabled={loading || !token}
               style={{
                 width: "100%",
-                padding: "0.75rem",
-                backgroundColor: (loading || !token) ? "#0d9488" : "#14b8a6",
+                padding: "0.875rem 1.5rem",
+                backgroundColor: (loading || !token) ? "rgba(20, 184, 166, 0.5)" : "#14b8a6",
                 color: "#ffffff",
                 border: "none",
                 borderRadius: "8px",
-                fontSize: "0.875rem",
+                fontSize: "16px",
                 fontWeight: "500",
                 cursor: (loading || !token) ? "not-allowed" : "pointer",
-                transition: "background-color 0.15s ease",
-                opacity: (loading || !token) ? 0.7 : 1
+                marginBottom: "1.5rem",
+                transition: "all 0.2s"
               }}
               onMouseOver={(e) => !(loading || !token) && (e.target.style.backgroundColor = "#0d9488")}
               onMouseOut={(e) => !(loading || !token) && (e.target.style.backgroundColor = "#14b8a6")}
