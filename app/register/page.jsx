@@ -422,6 +422,13 @@ export default function RegisterPage() {
                     e.currentTarget.style.boxShadow = 'none';
                   }}
                 />
+
+                {/* Password Requirements Display */}
+                <PasswordRequirementsDisplay
+                  password={formData.password}
+                  validation={passwordValidation}
+                  showStrengthBar={true}
+                />
               </div>
 
               <div style={{ marginBottom: '2rem' }}>
