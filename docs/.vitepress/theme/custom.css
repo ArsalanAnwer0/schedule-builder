@@ -115,51 +115,6 @@
 }
 
 /**
- * Component: Hero Section
- * -------------------------------------------------------------------------- */
-
-:root {
-  --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
-}
-
-.VPHero .name {
-  letter-spacing: -0.02em;
-  font-weight: 700;
-}
-
-.VPHero .tagline {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
-}
-
-/**
- * Component: Feature Cards
- * -------------------------------------------------------------------------- */
-
-.VPFeature {
-  border-radius: 12px;
-  transition: all 0.3s ease;
-}
-
-.VPFeature:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(20, 184, 166, 0.12);
-}
-
-.VPFeature .title {
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  margin-bottom: 0.5rem;
-}
-
-.VPFeature .details {
-  line-height: 1.7;
-  color: var(--vp-c-text-2);
-}
-
-/**
  * Component: Custom Blocks (Tips, Warnings, etc.)
  * -------------------------------------------------------------------------- */
 
