@@ -284,22 +284,35 @@ function ResetPasswordForm() {
 
             <button
               type="submit"
-              disabled={loading || !token}
+              disabled={loading || !token || !isPasswordValid || formData.password !== formData.confirmPassword}
               style={{
                 width: "100%",
                 padding: "0.875rem 1.5rem",
-                backgroundColor: (loading || !token) ? "rgba(20, 184, 166, 0.5)" : "#14b8a6",
+                backgroundColor: (loading || !token || !isPasswordValid || formData.password !== formData.confirmPassword)
+                  ? "rgba(20, 184, 166, 0.5)"
+                  : "#14b8a6",
                 color: "#ffffff",
                 border: "none",
                 borderRadius: "8px",
                 fontSize: "16px",
                 fontWeight: "500",
-                cursor: (loading || !token) ? "not-allowed" : "pointer",
+                cursor: (loading || !token || !isPasswordValid || formData.password !== formData.confirmPassword)
+                  ? "not-allowed"
+                  : "pointer",
                 marginBottom: "1.5rem",
-                transition: "all 0.2s"
+                transition: "all 0.2s",
+                opacity: (loading || !token || !isPasswordValid || formData.password !== formData.confirmPassword) ? 0.6 : 1
               }}
-              onMouseOver={(e) => !(loading || !token) && (e.target.style.backgroundColor = "#0d9488")}
-              onMouseOut={(e) => !(loading || !token) && (e.target.style.backgroundColor = "#14b8a6")}
+              onMouseOver={(e) => {
+                if (!loading && token && isPasswordValid && formData.password === formData.confirmPassword) {
+                  e.target.style.backgroundColor = "#0d9488";
+                }
+              }}
+              onMouseOut={(e) => {
+                if (!loading && token && isPasswordValid && formData.password === formData.confirmPassword) {
+                  e.target.style.backgroundColor = "#14b8a6";
+                }
+              }}
             >
               {loading ? 'Resetting...' : 'Reset Password'}
             </button>
