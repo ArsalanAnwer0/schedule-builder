@@ -65,16 +65,27 @@ export async function POST(request) {
     });
 
     // Send confirmation email
+    let emailSent = false;
     try {
       await sendWaitlistConfirmation(email);
+      emailSent = true;
+      console.log(`Waitlist confirmation email sent successfully to: ${email}`);
     } catch (emailError) {
       console.error('Failed to send confirmation email:', emailError);
-      // Don't fail the request if email fails, but log it
+      console.error('Email error details:', {
+        message: emailError.message,
+        stack: emailError.stack,
+        email: email
+      });
+      // Don't fail the request if email fails, but warn the user
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Successfully joined the waitlist! Check your email for confirmation.',
+      message: emailSent
+        ? 'Successfully joined the waitlist! Check your email for confirmation.'
+        : 'Successfully joined the waitlist! (Confirmation email pending)',
+      emailSent
     });
 
   } catch (error) {
