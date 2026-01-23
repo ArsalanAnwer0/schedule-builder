@@ -200,9 +200,16 @@ function ResetPasswordForm() {
                   e.target.style.boxShadow = "none";
                 }}
               />
+
+              {/* Password Requirements Display */}
+              <PasswordRequirementsDisplay
+                password={formData.password}
+                validation={passwordValidation}
+                showStrengthBar={true}
+              />
             </div>
 
-            <div style={{ marginBottom: "1.5rem" }}>
+            <div style={{ marginBottom: "2rem" }}>
               <label style={{
                 display: "block",
                 fontSize: "14px",
@@ -242,6 +249,37 @@ function ResetPasswordForm() {
                   e.target.style.boxShadow = "none";
                 }}
               />
+
+              {/* Password Match Indicator */}
+              {formData.confirmPassword && (
+                <div style={{
+                  marginTop: "0.5rem",
+                  padding: "0.5rem 0.75rem",
+                  backgroundColor: formData.password === formData.confirmPassword
+                    ? "rgba(16, 185, 129, 0.1)"
+                    : "rgba(220, 38, 38, 0.1)",
+                  border: `1px solid ${formData.password === formData.confirmPassword
+                    ? "rgba(16, 185, 129, 0.3)"
+                    : "rgba(220, 38, 38, 0.3)"}`,
+                  borderRadius: "6px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  transition: "all 0.2s ease"
+                }}>
+                  <span style={{
+                    fontSize: "0.75rem",
+                    fontWeight: "500",
+                    color: formData.password === formData.confirmPassword
+                      ? "#10b981"
+                      : "#dc2626"
+                  }}>
+                    {formData.password === formData.confirmPassword
+                      ? "✓ Passwords match"
+                      : "✗ Passwords do not match"}
+                  </span>
+                </div>
+              )}
             </div>
 
             <button
