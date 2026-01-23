@@ -100,7 +100,9 @@ export default {
 
   // Head tags for SEO
   head: [
-    ['link', { rel: 'icon', href: '/favicon.ico' }],
+    ['link', { rel: 'icon', href: '/favicon.ico', sizes: 'any' }],
+    ['link', { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' }],
+    ['link', { rel: 'apple-touch-icon', href: '/favicon.svg' }],
     ['meta', { name: 'theme-color', content: '#14b8a6' }],
     ['meta', { name: 'og:type', content: 'website' }],
     ['meta', { name: 'og:site_name', content: 'Schedule Builder Docs' }],
