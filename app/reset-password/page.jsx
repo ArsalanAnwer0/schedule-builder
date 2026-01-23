@@ -3,6 +3,8 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { usePasswordValidation } from '@/lib/hooks/usePasswordValidation';
+import PasswordRequirementsDisplay from '@/components/auth/PasswordRequirementsDisplay';
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -16,6 +18,9 @@ function ResetPasswordForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  // Use password validation hook
+  const { validation: passwordValidation, isValid: isPasswordValid } = usePasswordValidation(formData.password);
 
   useEffect(() => {
     if (!token) {
