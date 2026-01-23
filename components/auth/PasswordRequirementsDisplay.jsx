@@ -138,10 +138,23 @@ export default function PasswordRequirementsDisplay({
                 marginBottom: idx < requirements.length - 1 ? '0.25rem' : 0,
                 color: req.met ? '#10b981' : '#dc2626',
                 fontWeight: req.met ? '500' : '400',
-                transition: 'color 0.2s ease'
+                transition: 'all 0.2s ease',
+                listStyle: 'none',
+                position: 'relative',
+                paddingLeft: '1.25rem'
               }}
               aria-label={`${req.text}: ${req.met ? 'met' : 'not met'}`}
             >
+              <span style={{
+                position: 'absolute',
+                left: 0,
+                top: '0.1rem',
+                fontSize: '0.875rem',
+                fontWeight: '600',
+                transition: 'all 0.2s ease'
+              }}>
+                {req.met ? '✓' : '✗'}
+              </span>
               {req.text}
             </li>
           ))}
