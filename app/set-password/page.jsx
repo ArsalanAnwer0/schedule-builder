@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { validatePasswordStrength, getStrengthDisplay } from '../../lib/utils/passwordStrength';
+import { usePasswordValidation } from '@/lib/hooks/usePasswordValidation';
+import PasswordRequirementsDisplay from '@/components/auth/PasswordRequirementsDisplay';
 
 export default function SetPasswordPage() {
   const router = useRouter();
@@ -14,7 +15,9 @@ export default function SetPasswordPage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [passwordStrength, setPasswordStrength] = useState(null);
+
+  // Use password validation hook
+  const { validation: passwordValidation, isValid: isPasswordValid } = usePasswordValidation(formData.password);
 
   const handleChange = (e) => {
     setFormData({
@@ -22,16 +25,6 @@ export default function SetPasswordPage() {
       [e.target.name]: e.target.value,
     });
   };
-
-  // Check password strength when password changes
-  useEffect(() => {
-    if (formData.password) {
-      const strength = validatePasswordStrength(formData.password);
-      setPasswordStrength(strength);
-    } else {
-      setPasswordStrength(null);
-    }
-  }, [formData.password]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -297,71 +290,11 @@ export default function SetPasswordPage() {
               />
 
               {/* Password Strength Indicator */}
-              {passwordStrength && formData.password && (
-                <div style={{ marginTop: '0.75rem' }}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    marginBottom: '0.5rem'
-                  }}>
-                    <span style={{
-                      fontSize: '0.75rem',
-                      color: 'rgba(0, 0, 0, 0.6)',
-                      fontWeight: '400'
-                    }}>
-                      Password Strength:
-                    </span>
-                    <span style={{
-                      fontSize: '0.75rem',
-                      fontWeight: '600',
-                      color: getStrengthDisplay(passwordStrength.strength).color
-                    }}>
-                      {getStrengthDisplay(passwordStrength.strength).label}
-                    </span>
-                  </div>
-
-                  {/* Strength Bar */}
-                  <div style={{
-                    height: '4px',
-                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                    borderRadius: '2px',
-                    overflow: 'hidden',
-                    marginBottom: '0.75rem'
-                  }}>
-                    <div style={{
-                      height: '100%',
-                      width: `${(passwordStrength.score / 6) * 100}%`,
-                      backgroundColor: getStrengthDisplay(passwordStrength.strength).color,
-                      transition: 'all 0.3s ease'
-                    }}></div>
-                  </div>
-
-                  {/* Requirement Checklist */}
-                  {passwordStrength.errors.length > 0 && (
-                    <div style={{
-                      padding: '0.75rem',
-                      backgroundColor: 'rgba(0, 0, 0, 0.03)',
-                      borderRadius: '6px',
-                      border: '1px solid rgba(0, 0, 0, 0.1)'
-                    }}>
-                      <ul style={{
-                        margin: 0,
-                        paddingLeft: '1.25rem',
-                        fontSize: '0.75rem',
-                        color: 'rgba(0, 0, 0, 0.6)',
-                        lineHeight: '1.6'
-                      }}>
-                        {passwordStrength.errors.map((err, idx) => (
-                          <li key={idx} style={{ marginBottom: idx < passwordStrength.errors.length - 1 ? '0.25rem' : 0 }}>
-                            {err}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              )}
+              <PasswordRequirementsDisplay
+                password={formData.password}
+                validation={passwordValidation}
+                showStrengthBar={true}
+              />
             </div>
 
             {/* Confirm Password */}
