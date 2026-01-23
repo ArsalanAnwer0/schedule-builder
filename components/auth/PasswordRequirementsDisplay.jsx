@@ -56,7 +56,7 @@ export default function PasswordRequirementsDisplay({
   }
 
   return (
-    <div style={{ marginTop: '0.75rem' }}>
+    <div style={{ marginTop: '0.75rem' }} role="status" aria-live="polite" aria-atomic="true">
       {/* Strength Label and Bar */}
       {showStrengthBar && (
         <>
@@ -65,7 +65,7 @@ export default function PasswordRequirementsDisplay({
             alignItems: 'center',
             justifyContent: 'space-between',
             marginBottom: '0.5rem'
-          }}>
+          }} aria-label={`Password strength: ${strengthDisplay.label}`}>
             <span style={{
               fontSize: '0.75rem',
               color: 'rgba(0, 0, 0, 0.6)',
@@ -77,19 +77,26 @@ export default function PasswordRequirementsDisplay({
               fontSize: '0.75rem',
               fontWeight: '600',
               color: strengthDisplay.color
-            }}>
+            }} aria-label={strengthDisplay.label}>
               {strengthDisplay.label}
             </span>
           </div>
 
           {/* Strength Bar */}
-          <div style={{
-            height: '4px',
-            backgroundColor: 'rgba(0, 0, 0, 0.1)',
-            borderRadius: '2px',
-            overflow: 'hidden',
-            marginBottom: '0.75rem'
-          }}>
+          <div
+            style={{
+              height: '4px',
+              backgroundColor: 'rgba(0, 0, 0, 0.1)',
+              borderRadius: '2px',
+              overflow: 'hidden',
+              marginBottom: '0.75rem'
+            }}
+            role="progressbar"
+            aria-valuenow={validation.score}
+            aria-valuemin="0"
+            aria-valuemax="6"
+            aria-label={`Password strength score: ${validation.score} out of 6`}
+          >
             <div style={{
               height: '100%',
               width: `${(validation.score / 6) * 100}%`,
@@ -115,12 +122,15 @@ export default function PasswordRequirementsDisplay({
         }}>
           Password Requirements:
         </div>
-        <ul style={{
-          margin: 0,
-          paddingLeft: '1.25rem',
-          fontSize: '0.75rem',
-          lineHeight: '1.6'
-        }}>
+        <ul
+          style={{
+            margin: 0,
+            paddingLeft: '1.25rem',
+            fontSize: '0.75rem',
+            lineHeight: '1.6'
+          }}
+          aria-label="Password requirements list"
+        >
           {requirements.map((req, idx) => (
             <li
               key={idx}
@@ -130,6 +140,7 @@ export default function PasswordRequirementsDisplay({
                 fontWeight: req.met ? '500' : '400',
                 transition: 'color 0.2s ease'
               }}
+              aria-label={`${req.text}: ${req.met ? 'met' : 'not met'}`}
             >
               {req.text}
             </li>
