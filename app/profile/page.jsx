@@ -64,22 +64,22 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: "100vh", backgroundColor: "#0f1b2a", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <p style={{ color: "#8b949e" }}>Loading...</p>
+      <div style={{ minHeight: "100vh", backgroundColor: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <p style={{ color: "rgba(0, 0, 0, 0.5)" }}>Loading...</p>
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#0f1b2a", padding: "2rem 1.5rem" }}>
+    <div style={{ minHeight: "100vh", backgroundColor: "#f5f5f5", padding: "2rem 1.5rem" }}>
       <div style={{ maxWidth: "800px", margin: "0 auto" }}>
         {/* Header */}
         <div style={{ marginBottom: "2rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
           <div>
-            <h1 style={{ fontSize: "1.875rem", fontWeight: "400", color: "#ffffff", marginBottom: "0.5rem" }}>
+            <h1 style={{ fontSize: "1.875rem", fontWeight: "400", color: "rgba(0, 0, 0, 0.87)", marginBottom: "0.5rem" }}>
               Profile & Settings
             </h1>
-            <p style={{ fontSize: "1rem", color: "#aab7b8" }}>
+            <p style={{ fontSize: "1rem", color: "rgba(0, 0, 0, 0.5)" }}>
               Manage your account settings
             </p>
           </div>
@@ -87,9 +87,9 @@ export default function ProfilePage() {
             href="/admin"
             style={{
               padding: "0.625rem 1.25rem",
-              backgroundColor: "#16191f",
-              color: "#ffffff",
-              border: "1px solid #414d5c",
+              backgroundColor: "transparent",
+              color: "rgba(0, 0, 0, 0.6)",
+              border: "1px solid rgba(0, 0, 0, 0.2)",
               borderRadius: "6px",
               fontSize: "0.875rem",
               fontWeight: "500",
@@ -102,46 +102,46 @@ export default function ProfilePage() {
         </div>
 
         {/* Account Information */}
-        <div style={{ backgroundColor: "#16191f", border: "1px solid #30363d", borderRadius: "8px", marginBottom: "2rem", padding: "2rem" }}>
-          <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "#ffffff", marginBottom: "1.5rem" }}>
+        <div style={{ backgroundColor: "#ffffff", border: "1px solid rgba(0, 0, 0, 0.1)", borderRadius: "8px", marginBottom: "2rem", padding: "2rem", boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)" }}>
+          <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", marginBottom: "1.5rem" }}>
             Account Information
           </h2>
 
           <div style={{ display: "grid", gap: "1.5rem" }}>
             <div>
-              <label style={{ display: "block", fontSize: "0.875rem", color: "#8b949e", marginBottom: "0.5rem" }}>
+              <label style={{ display: "block", fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.5)", marginBottom: "0.5rem" }}>
                 Name
               </label>
-              <p style={{ fontSize: "1rem", color: "#ffffff", margin: 0 }}>
+              <p style={{ fontSize: "1rem", color: "rgba(0, 0, 0, 0.87)", margin: 0 }}>
                 {user?.name}
               </p>
             </div>
 
             <div>
-              <label style={{ display: "block", fontSize: "0.875rem", color: "#8b949e", marginBottom: "0.5rem" }}>
+              <label style={{ display: "block", fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.5)", marginBottom: "0.5rem" }}>
                 Email Address
               </label>
-              <p style={{ fontSize: "1rem", color: "#ffffff", margin: 0 }}>
+              <p style={{ fontSize: "1rem", color: "rgba(0, 0, 0, 0.87)", margin: 0 }}>
                 {user?.email}
               </p>
             </div>
 
             {user?.organizationName && (
               <div>
-                <label style={{ display: "block", fontSize: "0.875rem", color: "#8b949e", marginBottom: "0.5rem" }}>
+                <label style={{ display: "block", fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.5)", marginBottom: "0.5rem" }}>
                   Organization
                 </label>
-                <p style={{ fontSize: "1rem", color: "#ffffff", margin: 0 }}>
+                <p style={{ fontSize: "1rem", color: "rgba(0, 0, 0, 0.87)", margin: 0 }}>
                   {user.organizationName}
                 </p>
               </div>
             )}
 
             <div>
-              <label style={{ display: "block", fontSize: "0.875rem", color: "#8b949e", marginBottom: "0.5rem" }}>
+              <label style={{ display: "block", fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.5)", marginBottom: "0.5rem" }}>
                 Role
               </label>
-              <p style={{ fontSize: "1rem", color: "#ffffff", margin: 0 }}>
+              <p style={{ fontSize: "1rem", color: "rgba(0, 0, 0, 0.87)", margin: 0 }}>
                 {user?.role === 'student'
                   ? 'Student'
                   : user?.adminType === 'primary'
@@ -155,23 +155,23 @@ export default function ProfilePage() {
         </div>
 
         {/* Danger Zone */}
-        <div style={{ backgroundColor: "#16191f", border: "1px solid #5c2d30", borderRadius: "8px", padding: "2rem" }}>
-          <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "#ff6b6b", marginBottom: "0.5rem" }}>
+        <div style={{ backgroundColor: "#ffffff", border: "1px solid rgba(239, 68, 68, 0.3)", borderRadius: "8px", padding: "2rem", boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)" }}>
+          <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "#dc2626", marginBottom: "0.5rem" }}>
             Danger Zone
           </h2>
-          <p style={{ fontSize: "0.875rem", color: "#8b949e", marginBottom: "1.5rem", lineHeight: "1.5" }}>
+          <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.5)", marginBottom: "1.5rem", lineHeight: "1.5" }}>
             Once you delete your account, there is no going back. All your data will be permanently removed.
           </p>
 
           {error && (
             <div style={{
               padding: "0.75rem 1rem",
-              backgroundColor: "#2d1517",
-              border: "1px solid #5c2d30",
+              backgroundColor: "rgba(239, 68, 68, 0.1)",
+              border: "1px solid rgba(239, 68, 68, 0.3)",
               borderRadius: "6px",
               marginBottom: "1rem"
             }}>
-              <p style={{ color: "#ff6b6b", fontSize: "0.875rem", margin: 0 }}>
+              <p style={{ color: "#dc2626", fontSize: "0.875rem", margin: 0 }}>
                 {error}
               </p>
             </div>
@@ -182,9 +182,9 @@ export default function ProfilePage() {
               onClick={() => setShowDeleteConfirm(true)}
               style={{
                 padding: "0.625rem 1.25rem",
-                backgroundColor: "#2d1517",
-                color: "#ff6b6b",
-                border: "1px solid #5c2d30",
+                backgroundColor: "rgba(239, 68, 68, 0.1)",
+                color: "#dc2626",
+                border: "1px solid rgba(239, 68, 68, 0.3)",
                 borderRadius: "6px",
                 fontSize: "0.875rem",
                 fontWeight: "500",
@@ -192,12 +192,10 @@ export default function ProfilePage() {
                 transition: "all 0.15s ease"
               }}
               onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = "#3d1f21";
-                e.currentTarget.style.borderColor = "#7c3d40";
+                e.currentTarget.style.backgroundColor = "rgba(239, 68, 68, 0.15)";
               }}
               onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = "#2d1517";
-                e.currentTarget.style.borderColor = "#5c2d30";
+                e.currentTarget.style.backgroundColor = "rgba(239, 68, 68, 0.1)";
               }}
             >
               Delete Account
@@ -205,14 +203,14 @@ export default function ProfilePage() {
           ) : (
             <div style={{
               padding: "1.5rem",
-              backgroundColor: "#2d1517",
-              border: "1px solid #5c2d30",
+              backgroundColor: "rgba(239, 68, 68, 0.05)",
+              border: "1px solid rgba(239, 68, 68, 0.2)",
               borderRadius: "6px"
             }}>
-              <p style={{ fontSize: "0.875rem", color: "#ff6b6b", marginBottom: "1rem", fontWeight: "500" }}>
+              <p style={{ fontSize: "0.875rem", color: "#dc2626", marginBottom: "1rem", fontWeight: "500" }}>
                 Are you absolutely sure?
               </p>
-              <p style={{ fontSize: "0.875rem", color: "#c9d1d9", marginBottom: "1rem", lineHeight: "1.5" }}>
+              <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.6)", marginBottom: "1rem", lineHeight: "1.5" }}>
                 This action cannot be undone. This will permanently delete your admin account and remove all associated data from our servers.
               </p>
 
@@ -220,7 +218,7 @@ export default function ProfilePage() {
                 <label style={{
                   display: "block",
                   fontSize: "0.875rem",
-                  color: "#c9d1d9",
+                  color: "rgba(0, 0, 0, 0.6)",
                   marginBottom: "0.5rem"
                 }}>
                   Type <strong>DELETE</strong> to confirm:
@@ -233,11 +231,11 @@ export default function ProfilePage() {
                   style={{
                     width: "100%",
                     padding: "0.625rem 0.875rem",
-                    backgroundColor: "#0d1117",
-                    border: "1px solid #30363d",
+                    backgroundColor: "#ffffff",
+                    border: "1px solid rgba(0, 0, 0, 0.2)",
                     borderRadius: "6px",
                     fontSize: "0.875rem",
-                    color: "#ffffff",
+                    color: "rgba(0, 0, 0, 0.87)",
                     outline: "none"
                   }}
                 />
@@ -253,9 +251,9 @@ export default function ProfilePage() {
                   disabled={deleting}
                   style={{
                     padding: "0.625rem 1.25rem",
-                    backgroundColor: "#0d1117",
-                    color: "#ffffff",
-                    border: "1px solid #30363d",
+                    backgroundColor: "transparent",
+                    color: "rgba(0, 0, 0, 0.6)",
+                    border: "1px solid rgba(0, 0, 0, 0.2)",
                     borderRadius: "6px",
                     fontSize: "0.875rem",
                     fontWeight: "500",
@@ -270,7 +268,7 @@ export default function ProfilePage() {
                   disabled={deleting || confirmText !== 'DELETE'}
                   style={{
                     padding: "0.625rem 1.25rem",
-                    backgroundColor: (deleting || confirmText !== 'DELETE') ? "#5c2d30" : "#dc2626",
+                    backgroundColor: (deleting || confirmText !== 'DELETE') ? "rgba(239, 68, 68, 0.3)" : "#dc2626",
                     color: "#ffffff",
                     border: "none",
                     borderRadius: "6px",

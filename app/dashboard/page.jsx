@@ -775,8 +775,8 @@ export default function StudentDashboard() {
         {/* Pending Edit Requests Section */}
         {editRequests.filter(req => req.status === 'pending').length > 0 && (
           <div style={{
-            backgroundColor: "#2d1f17",
-            border: "1px solid #f59e0b",
+            backgroundColor: "rgba(245, 158, 11, 0.1)",
+            border: "1px solid rgba(245, 158, 11, 0.3)",
             borderRadius: "8px",
             padding: "1rem 1.5rem",
             marginBottom: "1.5rem"
@@ -784,13 +784,13 @@ export default function StudentDashboard() {
             <h3 style={{
               fontSize: "1rem",
               fontWeight: "500",
-              color: "#f59e0b",
+              color: "#d97706",
               margin: 0,
               marginBottom: "0.5rem"
             }}>
               Pending Edit Request
             </h3>
-            <p style={{ color: "#e5e7eb", fontSize: "0.875rem", margin: 0 }}>
+            <p style={{ color: "rgba(0, 0, 0, 0.6)", fontSize: "0.875rem", margin: 0 }}>
               You have a pending availability edit request waiting for admin approval.
             </p>
           </div>
@@ -863,9 +863,9 @@ export default function StudentDashboard() {
                 }}
                 style={{
                   padding: "0.5rem 1rem",
-                  backgroundColor: "#374151",
-                  color: "rgba(0, 0, 0, 0.87)",
-                  border: "1px solid #4b5563",
+                  backgroundColor: "transparent",
+                  color: "rgba(0, 0, 0, 0.6)",
+                  border: "1px solid rgba(0, 0, 0, 0.2)",
                   borderRadius: "6px",
                   fontSize: "0.875rem",
                   fontWeight: "500",
@@ -873,8 +873,8 @@ export default function StudentDashboard() {
                   transition: "all 0.15s ease",
                   whiteSpace: "nowrap"
                 }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#4b5563"}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#374151"}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.05)"}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
               >
                 Cancel
               </button>
@@ -966,8 +966,8 @@ export default function StudentDashboard() {
                           disabled={isDisabled}
                           style={{
                             padding: "0.75rem",
-                            backgroundColor: isSelected ? "#0d4a2d" : "rgba(255, 255, 255, 0.05)",
-                            border: `1px solid ${isSelected ? "#1e7a4d" : "rgba(255, 255, 255, 0.1)"}`,
+                            backgroundColor: isSelected ? "rgba(20, 184, 166, 0.15)" : "rgba(0, 0, 0, 0.02)",
+                            border: `1px solid ${isSelected ? "#14b8a6" : "rgba(0, 0, 0, 0.1)"}`,
                             borderRadius: "4px",
                             fontSize: "0.75rem",
                             color: isSelected ? "#86efac" : "#8b949e",
@@ -1023,8 +1023,8 @@ export default function StudentDashboard() {
                           disabled={isDisabled}
                           style={{
                             padding: "0.875rem",
-                            backgroundColor: isSelected ? "#0d4a2d" : "rgba(255, 255, 255, 0.05)",
-                            border: `1px solid ${isSelected ? "#1e7a4d" : "rgba(255, 255, 255, 0.1)"}`,
+                            backgroundColor: isSelected ? "rgba(20, 184, 166, 0.15)" : "rgba(0, 0, 0, 0.02)",
+                            border: `1px solid ${isSelected ? "#14b8a6" : "rgba(0, 0, 0, 0.1)"}`,
                             borderRadius: "6px",
                             fontSize: "0.875rem",
                             color: isSelected ? "#86efac" : "#c9d1d9",

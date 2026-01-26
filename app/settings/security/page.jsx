@@ -170,9 +170,9 @@ export default function SecuritySettings() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#0a0a0a"
+        backgroundColor: "#f5f5f5"
       }}>
-        <p style={{ color: "#9ca3af" }}>Loading...</p>
+        <p style={{ color: "rgba(0, 0, 0, 0.5)" }}>Loading...</p>
       </div>
     );
   }
@@ -180,7 +180,7 @@ export default function SecuritySettings() {
   return (
     <div style={{
       minHeight: "100vh",
-      backgroundColor: "#0a0a0a",
+      backgroundColor: "#f5f5f5",
       padding: "2rem"
     }}>
       <div style={{
@@ -206,13 +206,13 @@ export default function SecuritySettings() {
           <h1 style={{
             fontSize: "2rem",
             fontWeight: "600",
-            color: "#ffffff",
+            color: "rgba(0, 0, 0, 0.87)",
             marginBottom: "0.5rem"
           }}>
             Security Settings
           </h1>
           <p style={{
-            color: "#9ca3af",
+            color: "rgba(0, 0, 0, 0.5)",
             fontSize: "0.9375rem"
           }}>
             Manage your account security and two-factor authentication
@@ -221,8 +221,8 @@ export default function SecuritySettings() {
 
         {/* 2FA Section */}
         <div style={{
-          backgroundColor: "#1a1a1a",
-          border: "1px solid rgba(255, 255, 255, 0.1)",
+          backgroundColor: "#ffffff",
+          border: "1px solid rgba(0, 0, 0, 0.1)",
           borderRadius: "12px",
           padding: "2rem"
         }}>
@@ -236,13 +236,13 @@ export default function SecuritySettings() {
               <h2 style={{
                 fontSize: "1.25rem",
                 fontWeight: "500",
-                color: "#ffffff",
+                color: "rgba(0, 0, 0, 0.87)",
                 marginBottom: "0.5rem"
               }}>
                 Two-Factor Authentication (2FA)
               </h2>
               <p style={{
-                color: "#9ca3af",
+                color: "rgba(0, 0, 0, 0.5)",
                 fontSize: "0.875rem",
                 lineHeight: "1.5"
               }}>
@@ -288,7 +288,7 @@ export default function SecuritySettings() {
               disabled={setupLoading}
               style={{
                 padding: "0.75rem 1.5rem",
-                backgroundColor: setupLoading ? "rgba(255, 255, 255, 0.1)" : "#14b8a6",
+                backgroundColor: setupLoading ? "rgba(0, 0, 0, 0.1)" : "#14b8a6",
                 color: "#ffffff",
                 border: "none",
                 borderRadius: "8px",
@@ -312,12 +312,12 @@ export default function SecuritySettings() {
             <div style={{
               marginTop: "1rem",
               padding: "0.75rem 1rem",
-              backgroundColor: "#2d1517",
-              border: "1px solid #5c2d30",
+              backgroundColor: "rgba(239, 68, 68, 0.1)",
+              border: "1px solid rgba(239, 68, 68, 0.3)",
               borderLeft: "4px solid #dc2626",
               borderRadius: "6px"
             }}>
-              <p style={{ color: "#ff6b6b", margin: 0, fontSize: "0.875rem" }}>{setupError}</p>
+              <p style={{ color: "#dc2626", margin: 0, fontSize: "0.875rem" }}>{setupError}</p>
             </div>
           )}
         </div>
@@ -343,13 +343,13 @@ export default function SecuritySettings() {
             }
           }}>
             <div style={{
-              backgroundColor: "#1a1a1a",
+              backgroundColor: "#ffffff",
               borderRadius: "12px",
               maxWidth: "500px",
               width: "100%",
               maxHeight: "90vh",
               overflow: "auto",
-              border: "1px solid rgba(255, 255, 255, 0.1)"
+              border: "1px solid rgba(0, 0, 0, 0.1)"
             }} onClick={(e) => e.stopPropagation()}>
               {/* Step 1: Scan QR Code */}
               {setupStep === 1 && (
@@ -357,7 +357,7 @@ export default function SecuritySettings() {
                   <h3 style={{
                     fontSize: "1.5rem",
                     fontWeight: "500",
-                    color: "#ffffff",
+                    color: "rgba(0, 0, 0, 0.87)",
                     marginBottom: "1.5rem"
                   }}>
                     Set Up Two-Factor Authentication
@@ -365,7 +365,7 @@ export default function SecuritySettings() {
 
                   <div style={{ marginBottom: "1.5rem" }}>
                     <p style={{
-                      color: "#d1d5db",
+                      color: "rgba(0, 0, 0, 0.6)",
                       fontSize: "0.875rem",
                       marginBottom: "1rem",
                       lineHeight: "1.5"
@@ -373,7 +373,7 @@ export default function SecuritySettings() {
                       1. Download Microsoft Authenticator or any TOTP authenticator app
                     </p>
                     <p style={{
-                      color: "#d1d5db",
+                      color: "rgba(0, 0, 0, 0.6)",
                       fontSize: "0.875rem",
                       marginBottom: "1rem",
                       lineHeight: "1.5"
@@ -394,15 +394,15 @@ export default function SecuritySettings() {
 
                   <div style={{ marginBottom: "1.5rem" }}>
                     <p style={{
-                      color: "#9ca3af",
+                      color: "rgba(0, 0, 0, 0.5)",
                       fontSize: "0.875rem",
                       marginBottom: "0.5rem"
                     }}>
                       Or enter this code manually:
                     </p>
                     <div style={{
-                      backgroundColor: "rgba(255, 255, 255, 0.05)",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      backgroundColor: "#ffffff",
+                      border: "1px solid rgba(0, 0, 0, 0.1)",
                       borderRadius: "6px",
                       padding: "0.75rem",
                       fontFamily: "'Courier New', monospace",
@@ -443,14 +443,14 @@ export default function SecuritySettings() {
                   <h3 style={{
                     fontSize: "1.5rem",
                     fontWeight: "500",
-                    color: "#ffffff",
+                    color: "rgba(0, 0, 0, 0.87)",
                     marginBottom: "1.5rem"
                   }}>
                     Verify Your Authenticator
                   </h3>
 
                   <p style={{
-                    color: "#d1d5db",
+                    color: "rgba(0, 0, 0, 0.6)",
                     fontSize: "0.875rem",
                     marginBottom: "1.5rem",
                     lineHeight: "1.5"
@@ -462,12 +462,12 @@ export default function SecuritySettings() {
                     <div style={{
                       marginBottom: "1rem",
                       padding: "0.75rem 1rem",
-                      backgroundColor: "#2d1517",
-                      border: "1px solid #5c2d30",
+                      backgroundColor: "rgba(239, 68, 68, 0.1)",
+                      border: "1px solid rgba(239, 68, 68, 0.3)",
                       borderLeft: "4px solid #dc2626",
                       borderRadius: "6px"
                     }}>
-                      <p style={{ color: "#ff6b6b", margin: 0, fontSize: "0.875rem" }}>{setupError}</p>
+                      <p style={{ color: "#dc2626", margin: 0, fontSize: "0.875rem" }}>{setupError}</p>
                     </div>
                   )}
 
@@ -482,11 +482,11 @@ export default function SecuritySettings() {
                       style={{
                         width: "100%",
                         padding: "0.875rem",
-                        backgroundColor: "rgba(255, 255, 255, 0.05)",
-                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        backgroundColor: "#ffffff",
+                        border: "1px solid rgba(0, 0, 0, 0.1)",
                         borderRadius: "8px",
                         fontSize: "1.5rem",
-                        color: "#ffffff",
+                        color: "rgba(0, 0, 0, 0.87)",
                         outline: "none",
                         textAlign: "center",
                         letterSpacing: "0.5em",
@@ -502,9 +502,9 @@ export default function SecuritySettings() {
                         style={{
                           flex: 1,
                           padding: "0.875rem",
-                          backgroundColor: "rgba(255, 255, 255, 0.05)",
-                          color: "#d1d5db",
-                          border: "1px solid rgba(255, 255, 255, 0.1)",
+                          backgroundColor: "#ffffff",
+                          color: "rgba(0, 0, 0, 0.6)",
+                          border: "1px solid rgba(0, 0, 0, 0.1)",
                           borderRadius: "8px",
                           fontSize: "0.9375rem",
                           fontWeight: "500",
@@ -519,7 +519,7 @@ export default function SecuritySettings() {
                         style={{
                           flex: 1,
                           padding: "0.875rem",
-                          backgroundColor: (setupLoading || verificationCode.length !== 6) ? "rgba(255, 255, 255, 0.1)" : "#14b8a6",
+                          backgroundColor: (setupLoading || verificationCode.length !== 6) ? "rgba(0, 0, 0, 0.1)" : "#14b8a6",
                           color: "#ffffff",
                           border: "none",
                           borderRadius: "8px",
@@ -556,7 +556,7 @@ export default function SecuritySettings() {
                   <h3 style={{
                     fontSize: "1.5rem",
                     fontWeight: "500",
-                    color: "#ffffff",
+                    color: "rgba(0, 0, 0, 0.87)",
                     marginBottom: "0.5rem",
                     textAlign: "center"
                   }}>
@@ -564,7 +564,7 @@ export default function SecuritySettings() {
                   </h3>
 
                   <p style={{
-                    color: "#9ca3af",
+                    color: "rgba(0, 0, 0, 0.5)",
                     fontSize: "0.875rem",
                     marginBottom: "1.5rem",
                     textAlign: "center"
@@ -590,8 +590,8 @@ export default function SecuritySettings() {
                   </div>
 
                   <div style={{
-                    backgroundColor: "rgba(255, 255, 255, 0.03)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    backgroundColor: "rgba(0, 0, 0, 0.02)",
+                    border: "1px solid rgba(0, 0, 0, 0.1)",
                     borderRadius: "8px",
                     padding: "1rem",
                     marginBottom: "1.5rem"
@@ -618,9 +618,9 @@ export default function SecuritySettings() {
                       style={{
                         flex: 1,
                         padding: "0.875rem",
-                        backgroundColor: "rgba(255, 255, 255, 0.05)",
-                        color: "#d1d5db",
-                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        backgroundColor: "#ffffff",
+                        color: "rgba(0, 0, 0, 0.6)",
+                        border: "1px solid rgba(0, 0, 0, 0.1)",
                         borderRadius: "8px",
                         fontSize: "0.9375rem",
                         fontWeight: "500",
@@ -671,24 +671,24 @@ export default function SecuritySettings() {
             padding: "1rem"
           }} onClick={() => setShowDisable2FA(false)}>
             <div style={{
-              backgroundColor: "#1a1a1a",
+              backgroundColor: "#ffffff",
               borderRadius: "12px",
               maxWidth: "450px",
               width: "100%",
               padding: "2rem",
-              border: "1px solid rgba(255, 255, 255, 0.1)"
+              border: "1px solid rgba(0, 0, 0, 0.1)"
             }} onClick={(e) => e.stopPropagation()}>
               <h3 style={{
                 fontSize: "1.5rem",
                 fontWeight: "500",
-                color: "#ffffff",
+                color: "rgba(0, 0, 0, 0.87)",
                 marginBottom: "1.5rem"
               }}>
                 Disable Two-Factor Authentication
               </h3>
 
               <p style={{
-                color: "#d1d5db",
+                color: "rgba(0, 0, 0, 0.6)",
                 fontSize: "0.875rem",
                 marginBottom: "1.5rem",
                 lineHeight: "1.5"
@@ -700,12 +700,12 @@ export default function SecuritySettings() {
                 <div style={{
                   marginBottom: "1rem",
                   padding: "0.75rem 1rem",
-                  backgroundColor: "#2d1517",
-                  border: "1px solid #5c2d30",
+                  backgroundColor: "rgba(239, 68, 68, 0.1)",
+                  border: "1px solid rgba(239, 68, 68, 0.3)",
                   borderLeft: "4px solid #dc2626",
                   borderRadius: "6px"
                 }}>
-                  <p style={{ color: "#ff6b6b", margin: 0, fontSize: "0.875rem" }}>{disableError}</p>
+                  <p style={{ color: "#dc2626", margin: 0, fontSize: "0.875rem" }}>{disableError}</p>
                 </div>
               )}
 
@@ -715,7 +715,7 @@ export default function SecuritySettings() {
                     display: "flex",
                     alignItems: "center",
                     gap: "0.5rem",
-                    color: "#d1d5db",
+                    color: "rgba(0, 0, 0, 0.6)",
                     fontSize: "0.875rem",
                     marginBottom: "0.75rem",
                     cursor: "pointer"
@@ -740,11 +740,11 @@ export default function SecuritySettings() {
                   style={{
                     width: "100%",
                     padding: "0.875rem",
-                    backgroundColor: "rgba(255, 255, 255, 0.05)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    backgroundColor: "#ffffff",
+                    border: "1px solid rgba(0, 0, 0, 0.1)",
                     borderRadius: "8px",
                     fontSize: useBackupCode ? "1rem" : "1.5rem",
-                    color: "#ffffff",
+                    color: "rgba(0, 0, 0, 0.87)",
                     outline: "none",
                     textAlign: "center",
                     letterSpacing: useBackupCode ? "0.2em" : "0.5em",
@@ -765,9 +765,9 @@ export default function SecuritySettings() {
                     style={{
                       flex: 1,
                       padding: "0.875rem",
-                      backgroundColor: "rgba(255, 255, 255, 0.05)",
-                      color: "#d1d5db",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      backgroundColor: "#ffffff",
+                      color: "rgba(0, 0, 0, 0.6)",
+                      border: "1px solid rgba(0, 0, 0, 0.1)",
                       borderRadius: "8px",
                       fontSize: "0.9375rem",
                       fontWeight: "500",
@@ -782,7 +782,7 @@ export default function SecuritySettings() {
                     style={{
                       flex: 1,
                       padding: "0.875rem",
-                      backgroundColor: disableLoading ? "rgba(255, 255, 255, 0.1)" : "#dc2626",
+                      backgroundColor: disableLoading ? "rgba(0, 0, 0, 0.1)" : "#dc2626",
                       color: "#ffffff",
                       border: "none",
                       borderRadius: "8px",

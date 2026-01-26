@@ -120,8 +120,8 @@ export default function NotificationBell() {
         onClick={() => setIsOpen(!isOpen)}
         style={{
           position: 'relative',
-          background: 'rgba(255, 255, 255, 0.05)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+          background: 'transparent',
+          border: '1px solid rgba(0, 0, 0, 0.1)',
           borderRadius: '8px',
           padding: '0.625rem',
           cursor: 'pointer',
@@ -131,12 +131,12 @@ export default function NotificationBell() {
           justifyContent: 'center'
         }}
         onMouseOver={(e) => {
-          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
+          e.currentTarget.style.background = 'rgba(0, 0, 0, 0.05)';
           e.currentTarget.style.borderColor = '#14b8a6';
         }}
         onMouseOut={(e) => {
-          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
-          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+          e.currentTarget.style.background = 'transparent';
+          e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.1)';
         }}
       >
         <svg
@@ -144,7 +144,7 @@ export default function NotificationBell() {
           height="20"
           viewBox="0 0 24 24"
           fill="none"
-          stroke={unreadCount > 0 ? '#14b8a6' : 'rgba(255, 255, 255, 0.7)'}
+          stroke={unreadCount > 0 ? '#14b8a6' : 'rgba(0, 0, 0, 0.5)'}
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -182,17 +182,17 @@ export default function NotificationBell() {
           right: 0,
           width: '380px',
           maxWidth: '90vw',
-          backgroundColor: '#16191f',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+          backgroundColor: '#ffffff',
+          border: '1px solid rgba(0, 0, 0, 0.1)',
           borderRadius: '12px',
-          boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)',
+          boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
           zIndex: 1000,
           overflow: 'hidden'
         }}>
           {/* Header */}
           <div style={{
             padding: '1rem 1.25rem',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+            borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center'
@@ -200,7 +200,7 @@ export default function NotificationBell() {
             <h3 style={{
               fontSize: '1rem',
               fontWeight: '600',
-              color: '#ffffff',
+              color: 'rgba(0, 0, 0, 0.87)',
               margin: 0
             }}>
               Notifications
@@ -230,14 +230,14 @@ export default function NotificationBell() {
             display: 'flex',
             padding: '0.75rem 1.25rem',
             gap: '1rem',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+            borderBottom: '1px solid rgba(0, 0, 0, 0.1)'
           }}>
             <button
               onClick={() => setShowRead(false)}
               style={{
                 background: 'none',
                 border: 'none',
-                color: !showRead ? '#14b8a6' : 'rgba(255, 255, 255, 0.5)',
+                color: !showRead ? '#14b8a6' : 'rgba(0, 0, 0, 0.4)',
                 fontSize: '0.875rem',
                 cursor: 'pointer',
                 padding: '0.25rem 0',
@@ -252,7 +252,7 @@ export default function NotificationBell() {
               style={{
                 background: 'none',
                 border: 'none',
-                color: showRead ? '#14b8a6' : 'rgba(255, 255, 255, 0.5)',
+                color: showRead ? '#14b8a6' : 'rgba(0, 0, 0, 0.4)',
                 fontSize: '0.875rem',
                 cursor: 'pointer',
                 padding: '0.25rem 0',
@@ -273,7 +273,7 @@ export default function NotificationBell() {
               <div style={{
                 padding: '3rem 1.25rem',
                 textAlign: 'center',
-                color: 'rgba(255, 255, 255, 0.5)',
+                color: 'rgba(0, 0, 0, 0.4)',
                 fontSize: '0.875rem'
               }}>
                 Loading...
@@ -282,7 +282,7 @@ export default function NotificationBell() {
               <div style={{
                 padding: '3rem 1.25rem',
                 textAlign: 'center',
-                color: 'rgba(255, 255, 255, 0.5)',
+                color: 'rgba(0, 0, 0, 0.4)',
                 fontSize: '0.875rem'
               }}>
                 {showRead ? 'No notifications yet' : 'No unread notifications'}
@@ -297,13 +297,13 @@ export default function NotificationBell() {
                     padding: '1rem 1.25rem',
                     backgroundColor: notification.read ? 'transparent' : 'rgba(20, 184, 166, 0.05)',
                     border: 'none',
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                    borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
                     cursor: 'pointer',
                     textAlign: 'left',
                     transition: 'background-color 0.2s'
                   }}
                   onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                    e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.03)';
                   }}
                   onMouseOut={(e) => {
                     e.currentTarget.style.backgroundColor = notification.read ? 'transparent' : 'rgba(20, 184, 166, 0.05)';
@@ -323,7 +323,7 @@ export default function NotificationBell() {
                     <div style={{ flex: 1 }}>
                       <p style={{
                         fontSize: '0.875rem',
-                        color: '#ffffff',
+                        color: 'rgba(0, 0, 0, 0.87)',
                         margin: '0 0 0.375rem 0',
                         lineHeight: '1.5'
                       }}>
@@ -331,7 +331,7 @@ export default function NotificationBell() {
                       </p>
                       <p style={{
                         fontSize: '0.75rem',
-                        color: 'rgba(255, 255, 255, 0.4)',
+                        color: 'rgba(0, 0, 0, 0.4)',
                         margin: 0
                       }}>
                         {formatRelativeTime(notification.createdAt)}
@@ -347,7 +347,7 @@ export default function NotificationBell() {
           {notifications.length > 0 && (
             <div style={{
               padding: '0.75rem 1.25rem',
-              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+              borderTop: '1px solid rgba(0, 0, 0, 0.1)',
               textAlign: 'center'
             }}>
               <button

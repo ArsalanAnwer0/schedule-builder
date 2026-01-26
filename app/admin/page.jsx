@@ -1048,26 +1048,26 @@ export default function Home() {
         {studentSuccess && (
           <div style={{
             padding: "1rem 1.5rem",
-            backgroundColor: "#0d1f17",
-            border: "1px solid #1e4d2b",
-            borderLeft: "4px solid #047857",
+            backgroundColor: "rgba(16, 185, 129, 0.1)",
+            border: "1px solid rgba(16, 185, 129, 0.3)",
+            borderLeft: "4px solid #10b981",
             borderRadius: "6px",
             marginBottom: "1.5rem"
           }}>
-            <p style={{ color: "#10b981", margin: 0, fontSize: "0.875rem" }}>✓ {studentSuccess}</p>
+            <p style={{ color: "#047857", margin: 0, fontSize: "0.875rem" }}>✓ {studentSuccess}</p>
           </div>
         )}
 
         {studentError && (
           <div style={{
             padding: "1rem 1.5rem",
-            backgroundColor: "#2d1517",
-            border: "1px solid #5c2d30",
+            backgroundColor: "rgba(239, 68, 68, 0.1)",
+            border: "1px solid rgba(239, 68, 68, 0.3)",
             borderLeft: "4px solid #dc2626",
             borderRadius: "6px",
             marginBottom: "1.5rem"
           }}>
-            <p style={{ color: "#ff6b6b", margin: 0, fontSize: "0.875rem" }}>{studentError}</p>
+            <p style={{ color: "#dc2626", margin: 0, fontSize: "0.875rem" }}>{studentError}</p>
           </div>
         )}
 
@@ -1075,26 +1075,26 @@ export default function Home() {
         {adminSuccess && (
           <div style={{
             padding: "1rem 1.5rem",
-            backgroundColor: "#0d1f17",
-            border: "1px solid #1e4d2b",
-            borderLeft: "4px solid #047857",
+            backgroundColor: "rgba(16, 185, 129, 0.1)",
+            border: "1px solid rgba(16, 185, 129, 0.3)",
+            borderLeft: "4px solid #10b981",
             borderRadius: "6px",
             marginBottom: "1.5rem"
           }}>
-            <p style={{ color: "#10b981", margin: 0, fontSize: "0.875rem" }}>✓ {adminSuccess}</p>
+            <p style={{ color: "#047857", margin: 0, fontSize: "0.875rem" }}>✓ {adminSuccess}</p>
           </div>
         )}
 
         {adminError && (
           <div style={{
             padding: "1rem 1.5rem",
-            backgroundColor: "#2d1517",
-            border: "1px solid #5c2d30",
+            backgroundColor: "rgba(239, 68, 68, 0.1)",
+            border: "1px solid rgba(239, 68, 68, 0.3)",
             borderLeft: "4px solid #dc2626",
             borderRadius: "6px",
             marginBottom: "1.5rem"
           }}>
-            <p style={{ color: "#ff6b6b", margin: 0, fontSize: "0.875rem" }}>{adminError}</p>
+            <p style={{ color: "#dc2626", margin: 0, fontSize: "0.875rem" }}>{adminError}</p>
           </div>
         )}
 
@@ -1395,15 +1395,15 @@ export default function Home() {
                               style={{
                                 padding: "0.375rem 0.875rem",
                                 fontSize: "0.875rem",
-                                backgroundColor: "rgba(0, 0, 0, 0.02)",
-                                border: "1px solid rgba(0, 0, 0, 0.1)",
+                                backgroundColor: "transparent",
+                                border: "1px solid rgba(0, 0, 0, 0.2)",
                                 borderRadius: "4px",
                                 color: "#14b8a6",
                                 cursor: "pointer",
                                 transition: "all 0.15s"
                               }}
-                              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#252d3d"}
-                              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)"}
+                              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.05)"}
+                              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                             >
                               Edit
                             </button>
@@ -1412,14 +1412,14 @@ export default function Home() {
                               style={{
                                 padding: "0.375rem 0.875rem",
                                 fontSize: "0.875rem",
-                                backgroundColor: "#2d1517",
-                                border: "1px solid #5c2d30",
+                                backgroundColor: "rgba(239, 68, 68, 0.1)",
+                                border: "1px solid rgba(239, 68, 68, 0.3)",
                                 borderRadius: "4px",
-                                color: "#ff6b6b",
+                                color: "#dc2626",
                                 cursor: "pointer",
                                 transition: "all 0.15s"
                               }}
-                              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#3d2527"}
+                              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(239, 68, 68, 0.15)"}
                               onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#2d1517"}
                             >
                               Delete
@@ -1716,7 +1716,7 @@ export default function Home() {
               {editRequests.map((request) => (
                 <div key={request.id} style={{ backgroundColor: "#ffffff", border: "1px solid rgba(0, 0, 0, 0.1)", borderRadius: "8px", overflow: "hidden" }}>
                   {/* Request Header */}
-                  <div style={{ padding: "1rem 1.25rem", backgroundColor: "#1f2937", borderBottom: "1px solid rgba(255, 255, 255, 0.1)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+                  <div style={{ padding: "1rem 1.25rem", backgroundColor: "rgba(0, 0, 0, 0.02)", borderBottom: "1px solid rgba(255, 255, 255, 0.1)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
                     <div>
                       <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.25rem" }}>
                         {request.userName}
@@ -1845,10 +1845,10 @@ export default function Home() {
                                       <span key={idx} style={{
                                         fontSize: "0.7rem",
                                         color: "#ef4444",
-                                        backgroundColor: "#2d1517",
+                                        backgroundColor: "rgba(239, 68, 68, 0.1)",
                                         padding: "0.125rem 0.375rem",
                                         borderRadius: "3px",
-                                        border: "1px solid #5c2d30",
+                                        border: "1px solid rgba(239, 68, 68, 0.3)",
                                         textDecoration: "line-through"
                                       }}>
                                         {slot}
@@ -1867,7 +1867,7 @@ export default function Home() {
                                       <span key={idx} style={{
                                         fontSize: "0.7rem",
                                         color: "#10b981",
-                                        backgroundColor: "#0d1f17",
+                                        backgroundColor: "rgba(20, 184, 166, 0.1)",
                                         padding: "0.125rem 0.375rem",
                                         borderRadius: "3px",
                                         border: "1px solid #1e4d2b",
@@ -1950,7 +1950,7 @@ export default function Home() {
               {passwordResetRequests.map((request) => (
                 <div key={request.id} style={{ backgroundColor: "#ffffff", border: "1px solid rgba(0, 0, 0, 0.1)", borderRadius: "8px", overflow: "hidden", marginBottom: "1rem" }}>
                   {/* Request Header */}
-                  <div style={{ padding: "1rem 1.25rem", backgroundColor: "#1f2937", borderBottom: "1px solid rgba(255, 255, 255, 0.1)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+                  <div style={{ padding: "1rem 1.25rem", backgroundColor: "rgba(0, 0, 0, 0.02)", borderBottom: "1px solid rgba(255, 255, 255, 0.1)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
                     <div>
                       <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.25rem" }}>
                         {request.userName}
@@ -2067,14 +2067,14 @@ export default function Home() {
         {validationError && (
           <div style={{
             padding: "1rem 1.25rem",
-            backgroundColor: "#2d1517",
-            border: "1px solid #5c2d30",
+            backgroundColor: "rgba(239, 68, 68, 0.1)",
+            border: "1px solid rgba(239, 68, 68, 0.3)",
             borderRadius: "6px",
             marginTop: "1.5rem",
             marginBottom: "1rem"
           }}>
             <div style={{ display: "flex", alignItems: "start", gap: "0.75rem" }}>
-              <span style={{ fontSize: "1.25rem", color: "#ff6b6b", lineHeight: "1" }}>⚠</span>
+              <span style={{ fontSize: "1.25rem", color: "#dc2626", lineHeight: "1" }}>⚠</span>
               <p style={{ color: "#ff9999", fontSize: "0.875rem", margin: 0, lineHeight: "1.6" }}>
                 {validationError}
               </p>
@@ -2248,8 +2248,8 @@ export default function Home() {
                   {currentSchedule.errors && currentSchedule.errors.length > 0 && (
                     <div style={{
                       padding: "1rem 1.5rem",
-                      backgroundColor: "#2d1517",
-                      border: "1px solid #5c2d30",
+                      backgroundColor: "rgba(239, 68, 68, 0.1)",
+                      border: "1px solid rgba(239, 68, 68, 0.3)",
                       borderLeft: "4px solid #dc2626",
                       borderRadius: "6px",
                       marginBottom: "1rem"
@@ -2269,7 +2269,7 @@ export default function Home() {
                           <span style={{ color: "#fff", fontWeight: "bold", fontSize: "0.875rem" }}>×</span>
                         </div>
                         <div style={{ flex: 1 }}>
-                          <div style={{ fontWeight: "500", color: "#ff6b6b", fontSize: "0.875rem", marginBottom: "0.5rem" }}>
+                          <div style={{ fontWeight: "500", color: "#dc2626", fontSize: "0.875rem", marginBottom: "0.5rem" }}>
                             Errors
                           </div>
                           <ul style={{ paddingLeft: "0", color: "#ff9999", fontSize: "0.875rem", margin: 0, lineHeight: "1.6", listStyle: "none" }}>
@@ -2288,7 +2288,7 @@ export default function Home() {
                   {currentSchedule.successMessages && currentSchedule.successMessages.length > 0 && (
                     <div style={{
                       padding: "1rem 1.5rem",
-                      backgroundColor: "#0d1f17",
+                      backgroundColor: "rgba(20, 184, 166, 0.1)",
                       border: "1px solid #1e4d2b",
                       borderLeft: "4px solid #047857",
                       borderRadius: "6px",
@@ -2370,7 +2370,7 @@ export default function Home() {
                   {(!currentSchedule.successMessages || currentSchedule.successMessages.length === 0) && (
                     <div style={{
                       padding: "1rem 1.5rem",
-                      backgroundColor: "#0d1f17",
+                      backgroundColor: "rgba(20, 184, 166, 0.1)",
                       border: "1px solid #1e4d2b",
                       borderLeft: "4px solid #047857",
                       borderRadius: "6px",
@@ -2402,21 +2402,21 @@ export default function Home() {
                   <div style={{ backgroundColor: "#ffffff", border: "1px solid #414d5c", borderRadius: "8px", padding: "1.5rem", marginBottom: "1.5rem" }}>
                     <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "rgba(0, 0, 0, 0.87)", marginBottom: "1.25rem" }}>Statistics</h2>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
-                      <div style={{ padding: "1rem", backgroundColor: "#1f2937", borderRadius: "4px", border: "1px solid #2d3748" }}>
+                      <div style={{ padding: "1rem", backgroundColor: "rgba(0, 0, 0, 0.02)", borderRadius: "4px", border: "1px solid rgba(0, 0, 0, 0.1)" }}>
                         <p style={{ fontSize: "0.75rem", color: "#9ca3af", textTransform: "uppercase", marginBottom: "0.5rem", fontWeight: "500", letterSpacing: "0.05em" }}>Workers Scheduled</p>
                         <p style={{ fontSize: "1.5rem", fontWeight: "400", color: "rgba(0, 0, 0, 0.87)", margin: 0 }}>
                           {currentSchedule.statistics.totalWorkersScheduled} / {currentSchedule.statistics.totalWorkersAvailable}
                         </p>
                       </div>
-                      <div style={{ padding: "1rem", backgroundColor: "#1f2937", borderRadius: "4px", border: "1px solid #2d3748" }}>
+                      <div style={{ padding: "1rem", backgroundColor: "rgba(0, 0, 0, 0.02)", borderRadius: "4px", border: "1px solid rgba(0, 0, 0, 0.1)" }}>
                         <p style={{ fontSize: "0.75rem", color: "#9ca3af", textTransform: "uppercase", marginBottom: "0.5rem", fontWeight: "500", letterSpacing: "0.05em" }}>Total Hours</p>
                         <p style={{ fontSize: "1.5rem", fontWeight: "400", color: "rgba(0, 0, 0, 0.87)", margin: 0 }}>{currentSchedule.statistics.totalHoursScheduled}h</p>
                       </div>
-                      <div style={{ padding: "1rem", backgroundColor: "#1f2937", borderRadius: "4px", border: "1px solid #2d3748" }}>
+                      <div style={{ padding: "1rem", backgroundColor: "rgba(0, 0, 0, 0.02)", borderRadius: "4px", border: "1px solid rgba(0, 0, 0, 0.1)" }}>
                         <p style={{ fontSize: "0.75rem", color: "#9ca3af", textTransform: "uppercase", marginBottom: "0.5rem", fontWeight: "500", letterSpacing: "0.05em" }}>Avg Hours/Worker</p>
                         <p style={{ fontSize: "1.5rem", fontWeight: "400", color: "rgba(0, 0, 0, 0.87)", margin: 0 }}>{currentSchedule.statistics.avgHoursPerWorker}h</p>
                       </div>
-                      <div style={{ padding: "1rem", backgroundColor: "#1f2937", borderRadius: "4px", border: "1px solid #2d3748" }}>
+                      <div style={{ padding: "1rem", backgroundColor: "rgba(0, 0, 0, 0.02)", borderRadius: "4px", border: "1px solid rgba(0, 0, 0, 0.1)" }}>
                         <p style={{ fontSize: "0.75rem", color: "#9ca3af", textTransform: "uppercase", marginBottom: "0.5rem", fontWeight: "500", letterSpacing: "0.05em" }}>Hour Balance</p>
                         <p style={{ fontSize: "1.5rem", fontWeight: "400", margin: 0, color: currentSchedule.statistics.hoursDifference <= 1 ? "#4ade80" : "#ff9900" }}>
                           ±{currentSchedule.statistics.hoursDifference}h
@@ -2432,7 +2432,7 @@ export default function Home() {
                     </div>
                     <div className="table-container" style={{ overflowX: "auto" }}>
                       <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                        <thead style={{ backgroundColor: "#1f2937" }}>
+                        <thead style={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}>
                           <tr>
                             <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em", borderBottom: "1px solid #2d3748" }}>Worker</th>
                             {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => (
@@ -2497,13 +2497,13 @@ export default function Home() {
                   {/* Coverage Gaps */}
                   {currentSchedule.uncoveredPeriods && Object.keys(currentSchedule.uncoveredPeriods).length > 0 && (
                     <div style={{ backgroundColor: "#ffffff", border: "1px solid #414d5c", borderRadius: "8px", padding: "1.5rem" }}>
-                      <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "#ff6b6b", marginBottom: "1rem" }}>
+                      <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "#dc2626", marginBottom: "1rem" }}>
                         ⚠ Coverage gaps
                       </h2>
                       <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                         {Object.entries(currentSchedule.uncoveredPeriods).map(([day, periods]) => (
-                          <div key={day} style={{ padding: "1rem", backgroundColor: "#2d1517", border: "1px solid #5c2d30", borderRadius: "4px" }}>
-                            <p style={{ fontWeight: "500", color: "#ff6b6b", marginBottom: "0.5rem", fontSize: "0.875rem" }}>{day}</p>
+                          <div key={day} style={{ padding: "1rem", backgroundColor: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.3)", borderRadius: "4px" }}>
+                            <p style={{ fontWeight: "500", color: "#dc2626", marginBottom: "0.5rem", fontSize: "0.875rem" }}>{day}</p>
                             <ul style={{ paddingLeft: "1.25rem", fontSize: "0.875rem", color: "#ff9999", margin: 0 }}>
                               {periods.map((period, i) => (
                                 <li key={i}>
@@ -2556,12 +2556,12 @@ export default function Home() {
               {adminError && (
                 <div style={{
                   padding: "0.75rem 1rem",
-                  backgroundColor: "#2d1517",
-                  border: "1px solid #5c2d30",
+                  backgroundColor: "rgba(239, 68, 68, 0.1)",
+                  border: "1px solid rgba(239, 68, 68, 0.3)",
                   borderRadius: "6px",
                   marginBottom: "1rem"
                 }}>
-                  <p style={{ color: "#ff6b6b", fontSize: "0.875rem", margin: 0 }}>
+                  <p style={{ color: "#dc2626", fontSize: "0.875rem", margin: 0 }}>
                     {adminError}
                   </p>
                 </div>
@@ -2647,7 +2647,7 @@ export default function Home() {
                       cursor: "pointer",
                       transition: "all 0.15s ease"
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#252d3d"}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.05)"}
                     onMouseOut={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)"}
                   >
                     Cancel
@@ -2718,13 +2718,13 @@ export default function Home() {
               {studentError && (
                 <div style={{
                   padding: "0.75rem 1rem",
-                  backgroundColor: "#2d1517",
-                  border: "1px solid #5c2d30",
+                  backgroundColor: "rgba(239, 68, 68, 0.1)",
+                  border: "1px solid rgba(239, 68, 68, 0.3)",
                   borderLeft: "4px solid #dc2626",
                   borderRadius: "6px",
                   marginBottom: "1.5rem"
                 }}>
-                  <p style={{ color: "#ff6b6b", margin: 0, fontSize: "0.875rem" }}>{studentError}</p>
+                  <p style={{ color: "#dc2626", margin: 0, fontSize: "0.875rem" }}>{studentError}</p>
                 </div>
               )}
 
@@ -2844,7 +2844,7 @@ export default function Home() {
                       cursor: "pointer",
                       transition: "all 0.15s ease"
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#252d3d"}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.05)"}
                     onMouseOut={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)"}
                   >
                     Cancel
@@ -2905,11 +2905,11 @@ export default function Home() {
           >
             <div
               style={{
-                backgroundColor: "#1c2432",
+                backgroundColor: "#ffffff",
                 borderRadius: "12px",
                 maxWidth: "500px",
                 width: "100%",
-                boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.5)",
+                boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.15)",
                 border: "1px solid rgba(0, 0, 0, 0.1)"
               }}
               onClick={(e) => e.stopPropagation()}
@@ -2919,7 +2919,7 @@ export default function Home() {
                   margin: 0,
                   fontSize: "1.25rem",
                   fontWeight: "600",
-                  color: confirmModal.isDangerous ? "#f87171" : "#ffffff",
+                  color: confirmModal.isDangerous ? "#dc2626" : "rgba(0, 0, 0, 0.87)",
                   marginBottom: "0.75rem"
                 }}>
                   {confirmModal.title}
@@ -2937,7 +2937,7 @@ export default function Home() {
               <div style={{
                 padding: "1rem 1.5rem",
                 backgroundColor: "rgba(0, 0, 0, 0.02)",
-                borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+                borderTop: "1px solid rgba(0, 0, 0, 0.1)",
                 display: "flex",
                 justifyContent: "flex-end",
                 gap: "0.75rem",
@@ -2950,7 +2950,7 @@ export default function Home() {
                     padding: "0.5rem 1rem",
                     backgroundColor: "transparent",
                     color: "rgba(0, 0, 0, 0.6)",
-                    border: "1px solid rgba(0, 0, 0, 0.1)",
+                    border: "1px solid rgba(0, 0, 0, 0.2)",
                     borderRadius: "6px",
                     fontSize: "0.875rem",
                     fontWeight: "500",
@@ -2958,7 +2958,7 @@ export default function Home() {
                     transition: "all 0.15s ease"
                   }}
                   onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+                    e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.05)";
                   }}
                   onMouseOut={(e) => {
                     e.currentTarget.style.backgroundColor = "transparent";

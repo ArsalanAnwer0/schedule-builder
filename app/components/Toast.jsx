@@ -112,7 +112,7 @@ function Toast({ toast, onClose }) {
         borderLeft: `4px solid ${style.border}`,
         borderRadius: '8px',
         padding: '1rem 1.25rem',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
         backdropFilter: 'blur(10px)',
         display: 'flex',
         alignItems: 'flex-start',
@@ -159,7 +159,7 @@ function Toast({ toast, onClose }) {
 
       <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{
-          color: '#ffffff',
+          color: 'rgba(0, 0, 0, 0.87)',
           fontSize: '0.875rem',
           lineHeight: '1.5',
           margin: 0,
@@ -174,7 +174,7 @@ function Toast({ toast, onClose }) {
         style={{
           background: 'none',
           border: 'none',
-          color: 'rgba(255, 255, 255, 0.6)',
+          color: 'rgba(0, 0, 0, 0.4)',
           fontSize: '1.25rem',
           cursor: 'pointer',
           padding: 0,
@@ -182,8 +182,8 @@ function Toast({ toast, onClose }) {
           flexShrink: 0,
           transition: 'color 0.2s'
         }}
-        onMouseOver={(e) => e.currentTarget.style.color = '#ffffff'}
-        onMouseOut={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)'}
+        onMouseOver={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.7)'}
+        onMouseOut={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.4)'}
       >
         ×
       </button>

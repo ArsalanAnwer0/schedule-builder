@@ -339,6 +339,44 @@ export default function SetPasswordPage() {
                   e.currentTarget.style.boxShadow = 'none';
                 }}
               />
+
+              {/* Password Match Indicator */}
+              {formData.confirmPassword && (
+                <div style={{
+                  marginTop: '0.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem'
+                }}>
+                  {formData.password === formData.confirmPassword ? (
+                    <>
+                      <span style={{
+                        color: '#10b981',
+                        fontSize: '1rem',
+                        fontWeight: '600'
+                      }}>✓</span>
+                      <span style={{
+                        fontSize: '0.8125rem',
+                        color: '#10b981',
+                        fontWeight: '500'
+                      }}>Passwords match</span>
+                    </>
+                  ) : (
+                    <>
+                      <span style={{
+                        color: '#ef4444',
+                        fontSize: '1rem',
+                        fontWeight: '600'
+                      }}>✕</span>
+                      <span style={{
+                        fontSize: '0.8125rem',
+                        color: '#ef4444',
+                        fontWeight: '500'
+                      }}>Passwords do not match</span>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Submit Button */}
