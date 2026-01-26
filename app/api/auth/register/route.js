@@ -17,6 +17,15 @@ export async function POST(request) {
       );
     }
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { error: 'Please enter a valid email address' },
+        { status: 400 }
+      );
+    }
+
     // Validate password strength (SECURITY FIX: Use comprehensive validator)
     const passwordValidation = validatePasswordStrength(password);
     if (!passwordValidation.isValid) {
@@ -61,8 +70,8 @@ export async function POST(request) {
       );
     }
 
-    // Check if email already exists
-    const existingUser = await User.findOne({ email });
+    // Check if email already exists (normalize to lowercase for consistency)
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
       return NextResponse.json(
         { error: 'Email already registered' },
