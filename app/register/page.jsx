@@ -84,7 +84,7 @@ export default function RegisterPage() {
       <div style={{
         flex: 1,
         backgroundColor: '#ffffff',
-        padding: '4rem',
+        padding: '2rem 3rem',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
@@ -134,7 +134,7 @@ export default function RegisterPage() {
       <div style={{
         flex: 1,
         backgroundColor: '#ffffff',
-        padding: '4rem',
+        padding: '2rem 3rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -144,9 +144,9 @@ export default function RegisterPage() {
         <div style={{ maxWidth: '420px', width: '100%' }}>
 
           {/* Header */}
-          <div style={{ marginBottom: '2.5rem' }}>
+          <div style={{ marginBottom: '1.5rem' }}>
             <h2 style={{
-              fontSize: '32px',
+              fontSize: '28px',
               fontWeight: '600',
               color: 'rgba(0, 0, 0, 0.87)',
               marginBottom: '0.5rem',
@@ -155,10 +155,10 @@ export default function RegisterPage() {
               Create your admin account
             </h2>
             <p style={{
-              fontSize: '16px',
+              fontSize: '15px',
               color: 'rgba(0, 0, 0, 0.5)',
               fontWeight: '300',
-              margin: '0.5rem 0 0 0'
+              margin: '0.25rem 0 0 0'
             }}>
               Set up your organization on Schedule Builder
             </p>
@@ -243,17 +243,17 @@ export default function RegisterPage() {
             <form onSubmit={handleSubmit}>
               {/* Info Banner */}
               <div style={{
-                padding: '1rem 1.25rem',
+                padding: '0.75rem 1rem',
                 backgroundColor: 'rgba(20, 184, 166, 0.05)',
                 border: '1px solid rgba(20, 184, 166, 0.2)',
                 borderRadius: '8px',
-                marginBottom: '2rem'
+                marginBottom: '1.25rem'
               }}>
                 <p style={{
                   color: 'rgba(0, 0, 0, 0.6)',
-                  fontSize: '0.875rem',
+                  fontSize: '0.8125rem',
                   margin: 0,
-                  lineHeight: '1.6',
+                  lineHeight: '1.5',
                   fontWeight: '400'
                 }}>
                   Create a primary admin account for your organization
@@ -261,7 +261,7 @@ export default function RegisterPage() {
               </div>
 
               {/* Form Fields */}
-              <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{ marginBottom: '1rem' }}>
                 <label style={{
                   display: 'block',
                   fontSize: '14px',
@@ -301,7 +301,7 @@ export default function RegisterPage() {
                 />
               </div>
 
-              <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{ marginBottom: '1rem' }}>
                 <label style={{
                   display: 'block',
                   fontSize: '14px',
@@ -342,7 +342,7 @@ export default function RegisterPage() {
                 />
               </div>
 
-              <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{ marginBottom: '1rem' }}>
                 <label style={{
                   display: 'block',
                   fontSize: '14px',
@@ -382,7 +382,7 @@ export default function RegisterPage() {
                 />
               </div>
 
-              <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{ marginBottom: '1rem' }}>
                 <label style={{
                   display: 'block',
                   fontSize: '14px',

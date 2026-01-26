@@ -189,7 +189,7 @@ function LoginForm() {
       <div style={{
         flex: 1,
         backgroundColor: '#ffffff',
-        padding: '4rem',
+        padding: '2rem 3rem',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
@@ -241,7 +241,7 @@ function LoginForm() {
       <div style={{
         flex: 1,
         backgroundColor: '#ffffff',
-        padding: '4rem',
+        padding: '2rem 3rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -251,9 +251,9 @@ function LoginForm() {
         <div style={{ maxWidth: '420px', width: '100%' }}>
 
           {/* Header */}
-          <div style={{ marginBottom: '2.5rem' }}>
+          <div style={{ marginBottom: '1.5rem' }}>
             <h2 style={{
-              fontSize: '32px',
+              fontSize: '28px',
               fontWeight: '600',
               color: 'rgba(0, 0, 0, 0.87)',
               marginBottom: '0.5rem',
@@ -262,10 +262,10 @@ function LoginForm() {
               {codeSent ? 'Enter verification code' : 'Sign in to your account'}
             </h2>
             <p style={{
-              fontSize: '16px',
+              fontSize: '15px',
               color: 'rgba(0, 0, 0, 0.5)',
               fontWeight: '300',
-              margin: '0.5rem 0 0 0'
+              margin: '0.25rem 0 0 0'
             }}>
               {!codeSent && 'Welcome back to Schedule Builder'}
             </p>
