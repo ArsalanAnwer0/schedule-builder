@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { usePasswordValidation } from '@/lib/hooks/usePasswordValidation';
 import PasswordRequirementsDisplay from '@/components/auth/PasswordRequirementsDisplay';
+import { validatePasswordStrength } from '@/lib/utils/passwordStrength';
 
 export default function SetPasswordPage() {
   const router = useRouter();

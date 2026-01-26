@@ -249,12 +249,12 @@ export default function StudentDashboard() {
     return (
       <div style={{
         minHeight: "100vh",
-        backgroundColor: "#0a0f1a",
+        backgroundColor: "#ffffff",
         display: "flex",
         alignItems: "center",
         justifyContent: "center"
       }}>
-        <p style={{ color: "rgba(255, 255, 255, 0.6)", fontWeight: "300" }}>Loading...</p>
+        <p style={{ color: "rgba(0, 0, 0, 0.5)", fontWeight: "300" }}>Loading...</p>
       </div>
     );
   }
@@ -262,7 +262,7 @@ export default function StudentDashboard() {
   return (
     <div className="page-container" style={{
       minHeight: "100vh",
-      backgroundColor: "#0a0f1a",
+      backgroundColor: "#ffffff",
       padding: "2rem 1.5rem"
     }}>
       <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
@@ -280,7 +280,7 @@ export default function StudentDashboard() {
             <h1 className="page-title" style={{
               fontSize: "1.875rem",
               fontWeight: "400",
-              color: "#ffffff",
+              color: "rgba(0, 0, 0, 0.87)",
               marginBottom: "0.5rem",
               letterSpacing: "-0.02em",
               fontFamily: "Georgia, 'Times New Roman', serif"
@@ -289,7 +289,7 @@ export default function StudentDashboard() {
             </h1>
             <p style={{
               fontSize: "1rem",
-              color: "rgba(255, 255, 255, 0.6)",
+              color: "rgba(0, 0, 0, 0.5)",
               lineHeight: "1.6",
               fontWeight: "300"
             }}>
@@ -306,9 +306,9 @@ export default function StudentDashboard() {
                 onClick={() => setShowProfileDropdown(!showProfileDropdown)}
                 style={{
                   padding: "0.625rem 1rem",
-                  backgroundColor: "rgba(255, 255, 255, 0.05)",
-                  color: "#ffffff",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  backgroundColor: "rgba(0, 0, 0, 0.02)",
+                  color: "rgba(0, 0, 0, 0.87)",
+                  border: "1px solid rgba(0, 0, 0, 0.1)",
                   borderRadius: "8px",
                   fontSize: "0.875rem",
                   fontWeight: "500",
@@ -337,16 +337,16 @@ export default function StudentDashboard() {
                 justifyContent: "center",
                 fontSize: "0.875rem",
                 fontWeight: "600",
-                color: "#ffffff"
+                color: "rgba(0, 0, 0, 0.87)"
               }}>
                 {user?.name?.charAt(0).toUpperCase()}
               </div>
               <div className="profile-text" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", textAlign: "left" }}>
-                <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff" }}>{user?.name}</span>
-                <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>Student</span>
+                <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)" }}>{user?.name}</span>
+                <span style={{ fontSize: "0.75rem", color: "rgba(0, 0, 0, 0.45)" }}>Student</span>
               </div>
               <svg className="profile-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ marginLeft: "0.25rem" }}>
-                <path d="M4 6L8 10L12 6" stroke="#8b949e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M4 6L8 10L12 6" stroke="rgba(0, 0, 0, 0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
 
@@ -369,8 +369,8 @@ export default function StudentDashboard() {
                   top: "calc(100% + 0.5rem)",
                   right: 0,
                   minWidth: "240px",
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  backgroundColor: "rgba(0, 0, 0, 0.05)",
+                  border: "1px solid rgba(0, 0, 0, 0.15)",
                   borderRadius: "8px",
                   boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
                   backdropFilter: "blur(10px)",
@@ -378,13 +378,13 @@ export default function StudentDashboard() {
                   overflow: "hidden"
                 }}>
                   <div style={{ padding: "0.75rem 1rem", borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
-                    <div style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff", marginBottom: "0.25rem" }}>
+                    <div style={{ fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", marginBottom: "0.25rem" }}>
                       {user?.name}
                     </div>
-                    <div style={{ fontSize: "0.75rem", color: "#8b949e" }}>
+                    <div style={{ fontSize: "0.75rem", color: "rgba(0, 0, 0, 0.45)" }}>
                       {user?.email}
                     </div>
-                    <div style={{ fontSize: "0.75rem", color: "#8b949e", marginTop: "0.25rem" }}>
+                    <div style={{ fontSize: "0.75rem", color: "rgba(0, 0, 0, 0.45)", marginTop: "0.25rem" }}>
                       Student
                     </div>
                   </div>
@@ -513,7 +513,7 @@ export default function StudentDashboard() {
         {/* Published Schedule Section */}
         {!loadingSchedule && publishedSchedule && (
           <div style={{
-            backgroundColor: "rgba(255, 255, 255, 0.03)",
+            backgroundColor: "#ffffff",
             border: "1px solid #14b8a6",
             borderRadius: "8px",
             padding: "1.5rem",
@@ -523,7 +523,7 @@ export default function StudentDashboard() {
               <h2 style={{
                 fontSize: "1.25rem",
                 fontWeight: "500",
-                color: "#ffffff",
+                color: "rgba(0, 0, 0, 0.87)",
                 marginBottom: "0.5rem"
               }}>
                 Your Work Schedule
@@ -531,7 +531,7 @@ export default function StudentDashboard() {
               {publishedSchedule.scheduleConfig && (
                 <p style={{
                   fontSize: "0.875rem",
-                  color: "#8b949e",
+                  color: "rgba(0, 0, 0, 0.45)",
                   margin: 0
                 }}>
                   {new Date(publishedSchedule.scheduleConfig.startDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
@@ -552,7 +552,7 @@ export default function StudentDashboard() {
                       textAlign: "left",
                       fontSize: "0.875rem",
                       fontWeight: "600",
-                      color: "#8b949e",
+                      color: "rgba(0, 0, 0, 0.45)",
                       textTransform: "uppercase",
                       letterSpacing: "0.05em"
                     }}>Day</th>
@@ -561,7 +561,7 @@ export default function StudentDashboard() {
                       textAlign: "left",
                       fontSize: "0.875rem",
                       fontWeight: "600",
-                      color: "#8b949e",
+                      color: "rgba(0, 0, 0, 0.45)",
                       textTransform: "uppercase",
                       letterSpacing: "0.05em"
                     }}>Worker</th>
@@ -570,7 +570,7 @@ export default function StudentDashboard() {
                       textAlign: "left",
                       fontSize: "0.875rem",
                       fontWeight: "600",
-                      color: "#8b949e",
+                      color: "rgba(0, 0, 0, 0.45)",
                       textTransform: "uppercase",
                       letterSpacing: "0.05em"
                     }}>Shift Time</th>
@@ -579,7 +579,7 @@ export default function StudentDashboard() {
                       textAlign: "left",
                       fontSize: "0.875rem",
                       fontWeight: "600",
-                      color: "#8b949e",
+                      color: "rgba(0, 0, 0, 0.45)",
                       textTransform: "uppercase",
                       letterSpacing: "0.05em"
                     }}>Hours</th>
@@ -594,7 +594,7 @@ export default function StudentDashboard() {
                         <tr key={day} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
                           <td style={{
                             padding: "1rem 0.75rem",
-                            color: "#c9d1d9",
+                            color: "rgba(0, 0, 0, 0.6)",
                             fontSize: "0.875rem",
                             textTransform: "capitalize"
                           }}>
@@ -602,7 +602,7 @@ export default function StudentDashboard() {
                           </td>
                           <td colSpan="3" style={{
                             padding: "1rem 0.75rem",
-                            color: "#6e7681",
+                            color: "rgba(0, 0, 0, 0.5)",
                             fontSize: "0.875rem",
                             fontStyle: "italic"
                           }}>
@@ -619,7 +619,7 @@ export default function StudentDashboard() {
                             rowSpan={dayShifts.length}
                             style={{
                               padding: "1rem 0.75rem",
-                              color: "#c9d1d9",
+                              color: "rgba(0, 0, 0, 0.6)",
                               fontSize: "0.875rem",
                               textTransform: "capitalize",
                               verticalAlign: "top"
@@ -648,14 +648,14 @@ export default function StudentDashboard() {
                         </td>
                         <td style={{
                           padding: "1rem 0.75rem",
-                          color: "#c9d1d9",
+                          color: "rgba(0, 0, 0, 0.6)",
                           fontSize: "0.875rem"
                         }}>
                           {shift.startTime} - {shift.endTime}
                         </td>
                         <td style={{
                           padding: "1rem 0.75rem",
-                          color: "#c9d1d9",
+                          color: "rgba(0, 0, 0, 0.6)",
                           fontSize: "0.875rem"
                         }}>
                           {shift.hours}h
@@ -675,15 +675,15 @@ export default function StudentDashboard() {
                 return (
                   <div key={day} style={{
                     marginBottom: "1.5rem",
-                    backgroundColor: "rgba(255, 255, 255, 0.03)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    backgroundColor: "#ffffff",
+                    border: "1px solid rgba(0, 0, 0, 0.1)",
                     borderRadius: "8px",
                     padding: "1rem"
                   }}>
                     <h3 style={{
                       fontSize: "1rem",
                       fontWeight: "600",
-                      color: "#ffffff",
+                      color: "rgba(0, 0, 0, 0.87)",
                       textTransform: "capitalize",
                       margin: 0,
                       marginBottom: "1rem"
@@ -693,7 +693,7 @@ export default function StudentDashboard() {
 
                     {dayShifts.length === 0 ? (
                       <p style={{
-                        color: "#6e7681",
+                        color: "rgba(0, 0, 0, 0.5)",
                         fontSize: "0.875rem",
                         fontStyle: "italic",
                         margin: 0
@@ -733,7 +733,7 @@ export default function StudentDashboard() {
                                 )}
                               </span>
                               <span style={{
-                                color: "#8b949e",
+                                color: "rgba(0, 0, 0, 0.45)",
                                 fontSize: "0.875rem",
                                 fontWeight: "500"
                               }}>
@@ -741,7 +741,7 @@ export default function StudentDashboard() {
                               </span>
                             </div>
                             <div style={{
-                              color: "#c9d1d9",
+                              color: "rgba(0, 0, 0, 0.6)",
                               fontSize: "0.875rem"
                             }}>
                               {shift.startTime} - {shift.endTime}
@@ -759,14 +759,14 @@ export default function StudentDashboard() {
 
         {!loadingSchedule && !publishedSchedule && (
           <div style={{
-            backgroundColor: "rgba(255, 255, 255, 0.03)",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
+            backgroundColor: "#ffffff",
+            border: "1px solid rgba(0, 0, 0, 0.1)",
             borderRadius: "8px",
             padding: "1.5rem",
             marginBottom: "2rem",
             textAlign: "center"
           }}>
-            <p style={{ color: "#8b949e", fontSize: "0.875rem", margin: 0 }}>
+            <p style={{ color: "rgba(0, 0, 0, 0.45)", fontSize: "0.875rem", margin: 0 }}>
               No schedule has been published yet. You'll see your work schedule here once it's published by your manager.
             </p>
           </div>
@@ -798,8 +798,8 @@ export default function StudentDashboard() {
 
         {/* Availability Submission Section */}
         <div style={{
-          backgroundColor: "rgba(255, 255, 255, 0.03)",
-          border: "1px solid rgba(255, 255, 255, 0.1)",
+          backgroundColor: "#ffffff",
+          border: "1px solid rgba(0, 0, 0, 0.1)",
           borderRadius: "8px",
           marginBottom: "2rem",
           overflow: "hidden"
@@ -817,7 +817,7 @@ export default function StudentDashboard() {
               <h2 style={{
                 fontSize: "1.125rem",
                 fontWeight: "500",
-                color: "#ffffff",
+                color: "rgba(0, 0, 0, 0.87)",
                 margin: 0,
                 marginBottom: "0.5rem"
               }}>
@@ -825,7 +825,7 @@ export default function StudentDashboard() {
               </h2>
               <p style={{
                 fontSize: "0.875rem",
-                color: "#8b949e",
+                color: "rgba(0, 0, 0, 0.45)",
                 margin: 0,
                 lineHeight: "1.5"
               }}>
@@ -840,7 +840,7 @@ export default function StudentDashboard() {
                 style={{
                   padding: "0.5rem 1rem",
                   backgroundColor: "#0d9488",
-                  color: "#ffffff",
+                  color: "rgba(0, 0, 0, 0.87)",
                   border: "1px solid #0d9488",
                   borderRadius: "6px",
                   fontSize: "0.875rem",
@@ -864,7 +864,7 @@ export default function StudentDashboard() {
                 style={{
                   padding: "0.5rem 1rem",
                   backgroundColor: "#374151",
-                  color: "#ffffff",
+                  color: "rgba(0, 0, 0, 0.87)",
                   border: "1px solid #4b5563",
                   borderRadius: "6px",
                   fontSize: "0.875rem",
@@ -885,7 +885,7 @@ export default function StudentDashboard() {
           {user && !user.availabilityRequested ? (
             <div style={{ padding: "3rem 2rem", textAlign: "center" }}>
               <div style={{
-                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                backgroundColor: "rgba(0, 0, 0, 0.02)",
                 border: "1px solid rgba(255, 255, 255, 0.08)",
                 borderRadius: "8px",
                 padding: "3rem 2rem",
@@ -895,7 +895,7 @@ export default function StudentDashboard() {
                 <h3 style={{
                   fontSize: "1.25rem",
                   fontWeight: "500",
-                  color: "#ffffff",
+                  color: "rgba(0, 0, 0, 0.87)",
                   margin: 0,
                   marginBottom: "1rem"
                 }}>
@@ -903,7 +903,7 @@ export default function StudentDashboard() {
                 </h3>
                 <p style={{
                   fontSize: "0.9375rem",
-                  color: "#8b949e",
+                  color: "rgba(0, 0, 0, 0.45)",
                   lineHeight: "1.6",
                   margin: 0
                 }}>
@@ -948,7 +948,7 @@ export default function StudentDashboard() {
                       style={{
                         padding: "0.75rem",
                         fontSize: "0.875rem",
-                        color: "#c9d1d9",
+                        color: "rgba(0, 0, 0, 0.6)",
                         display: "flex",
                         alignItems: "center"
                       }}
@@ -1003,7 +1003,7 @@ export default function StudentDashboard() {
                   <h3 className="day-header" style={{
                     fontSize: "0.9375rem",
                     fontWeight: "600",
-                    color: "#ffffff",
+                    color: "rgba(0, 0, 0, 0.87)",
                     textTransform: "uppercase",
                     letterSpacing: "0.05em",
                     margin: 0,
@@ -1064,7 +1064,7 @@ export default function StudentDashboard() {
                   display: "block",
                   fontSize: "0.875rem",
                   fontWeight: "500",
-                  color: "#c9d1d9",
+                  color: "rgba(0, 0, 0, 0.6)",
                   marginBottom: "0.625rem"
                 }}>
                   Reason for Edit Request <span style={{ color: "#f59e0b" }}>*</span>
@@ -1078,11 +1078,11 @@ export default function StudentDashboard() {
                   style={{
                     width: "100%",
                     padding: "0.625rem 0.875rem",
-                    backgroundColor: "rgba(255, 255, 255, 0.05)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    backgroundColor: "rgba(0, 0, 0, 0.02)",
+                    border: "1px solid rgba(0, 0, 0, 0.1)",
                     borderRadius: "6px",
                     fontSize: "0.875rem",
-                    color: "#ffffff",
+                    color: "rgba(0, 0, 0, 0.87)",
                     outline: "none",
                     resize: "vertical",
                     fontFamily: "inherit"
@@ -1097,7 +1097,7 @@ export default function StudentDashboard() {
                 display: "block",
                 fontSize: "0.875rem",
                 fontWeight: "500",
-                color: "#c9d1d9",
+                color: "rgba(0, 0, 0, 0.6)",
                 marginBottom: "0.625rem"
               }}>
                 Additional Notes (Optional)
@@ -1111,11 +1111,11 @@ export default function StudentDashboard() {
                 style={{
                   width: "100%",
                   padding: "0.625rem 0.875rem",
-                  backgroundColor: "rgba(255, 255, 255, 0.05)",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  backgroundColor: "rgba(0, 0, 0, 0.02)",
+                  border: "1px solid rgba(0, 0, 0, 0.1)",
                   borderRadius: "6px",
                   fontSize: "0.875rem",
-                  color: "#ffffff",
+                  color: "rgba(0, 0, 0, 0.87)",
                   outline: "none",
                   resize: "vertical",
                   fontFamily: "inherit",
@@ -1133,7 +1133,7 @@ export default function StudentDashboard() {
                 style={{
                   padding: "0.625rem 1.25rem",
                   backgroundColor: (showEditForm ? submittingEdit : submitting) ? "#414d5c" : showEditForm ? "#0d9488" : "#14b8a6",
-                  color: "#ffffff",
+                  color: "rgba(0, 0, 0, 0.87)",
                   border: `1px solid ${(showEditForm ? submittingEdit : submitting) ? "#414d5c" : showEditForm ? "#0d9488" : "#14b8a6"}`,
                   borderRadius: "6px",
                   fontSize: "0.875rem",

@@ -859,23 +859,23 @@ export default function Home() {
 
   if (authLoading) {
     return (
-      <div style={{ minHeight: "100vh", backgroundColor: "#0a0f1a", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <p style={{ color: "rgba(255, 255, 255, 0.6)", fontWeight: "300" }}>Loading...</p>
+      <div style={{ minHeight: "100vh", backgroundColor: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <p style={{ color: "rgba(0, 0, 0, 0.5)", fontWeight: "300" }}>Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="admin-container" style={{ minHeight: "100vh", backgroundColor: "#0a0f1a", padding: "2rem 1.5rem" }}>
+    <div className="admin-container" style={{ minHeight: "100vh", backgroundColor: "#ffffff", padding: "2rem 1.5rem" }}>
       <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
 
         {/* Header with User Info and Profile Dropdown */}
         <div style={{ marginBottom: "1.5rem", display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1rem" }}>
           <div>
-            <h1 style={{ fontSize: "1.875rem", fontWeight: "400", color: "#ffffff", marginBottom: "0.5rem", letterSpacing: "-0.02em", fontFamily: "Georgia, 'Times New Roman', serif" }}>
+            <h1 style={{ fontSize: "1.875rem", fontWeight: "400", color: "rgba(0, 0, 0, 0.87)", marginBottom: "0.5rem", letterSpacing: "-0.02em", fontFamily: "Georgia, 'Times New Roman', serif" }}>
               Schedule Builder
             </h1>
-            <p style={{ fontSize: "1rem", color: "rgba(255, 255, 255, 0.6)", lineHeight: "1.6", fontWeight: "300" }}>
+            <p style={{ fontSize: "1rem", color: "rgba(0, 0, 0, 0.5)", lineHeight: "1.6", fontWeight: "300" }}>
               Welcome back, {user?.name}. Manage your office schedules and students below.
             </p>
           </div>
@@ -889,9 +889,9 @@ export default function Home() {
                 onClick={() => setShowProfileDropdown(!showProfileDropdown)}
                 style={{
                   padding: "0.625rem 1rem",
-                  backgroundColor: "rgba(255, 255, 255, 0.05)",
-                  color: "#ffffff",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  backgroundColor: "rgba(0, 0, 0, 0.02)",
+                  color: "rgba(0, 0, 0, 0.87)",
+                  border: "1px solid rgba(0, 0, 0, 0.1)",
                   borderRadius: "8px",
                   fontSize: "0.875rem",
                   fontWeight: "500",
@@ -920,18 +920,18 @@ export default function Home() {
                 justifyContent: "center",
                 fontSize: "0.875rem",
                 fontWeight: "600",
-                color: "#ffffff"
+                color: "rgba(0, 0, 0, 0.87)"
               }}>
                 {user?.name?.charAt(0).toUpperCase()}
               </div>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", textAlign: "left" }}>
-                <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff" }}>{user?.name}</span>
-                <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>
+                <span style={{ fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)" }}>{user?.name}</span>
+                <span style={{ fontSize: "0.75rem", color: "rgba(0, 0, 0, 0.45)" }}>
                   {user?.adminType === 'primary' ? 'Primary Admin' : 'Secondary Admin'}
                 </span>
               </div>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ marginLeft: "0.25rem" }}>
-                <path d="M4 6L8 10L12 6" stroke="#8b949e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M4 6L8 10L12 6" stroke="rgba(0, 0, 0, 0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
 
@@ -954,8 +954,8 @@ export default function Home() {
                   top: "calc(100% + 0.5rem)",
                   right: 0,
                   minWidth: "240px",
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  backgroundColor: "rgba(0, 0, 0, 0.05)",
+                  border: "1px solid rgba(0, 0, 0, 0.15)",
                   borderRadius: "8px",
                   boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
                   backdropFilter: "blur(10px)",
@@ -963,14 +963,14 @@ export default function Home() {
                   overflow: "hidden"
                 }}>
                   <div style={{ padding: "0.75rem 1rem", borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
-                    <div style={{ fontSize: "0.875rem", fontWeight: "500", color: "#ffffff", marginBottom: "0.25rem" }}>
+                    <div style={{ fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", marginBottom: "0.25rem" }}>
                       {user?.name}
                     </div>
-                    <div style={{ fontSize: "0.75rem", color: "#8b949e" }}>
+                    <div style={{ fontSize: "0.75rem", color: "rgba(0, 0, 0, 0.45)" }}>
                       {user?.email}
                     </div>
                     {user?.organizationName && (
-                      <div style={{ fontSize: "0.75rem", color: "#8b949e", marginTop: "0.25rem" }}>
+                      <div style={{ fontSize: "0.75rem", color: "rgba(0, 0, 0, 0.45)", marginTop: "0.25rem" }}>
                         {user.organizationName}
                       </div>
                     )}
@@ -985,7 +985,7 @@ export default function Home() {
                         width: "100%",
                         padding: "0.625rem 0.75rem",
                         backgroundColor: "transparent",
-                        color: "#c9d1d9",
+                        color: "rgba(0, 0, 0, 0.6)",
                         border: "none",
                         borderRadius: "6px",
                         fontSize: "0.875rem",
@@ -1100,13 +1100,13 @@ export default function Home() {
 
         {/* Admin Management Section - Only show for primary admin */}
         {(!user?.adminType || user?.adminType === 'primary') && (
-          <div style={{ backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
+          <div style={{ backgroundColor: "#ffffff", border: "1px solid rgba(0, 0, 0, 0.1)", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
             <div style={{ padding: "1.5rem", borderBottom: "1px solid rgba(255, 255, 255, 0.1)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
               <div>
-                <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
+                <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.5rem" }}>
                   Admin Team
                 </h2>
-                <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
+                <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", margin: 0, lineHeight: "1.5" }}>
                   Manage administrators for {user?.organizationName || 'your organization'} (max 3 total)
                 </p>
               </div>
@@ -1117,7 +1117,7 @@ export default function Home() {
                   style={{
                     padding: "0.625rem 1.25rem",
                     backgroundColor: admins.length >= 3 ? "#414d5c" : "#14b8a6",
-                    color: "#ffffff",
+                    color: "rgba(0, 0, 0, 0.87)",
                     border: "1px solid",
                     borderColor: admins.length >= 3 ? "#414d5c" : "#14b8a6",
                     borderRadius: "6px",
@@ -1147,7 +1147,7 @@ export default function Home() {
 
             <div style={{ padding: "2rem" }}>
               {loadingAdmins ? (
-                <p style={{ color: "#8b949e" }}>Loading admins...</p>
+                <p style={{ color: "rgba(0, 0, 0, 0.45)" }}>Loading admins...</p>
               ) : (
                 <div className="table-container" style={{ overflowX: "auto" }}>
                   <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -1162,11 +1162,11 @@ export default function Home() {
                     <tbody>
                       {admins.map((admin) => (
                         <tr key={admin.id} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
-                          <td style={{ padding: "1rem", color: "#ffffff", fontSize: "0.875rem" }}>
+                          <td style={{ padding: "1rem", color: "rgba(0, 0, 0, 0.87)", fontSize: "0.875rem" }}>
                             {admin.name}
-                            {admin.id === user?._id && <span style={{ color: "#8b949e", fontSize: "0.75rem", marginLeft: "0.5rem" }}>(You)</span>}
+                            {admin.id === user?._id && <span style={{ color: "rgba(0, 0, 0, 0.45)", fontSize: "0.75rem", marginLeft: "0.5rem" }}>(You)</span>}
                           </td>
-                          <td style={{ padding: "1rem", color: "#c9d1d9", fontSize: "0.875rem" }}>{admin.email}</td>
+                          <td style={{ padding: "1rem", color: "rgba(0, 0, 0, 0.6)", fontSize: "0.875rem" }}>{admin.email}</td>
                           <td style={{ padding: "1rem", fontSize: "0.875rem" }}>
                             <span style={{
                               padding: "0.25rem 0.75rem",
@@ -1218,13 +1218,13 @@ export default function Home() {
         )}
 
         {/* Student Management Section */}
-        <div style={{ backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
+        <div style={{ backgroundColor: "#ffffff", border: "1px solid rgba(0, 0, 0, 0.1)", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
           <div style={{ padding: "1.5rem", borderBottom: "1px solid rgba(255, 255, 255, 0.1)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
             <div>
-              <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
+              <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.5rem" }}>
                 Students
               </h2>
-              <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
+              <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", margin: 0, lineHeight: "1.5" }}>
                 Manage your student roster and their information
               </p>
             </div>
@@ -1235,7 +1235,7 @@ export default function Home() {
                 style={{
                   padding: "0.625rem 1.25rem",
                   backgroundColor: students.length === 0 ? "#414d5c" : "#10b981",
-                  color: "#ffffff",
+                  color: "rgba(0, 0, 0, 0.87)",
                   border: "1px solid",
                   borderColor: students.length === 0 ? "#414d5c" : "#10b981",
                   borderRadius: "6px",
@@ -1266,7 +1266,7 @@ export default function Home() {
                 style={{
                   padding: "0.625rem 1.25rem",
                   backgroundColor: students.length === 0 ? "#414d5c" : "#ca8a04",
-                  color: "#ffffff",
+                  color: "rgba(0, 0, 0, 0.87)",
                   border: "1px solid",
                   borderColor: students.length === 0 ? "#414d5c" : "#ca8a04",
                   borderRadius: "6px",
@@ -1296,7 +1296,7 @@ export default function Home() {
                 style={{
                   padding: "0.625rem 1.25rem",
                   backgroundColor: "#14b8a6",
-                  color: "#ffffff",
+                  color: "rgba(0, 0, 0, 0.87)",
                   border: "1px solid #14b8a6",
                   borderRadius: "6px",
                   fontSize: "0.875rem",
@@ -1320,9 +1320,9 @@ export default function Home() {
 
           <div style={{ padding: "2rem" }}>
             {loadingStudents ? (
-              <p style={{ color: "#8b949e" }}>Loading students...</p>
+              <p style={{ color: "rgba(0, 0, 0, 0.45)" }}>Loading students...</p>
             ) : students.length === 0 ? (
-              <p style={{ color: "#8b949e" }}>No students yet. Add your first student to get started.</p>
+              <p style={{ color: "rgba(0, 0, 0, 0.45)" }}>No students yet. Add your first student to get started.</p>
             ) : (
               <div className="table-container" style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -1336,8 +1336,8 @@ export default function Home() {
                   <tbody>
                     {students.map((student) => (
                       <tr key={student.id} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
-                        <td style={{ padding: "1rem", color: "#ffffff", fontSize: "0.875rem" }}>{student.name}</td>
-                        <td style={{ padding: "1rem", color: "#c9d1d9", fontSize: "0.875rem" }}>{student.email}</td>
+                        <td style={{ padding: "1rem", color: "rgba(0, 0, 0, 0.87)", fontSize: "0.875rem" }}>{student.name}</td>
+                        <td style={{ padding: "1rem", color: "rgba(0, 0, 0, 0.6)", fontSize: "0.875rem" }}>{student.email}</td>
                         <td style={{ padding: "1rem", textAlign: "right" }}>
                           <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end", flexWrap: "wrap" }}>
                             {!student.hasSubmitted && (
@@ -1349,7 +1349,7 @@ export default function Home() {
                                   backgroundColor: "#0d9488",
                                   border: "1px solid #0d9488",
                                   borderRadius: "4px",
-                                  color: "#ffffff",
+                                  color: "rgba(0, 0, 0, 0.87)",
                                   cursor: "pointer",
                                   transition: "all 0.15s"
                                 }}
@@ -1374,7 +1374,7 @@ export default function Home() {
                                   backgroundColor: "#854d0e",
                                   border: "1px solid #854d0e",
                                   borderRadius: "4px",
-                                  color: "#ffffff",
+                                  color: "rgba(0, 0, 0, 0.87)",
                                   cursor: "pointer",
                                   transition: "all 0.15s"
                                 }}
@@ -1395,8 +1395,8 @@ export default function Home() {
                               style={{
                                 padding: "0.375rem 0.875rem",
                                 fontSize: "0.875rem",
-                                backgroundColor: "rgba(255, 255, 255, 0.05)",
-                                border: "1px solid rgba(255, 255, 255, 0.1)",
+                                backgroundColor: "rgba(0, 0, 0, 0.02)",
+                                border: "1px solid rgba(0, 0, 0, 0.1)",
                                 borderRadius: "4px",
                                 color: "#14b8a6",
                                 cursor: "pointer",
@@ -1436,12 +1436,12 @@ export default function Home() {
         </div>
 
         {/* Schedule Configuration Section */}
-        <div style={{ backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
+        <div style={{ backgroundColor: "#ffffff", border: "1px solid rgba(0, 0, 0, 0.1)", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
           <div style={{ padding: "1.5rem", borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
-            <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
+            <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.5rem" }}>
               Schedule configuration
             </h2>
-            <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
+            <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", margin: 0, lineHeight: "1.5" }}>
               Configure your office hours, schedule period, and shift constraints
             </p>
           </div>
@@ -1450,16 +1450,16 @@ export default function Home() {
             {/* Office Hours */}
             <div style={{ marginBottom: "2.5rem" }}>
               <div style={{ marginBottom: "1.25rem" }}>
-                <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.375rem" }}>
+                <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.375rem" }}>
                   Office hours
                 </h3>
-                <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
+                <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", margin: 0, lineHeight: "1.5" }}>
                   Define the operating hours for your office (Monday - Friday)
                 </p>
               </div>
               <div className="grid-2-cols" style={{ display: "grid", gap: "1.25rem", maxWidth: "540px" }}>
                 <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", marginBottom: "0.625rem" }}>
+                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.6)", marginBottom: "0.625rem" }}>
                     Start time
                   </label>
                   <input
@@ -1469,18 +1469,18 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "rgba(255, 255, 255, 0.05)",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      backgroundColor: "rgba(0, 0, 0, 0.02)",
+                      border: "1px solid rgba(0, 0, 0, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
-                      color: "#ffffff",
+                      color: "rgba(0, 0, 0, 0.87)",
                       outline: "none",
                       colorScheme: "dark"
                     }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", marginBottom: "0.625rem" }}>
+                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.6)", marginBottom: "0.625rem" }}>
                     End time
                   </label>
                   <input
@@ -1490,11 +1490,11 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "rgba(255, 255, 255, 0.05)",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      backgroundColor: "rgba(0, 0, 0, 0.02)",
+                      border: "1px solid rgba(0, 0, 0, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
-                      color: "#ffffff",
+                      color: "rgba(0, 0, 0, 0.87)",
                       outline: "none",
                       colorScheme: "dark"
                     }}
@@ -1509,16 +1509,16 @@ export default function Home() {
             {/* Schedule Period */}
             <div style={{ marginBottom: "2.5rem" }}>
               <div style={{ marginBottom: "1.25rem" }}>
-                <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.375rem" }}>
+                <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.375rem" }}>
                   Schedule period
                 </h3>
-                <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
+                <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", margin: 0, lineHeight: "1.5" }}>
                   Specify the date range for this schedule (e.g., semester dates)
                 </p>
               </div>
 
               <div style={{ marginBottom: "1.5rem" }}>
-                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", marginBottom: "0.625rem" }}>
+                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.6)", marginBottom: "0.625rem" }}>
                   Semester preset
                 </label>
                 <select
@@ -1528,11 +1528,11 @@ export default function Home() {
                     width: "100%",
                     maxWidth: "340px",
                     padding: "0.625rem 0.875rem",
-                    backgroundColor: "rgba(255, 255, 255, 0.05)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    backgroundColor: "rgba(0, 0, 0, 0.02)",
+                    border: "1px solid rgba(0, 0, 0, 0.1)",
                     borderRadius: "6px",
                     fontSize: "0.875rem",
-                    color: "#ffffff",
+                    color: "rgba(0, 0, 0, 0.87)",
                     outline: "none",
                     cursor: "pointer"
                   }}
@@ -1549,7 +1549,7 @@ export default function Home() {
 
               <div className="grid-2-cols" style={{ display: "grid", gap: "1.25rem", maxWidth: "540px" }}>
                 <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", marginBottom: "0.625rem" }}>
+                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.6)", marginBottom: "0.625rem" }}>
                     Start date
                   </label>
                   <input
@@ -1562,18 +1562,18 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "rgba(255, 255, 255, 0.05)",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      backgroundColor: "rgba(0, 0, 0, 0.02)",
+                      border: "1px solid rgba(0, 0, 0, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
-                      color: "#ffffff",
+                      color: "rgba(0, 0, 0, 0.87)",
                       outline: "none",
                       colorScheme: "dark"
                     }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", marginBottom: "0.625rem" }}>
+                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.6)", marginBottom: "0.625rem" }}>
                     End date
                   </label>
                   <input
@@ -1586,11 +1586,11 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "rgba(255, 255, 255, 0.05)",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      backgroundColor: "rgba(0, 0, 0, 0.02)",
+                      border: "1px solid rgba(0, 0, 0, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
-                      color: "#ffffff",
+                      color: "rgba(0, 0, 0, 0.87)",
                       outline: "none",
                       colorScheme: "dark"
                     }}
@@ -1605,16 +1605,16 @@ export default function Home() {
             {/* Hours and Shift Constraints */}
             <div>
               <div style={{ marginBottom: "1.25rem" }}>
-                <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.375rem" }}>
+                <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.375rem" }}>
                   Hours and shift constraints
                 </h3>
-                <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
+                <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", margin: 0, lineHeight: "1.5" }}>
                   Set weekly hour targets and optional shift length limits. Leave shift constraints empty to use automatic scheduling strategies.
                 </p>
               </div>
 
               <div style={{ marginBottom: "1.5rem", maxWidth: "340px" }}>
-                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", marginBottom: "0.625rem" }}>
+                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.6)", marginBottom: "0.625rem" }}>
                   Hours per worker per week
                 </label>
                 <input
@@ -1624,25 +1624,25 @@ export default function Home() {
                   style={{
                     width: "100%",
                     padding: "0.625rem 0.875rem",
-                    backgroundColor: "rgba(255, 255, 255, 0.05)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    backgroundColor: "rgba(0, 0, 0, 0.02)",
+                    border: "1px solid rgba(0, 0, 0, 0.1)",
                     borderRadius: "6px",
                     fontSize: "0.875rem",
-                    color: "#ffffff",
+                    color: "rgba(0, 0, 0, 0.87)",
                     outline: "none"
                   }}
                   min="2"
                   max="20"
                   step="0.5"
                 />
-                <p style={{ fontSize: "0.8125rem", color: "#6e7681", marginTop: "0.5rem", marginBottom: 0, lineHeight: "1.4" }}>
+                <p style={{ fontSize: "0.8125rem", color: "rgba(0, 0, 0, 0.5)", marginTop: "0.5rem", marginBottom: 0, lineHeight: "1.4" }}>
                   Target hours each worker should get
                 </p>
               </div>
 
               <div className="grid-2-cols" style={{ display: "grid", gap: "1.5rem", marginTop: "1.5rem" }}>
                 <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", marginBottom: "0.625rem" }}>
+                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.6)", marginBottom: "0.625rem" }}>
                     Minimum shift (hours)
                   </label>
                   <input
@@ -1653,24 +1653,24 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "rgba(255, 255, 255, 0.05)",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      backgroundColor: "rgba(0, 0, 0, 0.02)",
+                      border: "1px solid rgba(0, 0, 0, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
-                      color: "#ffffff",
+                      color: "rgba(0, 0, 0, 0.87)",
                       outline: "none"
                     }}
                     min="1"
                     max="8"
                     step="0.5"
                   />
-                  <p style={{ fontSize: "0.8125rem", color: "#6e7681", marginTop: "0.5rem", marginBottom: 0, lineHeight: "1.4" }}>
+                  <p style={{ fontSize: "0.8125rem", color: "rgba(0, 0, 0, 0.5)", marginTop: "0.5rem", marginBottom: 0, lineHeight: "1.4" }}>
                     Optional: Shortest shift duration (leave empty for auto)
                   </p>
                 </div>
 
                 <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", marginBottom: "0.625rem" }}>
+                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.6)", marginBottom: "0.625rem" }}>
                     Maximum shift (hours)
                   </label>
                   <input
@@ -1681,18 +1681,18 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "rgba(255, 255, 255, 0.05)",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      backgroundColor: "rgba(0, 0, 0, 0.02)",
+                      border: "1px solid rgba(0, 0, 0, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
-                      color: "#ffffff",
+                      color: "rgba(0, 0, 0, 0.87)",
                       outline: "none"
                     }}
                     min="1"
                     max="8"
                     step="0.5"
                   />
-                  <p style={{ fontSize: "0.8125rem", color: "#6e7681", marginTop: "0.5rem", marginBottom: 0, lineHeight: "1.4" }}>
+                  <p style={{ fontSize: "0.8125rem", color: "rgba(0, 0, 0, 0.5)", marginTop: "0.5rem", marginBottom: 0, lineHeight: "1.4" }}>
                     Optional: Longest shift duration (leave empty for auto)
                   </p>
                 </div>
@@ -1714,14 +1714,14 @@ export default function Home() {
             </div>
             <div style={{ padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
               {editRequests.map((request) => (
-                <div key={request.id} style={{ backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "8px", overflow: "hidden" }}>
+                <div key={request.id} style={{ backgroundColor: "#ffffff", border: "1px solid rgba(0, 0, 0, 0.1)", borderRadius: "8px", overflow: "hidden" }}>
                   {/* Request Header */}
                   <div style={{ padding: "1rem 1.25rem", backgroundColor: "#1f2937", borderBottom: "1px solid rgba(255, 255, 255, 0.1)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
                     <div>
-                      <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.25rem" }}>
+                      <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.25rem" }}>
                         {request.userName}
                       </h3>
-                      <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0 }}>
+                      <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", margin: 0 }}>
                         {request.userEmail}
                       </p>
                     </div>
@@ -1732,7 +1732,7 @@ export default function Home() {
                         style={{
                           padding: "0.5rem 1rem",
                           backgroundColor: processingRequestId === request.id ? "#374151" : "#10b981",
-                          color: "#ffffff",
+                          color: "rgba(0, 0, 0, 0.87)",
                           border: "none",
                           borderRadius: "6px",
                           fontSize: "0.875rem",
@@ -1759,7 +1759,7 @@ export default function Home() {
                         style={{
                           padding: "0.5rem 1rem",
                           backgroundColor: processingRequestId === request.id ? "#374151" : "#dc2626",
-                          color: "#ffffff",
+                          color: "rgba(0, 0, 0, 0.87)",
                           border: "none",
                           borderRadius: "6px",
                           fontSize: "0.875rem",
@@ -1787,17 +1787,17 @@ export default function Home() {
                   <div style={{ padding: "1.25rem" }}>
                     {/* Reason */}
                     <div style={{ marginBottom: "1.5rem" }}>
-                      <h4 style={{ fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", margin: 0, marginBottom: "0.5rem" }}>
+                      <h4 style={{ fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.6)", margin: 0, marginBottom: "0.5rem" }}>
                         Reason for Edit:
                       </h4>
-                      <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, padding: "0.75rem", backgroundColor: "rgba(255, 255, 255, 0.05)", borderRadius: "4px", border: "1px solid rgba(255, 255, 255, 0.1)" }}>
+                      <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", margin: 0, padding: "0.75rem", backgroundColor: "rgba(0, 0, 0, 0.02)", borderRadius: "4px", border: "1px solid rgba(0, 0, 0, 0.1)" }}>
                         {request.reason}
                       </p>
                     </div>
 
                     {/* Comparison */}
                     <div>
-                      <h4 style={{ fontSize: "0.875rem", fontWeight: "500", color: "#c9d1d9", margin: 0, marginBottom: "0.75rem" }}>
+                      <h4 style={{ fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.6)", margin: 0, marginBottom: "0.75rem" }}>
                         Changes by Day
                       </h4>
                       <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
@@ -1818,8 +1818,8 @@ export default function Home() {
 
                           return (
                             <div key={day} style={{
-                              backgroundColor: "rgba(255, 255, 255, 0.05)",
-                              border: "1px solid rgba(255, 255, 255, 0.1)",
+                              backgroundColor: "rgba(0, 0, 0, 0.02)",
+                              border: "1px solid rgba(0, 0, 0, 0.1)",
                               borderRadius: "6px",
                               padding: "0.75rem"
                             }}>
@@ -1882,14 +1882,14 @@ export default function Home() {
                                 {/* Unchanged slots (if any exist and we want to show them) */}
                                 {unchangedSlots.length > 0 && (addedSlots.length > 0 || removedSlots.length > 0) && (
                                   <div style={{ display: "flex", flexWrap: "wrap", gap: "0.25rem", alignItems: "center" }}>
-                                    <span style={{ fontSize: "0.75rem", color: "#6e7681", fontWeight: "500", marginRight: "0.25rem" }}>
+                                    <span style={{ fontSize: "0.75rem", color: "rgba(0, 0, 0, 0.5)", fontWeight: "500", marginRight: "0.25rem" }}>
                                       Unchanged:
                                     </span>
                                     {unchangedSlots.slice(0, 5).map((slot, idx) => (
                                       <span key={idx} style={{
                                         fontSize: "0.7rem",
-                                        color: "#6e7681",
-                                        backgroundColor: "rgba(255, 255, 255, 0.05)",
+                                        color: "rgba(0, 0, 0, 0.5)",
+                                        backgroundColor: "rgba(0, 0, 0, 0.02)",
                                         padding: "0.125rem 0.375rem",
                                         borderRadius: "3px",
                                         border: "1px solid rgba(255, 255, 255, 0.08)"
@@ -1898,7 +1898,7 @@ export default function Home() {
                                       </span>
                                     ))}
                                     {unchangedSlots.length > 5 && (
-                                      <span style={{ fontSize: "0.7rem", color: "#6e7681" }}>
+                                      <span style={{ fontSize: "0.7rem", color: "rgba(0, 0, 0, 0.5)" }}>
                                         +{unchangedSlots.length - 5} more
                                       </span>
                                     )}
@@ -1919,7 +1919,7 @@ export default function Home() {
                         <div style={{
                           padding: "1rem",
                           textAlign: "center",
-                          color: "#6e7681",
+                          color: "rgba(0, 0, 0, 0.5)",
                           fontSize: "0.875rem",
                           fontStyle: "italic"
                         }}>
@@ -1936,26 +1936,26 @@ export default function Home() {
 
         {/* Pending Password Reset Requests Section */}
         {passwordResetRequests.length > 0 && (
-          <div style={{ backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
+          <div style={{ backgroundColor: "#ffffff", border: "1px solid rgba(0, 0, 0, 0.1)", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
             <div style={{ padding: "1.5rem", borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
-              <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
+              <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.5rem" }}>
                 Password Reset Requests ({passwordResetRequests.length})
               </h2>
-              <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
+              <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", margin: 0, lineHeight: "1.5" }}>
                 Review and approve password reset requests from students
               </p>
             </div>
 
             <div style={{ padding: "1.5rem" }}>
               {passwordResetRequests.map((request) => (
-                <div key={request.id} style={{ backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "8px", overflow: "hidden", marginBottom: "1rem" }}>
+                <div key={request.id} style={{ backgroundColor: "#ffffff", border: "1px solid rgba(0, 0, 0, 0.1)", borderRadius: "8px", overflow: "hidden", marginBottom: "1rem" }}>
                   {/* Request Header */}
                   <div style={{ padding: "1rem 1.25rem", backgroundColor: "#1f2937", borderBottom: "1px solid rgba(255, 255, 255, 0.1)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
                     <div>
-                      <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.25rem" }}>
+                      <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.25rem" }}>
                         {request.userName}
                       </h3>
-                      <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0 }}>
+                      <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", margin: 0 }}>
                         {request.userEmail}
                       </p>
                     </div>
@@ -1966,7 +1966,7 @@ export default function Home() {
                         style={{
                           padding: "0.5rem 1rem",
                           backgroundColor: processingRequestId === request.id ? "#374151" : "#10b981",
-                          color: "#ffffff",
+                          color: "rgba(0, 0, 0, 0.87)",
                           border: "none",
                           borderRadius: "6px",
                           fontSize: "0.875rem",
@@ -1993,7 +1993,7 @@ export default function Home() {
                         style={{
                           padding: "0.5rem 1rem",
                           backgroundColor: processingRequestId === request.id ? "#374151" : "#dc2626",
-                          color: "#ffffff",
+                          color: "rgba(0, 0, 0, 0.87)",
                           border: "none",
                           borderRadius: "6px",
                           fontSize: "0.875rem",
@@ -2019,7 +2019,7 @@ export default function Home() {
 
                   {/* Request Details */}
                   <div style={{ padding: "1.25rem" }}>
-                    <div style={{ display: "flex", gap: "1rem", fontSize: "0.875rem", color: "#8b949e" }}>
+                    <div style={{ display: "flex", gap: "1rem", fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)" }}>
                       <div>
                         <strong>Requested:</strong> {new Date(request.createdAt).toLocaleDateString()} at {new Date(request.createdAt).toLocaleTimeString()}
                       </div>
@@ -2035,13 +2035,13 @@ export default function Home() {
         )}
 
         {/* Student Workers Availability Section */}
-        <div style={{ backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid #414d5c", borderRadius: "8px", marginBottom: "1rem", overflow: "hidden" }}>
+        <div style={{ backgroundColor: "#ffffff", border: "1px solid #414d5c", borderRadius: "8px", marginBottom: "1rem", overflow: "hidden" }}>
           <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #414d5c" }}>
             <div>
-              <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
+              <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.5rem" }}>
                 Student Availability
               </h2>
-              <p style={{ fontSize: "0.875rem", color: "#8b949e", lineHeight: "1.5" }}>
+              <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", lineHeight: "1.5" }}>
                 Read-only view of student-submitted availability. {students.filter(s => s.hasSubmitted).length} of {students.length} students have submitted.
               </p>
             </div>
@@ -2050,7 +2050,7 @@ export default function Home() {
             {students.filter(s => s.hasSubmitted).length === 0 ? (
               <div style={{ padding: "3rem", textAlign: "center", color: "#6b7280", fontSize: "0.875rem" }}>
                 <p style={{ margin: 0, marginBottom: "1rem" }}>No students have submitted their availability yet.</p>
-                <p style={{ margin: 0, color: "#8b949e" }}>Request availability from students using the Admin Dashboard or wait for them to submit.</p>
+                <p style={{ margin: 0, color: "rgba(0, 0, 0, 0.45)" }}>Request availability from students using the Admin Dashboard or wait for them to submit.</p>
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -2135,10 +2135,10 @@ export default function Home() {
         {scheduleResult && scheduleResult.success && scheduleResult.schedules && (
           <div id="results">
             <div style={{ marginBottom: "2rem" }}>
-              <h2 style={{ fontSize: "1.5rem", fontWeight: "400", color: "#ffffff", marginBottom: "0.5rem" }}>
+              <h2 style={{ fontSize: "1.5rem", fontWeight: "400", color: "rgba(0, 0, 0, 0.87)", marginBottom: "0.5rem" }}>
                 Generated Schedules
               </h2>
-              <p style={{ fontSize: "0.875rem", color: "#8b949e", lineHeight: "1.6" }}>
+              <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", lineHeight: "1.6" }}>
                 Three different scheduling strategies have been generated. Review all options below to choose the best fit.
               </p>
             </div>
@@ -2148,7 +2148,7 @@ export default function Home() {
               <div key={scheduleIndex} style={{ marginBottom: "3rem" }}>
                 {/* Schedule Header */}
                 <div style={{
-                  backgroundColor: "rgba(255, 255, 255, 0.03)",
+                  backgroundColor: "#ffffff",
                   border: "2px solid #14b8a6",
                   borderRadius: "8px 8px 0 0",
                   padding: "1.5rem",
@@ -2159,10 +2159,10 @@ export default function Home() {
                   gap: "1rem"
                 }}>
                   <div style={{ flex: 1 }}>
-                    <h3 style={{ fontSize: "1.25rem", fontWeight: "500", color: "#ffffff", margin: 0, marginBottom: "0.5rem" }}>
+                    <h3 style={{ fontSize: "1.25rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.5rem" }}>
                       {currentSchedule.name}
                     </h3>
-                    <p style={{ fontSize: "0.875rem", color: "#8b949e", margin: 0, lineHeight: "1.5" }}>
+                    <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", margin: 0, lineHeight: "1.5" }}>
                       {currentSchedule.description}
                     </p>
                   </div>
@@ -2175,7 +2175,7 @@ export default function Home() {
                     style={{
                       padding: "0.625rem 1.25rem",
                       backgroundColor: publishingScheduleId === savedScheduleIds[scheduleIndex] ? "#374151" : "#10b981",
-                      color: "#ffffff",
+                      color: "rgba(0, 0, 0, 0.87)",
                       border: "1px solid",
                       borderColor: publishingScheduleId === savedScheduleIds[scheduleIndex] ? "#374151" : "#10b981",
                       borderRadius: "6px",
@@ -2213,7 +2213,7 @@ export default function Home() {
                     style={{
                       padding: "0.625rem 1.25rem",
                       backgroundColor: "#047857",
-                      color: "#ffffff",
+                      color: "rgba(0, 0, 0, 0.87)",
                       border: "1px solid #047857",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
@@ -2237,7 +2237,7 @@ export default function Home() {
                 </div>
 
                 <div style={{
-                  backgroundColor: "rgba(255, 255, 255, 0.03)",
+                  backgroundColor: "#ffffff",
                   border: "2px solid #14b8a6",
                   borderTop: "none",
                   borderRadius: "0 0 8px 8px",
@@ -2399,22 +2399,22 @@ export default function Home() {
                   )}
 
                   {/* Statistics */}
-                  <div style={{ backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid #414d5c", borderRadius: "8px", padding: "1.5rem", marginBottom: "1.5rem" }}>
-                    <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "#ffffff", marginBottom: "1.25rem" }}>Statistics</h2>
+                  <div style={{ backgroundColor: "#ffffff", border: "1px solid #414d5c", borderRadius: "8px", padding: "1.5rem", marginBottom: "1.5rem" }}>
+                    <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "rgba(0, 0, 0, 0.87)", marginBottom: "1.25rem" }}>Statistics</h2>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
                       <div style={{ padding: "1rem", backgroundColor: "#1f2937", borderRadius: "4px", border: "1px solid #2d3748" }}>
                         <p style={{ fontSize: "0.75rem", color: "#9ca3af", textTransform: "uppercase", marginBottom: "0.5rem", fontWeight: "500", letterSpacing: "0.05em" }}>Workers Scheduled</p>
-                        <p style={{ fontSize: "1.5rem", fontWeight: "400", color: "#ffffff", margin: 0 }}>
+                        <p style={{ fontSize: "1.5rem", fontWeight: "400", color: "rgba(0, 0, 0, 0.87)", margin: 0 }}>
                           {currentSchedule.statistics.totalWorkersScheduled} / {currentSchedule.statistics.totalWorkersAvailable}
                         </p>
                       </div>
                       <div style={{ padding: "1rem", backgroundColor: "#1f2937", borderRadius: "4px", border: "1px solid #2d3748" }}>
                         <p style={{ fontSize: "0.75rem", color: "#9ca3af", textTransform: "uppercase", marginBottom: "0.5rem", fontWeight: "500", letterSpacing: "0.05em" }}>Total Hours</p>
-                        <p style={{ fontSize: "1.5rem", fontWeight: "400", color: "#ffffff", margin: 0 }}>{currentSchedule.statistics.totalHoursScheduled}h</p>
+                        <p style={{ fontSize: "1.5rem", fontWeight: "400", color: "rgba(0, 0, 0, 0.87)", margin: 0 }}>{currentSchedule.statistics.totalHoursScheduled}h</p>
                       </div>
                       <div style={{ padding: "1rem", backgroundColor: "#1f2937", borderRadius: "4px", border: "1px solid #2d3748" }}>
                         <p style={{ fontSize: "0.75rem", color: "#9ca3af", textTransform: "uppercase", marginBottom: "0.5rem", fontWeight: "500", letterSpacing: "0.05em" }}>Avg Hours/Worker</p>
-                        <p style={{ fontSize: "1.5rem", fontWeight: "400", color: "#ffffff", margin: 0 }}>{currentSchedule.statistics.avgHoursPerWorker}h</p>
+                        <p style={{ fontSize: "1.5rem", fontWeight: "400", color: "rgba(0, 0, 0, 0.87)", margin: 0 }}>{currentSchedule.statistics.avgHoursPerWorker}h</p>
                       </div>
                       <div style={{ padding: "1rem", backgroundColor: "#1f2937", borderRadius: "4px", border: "1px solid #2d3748" }}>
                         <p style={{ fontSize: "0.75rem", color: "#9ca3af", textTransform: "uppercase", marginBottom: "0.5rem", fontWeight: "500", letterSpacing: "0.05em" }}>Hour Balance</p>
@@ -2426,9 +2426,9 @@ export default function Home() {
                   </div>
 
                   {/* Schedule Table */}
-                  <div style={{ backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid #414d5c", borderRadius: "8px", overflow: "hidden", marginBottom: "1.5rem" }}>
+                  <div style={{ backgroundColor: "#ffffff", border: "1px solid #414d5c", borderRadius: "8px", overflow: "hidden", marginBottom: "1.5rem" }}>
                     <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #414d5c" }}>
-                      <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "#ffffff", margin: 0 }}>Weekly schedule</h2>
+                      <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "rgba(0, 0, 0, 0.87)", margin: 0 }}>Weekly schedule</h2>
                     </div>
                     <div className="table-container" style={{ overflowX: "auto" }}>
                       <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -2449,7 +2449,7 @@ export default function Home() {
                             onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#1a1f2e"}
                             onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                           >
-                            <td style={{ padding: "1rem", fontWeight: "500", color: "#ffffff", fontSize: "0.875rem" }}>{worker.workerName}</td>
+                            <td style={{ padding: "1rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", fontSize: "0.875rem" }}>{worker.workerName}</td>
                             {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => (
                               <td key={day} style={{ padding: "1rem", fontSize: "0.875rem" }}>
                                 {worker.schedule[day] ? (
@@ -2458,7 +2458,7 @@ export default function Home() {
                                     <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                                       {worker.schedule[day].map((shift, idx) => (
                                         <div key={idx}>
-                                          <div style={{ fontWeight: "400", color: "#ffffff" }}>
+                                          <div style={{ fontWeight: "400", color: "rgba(0, 0, 0, 0.87)" }}>
                                             {convertTo12Hour(shift.start)} - {convertTo12Hour(shift.end)}
                                           </div>
                                           <div style={{ fontSize: "0.75rem", color: "#6b7280", marginTop: "0.125rem" }}>
@@ -2473,7 +2473,7 @@ export default function Home() {
                                   ) : (
                                     // Single shift
                                     <div>
-                                      <div style={{ fontWeight: "400", color: "#ffffff" }}>
+                                      <div style={{ fontWeight: "400", color: "rgba(0, 0, 0, 0.87)" }}>
                                         {convertTo12Hour(worker.schedule[day].start)} - {convertTo12Hour(worker.schedule[day].end)}
                                       </div>
                                       <div style={{ fontSize: "0.75rem", color: "#6b7280", marginTop: "0.125rem" }}>
@@ -2486,7 +2486,7 @@ export default function Home() {
                                 )}
                               </td>
                             ))}
-                            <td style={{ padding: "1rem", fontWeight: "500", color: "#ffffff", fontSize: "0.875rem" }}>{worker.totalHours}h</td>
+                            <td style={{ padding: "1rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", fontSize: "0.875rem" }}>{worker.totalHours}h</td>
                           </tr>
                           ))}
                         </tbody>
@@ -2496,7 +2496,7 @@ export default function Home() {
 
                   {/* Coverage Gaps */}
                   {currentSchedule.uncoveredPeriods && Object.keys(currentSchedule.uncoveredPeriods).length > 0 && (
-                    <div style={{ backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid #414d5c", borderRadius: "8px", padding: "1.5rem" }}>
+                    <div style={{ backgroundColor: "#ffffff", border: "1px solid #414d5c", borderRadius: "8px", padding: "1.5rem" }}>
                       <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "#ff6b6b", marginBottom: "1rem" }}>
                         ⚠ Coverage gaps
                       </h2>
@@ -2539,17 +2539,17 @@ export default function Home() {
             padding: "1rem"
           }}>
             <div style={{
-              backgroundColor: "rgba(255, 255, 255, 0.03)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
+              backgroundColor: "#ffffff",
+              border: "1px solid rgba(0, 0, 0, 0.1)",
               borderRadius: "8px",
               padding: "2rem",
               maxWidth: "500px",
               width: "100%"
             }}>
-              <h3 style={{ fontSize: "1.25rem", fontWeight: "500", color: "#ffffff", marginBottom: "0.5rem" }}>
+              <h3 style={{ fontSize: "1.25rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", marginBottom: "0.5rem" }}>
                 Invite Secondary Admin
               </h3>
-              <p style={{ fontSize: "0.875rem", color: "#8b949e", marginBottom: "1.5rem", lineHeight: "1.5" }}>
+              <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", marginBottom: "1.5rem", lineHeight: "1.5" }}>
                 Send an invitation email with login credentials to a new admin for {user?.organizationName}.
               </p>
 
@@ -2573,7 +2573,7 @@ export default function Home() {
                     display: "block",
                     fontSize: "0.875rem",
                     fontWeight: "500",
-                    color: "#c9d1d9",
+                    color: "rgba(0, 0, 0, 0.6)",
                     marginBottom: "0.625rem"
                   }}>
                     Name
@@ -2587,11 +2587,11 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "rgba(255, 255, 255, 0.05)",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      backgroundColor: "rgba(0, 0, 0, 0.02)",
+                      border: "1px solid rgba(0, 0, 0, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
-                      color: "#ffffff",
+                      color: "rgba(0, 0, 0, 0.87)",
                       outline: "none"
                     }}
                   />
@@ -2602,7 +2602,7 @@ export default function Home() {
                     display: "block",
                     fontSize: "0.875rem",
                     fontWeight: "500",
-                    color: "#c9d1d9",
+                    color: "rgba(0, 0, 0, 0.6)",
                     marginBottom: "0.625rem"
                   }}>
                     Email
@@ -2616,15 +2616,15 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "rgba(255, 255, 255, 0.05)",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      backgroundColor: "rgba(0, 0, 0, 0.02)",
+                      border: "1px solid rgba(0, 0, 0, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
-                      color: "#ffffff",
+                      color: "rgba(0, 0, 0, 0.87)",
                       outline: "none"
                     }}
                   />
-                  <p style={{ fontSize: "0.75rem", color: "#8b949e", marginTop: "0.5rem", marginBottom: 0 }}>
+                  <p style={{ fontSize: "0.75rem", color: "rgba(0, 0, 0, 0.45)", marginTop: "0.5rem", marginBottom: 0 }}>
                     An invitation email with temporary credentials will be sent to this address.
                   </p>
                 </div>
@@ -2638,9 +2638,9 @@ export default function Home() {
                     }}
                     style={{
                       padding: "0.625rem 1.25rem",
-                      backgroundColor: "rgba(255, 255, 255, 0.05)",
-                      color: "#ffffff",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      backgroundColor: "rgba(0, 0, 0, 0.02)",
+                      color: "rgba(0, 0, 0, 0.87)",
+                      border: "1px solid rgba(0, 0, 0, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       fontWeight: "500",
@@ -2658,7 +2658,7 @@ export default function Home() {
                     style={{
                       padding: "0.625rem 1.25rem",
                       backgroundColor: submittingAdmin ? "#6b7280" : "#14b8a6",
-                      color: "#ffffff",
+                      color: "rgba(0, 0, 0, 0.87)",
                       border: submittingAdmin ? "1px solid #6b7280" : "1px solid #14b8a6",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
@@ -2704,14 +2704,14 @@ export default function Home() {
             padding: "1rem"
           }}>
             <div style={{
-              backgroundColor: "rgba(255, 255, 255, 0.03)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
+              backgroundColor: "#ffffff",
+              border: "1px solid rgba(0, 0, 0, 0.1)",
               borderRadius: "8px",
               padding: "2rem",
               maxWidth: "500px",
               width: "100%"
             }}>
-              <h3 style={{ fontSize: "1.25rem", fontWeight: "500", color: "#ffffff", marginBottom: "1.5rem" }}>
+              <h3 style={{ fontSize: "1.25rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", marginBottom: "1.5rem" }}>
                 {editingStudent ? 'Edit Student' : 'Add New Student'}
               </h3>
 
@@ -2734,7 +2734,7 @@ export default function Home() {
                     display: "block",
                     fontSize: "0.875rem",
                     fontWeight: "500",
-                    color: "#c9d1d9",
+                    color: "rgba(0, 0, 0, 0.6)",
                     marginBottom: "0.625rem"
                   }}>
                     Name
@@ -2747,11 +2747,11 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "rgba(255, 255, 255, 0.05)",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      backgroundColor: "rgba(0, 0, 0, 0.02)",
+                      border: "1px solid rgba(0, 0, 0, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
-                      color: "#ffffff",
+                      color: "rgba(0, 0, 0, 0.87)",
                       outline: "none"
                     }}
                   />
@@ -2762,7 +2762,7 @@ export default function Home() {
                     display: "block",
                     fontSize: "0.875rem",
                     fontWeight: "500",
-                    color: "#c9d1d9",
+                    color: "rgba(0, 0, 0, 0.6)",
                     marginBottom: "0.625rem"
                   }}>
                     Primary Email
@@ -2774,11 +2774,11 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "rgba(255, 255, 255, 0.05)",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      backgroundColor: "rgba(0, 0, 0, 0.02)",
+                      border: "1px solid rgba(0, 0, 0, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
-                      color: "#ffffff",
+                      color: "rgba(0, 0, 0, 0.87)",
                       outline: "none"
                     }}
                     placeholder="personal@email.com"
@@ -2786,7 +2786,7 @@ export default function Home() {
                   <small style={{
                     display: "block",
                     fontSize: "0.75rem",
-                    color: "#8b949e",
+                    color: "rgba(0, 0, 0, 0.45)",
                     marginTop: "0.25rem"
                   }}>
                     At least one email is required
@@ -2798,7 +2798,7 @@ export default function Home() {
                     display: "block",
                     fontSize: "0.875rem",
                     fontWeight: "500",
-                    color: "#c9d1d9",
+                    color: "rgba(0, 0, 0, 0.6)",
                     marginBottom: "0.625rem"
                   }}>
                     Secondary Email (Optional)
@@ -2810,11 +2810,11 @@ export default function Home() {
                     style={{
                       width: "100%",
                       padding: "0.625rem 0.875rem",
-                      backgroundColor: "rgba(255, 255, 255, 0.05)",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      backgroundColor: "rgba(0, 0, 0, 0.02)",
+                      border: "1px solid rgba(0, 0, 0, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
-                      color: "#ffffff",
+                      color: "rgba(0, 0, 0, 0.87)",
                       outline: "none"
                     }}
                     placeholder="school@university.edu"
@@ -2822,7 +2822,7 @@ export default function Home() {
                   <small style={{
                     display: "block",
                     fontSize: "0.75rem",
-                    color: "#8b949e",
+                    color: "rgba(0, 0, 0, 0.45)",
                     marginTop: "0.25rem"
                   }}>
                     Notifications will be sent to both emails
@@ -2835,9 +2835,9 @@ export default function Home() {
                     onClick={() => setShowAddStudentModal(false)}
                     style={{
                       padding: "0.625rem 1.25rem",
-                      backgroundColor: "rgba(255, 255, 255, 0.05)",
-                      color: "#ffffff",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      backgroundColor: "rgba(0, 0, 0, 0.02)",
+                      color: "rgba(0, 0, 0, 0.87)",
+                      border: "1px solid rgba(0, 0, 0, 0.1)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       fontWeight: "500",
@@ -2855,7 +2855,7 @@ export default function Home() {
                     style={{
                       padding: "0.625rem 1.25rem",
                       backgroundColor: submittingStudent ? "#6b7280" : "#14b8a6",
-                      color: "#ffffff",
+                      color: "rgba(0, 0, 0, 0.87)",
                       border: submittingStudent ? "1px solid #6b7280" : "1px solid #14b8a6",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
@@ -2910,7 +2910,7 @@ export default function Home() {
                 maxWidth: "500px",
                 width: "100%",
                 boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.5)",
-                border: "1px solid rgba(255, 255, 255, 0.1)"
+                border: "1px solid rgba(0, 0, 0, 0.1)"
               }}
               onClick={(e) => e.stopPropagation()}
             >
@@ -2927,7 +2927,7 @@ export default function Home() {
                 <p style={{
                   margin: 0,
                   fontSize: "0.875rem",
-                  color: "#c9d1d9",
+                  color: "rgba(0, 0, 0, 0.6)",
                   lineHeight: "1.5"
                 }}>
                   {confirmModal.message}
@@ -2936,7 +2936,7 @@ export default function Home() {
 
               <div style={{
                 padding: "1rem 1.5rem",
-                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                backgroundColor: "rgba(0, 0, 0, 0.02)",
                 borderTop: "1px solid rgba(255, 255, 255, 0.1)",
                 display: "flex",
                 justifyContent: "flex-end",
@@ -2949,8 +2949,8 @@ export default function Home() {
                   style={{
                     padding: "0.5rem 1rem",
                     backgroundColor: "transparent",
-                    color: "#c9d1d9",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    color: "rgba(0, 0, 0, 0.6)",
+                    border: "1px solid rgba(0, 0, 0, 0.1)",
                     borderRadius: "6px",
                     fontSize: "0.875rem",
                     fontWeight: "500",
@@ -2971,7 +2971,7 @@ export default function Home() {
                   style={{
                     padding: "0.5rem 1rem",
                     backgroundColor: confirmModal.isDangerous ? "#dc2626" : "#14b8a6",
-                    color: "#ffffff",
+                    color: "rgba(0, 0, 0, 0.87)",
                     border: "none",
                     borderRadius: "6px",
                     fontSize: "0.875rem",
