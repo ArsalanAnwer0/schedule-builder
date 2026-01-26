@@ -141,19 +141,19 @@ Our community forum is the best place to:
 
 <div class="contact-card">
 
-### Email Support
+### Developer Contact
 
-**Best for:** Account issues, billing, privacy concerns
+**Best for:** Direct inquiries, collaboration, feedback
 
-Get personalized support for:
-- Account access problems
-- Billing and subscription questions
-- Data privacy rights
-- Security vulnerabilities
+Reach out to the developer:
+- Portfolio and background
+- Project collaboration
+- General inquiries
+- Feedback and suggestions
 
-[support@schedule-builder.xyz](mailto:support@schedule-builder.xyz)
+[Visit Portfolio →](https://arsalan-portfolio-umber.vercel.app/)
 
-<span class="contact-badge badge-moderate">24-48 Hours</span>
+<span class="contact-badge badge-moderate">1-2 Business Days</span>
 
 </div>
 
@@ -181,44 +181,37 @@ Report bugs or request features:
 The forum is publicly searchable, which means your question and its answer can help other users facing the same issue. It's also the fastest way to get help since both our team and experienced community members can respond.
 :::
 
-## Email Support Channels
+## Contact the Developer
 
 <div class="email-list">
 
 <div class="email-item">
-<strong>General Support</strong>
-<p><a href="mailto:support@schedule-builder.xyz">support@schedule-builder.xyz</a></p>
-<p>For general questions, technical issues, and account help. Please check the forum first for common questions.</p>
+<strong>Portfolio</strong>
+<p><a href="https://arsalan-portfolio-umber.vercel.app/" target="_blank">arsalan-portfolio-umber.vercel.app</a></p>
+<p>View my work, projects, and background. Best way to learn about my experience and reach out.</p>
 </div>
 
 <div class="email-item">
-<strong>Security Issues</strong>
-<p><a href="mailto:security@schedule-builder.xyz">security@schedule-builder.xyz</a></p>
-<p>For reporting security vulnerabilities or concerns. We follow responsible disclosure practices.</p>
+<strong>GitHub Profile</strong>
+<p><a href="https://github.com/ArsalanAnwer0" target="_blank">github.com/ArsalanAnwer0</a></p>
+<p>View my projects, contributions, and open source work.</p>
 </div>
 
 <div class="email-item">
-<strong>Privacy Requests</strong>
-<p><a href="mailto:privacy@schedule-builder.xyz">privacy@schedule-builder.xyz</a></p>
-<p>For GDPR, CCPA, or other privacy-related requests. Exercise your data rights (access, deletion, portability).</p>
-</div>
-
-<div class="email-item">
-<strong>Legal Inquiries</strong>
-<p><a href="mailto:legal@schedule-builder.xyz">legal@schedule-builder.xyz</a></p>
-<p>For legal questions, Terms of Service clarifications, and DMCA takedown notices.</p>
+<strong>Project Repository</strong>
+<p><a href="https://github.com/ArsalanAnwer0/schedule-builder" target="_blank">Schedule Builder on GitHub</a></p>
+<p>Star the repo, submit issues, or contribute to the project.</p>
 </div>
 
 </div>
 
-**When Emailing, Please Include:**
-- Your registered email address
+**When Reaching Out, Please Include:**
 - A clear description of your issue or question
 - Steps to reproduce the problem (for technical issues)
-- Screenshots if applicable (use [imgur.com](https://imgur.com) or similar)
+- Screenshots if applicable
 - Any error messages you received
 
-::: warning Before Emailing Support
+::: warning Before Reaching Out
 1. Check the [FAQ page](/faq) for common questions
 2. Search the [Community Forum](https://github.com/ArsalanAnwer0/schedule-builder/discussions) for similar issues
 3. Try the troubleshooting steps in our [documentation](/guide/)
@@ -245,39 +238,20 @@ We strive to respond promptly, but response times vary by channel and issue comp
 <td>Same day to 3 days</td>
 </tr>
 <tr>
-<td><strong>Email (General)</strong></td>
-<td>24-48 hours</td>
-<td>3-7 business days</td>
-</tr>
-<tr>
-<td><strong>Email (Security)</strong></td>
-<td>Within 24 hours</td>
-<td>Varies by severity</td>
-</tr>
-<tr>
-<td><strong>Email (Privacy)</strong></td>
-<td>5-10 business days</td>
-<td>Within 30 days</td>
-</tr>
-<tr>
 <td><strong>GitHub Issues</strong></td>
 <td>1-2 business days</td>
 <td>Varies by complexity</td>
 </tr>
 <tr>
-<td><strong>Social Media</strong></td>
-<td>Not for support</td>
-<td>N/A</td>
+<td><strong>Portfolio Contact</strong></td>
+<td>1-2 business days</td>
+<td>Varies by request</td>
 </tr>
 </tbody>
 </table>
 
-**Business Hours:** Monday - Friday, 9:00 AM - 5:00 PM Pacific Time (PT)
-
-**Holidays:** We're closed on major U.S. federal holidays. Response times may be longer around holidays.
-
-::: warning Emergency Support
-For critical issues affecting all users or security emergencies, email security@schedule-builder.xyz with "URGENT" in the subject line. We monitor this 24/7 for critical issues.
+::: tip Best Way to Reach Us
+For bug reports and feature requests, GitHub Issues is the most effective way to get a response. For general inquiries, use the contact form on the portfolio site.
 :::
 
 ## What Types of Inquiries We Accept
@@ -347,7 +321,8 @@ Your feedback and questions help us improve Schedule Builder for everyone. Don't
 ### Main Contacts
 
 **Primary Channels:**
-- [support@schedule-builder.xyz](mailto:support@schedule-builder.xyz)
+- [Portfolio](https://arsalan-portfolio-umber.vercel.app/)
+- [GitHub Profile](https://github.com/ArsalanAnwer0)
 - [Community Forum](https://github.com/ArsalanAnwer0/schedule-builder/discussions)
 - [GitHub Issues](https://github.com/ArsalanAnwer0/schedule-builder/issues)
 
