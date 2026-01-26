@@ -7,6 +7,7 @@ import TimePicker from "../components/TimePicker";
 import NotificationBell from "../components/NotificationBell";
 import { exportToCSV, downloadCSV } from "../../lib/utils/export";
 import AvailabilityGrid from "../components/AvailabilityGrid";
+import "./admin.css";
 
 // Predefined semester dates for US universities
 const SEMESTER_PRESETS = {
@@ -865,7 +866,7 @@ export default function Home() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#0a0f1a", padding: "2rem 1.5rem" }}>
+    <div className="admin-container" style={{ minHeight: "100vh", backgroundColor: "#0a0f1a", padding: "2rem 1.5rem" }}>
       <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
 
         {/* Header with User Info and Profile Dropdown */}

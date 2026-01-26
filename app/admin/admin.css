@@ -1,0 +1,89 @@
+/* Admin Dashboard Responsive Styles */
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .admin-container {
+    padding: 1rem 0.75rem !important;
+  }
+
+  .admin-title {
+    font-size: 1.5rem !important;
+  }
+
+  .admin-subtitle {
+    font-size: 0.8125rem !important;
+  }
+
+  .profile-text {
+    display: none !important;
+  }
+
+  .profile-chevron {
+    display: none !important;
+  }
+
+  /* Make tables scrollable horizontally */
+  .admin-table-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Stack form inputs vertically */
+  .admin-form-row {
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+
+  /* Card sections */
+  .admin-card {
+    padding: 1rem !important;
+  }
+
+  .admin-card-header {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    align-items: flex-start !important;
+  }
+
+  /* Schedule grid */
+  .schedule-grid-options {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Action buttons */
+  .admin-actions {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+
+  .admin-actions button {
+    width: 100% !important;
+  }
+}
+
+/* Tablet styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .admin-container {
+    padding: 1.5rem 1rem !important;
+  }
+
+  .admin-title {
+    font-size: 1.75rem !important;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .admin-container {
+    padding: 0.75rem 0.5rem !important;
+  }
+
+  .admin-title {
+    font-size: 1.25rem !important;
+  }
+
+  /* Smaller section padding */
+  .admin-section {
+    padding: 0.75rem !important;
+  }
+}
