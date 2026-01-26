@@ -184,9 +184,9 @@ Data is stored on secure servers in the United States. We use industry-leading c
 
 Can't find the answer you're looking for? We're here to help!
 
-- **📚 Check our [User Guide](/guide/)** for detailed documentation
-- **💬 Visit the [Community Forum](https://github.com/ArsalanAnwer0/schedule-builder/discussions)** to ask the community
-- **📧 Email [support@schedule-builder.xyz](mailto:support@schedule-builder.xyz)** for direct assistance
-- **🐛 Report bugs on [GitHub](https://github.com/ArsalanAnwer0/schedule-builder/issues)**
+- **Check our [User Guide](/guide/)** for detailed documentation
+- **Visit the [Community Forum](https://github.com/ArsalanAnwer0/schedule-builder/discussions)** to ask the community
+- **Email [support@schedule-builder.xyz](mailto:support@schedule-builder.xyz)** for direct assistance
+- **Report bugs on [GitHub](https://github.com/ArsalanAnwer0/schedule-builder/issues)**
 
 See all support options on our [Contact page](/legal/contact).
