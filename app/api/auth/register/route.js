@@ -107,8 +107,38 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('Registration error:', error);
+
+    // Handle specific MongoDB errors
+    if (error.code === 11000) {
+      // Duplicate key error
+      const field = Object.keys(error.keyPattern || {})[0];
+      return NextResponse.json(
+        { error: `${field === 'email' ? 'Email' : 'This value'} is already registered` },
+        { status: 400 }
+      );
+    }
+
+    // Handle validation errors from Mongoose
+    if (error.name === 'ValidationError') {
+      const firstError = Object.values(error.errors)[0];
+      return NextResponse.json(
+        { error: firstError?.message || 'Validation failed' },
+        { status: 400 }
+      );
+    }
+
+    // Handle connection errors
+    if (error.name === 'MongoNetworkError' || error.message?.includes('ECONNREFUSED')) {
+      return NextResponse.json(
+        { error: 'Database connection failed. Please try again later.' },
+        { status: 503 }
+      );
+    }
+
+    // Always return specific error for debugging
+    // The actual error helps diagnose production issues
     return NextResponse.json(
-      { error: 'Registration failed. Please try again.' },
+      { error: `Registration failed: ${error.message}` },
       { status: 500 }
     );
   }
