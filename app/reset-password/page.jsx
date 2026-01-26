@@ -47,12 +47,8 @@ function ResetPasswordForm() {
       return;
     }
 
-    // Validate password length
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
-      setLoading(false);
-      return;
-    }
+    // Password strength is validated by isPasswordValid hook (requires 12+ chars, etc.)
+    // No need for redundant validation here
 
     try {
       const res = await fetch('/api/auth/reset-password', {
