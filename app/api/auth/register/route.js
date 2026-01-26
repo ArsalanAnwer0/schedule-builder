@@ -1,3 +1,4 @@
+// Registration API - v2 (in-memory rate limiting)
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import dbConnect from '../../../../lib/db/connect';
