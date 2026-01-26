@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import ScreenshotGrid from './components/ScreenshotCarousel';
 import SplashScreen from './components/SplashScreen';
 import FadeInSection from './components/FadeInSection';
@@ -1346,44 +1347,48 @@ export default function LandingPage() {
                 >
                   How It Works
                 </button>
-                <button
-                  onClick={() => router.push('/forum')}
+                <Link
+                  href="/forum"
                   style={{
                     background: "none",
                     border: "none",
                     color: theme.textSecondary,
-                      fontSize: "15px",
+                    fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
                     padding: 0,
                     textAlign: "left",
                     lineHeight: "1.8",
-                    transition: "color 0.2s ease"
+                    transition: "color 0.2s ease",
+                    textDecoration: "none",
+                    display: "block"
                   }}
                   onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
                   onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
                 >
                   Forum
-                </button>
-                <button
-                  onClick={() => router.push('/docs')}
+                </Link>
+                <Link
+                  href="/docs"
                   style={{
                     background: "none",
                     border: "none",
                     color: theme.textSecondary,
-                      fontSize: "15px",
+                    fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
                     padding: 0,
                     textAlign: "left",
                     lineHeight: "1.8",
-                    transition: "color 0.2s ease"
+                    transition: "color 0.2s ease",
+                    textDecoration: "none",
+                    display: "block"
                   }}
                   onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
                   onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
                 >
                   Docs
-                </button>
+                </Link>
               </nav>
             </div>
 
@@ -1404,25 +1409,27 @@ export default function LandingPage() {
                 flexDirection: "column",
                 gap: "12px"
               }}>
-                <button
-                  onClick={() => router.push('/contact')}
+                <Link
+                  href="/contact"
                   style={{
                     background: "none",
                     border: "none",
                     color: theme.textSecondary,
-                      fontSize: "15px",
+                    fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
                     padding: 0,
                     textAlign: "left",
                     lineHeight: "1.8",
-                    transition: "color 0.2s ease"
+                    transition: "color 0.2s ease",
+                    textDecoration: "none",
+                    display: "block"
                   }}
                   onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
                   onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
                 >
                   Contact
-                </button>
+                </Link>
                 <button
                   onClick={() => scrollToSection('faq')}
                   style={{
@@ -1442,44 +1449,48 @@ export default function LandingPage() {
                 >
                   FAQ
                 </button>
-                <button
-                  onClick={() => router.push('/privacy')}
+                <Link
+                  href="/privacy"
                   style={{
                     background: "none",
                     border: "none",
                     color: theme.textSecondary,
-                      fontSize: "15px",
+                    fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
                     padding: 0,
                     textAlign: "left",
                     lineHeight: "1.8",
-                    transition: "color 0.2s ease"
+                    transition: "color 0.2s ease",
+                    textDecoration: "none",
+                    display: "block"
                   }}
                   onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
                   onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
                 >
                   Privacy Policy
-                </button>
-                <button
-                  onClick={() => router.push('/terms')}
+                </Link>
+                <Link
+                  href="/terms"
                   style={{
                     background: "none",
                     border: "none",
                     color: theme.textSecondary,
-                      fontSize: "15px",
+                    fontSize: "15px",
                     fontWeight: "400",
                     cursor: "pointer",
                     padding: 0,
                     textAlign: "left",
                     lineHeight: "1.8",
-                    transition: "color 0.2s ease"
+                    transition: "color 0.2s ease",
+                    textDecoration: "none",
+                    display: "block"
                   }}
                   onMouseOver={(e) => e.currentTarget.style.color = "#14b8a6"}
                   onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
                 >
                   Terms of Use
-                </button>
+                </Link>
               </nav>
             </div>
 
