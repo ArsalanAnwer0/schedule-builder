@@ -1,14 +1,12 @@
-// Registration API - v2 (in-memory rate limiting)
+// Registration API - v3 (with detailed debugging)
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import dbConnect from '../../../../lib/db/connect';
-import User from '../../../../lib/db/models/User';
-import { rateLimit } from '../../../../lib/utils/rateLimiter';
-import { validatePasswordStrength } from '../../../../lib/utils/passwordStrength';
 
 export async function POST(request) {
   try {
+    console.log('[REGISTER] Step 1: Parsing request body');
     const { email, name, organizationName, password } = await request.json();
+    console.log('[REGISTER] Step 2: Request parsed, email:', email?.substring(0, 3) + '***');
 
     // Validation
     if (!email || !name || !organizationName || !password) {
@@ -27,20 +25,27 @@ export async function POST(request) {
       );
     }
 
-    // Validate password strength (SECURITY FIX: Use comprehensive validator)
+    // Validate password strength
+    console.log('[REGISTER] Step 3: Importing password validator');
+    const { validatePasswordStrength } = await import('../../../../lib/utils/passwordStrength');
+    console.log('[REGISTER] Step 4: Validating password');
     const passwordValidation = validatePasswordStrength(password);
     if (!passwordValidation.isValid) {
       return NextResponse.json(
-        { error: passwordValidation.errors[0] }, // Return first error
+        { error: passwordValidation.errors[0] },
         { status: 400 }
       );
     }
 
     // Rate limiting: 3 registration attempts per IP per hour
+    console.log('[REGISTER] Step 5: Importing rate limiter');
+    const { rateLimit } = await import('../../../../lib/utils/rateLimiter');
+    console.log('[REGISTER] Step 6: Checking rate limit');
     const forwarded = request.headers.get('x-forwarded-for');
     const ip = forwarded ? forwarded.split(',')[0] : 'unknown';
     const rateLimitKey = `register:${ip}`;
     const rateLimitResult = await rateLimit(rateLimitKey, 3, 60 * 60 * 1000);
+    console.log('[REGISTER] Step 7: Rate limit result:', rateLimitResult.allowed);
 
     if (!rateLimitResult.allowed) {
       return NextResponse.json(
@@ -52,12 +57,20 @@ export async function POST(request) {
       );
     }
 
+    console.log('[REGISTER] Step 8: Importing dbConnect');
+    const dbConnect = (await import('../../../../lib/db/connect')).default;
+    console.log('[REGISTER] Step 9: Connecting to database');
     await dbConnect();
+    console.log('[REGISTER] Step 10: Connected to database');
 
     // Normalize organization name (lowercase, trim)
     const normalizedOrgName = organizationName.toLowerCase().trim();
 
+    console.log('[REGISTER] Step 11: Importing User model');
+    const User = (await import('../../../../lib/db/models/User')).default;
+
     // Check if there's already a primary admin FOR THIS ORGANIZATION
+    console.log('[REGISTER] Step 12: Checking for existing primary admin');
     const existingPrimaryAdmin = await User.findOne({
       role: 'admin',
       adminType: 'primary',
