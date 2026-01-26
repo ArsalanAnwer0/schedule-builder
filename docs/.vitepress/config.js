@@ -89,8 +89,8 @@ export default {
 
   // Head tags for SEO
   head: [
-    ['link', { rel: 'icon', href: '/favicon.ico', sizes: 'any' }],
     ['link', { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' }],
+    ['link', { rel: 'icon', href: '/favicon-32.png', type: 'image/png', sizes: '32x32' }],
     ['link', { rel: 'apple-touch-icon', href: '/favicon.svg' }],
     ['meta', { name: 'theme-color', content: '#14b8a6' }],
     ['meta', { name: 'og:type', content: 'website' }],
