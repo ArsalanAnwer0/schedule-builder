@@ -65,7 +65,7 @@ export async function POST(request) {
     }
 
     // Primary admins should use the registration page
-    if (user.role === 'admin' && user.isPrimaryAdmin) {
+    if (user.role === 'admin' && user.adminType === 'primary') {
       return NextResponse.json(
         { error: 'Primary admins should use the registration page.' },
         { status: 403 }
