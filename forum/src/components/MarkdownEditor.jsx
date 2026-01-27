@@ -1,32 +1,33 @@
-'use client';
-
-import { useState } from 'react';
+import { useState, useRef } from 'react'
 
 export default function MarkdownEditor({ value, onChange, placeholder = 'Write your content here...' }) {
-  const [showPreview, setShowPreview] = useState(false);
+  const [showPreview, setShowPreview] = useState(false)
+  const textareaRef = useRef(null)
 
   const insertMarkdown = (before, after = '') => {
-    const textarea = document.getElementById('markdown-textarea');
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = value.substring(start, end);
-    const newText = value.substring(0, start) + before + selectedText + after + value.substring(end);
+    const textarea = textareaRef.current
+    if (!textarea) return
 
-    onChange(newText);
+    const start = textarea.selectionStart
+    const end = textarea.selectionEnd
+    const selectedText = value.substring(start, end)
+    const newText = value.substring(0, start) + before + selectedText + after + value.substring(end)
+
+    onChange(newText)
 
     setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + before.length, start + before.length + selectedText.length);
-    }, 0);
-  };
+      textarea.focus()
+      textarea.setSelectionRange(start + before.length, start + before.length + selectedText.length)
+    }, 0)
+  }
 
   const toolbarButtons = [
-    { label: 'B', title: 'Bold', action: () => insertMarkdown('**', '**') },
-    { label: 'I', title: 'Italic', action: () => insertMarkdown('*', '*') },
+    { label: 'B', title: 'Bold', action: () => insertMarkdown('**', '**'), style: { fontWeight: '600' } },
+    { label: 'I', title: 'Italic', action: () => insertMarkdown('*', '*'), style: { fontStyle: 'italic' } },
     { label: 'Link', title: 'Insert Link', action: () => insertMarkdown('[', '](url)') },
     { label: 'Code', title: 'Code', action: () => insertMarkdown('`', '`') },
     { label: 'List', title: 'Bullet List', action: () => insertMarkdown('\n- ', '') },
-  ];
+  ]
 
   return (
     <div style={{ width: '100%', border: '1px solid rgba(0, 0, 0, 0.2)', borderRadius: '8px', overflow: 'hidden' }}>
@@ -52,9 +53,8 @@ export default function MarkdownEditor({ value, onChange, placeholder = 'Write y
               borderRadius: '4px',
               cursor: 'pointer',
               fontSize: '0.875rem',
-              fontWeight: btn.label === 'B' ? '600' : '400',
-              fontStyle: btn.label === 'I' ? 'italic' : 'normal',
               transition: 'background 0.15s ease',
+              ...btn.style,
             }}
             onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.1)'}
             onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.05)'}
@@ -76,8 +76,8 @@ export default function MarkdownEditor({ value, onChange, placeholder = 'Write y
             fontSize: '0.875rem',
             transition: 'background 0.15s ease',
           }}
-          onMouseOver={(e) => { if (!showPreview) e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.1)'; }}
-          onMouseOut={(e) => { if (!showPreview) e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.05)'; }}
+          onMouseOver={(e) => { if (!showPreview) e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.1)' }}
+          onMouseOut={(e) => { if (!showPreview) e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.05)' }}
         >
           {showPreview ? 'Edit' : 'Preview'}
         </button>
@@ -97,7 +97,7 @@ export default function MarkdownEditor({ value, onChange, placeholder = 'Write y
         </div>
       ) : (
         <textarea
-          id="markdown-textarea"
+          ref={textareaRef}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
@@ -118,5 +118,5 @@ export default function MarkdownEditor({ value, onChange, placeholder = 'Write y
         />
       )}
     </div>
-  );
+  )
 }

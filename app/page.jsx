@@ -8,6 +8,16 @@ import SplashScreen from './components/SplashScreen';
 import FadeInSection from './components/FadeInSection';
 import HeroAnimation from './components/HeroAnimation';
 
+// Get forum URL based on environment
+const getForumUrl = () => {
+  if (typeof window === 'undefined') return '/forum';
+  const hostname = window.location.hostname;
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://localhost:5174';
+  }
+  return `https://forum.${hostname}`;
+};
+
 export default function LandingPage() {
   const router = useRouter();
   const [showIntro, setShowIntro] = useState(true);
@@ -261,8 +271,8 @@ export default function LandingPage() {
             >
               FAQ
             </button>
-            <button
-              onClick={() => router.push('/forum')}
+            <a
+              href={getForumUrl()}
               style={{
                 background: "none",
                 border: "none",
@@ -271,13 +281,14 @@ export default function LandingPage() {
                 cursor: "pointer",
                 padding: "0.5rem 0",
                 fontWeight: "400",
-                transition: "color 0.6s ease"
+                transition: "color 0.6s ease",
+                textDecoration: "none"
               }}
               onMouseOver={(e) => e.currentTarget.style.color = theme.text}
               onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
             >
               Forum
-            </button>
+            </a>
             <button
               onClick={() => router.push('/docs')}
               style={{
@@ -426,11 +437,9 @@ export default function LandingPage() {
           >
             FAQ
           </button>
-          <button
-            onClick={() => {
-              router.push('/forum');
-              setMobileMenuOpen(false);
-            }}
+          <a
+            href={getForumUrl()}
+            onClick={() => setMobileMenuOpen(false)}
             style={{
               background: "none",
               border: "none",
@@ -439,11 +448,13 @@ export default function LandingPage() {
               cursor: "pointer",
               padding: "1rem 0",
               textAlign: "left",
-              transition: "color 0.6s ease"
+              transition: "color 0.6s ease",
+              textDecoration: "none",
+              display: "block"
             }}
           >
             Forum
-          </button>
+          </a>
           <button
             onClick={() => {
               router.push('/docs');
@@ -1349,8 +1360,8 @@ export default function LandingPage() {
                 >
                   How It Works
                 </button>
-                <Link
-                  href="/forum"
+                <a
+                  href={getForumUrl()}
                   style={{
                     background: "none",
                     border: "none",
@@ -1369,7 +1380,7 @@ export default function LandingPage() {
                   onMouseOut={(e) => e.currentTarget.style.color = theme.textSecondary}
                 >
                   Forum
-                </Link>
+                </a>
                 <Link
                   href="/docs"
                   style={{

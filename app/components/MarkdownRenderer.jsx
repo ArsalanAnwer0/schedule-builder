@@ -22,7 +22,7 @@ export default function MarkdownRenderer({ content }) {
     html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
 
     // Code
-    html = html.replace(/`(.+?)`/g, '<code style="background-color: #2d3748; padding: 2px 6px; border-radius: 4px; font-family: monospace;">$1</code>');
+    html = html.replace(/`(.+?)`/g, '<code style="background-color: rgba(0, 0, 0, 0.05); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: rgba(0, 0, 0, 0.87);">$1</code>');
 
     // Links
     html = html.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" style="color: #14b8a6; text-decoration: underline;" target="_blank" rel="noopener noreferrer">$1</a>');
@@ -40,9 +40,9 @@ export default function MarkdownRenderer({ content }) {
   return (
     <div
       style={{
-        color: '#e5e7eb',
+        color: 'rgba(0, 0, 0, 0.87)',
         lineHeight: '1.6',
-        fontSize: '15px',
+        fontSize: '0.9375rem',
       }}
       dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
     />

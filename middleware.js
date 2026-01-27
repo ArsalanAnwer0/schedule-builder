@@ -1,8 +1,29 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
+// Allowed origins for CORS (forum subdomain)
+const allowedOrigins = [
+  'http://localhost:5174',  // Local forum dev
+  'https://forum.schedule-builder.xyz',  // Production forum
+];
+
 export async function middleware(request) {
   const { pathname } = request.nextUrl;
+  const origin = request.headers.get('origin');
+  const isApiRoute = pathname.startsWith('/api/');
+  const isAllowedOrigin = allowedOrigins.includes(origin);
+
+  // Handle OPTIONS preflight requests for CORS
+  if (isApiRoute && request.method === 'OPTIONS') {
+    const response = new NextResponse(null, { status: 204 });
+    if (isAllowedOrigin) {
+      response.headers.set('Access-Control-Allow-Origin', origin);
+      response.headers.set('Access-Control-Allow-Credentials', 'true');
+      response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    }
+    return response;
+  }
 
   // Public routes that don't require authentication
   const publicRoutes = ['/', '/login', '/register', '/api/auth/request-link', '/api/auth/verify', '/api/auth/verify-code', '/api/auth/register'];
@@ -10,7 +31,10 @@ export async function middleware(request) {
   // Create response
   let response;
 
-  if (publicRoutes.some(route => pathname.startsWith(route))) {
+  // API routes should always proceed (auth is handled per-route)
+  if (isApiRoute) {
+    response = NextResponse.next();
+  } else if (publicRoutes.some(route => pathname.startsWith(route))) {
     response = NextResponse.next();
   } else {
     // Check for session cookie
@@ -22,6 +46,12 @@ export async function middleware(request) {
     } else {
       response = NextResponse.next();
     }
+  }
+
+  // Add CORS headers for API routes from allowed origins
+  if (isApiRoute && isAllowedOrigin) {
+    response.headers.set('Access-Control-Allow-Origin', origin);
+    response.headers.set('Access-Control-Allow-Credentials', 'true');
   }
 
   // Add security headers
