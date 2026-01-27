@@ -839,9 +839,9 @@ export default function StudentDashboard() {
                 onClick={() => setShowEditForm(true)}
                 style={{
                   padding: "0.5rem 1rem",
-                  backgroundColor: "#0d9488",
-                  color: "rgba(0, 0, 0, 0.87)",
-                  border: "1px solid #0d9488",
+                  backgroundColor: "transparent",
+                  color: "#14b8a6",
+                  border: "1px solid rgba(20, 184, 166, 0.4)",
                   borderRadius: "6px",
                   fontSize: "0.875rem",
                   fontWeight: "500",
@@ -849,8 +849,14 @@ export default function StudentDashboard() {
                   transition: "all 0.15s ease",
                   whiteSpace: "nowrap"
                 }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#0d9488"}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#0d9488"}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(20, 184, 166, 0.08)";
+                  e.currentTarget.style.borderColor = "#14b8a6";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.borderColor = "rgba(20, 184, 166, 0.4)";
+                }}
               >
                 Request Edit
               </button>
@@ -1132,9 +1138,10 @@ export default function StudentDashboard() {
                 disabled={showEditForm ? submittingEdit : submitting}
                 style={{
                   padding: "0.625rem 1.25rem",
-                  backgroundColor: (showEditForm ? submittingEdit : submitting) ? "#414d5c" : showEditForm ? "#0d9488" : "#14b8a6",
-                  color: "rgba(0, 0, 0, 0.87)",
-                  border: `1px solid ${(showEditForm ? submittingEdit : submitting) ? "#414d5c" : showEditForm ? "#0d9488" : "#14b8a6"}`,
+                  backgroundColor: "transparent",
+                  color: (showEditForm ? submittingEdit : submitting) ? "rgba(0, 0, 0, 0.3)" : "#14b8a6",
+                  border: "1px solid",
+                  borderColor: (showEditForm ? submittingEdit : submitting) ? "rgba(0, 0, 0, 0.1)" : "rgba(20, 184, 166, 0.4)",
                   borderRadius: "6px",
                   fontSize: "0.875rem",
                   fontWeight: "500",
@@ -1143,14 +1150,14 @@ export default function StudentDashboard() {
                 }}
                 onMouseOver={(e) => {
                   if (!(showEditForm ? submittingEdit : submitting)) {
-                    e.currentTarget.style.backgroundColor = showEditForm ? "#0d9488" : "#0d9488";
-                    e.currentTarget.style.borderColor = showEditForm ? "#0d9488" : "#0d9488";
+                    e.currentTarget.style.backgroundColor = "rgba(20, 184, 166, 0.08)";
+                    e.currentTarget.style.borderColor = "#14b8a6";
                   }
                 }}
                 onMouseOut={(e) => {
                   if (!(showEditForm ? submittingEdit : submitting)) {
-                    e.currentTarget.style.backgroundColor = showEditForm ? "#0d9488" : "#14b8a6";
-                    e.currentTarget.style.borderColor = showEditForm ? "#0d9488" : "#14b8a6";
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.borderColor = "rgba(20, 184, 166, 0.4)";
                   }
                 }}
               >

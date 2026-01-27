@@ -268,17 +268,23 @@ export default function SecuritySettings() {
               onClick={() => setShowDisable2FA(true)}
               style={{
                 padding: "0.75rem 1.5rem",
-                backgroundColor: "#dc2626",
-                color: "#ffffff",
-                border: "none",
+                backgroundColor: "transparent",
+                color: "#dc2626",
+                border: "1px solid rgba(220, 38, 38, 0.4)",
                 borderRadius: "8px",
                 fontSize: "0.9375rem",
                 fontWeight: "500",
                 cursor: "pointer",
                 transition: "all 0.2s"
               }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#b91c1c"}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#dc2626"}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = "rgba(220, 38, 38, 0.08)";
+                e.currentTarget.style.borderColor = "#dc2626";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
+                e.currentTarget.style.borderColor = "rgba(220, 38, 38, 0.4)";
+              }}
             >
               Disable 2FA
             </button>
@@ -288,9 +294,10 @@ export default function SecuritySettings() {
               disabled={setupLoading}
               style={{
                 padding: "0.75rem 1.5rem",
-                backgroundColor: setupLoading ? "rgba(0, 0, 0, 0.1)" : "#14b8a6",
-                color: "#ffffff",
-                border: "none",
+                backgroundColor: "transparent",
+                color: setupLoading ? "rgba(0, 0, 0, 0.3)" : "#14b8a6",
+                border: "1px solid",
+                borderColor: setupLoading ? "rgba(0, 0, 0, 0.1)" : "rgba(20, 184, 166, 0.4)",
                 borderRadius: "8px",
                 fontSize: "0.9375rem",
                 fontWeight: "500",
@@ -298,10 +305,16 @@ export default function SecuritySettings() {
                 transition: "all 0.2s"
               }}
               onMouseOver={(e) => {
-                if (!setupLoading) e.currentTarget.style.backgroundColor = "#0d9488";
+                if (!setupLoading) {
+                  e.currentTarget.style.backgroundColor = "rgba(20, 184, 166, 0.08)";
+                  e.currentTarget.style.borderColor = "#14b8a6";
+                }
               }}
               onMouseOut={(e) => {
-                if (!setupLoading) e.currentTarget.style.backgroundColor = "#14b8a6";
+                if (!setupLoading) {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.borderColor = "rgba(20, 184, 166, 0.4)";
+                }
               }}
             >
               {setupLoading ? 'Setting up...' : 'Enable 2FA'}
@@ -420,17 +433,23 @@ export default function SecuritySettings() {
                     style={{
                       width: "100%",
                       padding: "0.875rem",
-                      backgroundColor: "#14b8a6",
-                      color: "#ffffff",
-                      border: "none",
+                      backgroundColor: "transparent",
+                      color: "#14b8a6",
+                      border: "1px solid rgba(20, 184, 166, 0.4)",
                       borderRadius: "8px",
                       fontSize: "0.9375rem",
                       fontWeight: "500",
                       cursor: "pointer",
                       transition: "all 0.2s"
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#0d9488"}
-                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#14b8a6"}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.backgroundColor = "rgba(20, 184, 166, 0.08)";
+                      e.currentTarget.style.borderColor = "#14b8a6";
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.borderColor = "rgba(20, 184, 166, 0.4)";
+                    }}
                   >
                     Next
                   </button>
@@ -519,9 +538,10 @@ export default function SecuritySettings() {
                         style={{
                           flex: 1,
                           padding: "0.875rem",
-                          backgroundColor: (setupLoading || verificationCode.length !== 6) ? "rgba(0, 0, 0, 0.1)" : "#14b8a6",
-                          color: "#ffffff",
-                          border: "none",
+                          backgroundColor: "transparent",
+                          color: (setupLoading || verificationCode.length !== 6) ? "rgba(0, 0, 0, 0.3)" : "#14b8a6",
+                          border: "1px solid",
+                          borderColor: (setupLoading || verificationCode.length !== 6) ? "rgba(0, 0, 0, 0.1)" : "rgba(20, 184, 166, 0.4)",
                           borderRadius: "8px",
                           fontSize: "0.9375rem",
                           fontWeight: "500",
@@ -618,14 +638,16 @@ export default function SecuritySettings() {
                       style={{
                         flex: 1,
                         padding: "0.875rem",
-                        backgroundColor: "#ffffff",
+                        backgroundColor: "transparent",
                         color: "rgba(0, 0, 0, 0.6)",
-                        border: "1px solid rgba(0, 0, 0, 0.1)",
+                        border: "1px solid rgba(0, 0, 0, 0.2)",
                         borderRadius: "8px",
                         fontSize: "0.9375rem",
                         fontWeight: "500",
                         cursor: "pointer"
                       }}
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.03)"}
+                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                     >
                       Download Codes
                     </button>
@@ -634,17 +656,23 @@ export default function SecuritySettings() {
                       style={{
                         flex: 1,
                         padding: "0.875rem",
-                        backgroundColor: "#14b8a6",
-                        color: "#ffffff",
-                        border: "none",
+                        backgroundColor: "transparent",
+                        color: "#14b8a6",
+                        border: "1px solid rgba(20, 184, 166, 0.4)",
                         borderRadius: "8px",
                         fontSize: "0.9375rem",
                         fontWeight: "500",
                         cursor: "pointer",
                         transition: "all 0.2s"
                       }}
-                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#0d9488"}
-                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#14b8a6"}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.backgroundColor = "rgba(20, 184, 166, 0.08)";
+                        e.currentTarget.style.borderColor = "#14b8a6";
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.backgroundColor = "transparent";
+                        e.currentTarget.style.borderColor = "rgba(20, 184, 166, 0.4)";
+                      }}
                     >
                       Done
                     </button>
@@ -782,9 +810,10 @@ export default function SecuritySettings() {
                     style={{
                       flex: 1,
                       padding: "0.875rem",
-                      backgroundColor: disableLoading ? "rgba(0, 0, 0, 0.1)" : "#dc2626",
-                      color: "#ffffff",
-                      border: "none",
+                      backgroundColor: "transparent",
+                      color: disableLoading ? "rgba(0, 0, 0, 0.3)" : "#dc2626",
+                      border: "1px solid",
+                      borderColor: disableLoading ? "rgba(0, 0, 0, 0.1)" : "rgba(220, 38, 38, 0.4)",
                       borderRadius: "8px",
                       fontSize: "0.9375rem",
                       fontWeight: "500",

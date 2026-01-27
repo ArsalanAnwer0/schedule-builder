@@ -1116,10 +1116,10 @@ export default function Home() {
                   disabled={admins.length >= 3}
                   style={{
                     padding: "0.625rem 1.25rem",
-                    backgroundColor: admins.length >= 3 ? "#414d5c" : "#14b8a6",
-                    color: "rgba(0, 0, 0, 0.87)",
+                    backgroundColor: "transparent",
+                    color: admins.length >= 3 ? "rgba(0, 0, 0, 0.3)" : "#14b8a6",
                     border: "1px solid",
-                    borderColor: admins.length >= 3 ? "#414d5c" : "#14b8a6",
+                    borderColor: admins.length >= 3 ? "rgba(0, 0, 0, 0.1)" : "rgba(20, 184, 166, 0.4)",
                     borderRadius: "6px",
                     fontSize: "0.875rem",
                     fontWeight: "500",
@@ -1129,14 +1129,14 @@ export default function Home() {
                   }}
                   onMouseOver={(e) => {
                     if (admins.length < 3) {
-                      e.currentTarget.style.backgroundColor = "#0d9488";
-                      e.currentTarget.style.borderColor = "#0d9488";
+                      e.currentTarget.style.backgroundColor = "rgba(20, 184, 166, 0.08)";
+                      e.currentTarget.style.borderColor = "#14b8a6";
                     }
                   }}
                   onMouseOut={(e) => {
                     if (admins.length < 3) {
-                      e.currentTarget.style.backgroundColor = "#14b8a6";
-                      e.currentTarget.style.borderColor = "#14b8a6";
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.borderColor = "rgba(20, 184, 166, 0.4)";
                     }
                   }}
                 >
@@ -1187,7 +1187,7 @@ export default function Home() {
                                   padding: "0.5rem 1rem",
                                   backgroundColor: "transparent",
                                   color: "#dc2626",
-                                  border: "1px solid #dc2626",
+                                  border: "1px solid rgba(220, 38, 38, 0.3)",
                                   borderRadius: "6px",
                                   fontSize: "0.75rem",
                                   fontWeight: "500",
@@ -1195,12 +1195,12 @@ export default function Home() {
                                   transition: "all 0.15s ease"
                                 }}
                                 onMouseOver={(e) => {
-                                  e.currentTarget.style.backgroundColor = "#dc2626";
-                                  e.currentTarget.style.color = "#ffffff";
+                                  e.currentTarget.style.backgroundColor = "rgba(220, 38, 38, 0.08)";
+                                  e.currentTarget.style.borderColor = "#dc2626";
                                 }}
                                 onMouseOut={(e) => {
                                   e.currentTarget.style.backgroundColor = "transparent";
-                                  e.currentTarget.style.color = "#dc2626";
+                                  e.currentTarget.style.borderColor = "rgba(220, 38, 38, 0.3)";
                                 }}
                               >
                                 Remove
@@ -1234,10 +1234,10 @@ export default function Home() {
                 disabled={students.length === 0}
                 style={{
                   padding: "0.625rem 1.25rem",
-                  backgroundColor: students.length === 0 ? "#414d5c" : "#10b981",
-                  color: "rgba(0, 0, 0, 0.87)",
+                  backgroundColor: "transparent",
+                  color: students.length === 0 ? "rgba(0, 0, 0, 0.3)" : "#10b981",
                   border: "1px solid",
-                  borderColor: students.length === 0 ? "#414d5c" : "#10b981",
+                  borderColor: students.length === 0 ? "rgba(0, 0, 0, 0.1)" : "rgba(16, 185, 129, 0.4)",
                   borderRadius: "6px",
                   fontSize: "0.875rem",
                   fontWeight: "500",
@@ -1247,14 +1247,14 @@ export default function Home() {
                 }}
                 onMouseOver={(e) => {
                   if (students.length > 0) {
-                    e.currentTarget.style.backgroundColor = "#059669";
-                    e.currentTarget.style.borderColor = "#059669";
+                    e.currentTarget.style.backgroundColor = "rgba(16, 185, 129, 0.08)";
+                    e.currentTarget.style.borderColor = "#10b981";
                   }
                 }}
                 onMouseOut={(e) => {
                   if (students.length > 0) {
-                    e.currentTarget.style.backgroundColor = "#10b981";
-                    e.currentTarget.style.borderColor = "#10b981";
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.borderColor = "rgba(16, 185, 129, 0.4)";
                   }
                 }}
               >
@@ -1265,10 +1265,10 @@ export default function Home() {
                 disabled={students.length === 0}
                 style={{
                   padding: "0.625rem 1.25rem",
-                  backgroundColor: students.length === 0 ? "#414d5c" : "#ca8a04",
-                  color: "rgba(0, 0, 0, 0.87)",
+                  backgroundColor: "transparent",
+                  color: students.length === 0 ? "rgba(0, 0, 0, 0.3)" : "#ca8a04",
                   border: "1px solid",
-                  borderColor: students.length === 0 ? "#414d5c" : "#ca8a04",
+                  borderColor: students.length === 0 ? "rgba(0, 0, 0, 0.1)" : "rgba(202, 138, 4, 0.4)",
                   borderRadius: "6px",
                   fontSize: "0.875rem",
                   fontWeight: "500",
@@ -1278,14 +1278,14 @@ export default function Home() {
                 }}
                 onMouseOver={(e) => {
                   if (students.length > 0) {
-                    e.currentTarget.style.backgroundColor = "#a16207";
-                    e.currentTarget.style.borderColor = "#a16207";
+                    e.currentTarget.style.backgroundColor = "rgba(202, 138, 4, 0.08)";
+                    e.currentTarget.style.borderColor = "#ca8a04";
                   }
                 }}
                 onMouseOut={(e) => {
                   if (students.length > 0) {
-                    e.currentTarget.style.backgroundColor = "#ca8a04";
-                    e.currentTarget.style.borderColor = "#ca8a04";
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.borderColor = "rgba(202, 138, 4, 0.4)";
                   }
                 }}
               >
@@ -1295,9 +1295,9 @@ export default function Home() {
                 onClick={handleAddStudent}
                 style={{
                   padding: "0.625rem 1.25rem",
-                  backgroundColor: "#14b8a6",
-                  color: "rgba(0, 0, 0, 0.87)",
-                  border: "1px solid #14b8a6",
+                  backgroundColor: "transparent",
+                  color: "#14b8a6",
+                  border: "1px solid rgba(20, 184, 166, 0.4)",
                   borderRadius: "6px",
                   fontSize: "0.875rem",
                   fontWeight: "500",
@@ -1305,12 +1305,12 @@ export default function Home() {
                   transition: "all 0.15s ease"
                 }}
                 onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = "#0d9488";
-                  e.currentTarget.style.borderColor = "#0d9488";
+                  e.currentTarget.style.backgroundColor = "rgba(20, 184, 166, 0.08)";
+                  e.currentTarget.style.borderColor = "#14b8a6";
                 }}
                 onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = "#14b8a6";
-                  e.currentTarget.style.borderColor = "#14b8a6";
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.borderColor = "rgba(20, 184, 166, 0.4)";
                 }}
               >
                 + Add Student
@@ -1346,20 +1346,20 @@ export default function Home() {
                                 style={{
                                   padding: "0.375rem 0.875rem",
                                   fontSize: "0.875rem",
-                                  backgroundColor: "#0d9488",
-                                  border: "1px solid #0d9488",
+                                  backgroundColor: "transparent",
+                                  border: "1px solid rgba(20, 184, 166, 0.4)",
                                   borderRadius: "4px",
-                                  color: "rgba(0, 0, 0, 0.87)",
+                                  color: "#14b8a6",
                                   cursor: "pointer",
                                   transition: "all 0.15s"
                                 }}
                                 onMouseOver={(e) => {
-                                  e.currentTarget.style.backgroundColor = "#0f766e";
-                                  e.currentTarget.style.borderColor = "#0f766e";
+                                  e.currentTarget.style.backgroundColor = "rgba(20, 184, 166, 0.08)";
+                                  e.currentTarget.style.borderColor = "#14b8a6";
                                 }}
                                 onMouseOut={(e) => {
-                                  e.currentTarget.style.backgroundColor = "#0d9488";
-                                  e.currentTarget.style.borderColor = "#0d9488";
+                                  e.currentTarget.style.backgroundColor = "transparent";
+                                  e.currentTarget.style.borderColor = "rgba(20, 184, 166, 0.4)";
                                 }}
                               >
                                 Request Availability
@@ -1371,20 +1371,20 @@ export default function Home() {
                                 style={{
                                   padding: "0.375rem 0.875rem",
                                   fontSize: "0.875rem",
-                                  backgroundColor: "#854d0e",
-                                  border: "1px solid #854d0e",
+                                  backgroundColor: "transparent",
+                                  border: "1px solid rgba(202, 138, 4, 0.4)",
                                   borderRadius: "4px",
-                                  color: "rgba(0, 0, 0, 0.87)",
+                                  color: "#ca8a04",
                                   cursor: "pointer",
                                   transition: "all 0.15s"
                                 }}
                                 onMouseOver={(e) => {
-                                  e.currentTarget.style.backgroundColor = "#a16207";
-                                  e.currentTarget.style.borderColor = "#a16207";
+                                  e.currentTarget.style.backgroundColor = "rgba(202, 138, 4, 0.08)";
+                                  e.currentTarget.style.borderColor = "#ca8a04";
                                 }}
                                 onMouseOut={(e) => {
-                                  e.currentTarget.style.backgroundColor = "#854d0e";
-                                  e.currentTarget.style.borderColor = "#854d0e";
+                                  e.currentTarget.style.backgroundColor = "transparent";
+                                  e.currentTarget.style.borderColor = "rgba(202, 138, 4, 0.4)";
                                 }}
                               >
                                 Reset Availability
@@ -1412,15 +1412,21 @@ export default function Home() {
                               style={{
                                 padding: "0.375rem 0.875rem",
                                 fontSize: "0.875rem",
-                                backgroundColor: "rgba(239, 68, 68, 0.1)",
-                                border: "1px solid rgba(239, 68, 68, 0.3)",
+                                backgroundColor: "transparent",
+                                border: "1px solid rgba(220, 38, 38, 0.3)",
                                 borderRadius: "4px",
                                 color: "#dc2626",
                                 cursor: "pointer",
                                 transition: "all 0.15s"
                               }}
-                              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(239, 68, 68, 0.15)"}
-                              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#2d1517"}
+                              onMouseOver={(e) => {
+                                e.currentTarget.style.backgroundColor = "rgba(220, 38, 38, 0.08)";
+                                e.currentTarget.style.borderColor = "#dc2626";
+                              }}
+                              onMouseOut={(e) => {
+                                e.currentTarget.style.backgroundColor = "transparent";
+                                e.currentTarget.style.borderColor = "rgba(220, 38, 38, 0.3)";
+                              }}
                             >
                               Delete
                             </button>
@@ -1731,9 +1737,10 @@ export default function Home() {
                         disabled={processingRequestId === request.id}
                         style={{
                           padding: "0.5rem 1rem",
-                          backgroundColor: processingRequestId === request.id ? "#374151" : "#10b981",
-                          color: "rgba(0, 0, 0, 0.87)",
-                          border: "none",
+                          backgroundColor: "transparent",
+                          color: processingRequestId === request.id ? "rgba(0, 0, 0, 0.3)" : "#10b981",
+                          border: "1px solid",
+                          borderColor: processingRequestId === request.id ? "rgba(0, 0, 0, 0.1)" : "rgba(16, 185, 129, 0.4)",
                           borderRadius: "6px",
                           fontSize: "0.875rem",
                           fontWeight: "500",
@@ -1742,12 +1749,14 @@ export default function Home() {
                         }}
                         onMouseOver={(e) => {
                           if (processingRequestId !== request.id) {
-                            e.currentTarget.style.backgroundColor = "#059669";
+                            e.currentTarget.style.backgroundColor = "rgba(16, 185, 129, 0.08)";
+                            e.currentTarget.style.borderColor = "#10b981";
                           }
                         }}
                         onMouseOut={(e) => {
                           if (processingRequestId !== request.id) {
-                            e.currentTarget.style.backgroundColor = "#10b981";
+                            e.currentTarget.style.backgroundColor = "transparent";
+                            e.currentTarget.style.borderColor = "rgba(16, 185, 129, 0.4)";
                           }
                         }}
                       >
@@ -1758,9 +1767,10 @@ export default function Home() {
                         disabled={processingRequestId === request.id}
                         style={{
                           padding: "0.5rem 1rem",
-                          backgroundColor: processingRequestId === request.id ? "#374151" : "#dc2626",
-                          color: "rgba(0, 0, 0, 0.87)",
-                          border: "none",
+                          backgroundColor: "transparent",
+                          color: processingRequestId === request.id ? "rgba(0, 0, 0, 0.3)" : "#dc2626",
+                          border: "1px solid",
+                          borderColor: processingRequestId === request.id ? "rgba(0, 0, 0, 0.1)" : "rgba(220, 38, 38, 0.3)",
                           borderRadius: "6px",
                           fontSize: "0.875rem",
                           fontWeight: "500",
@@ -1769,12 +1779,14 @@ export default function Home() {
                         }}
                         onMouseOver={(e) => {
                           if (processingRequestId !== request.id) {
-                            e.currentTarget.style.backgroundColor = "#b91c1c";
+                            e.currentTarget.style.backgroundColor = "rgba(220, 38, 38, 0.08)";
+                            e.currentTarget.style.borderColor = "#dc2626";
                           }
                         }}
                         onMouseOut={(e) => {
                           if (processingRequestId !== request.id) {
-                            e.currentTarget.style.backgroundColor = "#dc2626";
+                            e.currentTarget.style.backgroundColor = "transparent";
+                            e.currentTarget.style.borderColor = "rgba(220, 38, 38, 0.3)";
                           }
                         }}
                       >
@@ -1965,9 +1977,10 @@ export default function Home() {
                         disabled={processingRequestId === request.id}
                         style={{
                           padding: "0.5rem 1rem",
-                          backgroundColor: processingRequestId === request.id ? "#374151" : "#10b981",
-                          color: "rgba(0, 0, 0, 0.87)",
-                          border: "none",
+                          backgroundColor: "transparent",
+                          color: processingRequestId === request.id ? "rgba(0, 0, 0, 0.3)" : "#10b981",
+                          border: "1px solid",
+                          borderColor: processingRequestId === request.id ? "rgba(0, 0, 0, 0.1)" : "rgba(16, 185, 129, 0.4)",
                           borderRadius: "6px",
                           fontSize: "0.875rem",
                           fontWeight: "500",
@@ -1976,12 +1989,14 @@ export default function Home() {
                         }}
                         onMouseOver={(e) => {
                           if (processingRequestId !== request.id) {
-                            e.currentTarget.style.backgroundColor = "#059669";
+                            e.currentTarget.style.backgroundColor = "rgba(16, 185, 129, 0.08)";
+                            e.currentTarget.style.borderColor = "#10b981";
                           }
                         }}
                         onMouseOut={(e) => {
                           if (processingRequestId !== request.id) {
-                            e.currentTarget.style.backgroundColor = "#10b981";
+                            e.currentTarget.style.backgroundColor = "transparent";
+                            e.currentTarget.style.borderColor = "rgba(16, 185, 129, 0.4)";
                           }
                         }}
                       >
@@ -1992,9 +2007,10 @@ export default function Home() {
                         disabled={processingRequestId === request.id}
                         style={{
                           padding: "0.5rem 1rem",
-                          backgroundColor: processingRequestId === request.id ? "#374151" : "#dc2626",
-                          color: "rgba(0, 0, 0, 0.87)",
-                          border: "none",
+                          backgroundColor: "transparent",
+                          color: processingRequestId === request.id ? "rgba(0, 0, 0, 0.3)" : "#dc2626",
+                          border: "1px solid",
+                          borderColor: processingRequestId === request.id ? "rgba(0, 0, 0, 0.1)" : "rgba(220, 38, 38, 0.3)",
                           borderRadius: "6px",
                           fontSize: "0.875rem",
                           fontWeight: "500",
@@ -2003,12 +2019,14 @@ export default function Home() {
                         }}
                         onMouseOver={(e) => {
                           if (processingRequestId !== request.id) {
-                            e.currentTarget.style.backgroundColor = "#b91c1c";
+                            e.currentTarget.style.backgroundColor = "rgba(220, 38, 38, 0.08)";
+                            e.currentTarget.style.borderColor = "#dc2626";
                           }
                         }}
                         onMouseOut={(e) => {
                           if (processingRequestId !== request.id) {
-                            e.currentTarget.style.backgroundColor = "#dc2626";
+                            e.currentTarget.style.backgroundColor = "transparent";
+                            e.currentTarget.style.borderColor = "rgba(220, 38, 38, 0.3)";
                           }
                         }}
                       >
@@ -2090,10 +2108,10 @@ export default function Home() {
             aria-busy={isGenerating}
             style={{
               padding: "0.625rem 1.5rem",
-              backgroundColor: isGenerating || students.filter(s => s.hasSubmitted).length === 0 ? "#1a1f2e" : "#ec7211",
-              color: isGenerating || students.filter(s => s.hasSubmitted).length === 0 ? "#4b5563" : "#ffffff",
+              backgroundColor: "transparent",
+              color: isGenerating || students.filter(s => s.hasSubmitted).length === 0 ? "rgba(0, 0, 0, 0.3)" : "#ec7211",
               border: "1px solid",
-              borderColor: isGenerating || students.filter(s => s.hasSubmitted).length === 0 ? "#2d3748" : "#ec7211",
+              borderColor: isGenerating || students.filter(s => s.hasSubmitted).length === 0 ? "rgba(0, 0, 0, 0.1)" : "rgba(236, 114, 17, 0.4)",
               borderRadius: "6px",
               fontSize: "0.875rem",
               fontWeight: "500",
@@ -2103,14 +2121,14 @@ export default function Home() {
             }}
             onMouseOver={(e) => {
               if (!isGenerating && students.filter(s => s.hasSubmitted).length > 0) {
-                e.currentTarget.style.backgroundColor = "#d66b14";
-                e.currentTarget.style.borderColor = "#d66b14";
+                e.currentTarget.style.backgroundColor = "rgba(236, 114, 17, 0.08)";
+                e.currentTarget.style.borderColor = "#ec7211";
               }
             }}
             onMouseOut={(e) => {
               if (!isGenerating && students.filter(s => s.hasSubmitted).length > 0) {
-                e.currentTarget.style.backgroundColor = "#ec7211";
-                e.currentTarget.style.borderColor = "#ec7211";
+                e.currentTarget.style.backgroundColor = "transparent";
+                e.currentTarget.style.borderColor = "rgba(236, 114, 17, 0.4)";
               }
             }}
           >
@@ -2120,7 +2138,7 @@ export default function Home() {
                   display: "inline-block",
                   width: "14px",
                   height: "14px",
-                  border: "2px solid #ffffff",
+                  border: "2px solid #ec7211",
                   borderTopColor: "transparent",
                   borderRadius: "50%",
                   animation: "spin 0.6s linear infinite"
@@ -2174,10 +2192,10 @@ export default function Home() {
                     aria-label={`Publish ${currentSchedule.name}`}
                     style={{
                       padding: "0.625rem 1.25rem",
-                      backgroundColor: publishingScheduleId === savedScheduleIds[scheduleIndex] ? "#374151" : "#10b981",
-                      color: "rgba(0, 0, 0, 0.87)",
+                      backgroundColor: "transparent",
+                      color: publishingScheduleId === savedScheduleIds[scheduleIndex] ? "rgba(0, 0, 0, 0.3)" : "#10b981",
                       border: "1px solid",
-                      borderColor: publishingScheduleId === savedScheduleIds[scheduleIndex] ? "#374151" : "#10b981",
+                      borderColor: publishingScheduleId === savedScheduleIds[scheduleIndex] ? "rgba(0, 0, 0, 0.1)" : "rgba(16, 185, 129, 0.4)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       fontWeight: "500",
@@ -2189,14 +2207,14 @@ export default function Home() {
                     }}
                     onMouseOver={(e) => {
                       if (publishingScheduleId !== savedScheduleIds[scheduleIndex]) {
-                        e.currentTarget.style.backgroundColor = "#059669";
-                        e.currentTarget.style.borderColor = "#059669";
+                        e.currentTarget.style.backgroundColor = "rgba(16, 185, 129, 0.08)";
+                        e.currentTarget.style.borderColor = "#10b981";
                       }
                     }}
                     onMouseOut={(e) => {
                       if (publishingScheduleId !== savedScheduleIds[scheduleIndex]) {
-                        e.currentTarget.style.backgroundColor = "#10b981";
-                        e.currentTarget.style.borderColor = "#10b981";
+                        e.currentTarget.style.backgroundColor = "transparent";
+                        e.currentTarget.style.borderColor = "rgba(16, 185, 129, 0.4)";
                       }
                     }}
                   >
@@ -2212,9 +2230,9 @@ export default function Home() {
                     aria-label={`Export ${currentSchedule.name} to CSV`}
                     style={{
                       padding: "0.625rem 1.25rem",
-                      backgroundColor: "#047857",
-                      color: "rgba(0, 0, 0, 0.87)",
-                      border: "1px solid #047857",
+                      backgroundColor: "transparent",
+                      color: "#047857",
+                      border: "1px solid rgba(4, 120, 87, 0.4)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       fontWeight: "500",
@@ -2224,12 +2242,12 @@ export default function Home() {
                       letterSpacing: "0.01em"
                     }}
                     onMouseOver={(e) => {
-                      e.currentTarget.style.backgroundColor = "#059669";
-                      e.currentTarget.style.borderColor = "#059669";
+                      e.currentTarget.style.backgroundColor = "rgba(4, 120, 87, 0.08)";
+                      e.currentTarget.style.borderColor = "#047857";
                     }}
                     onMouseOut={(e) => {
-                      e.currentTarget.style.backgroundColor = "#047857";
-                      e.currentTarget.style.borderColor = "#047857";
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.borderColor = "rgba(4, 120, 87, 0.4)";
                     }}
                   >
                     Export CSV
@@ -2638,17 +2656,17 @@ export default function Home() {
                     }}
                     style={{
                       padding: "0.625rem 1.25rem",
-                      backgroundColor: "rgba(0, 0, 0, 0.02)",
-                      color: "rgba(0, 0, 0, 0.87)",
-                      border: "1px solid rgba(0, 0, 0, 0.1)",
+                      backgroundColor: "transparent",
+                      color: "rgba(0, 0, 0, 0.6)",
+                      border: "1px solid rgba(0, 0, 0, 0.2)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       fontWeight: "500",
                       cursor: "pointer",
                       transition: "all 0.15s ease"
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.05)"}
-                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)"}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.03)"}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                   >
                     Cancel
                   </button>
@@ -2657,9 +2675,10 @@ export default function Home() {
                     disabled={submittingAdmin}
                     style={{
                       padding: "0.625rem 1.25rem",
-                      backgroundColor: submittingAdmin ? "#6b7280" : "#14b8a6",
-                      color: "rgba(0, 0, 0, 0.87)",
-                      border: submittingAdmin ? "1px solid #6b7280" : "1px solid #14b8a6",
+                      backgroundColor: "transparent",
+                      color: submittingAdmin ? "rgba(0, 0, 0, 0.3)" : "#14b8a6",
+                      border: "1px solid",
+                      borderColor: submittingAdmin ? "rgba(0, 0, 0, 0.1)" : "rgba(20, 184, 166, 0.4)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       fontWeight: "500",
@@ -2669,14 +2688,14 @@ export default function Home() {
                     }}
                     onMouseOver={(e) => {
                       if (!submittingAdmin) {
-                        e.currentTarget.style.backgroundColor = "#0d9488";
-                        e.currentTarget.style.borderColor = "#0d9488";
+                        e.currentTarget.style.backgroundColor = "rgba(20, 184, 166, 0.08)";
+                        e.currentTarget.style.borderColor = "#14b8a6";
                       }
                     }}
                     onMouseOut={(e) => {
                       if (!submittingAdmin) {
-                        e.currentTarget.style.backgroundColor = "#14b8a6";
-                        e.currentTarget.style.borderColor = "#14b8a6";
+                        e.currentTarget.style.backgroundColor = "transparent";
+                        e.currentTarget.style.borderColor = "rgba(20, 184, 166, 0.4)";
                       }
                     }}
                   >
@@ -2835,17 +2854,17 @@ export default function Home() {
                     onClick={() => setShowAddStudentModal(false)}
                     style={{
                       padding: "0.625rem 1.25rem",
-                      backgroundColor: "rgba(0, 0, 0, 0.02)",
-                      color: "rgba(0, 0, 0, 0.87)",
-                      border: "1px solid rgba(0, 0, 0, 0.1)",
+                      backgroundColor: "transparent",
+                      color: "rgba(0, 0, 0, 0.6)",
+                      border: "1px solid rgba(0, 0, 0, 0.2)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       fontWeight: "500",
                       cursor: "pointer",
                       transition: "all 0.15s ease"
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.05)"}
-                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)"}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.03)"}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                   >
                     Cancel
                   </button>
@@ -2854,9 +2873,10 @@ export default function Home() {
                     disabled={submittingStudent}
                     style={{
                       padding: "0.625rem 1.25rem",
-                      backgroundColor: submittingStudent ? "#6b7280" : "#14b8a6",
-                      color: "rgba(0, 0, 0, 0.87)",
-                      border: submittingStudent ? "1px solid #6b7280" : "1px solid #14b8a6",
+                      backgroundColor: "transparent",
+                      color: submittingStudent ? "rgba(0, 0, 0, 0.3)" : "#14b8a6",
+                      border: "1px solid",
+                      borderColor: submittingStudent ? "rgba(0, 0, 0, 0.1)" : "rgba(20, 184, 166, 0.4)",
                       borderRadius: "6px",
                       fontSize: "0.875rem",
                       fontWeight: "500",
@@ -2866,14 +2886,14 @@ export default function Home() {
                     }}
                     onMouseOver={(e) => {
                       if (!submittingStudent) {
-                        e.currentTarget.style.backgroundColor = "#0d9488";
-                        e.currentTarget.style.borderColor = "#0d9488";
+                        e.currentTarget.style.backgroundColor = "rgba(20, 184, 166, 0.08)";
+                        e.currentTarget.style.borderColor = "#14b8a6";
                       }
                     }}
                     onMouseOut={(e) => {
                       if (!submittingStudent) {
-                        e.currentTarget.style.backgroundColor = "#14b8a6";
-                        e.currentTarget.style.borderColor = "#14b8a6";
+                        e.currentTarget.style.backgroundColor = "transparent";
+                        e.currentTarget.style.borderColor = "rgba(20, 184, 166, 0.4)";
                       }
                     }}
                   >
@@ -2970,9 +2990,10 @@ export default function Home() {
                   onClick={() => confirmModal.onConfirm && confirmModal.onConfirm()}
                   style={{
                     padding: "0.5rem 1rem",
-                    backgroundColor: confirmModal.isDangerous ? "#dc2626" : "#14b8a6",
-                    color: "rgba(0, 0, 0, 0.87)",
-                    border: "none",
+                    backgroundColor: "transparent",
+                    color: confirmModal.isDangerous ? "#dc2626" : "#14b8a6",
+                    border: "1px solid",
+                    borderColor: confirmModal.isDangerous ? "rgba(220, 38, 38, 0.4)" : "rgba(20, 184, 166, 0.4)",
                     borderRadius: "6px",
                     fontSize: "0.875rem",
                     fontWeight: "500",
@@ -2980,10 +3001,12 @@ export default function Home() {
                     transition: "all 0.15s ease"
                   }}
                   onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = confirmModal.isDangerous ? "#b91c1c" : "#0d9488";
+                    e.currentTarget.style.backgroundColor = confirmModal.isDangerous ? "rgba(220, 38, 38, 0.08)" : "rgba(20, 184, 166, 0.08)";
+                    e.currentTarget.style.borderColor = confirmModal.isDangerous ? "#dc2626" : "#14b8a6";
                   }}
                   onMouseOut={(e) => {
-                    e.currentTarget.style.backgroundColor = confirmModal.isDangerous ? "#dc2626" : "#14b8a6";
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.borderColor = confirmModal.isDangerous ? "rgba(220, 38, 38, 0.4)" : "rgba(20, 184, 166, 0.4)";
                   }}
                 >
                   {confirmModal.confirmText}
