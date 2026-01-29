@@ -10,12 +10,12 @@ import HeroAnimation from './components/HeroAnimation';
 
 // Get forum URL based on environment
 const getForumUrl = () => {
-  if (typeof window === 'undefined') return '/forum';
+  if (typeof window === 'undefined') return 'https://forum.schedule-builder.xyz';
   const hostname = window.location.hostname;
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
     return 'http://localhost:5174';
   }
-  return `https://forum.${hostname}`;
+  return 'https://forum.schedule-builder.xyz';
 };
 
 export default function LandingPage() {
