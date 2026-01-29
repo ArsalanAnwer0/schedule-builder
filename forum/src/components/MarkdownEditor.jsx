@@ -22,7 +22,7 @@ export default function MarkdownEditor({ value, onChange, placeholder = 'Write y
   }
 
   const toolbarButtons = [
-    { label: 'B', title: 'Bold', action: () => insertMarkdown('**', '**'), style: { fontWeight: '600' } },
+    { label: 'B', title: 'Bold', action: () => insertMarkdown('**', '**'), style: { fontWeight: '700' } },
     { label: 'I', title: 'Italic', action: () => insertMarkdown('*', '*'), style: { fontStyle: 'italic' } },
     { label: 'Link', title: 'Insert Link', action: () => insertMarkdown('[', '](url)') },
     { label: 'Code', title: 'Code', action: () => insertMarkdown('`', '`') },
@@ -30,14 +30,20 @@ export default function MarkdownEditor({ value, onChange, placeholder = 'Write y
   ]
 
   return (
-    <div style={{ width: '100%', border: '1px solid rgba(0, 0, 0, 0.2)', borderRadius: '8px', overflow: 'hidden' }}>
+    <div style={{
+      width: '100%',
+      border: '1px solid rgba(0, 0, 0, 0.15)',
+      borderRadius: '6px',
+      overflow: 'hidden',
+      transition: 'border-color 0.15s',
+    }}>
       {/* Toolbar */}
       <div style={{
         display: 'flex',
-        gap: '0.5rem',
-        padding: '0.5rem',
-        backgroundColor: '#f9fafb',
-        borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+        gap: '0.25rem',
+        padding: '0.375rem',
+        borderBottom: '1px solid rgba(0, 0, 0, 0.08)',
+        backgroundColor: '#fafafa',
       }}>
         {toolbarButtons.map((btn, idx) => (
           <button
@@ -45,19 +51,26 @@ export default function MarkdownEditor({ value, onChange, placeholder = 'Write y
             type="button"
             onClick={btn.action}
             title={btn.title}
+            className="btn-press"
             style={{
-              padding: '0.375rem 0.75rem',
-              backgroundColor: 'rgba(0, 0, 0, 0.05)',
-              color: 'rgba(0, 0, 0, 0.7)',
+              padding: '0.25rem 0.5rem',
+              backgroundColor: 'transparent',
+              color: 'rgba(0, 0, 0, 0.55)',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
-              fontSize: '0.875rem',
-              transition: 'background 0.15s ease',
+              fontSize: '0.75rem',
+              transition: 'all 0.1s',
               ...btn.style,
             }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.1)'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.05)'}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.06)'
+              e.currentTarget.style.color = 'rgba(0, 0, 0, 0.8)'
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent'
+              e.currentTarget.style.color = 'rgba(0, 0, 0, 0.55)'
+            }}
           >
             {btn.label}
           </button>
@@ -66,18 +79,30 @@ export default function MarkdownEditor({ value, onChange, placeholder = 'Write y
         <button
           type="button"
           onClick={() => setShowPreview(!showPreview)}
+          className="btn-press"
           style={{
-            padding: '0.375rem 0.75rem',
-            backgroundColor: showPreview ? '#14b8a6' : 'rgba(0, 0, 0, 0.05)',
-            color: showPreview ? '#ffffff' : 'rgba(0, 0, 0, 0.7)',
+            padding: '0.25rem 0.5rem',
+            backgroundColor: showPreview ? 'rgba(20, 184, 166, 0.1)' : 'transparent',
+            color: showPreview ? '#14b8a6' : 'rgba(0, 0, 0, 0.45)',
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
-            fontSize: '0.875rem',
-            transition: 'background 0.15s ease',
+            fontSize: '0.75rem',
+            fontWeight: '500',
+            transition: 'all 0.1s',
           }}
-          onMouseOver={(e) => { if (!showPreview) e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.1)' }}
-          onMouseOut={(e) => { if (!showPreview) e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.05)' }}
+          onMouseOver={(e) => {
+            if (!showPreview) {
+              e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.06)'
+              e.currentTarget.style.color = 'rgba(0, 0, 0, 0.65)'
+            }
+          }}
+          onMouseOut={(e) => {
+            if (!showPreview) {
+              e.currentTarget.style.backgroundColor = 'transparent'
+              e.currentTarget.style.color = 'rgba(0, 0, 0, 0.45)'
+            }
+          }}
         >
           {showPreview ? 'Edit' : 'Preview'}
         </button>
@@ -86,14 +111,15 @@ export default function MarkdownEditor({ value, onChange, placeholder = 'Write y
       {/* Editor / Preview */}
       {showPreview ? (
         <div style={{
-          padding: '1rem',
+          padding: '0.75rem',
           backgroundColor: '#ffffff',
-          minHeight: '200px',
+          minHeight: '160px',
           color: 'rgba(0, 0, 0, 0.87)',
           lineHeight: '1.6',
+          fontSize: '0.8125rem',
           whiteSpace: 'pre-wrap',
         }}>
-          {value || <span style={{ color: 'rgba(0, 0, 0, 0.4)' }}>Nothing to preview</span>}
+          {value || <span style={{ color: 'rgba(0, 0, 0, 0.3)' }}>Nothing to preview</span>}
         </div>
       ) : (
         <textarea
@@ -103,12 +129,12 @@ export default function MarkdownEditor({ value, onChange, placeholder = 'Write y
           placeholder={placeholder}
           style={{
             width: '100%',
-            minHeight: '200px',
-            padding: '1rem',
+            minHeight: '160px',
+            padding: '0.75rem',
             backgroundColor: '#ffffff',
             color: 'rgba(0, 0, 0, 0.87)',
             border: 'none',
-            fontSize: '0.9375rem',
+            fontSize: '0.8125rem',
             lineHeight: '1.6',
             fontFamily: 'inherit',
             resize: 'vertical',

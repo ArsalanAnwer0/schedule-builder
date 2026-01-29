@@ -1,8 +1,17 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { api } from '../hooks/useApi'
 import MarkdownEditor from '../components/MarkdownEditor'
+
+const CATEGORY_COLORS = [
+  '#14b8a6', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6',
+  '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1',
+]
+
+function getCategoryColor(index) {
+  return CATEGORY_COLORS[index % CATEGORY_COLORS.length]
+}
 
 export default function NewTopicPage() {
   const navigate = useNavigate()
@@ -82,6 +91,29 @@ export default function NewTopicPage() {
     }
   }
 
+  const inputStyle = {
+    width: '100%',
+    padding: '0.5rem 0.75rem',
+    backgroundColor: '#ffffff',
+    color: 'rgba(0, 0, 0, 0.87)',
+    border: '1px solid rgba(0, 0, 0, 0.15)',
+    borderRadius: '6px',
+    fontSize: '0.8125rem',
+    outline: 'none',
+    boxSizing: 'border-box',
+    transition: 'border-color 0.15s, box-shadow 0.15s',
+  }
+
+  const handleFocus = (e) => {
+    e.currentTarget.style.borderColor = '#14b8a6'
+    e.currentTarget.style.boxShadow = '0 0 0 2px rgba(20, 184, 166, 0.1)'
+  }
+
+  const handleBlur = (e) => {
+    e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.15)'
+    e.currentTarget.style.boxShadow = 'none'
+  }
+
   if (authLoading || loading) {
     return (
       <div style={{
@@ -90,7 +122,7 @@ export default function NewTopicPage() {
         justifyContent: 'center',
         alignItems: 'center',
       }}>
-        <div style={{ color: 'rgba(0, 0, 0, 0.65)' }}>Loading...</div>
+        <div className="spinner spinner-lg" />
       </div>
     )
   }
@@ -102,35 +134,50 @@ export default function NewTopicPage() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        color: 'rgba(0, 0, 0, 0.45)',
+        fontSize: '0.8125rem',
       }}>
-        <div style={{ color: 'rgba(0, 0, 0, 0.65)' }}>Redirecting to sign in...</div>
+        Redirecting to sign in...
       </div>
     )
   }
 
   return (
-    <div style={{ padding: '3rem 2rem' }}>
-      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+    <div style={{ padding: '2rem 1.5rem' }}>
+      <div style={{ maxWidth: '700px', margin: '0 auto' }}>
+        {/* Breadcrumb */}
+        <div style={{ marginBottom: '1.25rem' }}>
+          <Link
+            to="/"
+            style={{ fontSize: '0.8125rem', color: 'rgba(0, 0, 0, 0.45)', transition: 'color 0.15s' }}
+            onMouseOver={(e) => e.currentTarget.style.color = '#14b8a6'}
+            onMouseOut={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.45)'}
+          >
+            Forum
+          </Link>
+          <span style={{ color: 'rgba(0, 0, 0, 0.3)', margin: '0 0.5rem', fontSize: '0.75rem' }}>/</span>
+          <span style={{ fontSize: '0.8125rem', color: 'rgba(0, 0, 0, 0.55)' }}>
+            New Topic
+          </span>
+        </div>
+
         <h1 style={{
-          fontSize: '2rem',
+          fontSize: '1.375rem',
           fontWeight: '600',
           color: 'rgba(0, 0, 0, 0.87)',
-          marginBottom: '2rem',
-          fontFamily: 'Georgia, serif',
-          letterSpacing: '-0.02em'
+          marginBottom: '1.5rem',
         }}>
           Create New Topic
         </h1>
 
         {error && (
           <div style={{
-            padding: '0.75rem 1rem',
-            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-            border: '1px solid rgba(239, 68, 68, 0.3)',
+            padding: '0.5rem 0.75rem',
+            backgroundColor: 'rgba(239, 68, 68, 0.08)',
             color: '#dc2626',
-            borderRadius: '8px',
-            marginBottom: '1.5rem',
-            fontSize: '0.875rem',
+            borderRadius: '6px',
+            marginBottom: '1rem',
+            fontSize: '0.8125rem',
           }}>
             {error}
           </div>
@@ -138,46 +185,59 @@ export default function NewTopicPage() {
 
         <form onSubmit={handleSubmit}>
           {/* Category */}
-          <div style={{ marginBottom: '1.5rem' }}>
-            <label style={{ display: 'block', color: 'rgba(0, 0, 0, 0.65)', marginBottom: '0.5rem', fontWeight: '500', fontSize: '0.875rem' }}>
-              Category *
+          <div style={{ marginBottom: '1.25rem' }}>
+            <label style={{
+              display: 'block',
+              color: 'rgba(0, 0, 0, 0.55)',
+              marginBottom: '0.375rem',
+              fontWeight: '500',
+              fontSize: '0.75rem',
+              textTransform: 'uppercase',
+              letterSpacing: '0.03em',
+            }}>
+              Category
             </label>
-            <select
-              value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              required
-              style={{
-                width: '100%',
-                padding: '0.75rem 1rem',
-                backgroundColor: '#ffffff',
-                color: 'rgba(0, 0, 0, 0.87)',
-                border: '1px solid rgba(0, 0, 0, 0.2)',
-                borderRadius: '8px',
-                fontSize: '0.9375rem',
-                outline: 'none',
-                boxSizing: 'border-box',
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = '#14b8a6'
-                e.currentTarget.style.boxShadow = '0 0 0 3px rgba(20, 184, 166, 0.1)'
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)'
-                e.currentTarget.style.boxShadow = 'none'
-              }}
-            >
-              {categories.map((cat) => (
-                <option key={cat._id} value={cat._id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
+            <div style={{ display: 'flex', gap: '0.375rem', flexWrap: 'wrap' }}>
+              {categories.map((cat, idx) => {
+                const isSelected = categoryId === cat._id
+                const color = getCategoryColor(idx)
+                return (
+                  <button
+                    key={cat._id}
+                    type="button"
+                    onClick={() => setCategoryId(cat._id)}
+                    className="btn-press"
+                    style={{
+                      padding: '0.3125rem 0.75rem',
+                      backgroundColor: isSelected ? color : 'transparent',
+                      color: isSelected ? '#fff' : 'rgba(0, 0, 0, 0.55)',
+                      border: isSelected ? 'none' : '1px solid rgba(0, 0, 0, 0.15)',
+                      borderRadius: '100px',
+                      fontSize: '0.8125rem',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    {cat.name}
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
           {/* Title */}
-          <div style={{ marginBottom: '1.5rem' }}>
-            <label style={{ display: 'block', color: 'rgba(0, 0, 0, 0.65)', marginBottom: '0.5rem', fontWeight: '500', fontSize: '0.875rem' }}>
-              Title *
+          <div style={{ marginBottom: '1.25rem' }}>
+            <label style={{
+              display: 'block',
+              color: 'rgba(0, 0, 0, 0.55)',
+              marginBottom: '0.375rem',
+              fontWeight: '500',
+              fontSize: '0.75rem',
+              textTransform: 'uppercase',
+              letterSpacing: '0.03em',
+            }}>
+              Title
             </label>
             <input
               type="text"
@@ -185,32 +245,24 @@ export default function NewTopicPage() {
               onChange={(e) => setTitle(e.target.value)}
               placeholder="What's your question or topic?"
               required
-              style={{
-                width: '100%',
-                padding: '0.75rem 1rem',
-                backgroundColor: '#ffffff',
-                color: 'rgba(0, 0, 0, 0.87)',
-                border: '1px solid rgba(0, 0, 0, 0.2)',
-                borderRadius: '8px',
-                fontSize: '0.9375rem',
-                outline: 'none',
-                boxSizing: 'border-box',
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = '#14b8a6'
-                e.currentTarget.style.boxShadow = '0 0 0 3px rgba(20, 184, 166, 0.1)'
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)'
-                e.currentTarget.style.boxShadow = 'none'
-              }}
+              style={inputStyle}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
             />
           </div>
 
           {/* Content */}
-          <div style={{ marginBottom: '1.5rem' }}>
-            <label style={{ display: 'block', color: 'rgba(0, 0, 0, 0.65)', marginBottom: '0.5rem', fontWeight: '500', fontSize: '0.875rem' }}>
-              Content *
+          <div style={{ marginBottom: '1.25rem' }}>
+            <label style={{
+              display: 'block',
+              color: 'rgba(0, 0, 0, 0.55)',
+              marginBottom: '0.375rem',
+              fontWeight: '500',
+              fontSize: '0.75rem',
+              textTransform: 'uppercase',
+              letterSpacing: '0.03em',
+            }}>
+              Content
             </label>
             <MarkdownEditor
               value={content}
@@ -220,52 +272,48 @@ export default function NewTopicPage() {
           </div>
 
           {/* Tags */}
-          <div style={{ marginBottom: '2rem' }}>
-            <label style={{ display: 'block', color: 'rgba(0, 0, 0, 0.65)', marginBottom: '0.5rem', fontWeight: '500', fontSize: '0.875rem' }}>
-              Tags (comma-separated)
+          <div style={{ marginBottom: '1.5rem' }}>
+            <label style={{
+              display: 'block',
+              color: 'rgba(0, 0, 0, 0.55)',
+              marginBottom: '0.375rem',
+              fontWeight: '500',
+              fontSize: '0.75rem',
+              textTransform: 'uppercase',
+              letterSpacing: '0.03em',
+            }}>
+              Tags
+              <span style={{ fontWeight: '400', textTransform: 'none', letterSpacing: '0', marginLeft: '0.375rem', color: 'rgba(0, 0, 0, 0.35)' }}>
+                comma-separated
+              </span>
             </label>
             <input
               type="text"
               value={tags}
               onChange={(e) => setTags(e.target.value)}
-              placeholder="bug, feature, mobile, etc."
-              style={{
-                width: '100%',
-                padding: '0.75rem 1rem',
-                backgroundColor: '#ffffff',
-                color: 'rgba(0, 0, 0, 0.87)',
-                border: '1px solid rgba(0, 0, 0, 0.2)',
-                borderRadius: '8px',
-                fontSize: '0.9375rem',
-                outline: 'none',
-                boxSizing: 'border-box',
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = '#14b8a6'
-                e.currentTarget.style.boxShadow = '0 0 0 3px rgba(20, 184, 166, 0.1)'
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)'
-                e.currentTarget.style.boxShadow = 'none'
-              }}
+              placeholder="bug, feature, mobile"
+              style={inputStyle}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
             />
           </div>
 
-          {/* Submit Buttons */}
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
+          {/* Buttons */}
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
             <button
               type="submit"
               disabled={submitting}
+              className="btn-press"
               style={{
-                padding: '0.75rem 2rem',
+                padding: '0.5rem 1.25rem',
                 backgroundColor: submitting ? 'rgba(20, 184, 166, 0.5)' : '#14b8a6',
                 color: '#ffffff',
                 border: 'none',
-                borderRadius: '8px',
-                fontSize: '1rem',
+                borderRadius: '6px',
+                fontSize: '0.8125rem',
                 fontWeight: '500',
                 cursor: submitting ? 'not-allowed' : 'pointer',
-                transition: 'background 0.2s',
+                transition: 'background 0.15s',
               }}
               onMouseOver={(e) => { if (!submitting) e.currentTarget.style.backgroundColor = '#0d9488' }}
               onMouseOut={(e) => { if (!submitting) e.currentTarget.style.backgroundColor = '#14b8a6' }}
@@ -275,24 +323,25 @@ export default function NewTopicPage() {
             <button
               type="button"
               onClick={() => navigate(-1)}
+              className="btn-press"
               style={{
-                padding: '0.75rem 2rem',
+                padding: '0.5rem 1.25rem',
                 backgroundColor: 'transparent',
-                color: 'rgba(0, 0, 0, 0.6)',
-                border: '1px solid rgba(0, 0, 0, 0.2)',
-                borderRadius: '8px',
-                fontSize: '1rem',
+                color: 'rgba(0, 0, 0, 0.5)',
+                border: '1px solid rgba(0, 0, 0, 0.15)',
+                borderRadius: '6px',
+                fontSize: '0.8125rem',
                 fontWeight: '500',
                 cursor: 'pointer',
-                transition: 'all 0.15s ease',
+                transition: 'all 0.15s',
               }}
               onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.05)'
                 e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.3)'
+                e.currentTarget.style.color = 'rgba(0, 0, 0, 0.7)'
               }}
               onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent'
-                e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)'
+                e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.15)'
+                e.currentTarget.style.color = 'rgba(0, 0, 0, 0.5)'
               }}
             >
               Cancel
