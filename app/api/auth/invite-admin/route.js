@@ -42,6 +42,14 @@ export async function POST(request) {
     // Determine primary email (use first available)
     const primaryEmail = email?.trim() || secondaryEmail?.trim();
 
+    // Validate primary email is @gmail.com (required for Google sign-in)
+    if (!primaryEmail.toLowerCase().endsWith('@gmail.com')) {
+      return NextResponse.json(
+        { error: 'Only Gmail accounts (@gmail.com) are allowed. Users must sign in with Google.' },
+        { status: 400 }
+      );
+    }
+
     await dbConnect();
 
     // Get the current admin (to get organization name)

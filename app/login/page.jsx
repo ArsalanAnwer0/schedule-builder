@@ -1,180 +1,36 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [code, setCode] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
-  const [codeSent, setCodeSent] = useState(false);
-  const [canResend, setCanResend] = useState(false);
-  const [resendCountdown, setResendCountdown] = useState(0);
-  const [usePasswordLogin, setUsePasswordLogin] = useState(true);
-
   const searchParams = useSearchParams();
   const urlError = searchParams.get('error');
 
-  // Countdown timer for resend button
-  useEffect(() => {
-    if (resendCountdown > 0) {
-      const timer = setTimeout(() => {
-        setResendCountdown(resendCountdown - 1);
-      }, 1000);
-      return () => clearTimeout(timer);
-    } else if (resendCountdown === 0 && codeSent) {
-      setCanResend(true);
-    }
-  }, [resendCountdown, codeSent]);
-
-  const startResendCountdown = () => {
-    setCanResend(false);
-    setResendCountdown(90); // 90 seconds to match rate limit
-  };
-
-  const handlePasswordLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    setMessage('');
-
-    try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || 'Login failed');
-        setLoading(false);
-        return;
-      }
-
-      // Check if 2FA is required
-      if (data.requires2FA) {
-        window.location.href = `/verify-2fa?userId=${data.userId}`;
-        return;
-      }
-
-      // Login successful - redirect based on role
-      if (data.redirectUrl) {
-        window.location.href = data.redirectUrl;
-      }
-
-    } catch (err) {
-      setError('Something went wrong. Please try again.');
-      setLoading(false);
+  const getErrorMessage = (error) => {
+    switch (error) {
+      case 'oauth_denied':
+        return 'Google sign-in was cancelled. Please try again.';
+      case 'oauth_error':
+        return 'Something went wrong with Google sign-in. Please try again.';
+      case 'no_account':
+        return 'No account found with this email. Contact your organization admin.';
+      case 'already_exists':
+        return 'An account with this email already exists. Please sign in instead.';
+      case 'gmail_only':
+        return 'Only Gmail accounts (@gmail.com) are supported. Please use a Gmail account.';
+      case 'no_email':
+        return 'Could not retrieve your email from Google. Please try again.';
+      default:
+        return error ? 'An error occurred. Please try again.' : null;
     }
   };
 
-  const handleRequestCode = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    setMessage('');
+  const errorMessage = getErrorMessage(urlError);
 
-    try {
-      const res = await fetch('/api/auth/request-link', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || 'Failed to send code');
-        setLoading(false);
-        return;
-      }
-
-      setCodeSent(true);
-      setMessage('Verification code sent! Check your email.');
-      setLoading(false);
-      startResendCountdown();
-
-    } catch (err) {
-      setError('Something went wrong. Please try again.');
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyCode = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    setMessage('');
-
-    try {
-      const res = await fetch('/api/auth/verify-code', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, code }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || 'Invalid verification code');
-        setLoading(false);
-        return;
-      }
-
-      // Login successful - redirect based on role
-      if (data.redirectUrl) {
-        window.location.href = data.redirectUrl;
-      }
-
-    } catch (err) {
-      setError('Something went wrong. Please try again.');
-      setLoading(false);
-    }
-  };
-
-  const handleBackToEmail = () => {
-    setCodeSent(false);
-    setCode('');
-    setError('');
-    setMessage('');
-    setCanResend(false);
-    setResendCountdown(0);
-  };
-
-  const handleResendCode = async () => {
-    setError('');
-    setMessage('');
-    setLoading(true);
-
-    try {
-      const res = await fetch('/api/auth/request-link', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || 'Failed to resend code');
-        setLoading(false);
-        return;
-      }
-
-      setMessage('New verification code sent!');
-      setLoading(false);
-      startResendCountdown();
-
-    } catch (err) {
-      setError('Failed to resend code. Please try again.');
-      setLoading(false);
-    }
+  const handleGoogleSignIn = () => {
+    window.location.href = '/api/auth/google?mode=login';
   };
 
   return (
@@ -233,8 +89,6 @@ function LoginForm() {
             Schedule Builder Team
           </p>
         </div>
-
-        {/* Responsive styles will be added via <style> tag below */}
       </div>
 
       {/* RIGHT PANEL - White */}
@@ -243,664 +97,148 @@ function LoginForm() {
         backgroundColor: '#ffffff',
         padding: '2rem 3rem',
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflowY: 'auto'
+        flexDirection: 'column',
+        position: 'relative'
       }}
       className="right-panel">
-        <div style={{ maxWidth: '420px', width: '100%' }}>
 
-          {/* Header */}
-          <div style={{ marginBottom: '1.5rem' }}>
-            <h2 style={{
-              fontSize: '28px',
-              fontWeight: '600',
+        {/* Sign Up link top right */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          marginBottom: '2rem'
+        }}>
+          <Link
+            href="/register"
+            style={{
               color: 'rgba(0, 0, 0, 0.87)',
-              marginBottom: '0.5rem',
+              fontSize: '0.9375rem',
+              textDecoration: 'none',
+              fontWeight: '400'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.color = '#14b8a6'}
+            onMouseOut={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.87)'}
+          >
+            Sign Up
+          </Link>
+        </div>
+
+        {/* Centered content */}
+        <div style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <div style={{ maxWidth: '420px', width: '100%' }}>
+
+            {/* Header */}
+            <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
+              <h2 style={{
+                fontSize: '28px',
+                fontWeight: '600',
+                color: 'rgba(0, 0, 0, 0.87)',
+                margin: 0
+              }}>
+                Sign in to your account
+              </h2>
+            </div>
+
+            {/* Error Message */}
+            {errorMessage && (
+              <div style={{
+                padding: '1rem 1.25rem',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                borderRadius: '8px',
+                marginBottom: '1.5rem'
+              }}>
+                <p style={{
+                  color: '#dc2626',
+                  fontSize: '0.9375rem',
+                  margin: 0,
+                  fontWeight: '400',
+                  textAlign: 'center'
+                }}>
+                  {errorMessage}
+                </p>
+              </div>
+            )}
+
+            {/* Continue with Google Button */}
+            <button
+              onClick={handleGoogleSignIn}
+              style={{
+                width: '100%',
+                padding: '0.875rem 1.5rem',
+                backgroundColor: '#ffffff',
+                color: 'rgba(0, 0, 0, 0.87)',
+                border: '1px solid rgba(0, 0, 0, 0.2)',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.75rem',
+                transition: 'all 0.2s',
+                marginBottom: '1.5rem'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.02)';
+                e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.3)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = '#ffffff';
+                e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)';
+              }}
+            >
+              {/* Google Icon */}
+              <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+              Continue with Google
+            </button>
+
+            {/* Terms of Service */}
+            <p style={{
+              fontSize: '0.8125rem',
+              color: 'rgba(0, 0, 0, 0.45)',
+              textAlign: 'center',
+              lineHeight: '1.6',
               margin: 0
             }}>
-              {codeSent ? 'Enter verification code' : 'Sign in to your account'}
-            </h2>
-            <p style={{
-              fontSize: '15px',
-              color: 'rgba(0, 0, 0, 0.5)',
-              fontWeight: '300',
-              margin: '0.25rem 0 0 0'
-            }}>
-              {!codeSent && 'Welcome back to Schedule Builder'}
+              By clicking continue, you agree to our{' '}
+              <a
+                href="https://schedule-builder-docs.vercel.app/legal/terms.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: 'rgba(0, 0, 0, 0.6)',
+                  textDecoration: 'underline'
+                }}
+              >
+                Terms of Service
+              </a>
+              {' '}and{' '}
+              <a
+                href="https://schedule-builder-docs.vercel.app/legal/privacy.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: 'rgba(0, 0, 0, 0.6)',
+                  textDecoration: 'underline'
+                }}
+              >
+                Privacy Policy
+              </a>.
             </p>
+
           </div>
-
-          {/* URL Error */}
-          {urlError && (
-            <div style={{
-              padding: '1rem 1.25rem',
-              backgroundColor: 'rgba(239, 68, 68, 0.1)',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-              borderRadius: '8px',
-              marginBottom: '1.5rem'
-            }}>
-              <p style={{
-                color: '#dc2626',
-                fontSize: '0.9375rem',
-                margin: 0,
-                fontWeight: '400'
-              }}>
-                {urlError === 'invalid_token' && 'Invalid login link'}
-                {urlError === 'expired_or_invalid' && 'Login link expired or invalid'}
-                {urlError === 'server_error' && 'Server error. Please try again.'}
-              </p>
-            </div>
-          )}
-
-          {/* Error Message */}
-          {error && (
-            <div style={{
-              padding: '1rem 1.25rem',
-              backgroundColor: 'rgba(239, 68, 68, 0.1)',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-              borderRadius: '8px',
-              marginBottom: '1.5rem'
-            }}>
-              <p style={{
-                color: '#dc2626',
-                fontSize: '0.9375rem',
-                margin: 0,
-                fontWeight: '400'
-              }}>
-                {error}
-              </p>
-            </div>
-          )}
-
-          {/* Success Message */}
-          {message && (
-            <div style={{
-              padding: '1rem 1.25rem',
-              backgroundColor: 'rgba(20, 184, 166, 0.1)',
-              border: '1px solid rgba(20, 184, 166, 0.3)',
-              borderRadius: '8px',
-              marginBottom: '1.5rem'
-            }}>
-              <p style={{
-                color: '#14b8a6',
-                fontSize: '0.9375rem',
-                margin: 0,
-                fontWeight: '400'
-              }}>
-                {message}
-              </p>
-            </div>
-          )}
-
-          {/* Password Login Step */}
-          {!codeSent && usePasswordLogin && (
-            <form onSubmit={handlePasswordLogin}>
-              <div style={{ marginBottom: '1.5rem' }}>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: 'rgba(0, 0, 0, 0.65)',
-                  marginBottom: '0.5rem'
-                }}>
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  disabled={loading}
-                  placeholder="you@example.com"
-                  style={{
-                    width: '100%',
-                    padding: '0.875rem 1rem',
-                    backgroundColor: '#ffffff',
-                    border: '1px solid rgba(0, 0, 0, 0.2)',
-                    borderRadius: '8px',
-                    fontSize: '0.9375rem',
-                    color: 'rgba(0, 0, 0, 0.87)',
-                    outline: 'none',
-                    fontWeight: '400',
-                    transition: 'all 0.2s',
-                    boxSizing: 'border-box'
-                  }}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#14b8a6';
-                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(20, 184, 166, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: 'rgba(0, 0, 0, 0.65)',
-                  marginBottom: '0.5rem'
-                }}>
-                  Password
-                </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={loading}
-                  placeholder="Enter your password"
-                  style={{
-                    width: '100%',
-                    padding: '0.875rem 1rem',
-                    backgroundColor: '#ffffff',
-                    border: '1px solid rgba(0, 0, 0, 0.2)',
-                    borderRadius: '8px',
-                    fontSize: '0.9375rem',
-                    color: 'rgba(0, 0, 0, 0.87)',
-                    outline: 'none',
-                    fontWeight: '400',
-                    transition: 'all 0.2s',
-                    boxSizing: 'border-box'
-                  }}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#14b8a6';
-                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(20, 184, 166, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-
-              {/* Forgot Password Link */}
-              <div style={{
-                textAlign: 'right',
-                marginBottom: '1.5rem'
-              }}>
-                <Link
-                  href="/forgot-password"
-                  style={{
-                    fontSize: '0.875rem',
-                    color: '#14b8a6',
-                    textDecoration: 'none',
-                    fontWeight: '400',
-                    transition: 'color 0.2s'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.color = '#0d9488'}
-                  onMouseOut={(e) => e.currentTarget.style.color = '#14b8a6'}
-                >
-                  Forgot Password?
-                </Link>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                style={{
-                  width: '100%',
-                  padding: '0.875rem 1.5rem',
-                  backgroundColor: loading ? 'rgba(20, 184, 166, 0.5)' : '#14b8a6',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '16px',
-                  fontWeight: '500',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  marginBottom: '1.5rem',
-                  transition: 'all 0.2s'
-                }}
-                onMouseOver={(e) => {
-                  if (!loading) e.currentTarget.style.backgroundColor = '#0d9488';
-                }}
-                onMouseOut={(e) => {
-                  if (!loading) e.currentTarget.style.backgroundColor = '#14b8a6';
-                }}
-              >
-                {loading ? 'Signing in...' : 'Sign In'}
-              </button>
-
-              {/* Alternative Login Option */}
-              <div style={{
-                textAlign: 'center',
-                marginBottom: '1.5rem'
-              }}>
-                <button
-                  type="button"
-                  onClick={() => setUsePasswordLogin(false)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#14b8a6',
-                    fontSize: '0.875rem',
-                    cursor: 'pointer',
-                    padding: 0,
-                    textDecoration: 'none',
-                    fontWeight: '400'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-                  onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
-                >
-                  Use verification code instead
-                </button>
-              </div>
-
-              {/* Register/Set Password Links */}
-              <div style={{
-                textAlign: 'center',
-                paddingTop: '1.5rem',
-                borderTop: '1px solid rgba(0, 0, 0, 0.1)'
-              }}>
-                <p style={{
-                  fontSize: '0.875rem',
-                  color: 'rgba(0, 0, 0, 0.5)',
-                  marginBottom: '0.75rem',
-                  fontWeight: '400'
-                }}>
-                  First time here?
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                  <Link
-                    href="/set-password"
-                    style={{
-                      color: '#14b8a6',
-                      fontSize: '0.9375rem',
-                      textDecoration: 'none',
-                      fontWeight: '400'
-                    }}
-                    onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-                    onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
-                  >
-                    Set your password (Students)
-                  </Link>
-                  <Link
-                    href="/register"
-                    style={{
-                      color: 'rgba(0, 0, 0, 0.5)',
-                      fontSize: '0.875rem',
-                      textDecoration: 'none',
-                      fontWeight: '400'
-                    }}
-                    onMouseOver={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.7)'}
-                    onMouseOut={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.5)'}
-                  >
-                    Register as Admin
-                  </Link>
-                </div>
-              </div>
-            </form>
-          )}
-
-          {/* Email Step for Verification Code */}
-          {!codeSent && !usePasswordLogin && (
-            <form onSubmit={handleRequestCode}>
-              <div style={{ marginBottom: '2rem' }}>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: 'rgba(0, 0, 0, 0.65)',
-                  marginBottom: '0.5rem'
-                }}>
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  disabled={loading}
-                  placeholder="you@example.com"
-                  style={{
-                    width: '100%',
-                    padding: '0.875rem 1rem',
-                    backgroundColor: '#ffffff',
-                    border: '1px solid rgba(0, 0, 0, 0.2)',
-                    borderRadius: '8px',
-                    fontSize: '0.9375rem',
-                    color: 'rgba(0, 0, 0, 0.87)',
-                    outline: 'none',
-                    fontWeight: '400',
-                    transition: 'all 0.2s',
-                    boxSizing: 'border-box'
-                  }}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#14b8a6';
-                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(20, 184, 166, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                style={{
-                  width: '100%',
-                  padding: '0.875rem 1.5rem',
-                  backgroundColor: loading ? 'rgba(20, 184, 166, 0.5)' : '#14b8a6',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '16px',
-                  fontWeight: '500',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  marginBottom: '1.5rem',
-                  transition: 'all 0.2s'
-                }}
-                onMouseOver={(e) => {
-                  if (!loading) e.currentTarget.style.backgroundColor = '#0d9488';
-                }}
-                onMouseOut={(e) => {
-                  if (!loading) e.currentTarget.style.backgroundColor = '#14b8a6';
-                }}
-              >
-                {loading ? 'Sending code...' : 'Send Verification Code'}
-              </button>
-
-              {/* Info */}
-              <div style={{
-                padding: '1rem 1.25rem',
-                backgroundColor: 'rgba(20, 184, 166, 0.05)',
-                border: '1px solid rgba(20, 184, 166, 0.2)',
-                borderRadius: '8px',
-                marginBottom: '1rem'
-              }}>
-                <p style={{
-                  color: 'rgba(0, 0, 0, 0.6)',
-                  fontSize: '0.875rem',
-                  margin: 0,
-                  lineHeight: '1.6',
-                  fontWeight: '400'
-                }}>
-                  We'll send a 6-digit code to your email. Code expires in 10 minutes.
-                </p>
-              </div>
-
-              {/* School Email Warning */}
-              <div style={{
-                padding: '1rem 1.25rem',
-                backgroundColor: 'rgba(239, 68, 68, 0.05)',
-                border: '1px solid rgba(239, 68, 68, 0.2)',
-                borderRadius: '8px',
-                marginBottom: '1.5rem'
-              }}>
-                <p style={{
-                  color: 'rgba(220, 38, 38, 0.8)',
-                  fontSize: '0.875rem',
-                  margin: 0,
-                  lineHeight: '1.6',
-                  fontWeight: '400'
-                }}>
-                  Note: Accounts with school/work email addresses may not receive email notifications due to spam filtering. Please use password login instead.
-                </p>
-              </div>
-
-              {/* Alternative Login Option */}
-              <div style={{
-                textAlign: 'center',
-                marginBottom: '1.5rem'
-              }}>
-                <button
-                  type="button"
-                  onClick={() => setUsePasswordLogin(true)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#14b8a6',
-                    fontSize: '0.875rem',
-                    cursor: 'pointer',
-                    padding: 0,
-                    textDecoration: 'none',
-                    fontWeight: '400'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-                  onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
-                >
-                  Use password instead
-                </button>
-              </div>
-
-              {/* Register/Set Password Links */}
-              <div style={{
-                textAlign: 'center',
-                paddingTop: '1.5rem',
-                borderTop: '1px solid rgba(0, 0, 0, 0.1)'
-              }}>
-                <p style={{
-                  fontSize: '0.875rem',
-                  color: 'rgba(0, 0, 0, 0.5)',
-                  marginBottom: '0.75rem',
-                  fontWeight: '400'
-                }}>
-                  First time here?
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                  <Link
-                    href="/set-password"
-                    style={{
-                      color: '#14b8a6',
-                      fontSize: '0.9375rem',
-                      textDecoration: 'none',
-                      fontWeight: '400'
-                    }}
-                    onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-                    onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
-                  >
-                    Set your password (Students)
-                  </Link>
-                  <Link
-                    href="/register"
-                    style={{
-                      color: 'rgba(0, 0, 0, 0.5)',
-                      fontSize: '0.875rem',
-                      textDecoration: 'none',
-                      fontWeight: '400'
-                    }}
-                    onMouseOver={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.7)'}
-                    onMouseOut={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.5)'}
-                  >
-                    Register as Admin
-                  </Link>
-                </div>
-              </div>
-            </form>
-          )}
-
-          {/* Verification Code Step */}
-          {codeSent && (
-            <form onSubmit={handleVerifyCode}>
-              {/* Email Display */}
-              <div style={{ marginBottom: '1.5rem' }}>
-                <p style={{
-                  fontSize: '0.875rem',
-                  color: 'rgba(0, 0, 0, 0.6)',
-                  margin: '0 0 0.5rem 0',
-                  fontWeight: '400'
-                }}>
-                  Signing in as: <strong style={{ color: '#14b8a6', fontWeight: '500' }}>{email}</strong>
-                </p>
-                <button
-                  type="button"
-                  onClick={handleBackToEmail}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#14b8a6',
-                    fontSize: '0.875rem',
-                    cursor: 'pointer',
-                    padding: 0,
-                    textDecoration: 'none',
-                    fontWeight: '400'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-                  onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
-                >
-                  Change email
-                </button>
-              </div>
-
-              {/* Code Input */}
-              <div style={{ marginBottom: '2rem' }}>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: 'rgba(0, 0, 0, 0.65)',
-                  marginBottom: '0.5rem'
-                }}>
-                  Verification Code
-                </label>
-                <input
-                  type="text"
-                  value={code}
-                  onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  required
-                  disabled={loading}
-                  placeholder="000000"
-                  maxLength={6}
-                  autoComplete="off"
-                  autoFocus
-                  style={{
-                    width: '100%',
-                    padding: '0.875rem 1rem',
-                    backgroundColor: '#ffffff',
-                    border: '1px solid rgba(0, 0, 0, 0.2)',
-                    borderRadius: '8px',
-                    fontSize: '1.5rem',
-                    color: 'rgba(0, 0, 0, 0.87)',
-                    outline: 'none',
-                    fontWeight: '400',
-                    transition: 'all 0.2s',
-                    letterSpacing: '0.5rem',
-                    textAlign: 'center',
-                    fontFamily: 'monospace',
-                    boxSizing: 'border-box'
-                  }}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#14b8a6';
-                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(20, 184, 166, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={loading || code.length !== 6}
-                style={{
-                  width: '100%',
-                  padding: '0.875rem 1.5rem',
-                  backgroundColor: (loading || code.length !== 6) ? 'rgba(20, 184, 166, 0.5)' : '#14b8a6',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '16px',
-                  fontWeight: '500',
-                  cursor: (loading || code.length !== 6) ? 'not-allowed' : 'pointer',
-                  marginBottom: '1.5rem',
-                  transition: 'all 0.2s'
-                }}
-                onMouseOver={(e) => {
-                  if (!loading && code.length === 6) e.currentTarget.style.backgroundColor = '#0d9488';
-                }}
-                onMouseOut={(e) => {
-                  if (!loading && code.length === 6) e.currentTarget.style.backgroundColor = '#14b8a6';
-                }}
-              >
-                {loading ? 'Verifying...' : 'Verify & Sign In'}
-              </button>
-
-              {/* Info */}
-              <div style={{
-                padding: '1rem 1.25rem',
-                backgroundColor: 'rgba(20, 184, 166, 0.05)',
-                border: '1px solid rgba(20, 184, 166, 0.2)',
-                borderRadius: '8px',
-                marginBottom: '1.5rem'
-              }}>
-                <p style={{
-                  color: 'rgba(0, 0, 0, 0.6)',
-                  fontSize: '0.875rem',
-                  margin: '0 0 0.5rem 0',
-                  lineHeight: '1.6',
-                  fontWeight: '400'
-                }}>
-                  Check your email for the 6-digit code. Code expires in 10 minutes.
-                </p>
-              </div>
-
-              {/* Resend */}
-              <div style={{
-                textAlign: 'center',
-                paddingTop: '1.5rem',
-                borderTop: '1px solid rgba(0, 0, 0, 0.1)'
-              }}>
-                {canResend ? (
-                  <button
-                    type="button"
-                    onClick={handleResendCode}
-                    disabled={loading}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#14b8a6',
-                      fontSize: '0.9375rem',
-                      cursor: loading ? 'not-allowed' : 'pointer',
-                      padding: 0,
-                      textDecoration: 'none',
-                      fontWeight: '400'
-                    }}
-                    onMouseOver={(e) => {
-                      if (!loading) e.currentTarget.style.textDecoration = 'underline';
-                    }}
-                    onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
-                  >
-                    Resend verification code
-                  </button>
-                ) : (
-                  <p style={{
-                    fontSize: '0.875rem',
-                    color: 'rgba(0, 0, 0, 0.4)',
-                    margin: 0,
-                    fontWeight: '400'
-                  }}>
-                    Resend code in {resendCountdown}s
-                  </p>
-                )}
-              </div>
-            </form>
-          )}
-
-          {/* Footer */}
-          <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-            <Link
-              href="/"
-              style={{
-                color: 'rgba(0, 0, 0, 0.4)',
-                fontSize: '0.875rem',
-                textDecoration: 'none',
-                fontWeight: '400'
-              }}
-              onMouseOver={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.6)'}
-              onMouseOut={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.4)'}
-            >
-              Back to home
-            </Link>
-          </div>
-
         </div>
       </div>
 

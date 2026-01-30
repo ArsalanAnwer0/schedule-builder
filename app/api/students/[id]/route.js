@@ -19,6 +19,14 @@ export async function PUT(request, { params }) {
       );
     }
 
+    // Validate email is @gmail.com (required for Google sign-in)
+    if (!email.toLowerCase().trim().endsWith('@gmail.com')) {
+      return NextResponse.json(
+        { error: 'Only Gmail accounts (@gmail.com) are allowed. Users must sign in with Google.' },
+        { status: 400 }
+      );
+    }
+
     await dbConnect();
 
     // Get current admin's organization

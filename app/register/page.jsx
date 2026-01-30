@@ -1,56 +1,75 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { usePasswordValidation } from '@/lib/hooks/usePasswordValidation';
-import PasswordRequirementsDisplay from '@/components/auth/PasswordRequirementsDisplay';
 
-export default function RegisterPage() {
-  const router = useRouter();
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    organizationName: '',
-    password: '',
-    confirmPassword: '',
-  });
+function RegisterForm() {
+  const searchParams = useSearchParams();
+  const step = searchParams.get('step');
+  const dataParam = searchParams.get('data');
+  const urlError = searchParams.get('error');
+
+  const [googleData, setGoogleData] = useState(null);
+  const [organizationName, setOrganizationName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
 
-  // Use password validation hook
-  const { validation: passwordValidation, isValid: isPasswordValid } = usePasswordValidation(formData.password);
+  // Parse Google data if returning from OAuth
+  useEffect(() => {
+    if (step === 'org' && dataParam) {
+      try {
+        const parsed = JSON.parse(Buffer.from(dataParam, 'base64url').toString());
+        if (parsed.email && parsed.name && parsed.googleId) {
+          setGoogleData(parsed);
+        } else {
+          setError('Invalid registration data. Please try again.');
+        }
+      } catch {
+        setError('Invalid registration data. Please try again.');
+      }
+    }
+  }, [step, dataParam]);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const getErrorMessage = (err) => {
+    switch (err) {
+      case 'oauth_denied':
+        return 'Google sign-up was cancelled. Please try again.';
+      case 'oauth_error':
+        return 'Something went wrong with Google sign-up. Please try again.';
+      case 'already_exists':
+        return 'An account with this email already exists. Please sign in instead.';
+      case 'gmail_only':
+        return 'Only Gmail accounts (@gmail.com) are supported. Please use a Gmail account.';
+      case 'no_email':
+        return 'Could not retrieve your email from Google. Please try again.';
+      default:
+        return err ? 'An error occurred. Please try again.' : null;
+    }
   };
 
-  const handleSubmit = async (e) => {
+  const errorFromUrl = getErrorMessage(urlError);
+
+  const handleGoogleSignUp = () => {
+    window.location.href = '/api/auth/google?mode=register';
+  };
+
+  const handleSubmitOrg = async (e) => {
     e.preventDefault();
+    if (!googleData) return;
+
     setLoading(true);
     setError('');
-    setSuccess(false);
-
-    // Validate passwords match
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      setLoading(false);
-      return;
-    }
 
     try {
-      const res = await fetch('/api/auth/register', {
+      const res = await fetch('/api/auth/google/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          organizationName: formData.organizationName,
-          password: formData.password,
+          email: googleData.email,
+          name: googleData.name,
+          googleId: googleData.googleId,
+          organizationName,
         }),
       });
 
@@ -62,15 +81,18 @@ export default function RegisterPage() {
         return;
       }
 
-      // Registration successful - redirect to login
-      window.location.href = '/login';
-      setLoading(false);
-
-    } catch (err) {
+      // Registration successful - redirect to admin dashboard
+      if (data.redirectUrl) {
+        window.location.href = data.redirectUrl;
+      }
+    } catch {
       setError('Something went wrong. Please try again.');
       setLoading(false);
     }
   };
+
+  // Step 2: Organization name form (after Google auth)
+  const isOrgStep = step === 'org' && googleData;
 
   return (
     <div style={{
@@ -136,446 +158,284 @@ export default function RegisterPage() {
         backgroundColor: '#ffffff',
         padding: '2rem 3rem',
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflowY: 'auto'
+        flexDirection: 'column',
+        position: 'relative'
       }}
       className="right-panel">
-        <div style={{ maxWidth: '420px', width: '100%' }}>
 
-          {/* Header */}
-          <div style={{ marginBottom: '1.5rem' }}>
-            <h2 style={{
-              fontSize: '28px',
-              fontWeight: '600',
+        {/* Login link top right */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          marginBottom: '2rem'
+        }}>
+          <Link
+            href="/login"
+            style={{
               color: 'rgba(0, 0, 0, 0.87)',
-              marginBottom: '0.5rem',
-              margin: 0
-            }}>
-              Create your admin account
-            </h2>
-            <p style={{
-              fontSize: '15px',
-              color: 'rgba(0, 0, 0, 0.5)',
-              fontWeight: '300',
-              margin: '0.25rem 0 0 0'
-            }}>
-              Set up your organization on Schedule Builder
-            </p>
-          </div>
+              fontSize: '0.9375rem',
+              textDecoration: 'none',
+              fontWeight: '400'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.color = '#14b8a6'}
+            onMouseOut={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.87)'}
+          >
+            Login
+          </Link>
+        </div>
 
-          {error && (
-            <div style={{
-              padding: '1rem 1.25rem',
-              backgroundColor: 'rgba(239, 68, 68, 0.1)',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-              borderRadius: '8px',
-              marginBottom: '1.5rem'
-            }}>
-              <p style={{
-                color: '#dc2626',
-                fontSize: '0.9375rem',
-                margin: 0,
-                fontWeight: '400'
-              }}>
-                {error}
-              </p>
-            </div>
-          )}
+        {/* Centered content */}
+        <div style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <div style={{ maxWidth: '420px', width: '100%' }}>
 
-          {success ? (
-            <div style={{ textAlign: 'center' }}>
-              <div style={{
-                width: '64px',
-                height: '64px',
-                margin: '0 auto 1.5rem auto',
-                backgroundColor: 'rgba(20, 184, 166, 0.15)',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg>
-              </div>
-
-              <h2 style={{
-                fontSize: '1.5rem',
-                fontWeight: '400',
-                color: 'rgba(0, 0, 0, 0.87)',
-                marginBottom: '0.75rem',
-                fontFamily: 'Georgia, serif'
-              }}>
-                Account created successfully
-              </h2>
-
-              <p style={{
-                color: 'rgba(0, 0, 0, 0.6)',
-                fontSize: '0.9375rem',
-                margin: '0 0 2rem 0',
-                lineHeight: '1.6',
-                fontWeight: '400'
-              }}>
-                You can now login with your email and password.
-              </p>
-
-              <Link
-                href="/login"
-                style={{
-                  display: 'inline-block',
-                  padding: '0.875rem 2rem',
-                  backgroundColor: '#14b8a6',
-                  color: '#ffffff',
-                  borderRadius: '8px',
-                  fontSize: '0.9375rem',
-                  fontWeight: '500',
-                  textDecoration: 'none',
-                  transition: 'all 0.2s'
-                }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0d9488'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#14b8a6'}
-              >
-                Continue to Login
-              </Link>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit}>
-              {/* Info Banner */}
-              <div style={{
-                padding: '0.75rem 1rem',
-                backgroundColor: 'rgba(20, 184, 166, 0.05)',
-                border: '1px solid rgba(20, 184, 166, 0.2)',
-                borderRadius: '8px',
-                marginBottom: '1.25rem'
-              }}>
-                <p style={{
-                  color: 'rgba(0, 0, 0, 0.6)',
-                  fontSize: '0.8125rem',
-                  margin: 0,
-                  lineHeight: '1.5',
-                  fontWeight: '400'
-                }}>
-                  Create a primary admin account for your organization
-                </p>
-              </div>
-
-              {/* Form Fields */}
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: 'rgba(0, 0, 0, 0.65)',
-                  marginBottom: '0.5rem'
-                }}>
-                  Your Name
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '0.875rem 1rem',
-                    backgroundColor: '#ffffff',
-                    border: '1px solid rgba(0, 0, 0, 0.2)',
-                    borderRadius: '8px',
-                    fontSize: '0.9375rem',
+            {!isOrgStep ? (
+              <>
+                {/* Step 1: Google Sign Up */}
+                <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
+                  <h2 style={{
+                    fontSize: '28px',
+                    fontWeight: '600',
                     color: 'rgba(0, 0, 0, 0.87)',
-                    outline: 'none',
-                    fontWeight: '400',
-                    transition: 'all 0.2s',
-                    boxSizing: 'border-box'
-                  }}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#14b8a6';
-                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(20, 184, 166, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: 'rgba(0, 0, 0, 0.65)',
-                  marginBottom: '0.5rem'
-                }}>
-                  Organization Name
-                </label>
-                <input
-                  type="text"
-                  name="organizationName"
-                  value={formData.organizationName}
-                  onChange={handleChange}
-                  required
-                  placeholder="e.g., ABC University"
-                  style={{
-                    width: '100%',
-                    padding: '0.875rem 1rem',
-                    backgroundColor: '#ffffff',
-                    border: '1px solid rgba(0, 0, 0, 0.2)',
-                    borderRadius: '8px',
-                    fontSize: '0.9375rem',
-                    color: 'rgba(0, 0, 0, 0.87)',
-                    outline: 'none',
-                    fontWeight: '400',
-                    transition: 'all 0.2s',
-                    boxSizing: 'border-box'
-                  }}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#14b8a6';
-                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(20, 184, 166, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: 'rgba(0, 0, 0, 0.65)',
-                  marginBottom: '0.5rem'
-                }}>
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '0.875rem 1rem',
-                    backgroundColor: '#ffffff',
-                    border: '1px solid rgba(0, 0, 0, 0.2)',
-                    borderRadius: '8px',
-                    fontSize: '0.9375rem',
-                    color: 'rgba(0, 0, 0, 0.87)',
-                    outline: 'none',
-                    fontWeight: '400',
-                    transition: 'all 0.2s',
-                    boxSizing: 'border-box'
-                  }}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#14b8a6';
-                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(20, 184, 166, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                />
-              </div>
-
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: 'rgba(0, 0, 0, 0.65)',
-                  marginBottom: '0.5rem'
-                }}>
-                  Password
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  minLength="12"
-                  placeholder="Enter password"
-                  style={{
-                    width: '100%',
-                    padding: '0.875rem 1rem',
-                    backgroundColor: '#ffffff',
-                    border: '1px solid rgba(0, 0, 0, 0.2)',
-                    borderRadius: '8px',
-                    fontSize: '0.9375rem',
-                    color: 'rgba(0, 0, 0, 0.87)',
-                    outline: 'none',
-                    fontWeight: '400',
-                    transition: 'all 0.2s',
-                    boxSizing: 'border-box'
-                  }}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#14b8a6';
-                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(20, 184, 166, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                />
-
-                {/* Password Requirements Display */}
-                <PasswordRequirementsDisplay
-                  password={formData.password}
-                  validation={passwordValidation}
-                  showStrengthBar={true}
-                />
-              </div>
-
-              <div style={{ marginBottom: '2rem' }}>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: 'rgba(0, 0, 0, 0.65)',
-                  marginBottom: '0.5rem'
-                }}>
-                  Confirm Password
-                </label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  required
-                  minLength="12"
-                  placeholder="Re-enter your password"
-                  style={{
-                    width: '100%',
-                    padding: '0.875rem 1rem',
-                    backgroundColor: '#ffffff',
-                    border: '1px solid rgba(0, 0, 0, 0.2)',
-                    borderRadius: '8px',
-                    fontSize: '0.9375rem',
-                    color: 'rgba(0, 0, 0, 0.87)',
-                    outline: 'none',
-                    fontWeight: '400',
-                    transition: 'all 0.2s',
-                    boxSizing: 'border-box'
-                  }}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = '#14b8a6';
-                    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(20, 184, 166, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                />
-
-                {/* Password Match Indicator */}
-                {formData.confirmPassword && (
-                  <div style={{
-                    marginTop: '0.5rem',
-                    padding: '0.5rem 0.75rem',
-                    backgroundColor: formData.password === formData.confirmPassword
-                      ? 'rgba(16, 185, 129, 0.1)'
-                      : 'rgba(220, 38, 38, 0.1)',
-                    border: `1px solid ${formData.password === formData.confirmPassword
-                      ? 'rgba(16, 185, 129, 0.3)'
-                      : 'rgba(220, 38, 38, 0.3)'}`,
-                    borderRadius: '6px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    transition: 'all 0.2s ease'
+                    margin: 0
                   }}>
-                    <span style={{
-                      fontSize: '0.75rem',
-                      fontWeight: '500',
-                      color: formData.password === formData.confirmPassword
-                        ? '#10b981'
-                        : '#dc2626'
+                    Create an account
+                  </h2>
+                </div>
+
+                {/* Error Message */}
+                {(errorFromUrl || error) && (
+                  <div style={{
+                    padding: '1rem 1.25rem',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    borderRadius: '8px',
+                    marginBottom: '1.5rem'
+                  }}>
+                    <p style={{
+                      color: '#dc2626',
+                      fontSize: '0.9375rem',
+                      margin: 0,
+                      fontWeight: '400',
+                      textAlign: 'center'
                     }}>
-                      {formData.password === formData.confirmPassword
-                        ? '✓ Passwords match'
-                        : '✗ Passwords do not match'}
-                    </span>
+                      {errorFromUrl || error}
+                    </p>
                   </div>
                 )}
-              </div>
 
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={loading || !isPasswordValid || formData.password !== formData.confirmPassword}
-                style={{
-                  width: '100%',
-                  padding: '0.875rem 1.5rem',
-                  backgroundColor: (loading || !isPasswordValid || formData.password !== formData.confirmPassword)
-                    ? 'rgba(20, 184, 166, 0.5)'
-                    : '#14b8a6',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '16px',
-                  fontWeight: '500',
-                  cursor: (loading || !isPasswordValid || formData.password !== formData.confirmPassword)
-                    ? 'not-allowed'
-                    : 'pointer',
-                  marginBottom: '1.5rem',
-                  transition: 'all 0.2s',
-                  opacity: (loading || !isPasswordValid || formData.password !== formData.confirmPassword) ? 0.6 : 1
-                }}
-                onMouseOver={(e) => {
-                  if (!loading && isPasswordValid && formData.password === formData.confirmPassword) {
-                    e.currentTarget.style.backgroundColor = '#0d9488';
-                  }
-                }}
-                onMouseOut={(e) => {
-                  if (!loading && isPasswordValid && formData.password === formData.confirmPassword) {
-                    e.currentTarget.style.backgroundColor = '#14b8a6';
-                  }
-                }}
-              >
-                {loading ? 'Creating account...' : 'Create Admin Account'}
-              </button>
-
-              {/* Login Link */}
-              <div style={{ textAlign: 'center' }}>
-                <Link
-                  href="/login"
+                {/* Continue with Google Button */}
+                <button
+                  onClick={handleGoogleSignUp}
                   style={{
-                    color: '#14b8a6',
-                    fontSize: '0.9375rem',
-                    textDecoration: 'none',
-                    fontWeight: '400'
+                    width: '100%',
+                    padding: '0.875rem 1.5rem',
+                    backgroundColor: '#ffffff',
+                    color: 'rgba(0, 0, 0, 0.87)',
+                    border: '1px solid rgba(0, 0, 0, 0.2)',
+                    borderRadius: '8px',
+                    fontSize: '16px',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.75rem',
+                    transition: 'all 0.2s',
+                    marginBottom: '1.5rem'
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
-                  onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.02)';
+                    e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.3)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = '#ffffff';
+                    e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)';
+                  }}
                 >
-                  Already have an account? Login
-                </Link>
-              </div>
-            </form>
-          )}
+                  {/* Google Icon */}
+                  <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                  </svg>
+                  Continue with Google
+                </button>
 
-          {/* Footer */}
-          <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-            <Link
-              href="/"
-              style={{
-                color: 'rgba(0, 0, 0, 0.4)',
-                fontSize: '0.875rem',
-                textDecoration: 'none',
-                fontWeight: '400'
-              }}
-              onMouseOver={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.6)'}
-              onMouseOut={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.4)'}
-            >
-              Back to home
-            </Link>
+                {/* Terms of Service */}
+                <p style={{
+                  fontSize: '0.8125rem',
+                  color: 'rgba(0, 0, 0, 0.45)',
+                  textAlign: 'center',
+                  lineHeight: '1.6',
+                  margin: 0
+                }}>
+                  By clicking continue, you agree to our{' '}
+                  <a
+                    href="https://schedule-builder-docs.vercel.app/legal/terms.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: 'rgba(0, 0, 0, 0.6)',
+                      textDecoration: 'underline'
+                    }}
+                  >
+                    Terms of Service
+                  </a>
+                  {' '}and{' '}
+                  <a
+                    href="https://schedule-builder-docs.vercel.app/legal/privacy.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: 'rgba(0, 0, 0, 0.6)',
+                      textDecoration: 'underline'
+                    }}
+                  >
+                    Privacy Policy
+                  </a>.
+                </p>
+              </>
+            ) : (
+              <>
+                {/* Step 2: Organization Name */}
+                <div style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
+                  <h2 style={{
+                    fontSize: '28px',
+                    fontWeight: '600',
+                    color: 'rgba(0, 0, 0, 0.87)',
+                    margin: 0,
+                    marginBottom: '0.5rem'
+                  }}>
+                    Set up your organization
+                  </h2>
+                  <p style={{
+                    fontSize: '15px',
+                    color: 'rgba(0, 0, 0, 0.5)',
+                    fontWeight: '300',
+                    margin: 0
+                  }}>
+                    One last step to complete your admin account
+                  </p>
+                </div>
+
+                {/* Error Message */}
+                {error && (
+                  <div style={{
+                    padding: '1rem 1.25rem',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    borderRadius: '8px',
+                    marginBottom: '1.5rem'
+                  }}>
+                    <p style={{
+                      color: '#dc2626',
+                      fontSize: '0.9375rem',
+                      margin: 0,
+                      fontWeight: '400',
+                      textAlign: 'center'
+                    }}>
+                      {error}
+                    </p>
+                  </div>
+                )}
+
+                {/* Google Account Info */}
+                <div style={{
+                  padding: '1rem 1.25rem',
+                  backgroundColor: 'rgba(20, 184, 166, 0.05)',
+                  border: '1px solid rgba(20, 184, 166, 0.2)',
+                  borderRadius: '8px',
+                  marginBottom: '1.5rem'
+                }}>
+                  <p style={{
+                    fontSize: '0.875rem',
+                    color: 'rgba(0, 0, 0, 0.6)',
+                    margin: 0,
+                    lineHeight: '1.6'
+                  }}>
+                    Signing up as <strong style={{ color: 'rgba(0, 0, 0, 0.87)' }}>{googleData.name}</strong>
+                    <br />
+                    <span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>{googleData.email}</span>
+                  </p>
+                </div>
+
+                <form onSubmit={handleSubmitOrg}>
+                  <div style={{ marginBottom: '2rem' }}>
+                    <label style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: 'rgba(0, 0, 0, 0.65)',
+                      marginBottom: '0.5rem'
+                    }}>
+                      Organization Name
+                    </label>
+                    <input
+                      type="text"
+                      value={organizationName}
+                      onChange={(e) => setOrganizationName(e.target.value)}
+                      required
+                      disabled={loading}
+                      placeholder="e.g., ABC University"
+                      style={{
+                        width: '100%',
+                        padding: '0.875rem 1rem',
+                        backgroundColor: '#ffffff',
+                        border: '1px solid rgba(0, 0, 0, 0.2)',
+                        borderRadius: '8px',
+                        fontSize: '0.9375rem',
+                        color: 'rgba(0, 0, 0, 0.87)',
+                        outline: 'none',
+                        fontWeight: '400',
+                        transition: 'all 0.2s',
+                        boxSizing: 'border-box'
+                      }}
+                      onFocus={(e) => {
+                        e.currentTarget.style.borderColor = '#14b8a6';
+                        e.currentTarget.style.boxShadow = '0 0 0 3px rgba(20, 184, 166, 0.1)';
+                      }}
+                      onBlur={(e) => {
+                        e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.2)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading || !organizationName.trim()}
+                    style={{
+                      width: '100%',
+                      padding: '0.875rem 1.5rem',
+                      backgroundColor: (loading || !organizationName.trim()) ? 'rgba(20, 184, 166, 0.5)' : '#14b8a6',
+                      color: '#ffffff',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontSize: '16px',
+                      fontWeight: '500',
+                      cursor: (loading || !organizationName.trim()) ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseOver={(e) => {
+                      if (!loading && organizationName.trim()) e.currentTarget.style.backgroundColor = '#0d9488';
+                    }}
+                    onMouseOut={(e) => {
+                      if (!loading && organizationName.trim()) e.currentTarget.style.backgroundColor = '#14b8a6';
+                    }}
+                  >
+                    {loading ? 'Creating account...' : 'Complete Registration'}
+                  </button>
+                </form>
+              </>
+            )}
+
           </div>
-
         </div>
       </div>
 
@@ -591,5 +451,29 @@ export default function RegisterPage() {
         }
       `}</style>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={
+      <div style={{
+        minHeight: '100vh',
+        backgroundColor: '#ffffff',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <div style={{
+          color: 'rgba(0, 0, 0, 0.6)',
+          fontSize: '1rem',
+          fontWeight: '400'
+        }}>
+          Loading...
+        </div>
+      </div>
+    }>
+      <RegisterForm />
+    </Suspense>
   );
 }
