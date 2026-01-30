@@ -313,25 +313,4 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
     font-size: 2rem !important;
   }
 
-  /* Footer responsive styles */
-  .footer-columns {
-    grid-template-columns: 1fr !important;
-    gap: 40px !important;
-    text-align: center !important;
-  }
-
-  .footer-columns nav {
-    align-items: center !important;
-  }
-
-  .footer-columns button,
-  .footer-columns a {
-    text-align: center !important;
-  }
-
-  .footer-bottom {
-    flex-direction: column !important;
-    gap: 20px !important;
-    text-align: center !important;
-  }
 }
