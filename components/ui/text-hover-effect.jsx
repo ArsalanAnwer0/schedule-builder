@@ -79,7 +79,7 @@ export default function TextHoverEffect({
         strokeWidth="1.5"
         style={{
           fill: "transparent",
-          stroke: "rgba(255,255,255,0.5)",
+          stroke: "rgba(0,0,0,0.15)",
           fontSize: `${fontSize}px`,
           fontWeight: "bold",
           fontFamily: "inherit",
