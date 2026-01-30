@@ -1270,12 +1270,12 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer style={{
-        padding: "40px 20px",
+        padding: "60px 20px",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
       }}>
-        <div style={{ width: "100%", maxWidth: "900px", height: "200px" }}>
+        <div style={{ width: "100%", maxWidth: "1100px", height: "250px" }}>
           <TextHoverEffect text="Schedule Builder" />
         </div>
       </footer>

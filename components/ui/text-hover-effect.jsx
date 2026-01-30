@@ -9,7 +9,7 @@ gsap.registerPlugin(useGSAP);
 export default function TextHoverEffect({
   text,
   duration,
-  fontSize = 56,
+  fontSize = 80,
 }) {
   const svgRef = useRef(null);
   const textRef = useRef(null);
@@ -72,7 +72,7 @@ export default function TextHoverEffect({
       ref={svgRef}
       width="100%"
       height="100%"
-      viewBox="0 0 1000 200"
+      viewBox="0 0 1200 200"
       xmlns="http://www.w3.org/2000/svg"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -81,9 +81,9 @@ export default function TextHoverEffect({
     >
       <defs>
         <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" style={{ stopColor: "rgba(255,255,255,0.15)" }} />
-          <stop offset="50%" style={{ stopColor: "rgba(255,255,255,0.3)" }} />
-          <stop offset="100%" style={{ stopColor: "rgba(255,255,255,0.15)" }} />
+          <stop offset="0%" style={{ stopColor: "rgba(255,255,255,0.4)" }} />
+          <stop offset="50%" style={{ stopColor: "rgba(255,255,255,0.6)" }} />
+          <stop offset="100%" style={{ stopColor: "rgba(255,255,255,0.4)" }} />
         </linearGradient>
 
         <radialGradient
@@ -109,7 +109,7 @@ export default function TextHoverEffect({
         y="50%"
         textAnchor="middle"
         dominantBaseline="middle"
-        strokeWidth="0.5"
+        strokeWidth="1"
         style={{
           fill: "transparent",
           stroke: "url(#textGradient)",
@@ -127,10 +127,10 @@ export default function TextHoverEffect({
         y="50%"
         textAnchor="middle"
         dominantBaseline="middle"
-        strokeWidth="0.5"
+        strokeWidth="1.5"
         mask="url(#textMask)"
         style={{
-          fill: "#14b8a6",
+          fill: "transparent",
           stroke: "#14b8a6",
           fontSize: `${fontSize}px`,
           fontWeight: "bold",
