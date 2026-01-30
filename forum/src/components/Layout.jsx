@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 
@@ -16,7 +15,6 @@ const MAIN_APP_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'htt
 export default function Layout({ children }) {
   const { user, loading, login, logout } = useAuth()
   const navigate = useNavigate()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
@@ -52,8 +50,7 @@ export default function Layout({ children }) {
               Schedule Builder Forum
             </Link>
 
-            {/* Desktop nav */}
-            <nav className="desktop-only" style={{ display: 'flex', gap: '1rem' }}>
+            <nav style={{ display: 'flex', gap: '1rem' }}>
               <a
                 href={MAIN_APP_URL}
                 style={{
@@ -69,7 +66,7 @@ export default function Layout({ children }) {
             </nav>
           </div>
 
-          {/* Right: Search + Auth + Mobile toggle */}
+          {/* Right: Search + Auth */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             {/* Search icon */}
             <button
@@ -92,8 +89,8 @@ export default function Layout({ children }) {
               <SearchIcon size={18} />
             </button>
 
-            {/* Desktop auth */}
-            <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            {/* Auth */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               {loading ? (
                 <div className="spinner" style={{ width: '18px', height: '18px', borderWidth: '2px' }} />
               ) : user ? (
@@ -112,7 +109,7 @@ export default function Layout({ children }) {
                   }}>
                     {(user.name || 'U').charAt(0).toUpperCase()}
                   </div>
-                  <span style={{ color: 'rgba(0, 0, 0, 0.6)', fontSize: '0.8125rem' }}>
+                  <span className="desktop-only" style={{ color: 'rgba(0, 0, 0, 0.6)', fontSize: '0.8125rem' }}>
                     {user.name}
                   </span>
                   <button
@@ -162,104 +159,8 @@ export default function Layout({ children }) {
                 </button>
               )}
             </div>
-
-            {/* Mobile hamburger */}
-            <button
-              className="mobile-only btn-press"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '0.5rem',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '4px',
-              }}
-            >
-              <span style={{
-                display: 'block',
-                width: '20px',
-                height: '2px',
-                backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                transition: 'all 0.2s',
-                transform: mobileMenuOpen ? 'rotate(45deg) translate(4px, 4px)' : 'none',
-              }} />
-              <span style={{
-                display: 'block',
-                width: '20px',
-                height: '2px',
-                backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                transition: 'all 0.2s',
-                opacity: mobileMenuOpen ? 0 : 1,
-              }} />
-              <span style={{
-                display: 'block',
-                width: '20px',
-                height: '2px',
-                backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                transition: 'all 0.2s',
-                transform: mobileMenuOpen ? 'rotate(-45deg) translate(4px, -4px)' : 'none',
-              }} />
-            </button>
           </div>
         </div>
-
-        {/* Mobile menu */}
-        {mobileMenuOpen && (
-          <div style={{
-            borderTop: '1px solid rgba(0, 0, 0, 0.06)',
-            padding: '0.75rem 1.5rem 1rem',
-            backgroundColor: '#ffffff',
-          }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <a
-                href={MAIN_APP_URL}
-                style={{ fontSize: '0.875rem', color: 'rgba(0, 0, 0, 0.6)', padding: '0.25rem 0' }}
-              >
-                Main Site
-              </a>
-              {loading ? null : user ? (
-                <>
-                  <div style={{ fontSize: '0.875rem', color: 'rgba(0, 0, 0, 0.6)', padding: '0.25rem 0' }}>
-                    Signed in as {user.name}
-                  </div>
-                  <button
-                    onClick={() => { logout(); setMobileMenuOpen(false); }}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      textAlign: 'left',
-                      fontSize: '0.875rem',
-                      color: 'rgba(0, 0, 0, 0.6)',
-                      cursor: 'pointer',
-                      padding: '0.25rem 0',
-                    }}
-                  >
-                    Sign Out
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => { login(); setMobileMenuOpen(false); }}
-                  style={{
-                    padding: '0.5rem 1rem',
-                    backgroundColor: '#14b8a6',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '6px',
-                    fontSize: '0.875rem',
-                    fontWeight: '500',
-                    cursor: 'pointer',
-                    width: 'fit-content',
-                  }}
-                >
-                  Sign In
-                </button>
-              )}
-            </div>
-          </div>
-        )}
       </header>
 
       {/* Main Content */}
