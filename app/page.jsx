@@ -150,12 +150,12 @@ export default function LandingPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setWaitlistError(data.error || 'Failed to join waitlist');
+        setWaitlistError(data.error || 'Failed to join. Please try again.');
         setWaitlistSubmitting(false);
         return;
       }
 
-      setWaitlistSuccess(data.message || 'Successfully joined the waitlist!');
+      setWaitlistSuccess(data.message || 'Successfully joined the community!');
       setWaitlistEmail('');
       setWaitlistSubmitting(false);
     } catch (err) {
@@ -1019,7 +1019,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Waitlist Section */}
+      {/* Community Section */}
       <section id="waitlist" className="section-padding" style={{
         maxWidth: "700px",
         margin: "0 auto",
@@ -1071,7 +1071,7 @@ export default function LandingPage() {
               maxWidth: "450px",
               margin: "0 auto 2.5rem auto"
             }}>
-              Join our waitlist for exclusive community events, content, and more.
+              Join our community for exclusive events, content, and more.
             </p>
 
           <form onSubmit={handleWaitlistSubmit} style={{
