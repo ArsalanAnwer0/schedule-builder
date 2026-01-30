@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createSession, setSessionCookie } from '../../../../../lib/auth/session';
+import { createSession } from '../../../../../lib/auth/session';
 import dbConnect from '../../../../../lib/db/connect';
 import User from '../../../../../lib/db/models/User';
 
@@ -135,11 +135,20 @@ export async function GET(request) {
 
       // Create session
       const session = await createSession(user._id.toString());
-      await setSessionCookie(session.token, session.expiresAt);
 
       // Redirect based on role
       const redirectUrl = user.role === 'admin' ? '/admin' : '/dashboard';
       const response = NextResponse.redirect(new URL(redirectUrl, request.url));
+
+      // Set session cookie directly on the redirect response
+      response.cookies.set('session_token', session.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        expires: session.expiresAt,
+        path: '/',
+        domain: process.env.COOKIE_DOMAIN || undefined,
+      });
       response.cookies.delete('google_oauth_state');
       return response;
     }
