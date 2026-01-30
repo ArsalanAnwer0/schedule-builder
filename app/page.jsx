@@ -1275,7 +1275,7 @@ export default function LandingPage() {
         justifyContent: "center",
         alignItems: "center",
       }}>
-        <div style={{ width: "100%", maxWidth: "1100px", height: "250px" }}>
+        <div style={{ width: "100%", maxWidth: "1200px", height: "280px" }}>
           <TextHoverEffect text="Schedule Builder" />
         </div>
       </footer>

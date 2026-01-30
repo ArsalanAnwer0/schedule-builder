@@ -8,11 +8,9 @@ gsap.registerPlugin(useGSAP);
 
 export default function TextHoverEffect({
   text,
-  duration,
-  fontSize = 80,
+  fontSize = 90,
 }) {
   const svgRef = useRef(null);
-  const textRef = useRef(null);
   const [cursor, setCursor] = useState({ x: 0, y: 0 });
   const [hovered, setHovered] = useState(false);
   const [maskPosition, setMaskPosition] = useState({ cx: "50%", cy: "50%" });
@@ -28,30 +26,6 @@ export default function TextHoverEffect({
       });
     }
   }, [cursor]);
-
-  useGSAP(
-    () => {
-      if (!textRef.current) return;
-      const textElement = textRef.current;
-      const length = textElement.getTotalLength?.() || 1000;
-
-      gsap.set(textElement, {
-        strokeDasharray: length,
-        strokeDashoffset: length,
-      });
-
-      gsap.fromTo(
-        textElement,
-        { strokeDashoffset: length },
-        {
-          strokeDashoffset: 0,
-          duration: duration || 2,
-          ease: "power2.inOut",
-        }
-      );
-    },
-    { scope: svgRef }
-  );
 
   useGSAP(
     () => {
@@ -80,12 +54,6 @@ export default function TextHoverEffect({
       style={{ cursor: "default" }}
     >
       <defs>
-        <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" style={{ stopColor: "rgba(255,255,255,0.4)" }} />
-          <stop offset="50%" style={{ stopColor: "rgba(255,255,255,0.6)" }} />
-          <stop offset="100%" style={{ stopColor: "rgba(255,255,255,0.4)" }} />
-        </linearGradient>
-
         <radialGradient
           id="revealMask"
           gradientUnits="userSpaceOnUse"
@@ -102,17 +70,16 @@ export default function TextHoverEffect({
         </mask>
       </defs>
 
-      {/* Stroke animated text */}
+      {/* Always visible text -- white outline */}
       <text
-        ref={textRef}
         x="50%"
         y="50%"
         textAnchor="middle"
         dominantBaseline="middle"
-        strokeWidth="1"
+        strokeWidth="1.5"
         style={{
           fill: "transparent",
-          stroke: "url(#textGradient)",
+          stroke: "rgba(255,255,255,0.5)",
           fontSize: `${fontSize}px`,
           fontWeight: "bold",
           fontFamily: "inherit",
@@ -121,13 +88,13 @@ export default function TextHoverEffect({
         {text}
       </text>
 
-      {/* Hover reveal text */}
+      {/* Hover reveal text -- green outline */}
       <text
         x="50%"
         y="50%"
         textAnchor="middle"
         dominantBaseline="middle"
-        strokeWidth="1.5"
+        strokeWidth="2"
         mask="url(#textMask)"
         style={{
           fill: "transparent",
