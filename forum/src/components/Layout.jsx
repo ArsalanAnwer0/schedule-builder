@@ -1,11 +1,21 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+
+function SearchIcon({ size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  )
+}
 
 const MAIN_APP_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3000' : 'https://schedule-builder.xyz')
 
 export default function Layout({ children }) {
   const { user, loading, login, logout } = useAuth()
+  const navigate = useNavigate()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
@@ -59,8 +69,29 @@ export default function Layout({ children }) {
             </nav>
           </div>
 
-          {/* Right: Auth + Mobile toggle */}
+          {/* Right: Search + Auth + Mobile toggle */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            {/* Search icon */}
+            <button
+              onClick={() => navigate('/?search=1')}
+              className="btn-press"
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '0.375rem',
+                color: 'rgba(0, 0, 0, 0.45)',
+                display: 'flex',
+                alignItems: 'center',
+                transition: 'color 0.15s',
+              }}
+              onMouseOver={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.7)'}
+              onMouseOut={(e) => e.currentTarget.style.color = 'rgba(0, 0, 0, 0.45)'}
+              title="Search topics"
+            >
+              <SearchIcon size={18} />
+            </button>
+
             {/* Desktop auth */}
             <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               {loading ? (

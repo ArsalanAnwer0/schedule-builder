@@ -30,6 +30,11 @@ export async function GET(request) {
       query.$text = { $search: search };
     }
 
+    const filter = searchParams.get('filter');
+    if (filter === 'unanswered') {
+      query.replyCount = 0;
+    }
+
     // Build sort
     let sortOptions = {};
     if (sort === 'top') {
