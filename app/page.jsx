@@ -8,6 +8,7 @@ import SplashScreen from './components/SplashScreen';
 import FadeInSection from './components/FadeInSection';
 import HeroAnimation from './components/HeroAnimation';
 import TextHoverEffect from '../components/ui/text-hover-effect';
+import WorkflowDiagram from './components/WorkflowDiagram';
 
 // Get forum URL based on environment
 const getForumUrl = () => {
@@ -590,117 +591,12 @@ export default function LandingPage() {
               fontWeight: "300",
               transition: "color 0.6s ease"
             }}>
-              Three steps to transform your scheduling workflow
+              The complete workflow from setup to scheduling
             </p>
           </div>
         </FadeInSection>
 
-        <div className="grid-3-cols" style={{
-          display: "grid",
-          gap: "2rem"
-        }}>
-          {/* Step 1 */}
-          <div style={{
-            padding: "3rem 2rem",
-            background: "rgba(0, 0, 0, 0.03)",
-            borderRadius: "12px",
-            border: `1px solid ${theme.border}`,
-            position: "relative"
-          }}>
-            <div className="step-number" style={{
-              fontWeight: "300",
-              color: "#14b8a6",
-              marginBottom: "2rem",
-              fontFamily: "monospace"
-            }}>
-              01
-            </div>
-            <h3 style={{
-              fontSize: "1.5rem",
-              fontWeight: "600",
-              color: theme.text,
-              marginBottom: "1rem"
-            }}>
-              Admin requests availability
-            </h3>
-            <p style={{
-              fontSize: "1rem",
-              color: theme.textSecondary,
-                lineHeight: "1.7",
-              fontWeight: "300"
-            }}>
-              Add your students and send automated availability requests. Students receive email invitations instantly.
-            </p>
-          </div>
-
-          {/* Step 2 */}
-          <div style={{
-            padding: "3rem 2rem",
-            background: "rgba(0, 0, 0, 0.03)",
-            borderRadius: "12px",
-            border: `1px solid ${theme.border}`,
-            position: "relative"
-          }}>
-            <div className="step-number" style={{
-              fontWeight: "300",
-              color: "#14b8a6",
-              marginBottom: "2rem",
-              fontFamily: "monospace"
-            }}>
-              02
-            </div>
-            <h3 style={{
-              fontSize: "1.5rem",
-              fontWeight: "600",
-              color: theme.text,
-              marginBottom: "1rem"
-            }}>
-              Students submit availability
-            </h3>
-            <p style={{
-              fontSize: "1rem",
-              color: theme.textSecondary,
-                lineHeight: "1.7",
-              fontWeight: "300"
-            }}>
-              Students fill out a simple form with their available hours. No back-and-forth emails or phone calls needed.
-            </p>
-          </div>
-
-          {/* Step 3 */}
-          <div style={{
-            padding: "3rem 2rem",
-            background: "rgba(0, 0, 0, 0.03)",
-            borderRadius: "12px",
-            border: `1px solid ${theme.border}`,
-            position: "relative"
-          }}>
-            <div className="step-number" style={{
-              fontWeight: "300",
-              color: "#14b8a6",
-              marginBottom: "2rem",
-              fontFamily: "monospace"
-            }}>
-              03
-            </div>
-            <h3 style={{
-              fontSize: "1.5rem",
-              fontWeight: "600",
-              color: theme.text,
-              marginBottom: "1rem"
-            }}>
-              Tool generates schedule
-            </h3>
-            <p style={{
-              fontSize: "1rem",
-              color: theme.textSecondary,
-                lineHeight: "1.7",
-              fontWeight: "300"
-            }}>
-              Our algorithm creates conflict-free schedules in seconds. Review, adjust, and share with your team.
-            </p>
-          </div>
-        </div>
+        <WorkflowDiagram theme={theme} />
       </section>
 
       {/* Screenshot Carousel Section - COMMENTED OUT FOR NOW */}
