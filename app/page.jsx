@@ -29,7 +29,6 @@ export default function LandingPage() {
   const [feedbackSuccess, setFeedbackSuccess] = useState('');
   const [feedbackError, setFeedbackError] = useState('');
   const [expandedFaq, setExpandedFaq] = useState(null);
-  const [hoveredFaq, setHoveredFaq] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [waitlistEmail, setWaitlistEmail] = useState('');
@@ -1064,103 +1063,157 @@ export default function LandingPage() {
 
       {/* FAQ Section */}
       <section id="faq" className="section-padding" style={{
-        maxWidth: "900px",
+        maxWidth: "1200px",
         margin: "0 auto"
       }}>
-        <FadeInSection>
-          <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-            <div style={{
-              display: "inline-block",
-              padding: "0.5rem 1rem",
-              backgroundColor: "rgba(20, 184, 166, 0.1)",
-              border: "1px solid rgba(20, 184, 166, 0.3)",
-              borderRadius: "20px",
-              color: "#14b8a6",
-              fontSize: "0.75rem",
-              fontWeight: "500",
-              marginBottom: "2rem",
-              letterSpacing: "0.1em"
-            }}>
-              FAQs
-            </div>
-            <h2 className="section-title" style={{
-              fontWeight: "400",
-              color: theme.text,
-              marginBottom: "1rem",
-              fontFamily: "Georgia, 'Times New Roman', serif"
-            }}>
-              Got questions?
-              <br />
-              Here's the answers.
-            </h2>
-          </div>
-        </FadeInSection>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "4rem" }}>
-          {[
-            { q: "How do admins register and login?", a: "Admins register with their organization name and email. After registration, they receive a verification code via email. Simply enter the code to access your admin portal. You can login anytime using your email - we'll send you a new code each time." },
-            { q: "How do students register and login?", a: "Students don't register themselves - admins add them to the system. When an admin adds a student, they automatically receive an email invitation with a login link. Students click the link, enter the verification code from their email, and access their dashboard." },
-            { q: "What if a student forgets their password or can't access their account?", a: "Students can request a password reset from the login page. The request is sent to all admins for approval. Once an admin approves it, the student receives a secure link to set a new password. This ensures account security while giving students an easy recovery option." },
-            { q: "How does the invite admin feature work?", a: "Primary admins can invite secondary admins to help manage scheduling. Just add their name and email in the Invite Admin section. They'll receive an invitation email and can login immediately. Secondary admins have the same access as primary admins." },
-            { q: "How do I add students to my organization?", a: "In your admin portal, use the Add Student section. Enter the student's name, primary email, and optionally a secondary email (like a school email). Click Request Availability, and they'll instantly receive an invitation email to submit their hours." },
-            { q: "Can students use multiple email addresses?", a: "Yes! When adding a student, you can provide both a primary and secondary email. Students receive invitations at both addresses and can login using either email - both access the same account and availability." },
-            { q: "What happens after students submit availability?", a: "Once students submit their available hours, you'll see their status change to \"Submitted\" in your admin portal. You'll also receive a notification when all students have submitted. You can then generate a schedule using the scheduling tool, which creates a balanced, conflict-free schedule automatically based on all submitted availability." }
-          ].map((faq, index) => (
-            <div
-              key={index}
-              style={{
-                background: "rgba(0, 0, 0, 0.03)",
-                border: `1px solid ${theme.border}`,
-                borderRadius: "8px",
-                overflow: "hidden"
-              }}
-            >
-              <button
-                onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
-                onMouseEnter={() => setHoveredFaq(index)}
-                onMouseLeave={() => setHoveredFaq(null)}
-                style={{
-                  width: "100%",
-                  padding: "1.5rem",
-                  background: "none",
-                  border: "none",
+        <div className="faq-grid" style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "4rem",
+          alignItems: "start"
+        }}>
+          {/* Left Column */}
+          <FadeInSection>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              <div>
+                <div style={{
+                  display: "inline-block",
+                  padding: "0.375rem 0.875rem",
+                  border: `1px solid ${theme.border}`,
+                  borderRadius: "9999px",
                   color: theme.text,
+                  fontSize: "0.8125rem",
+                  fontWeight: "500"
+                }}>
+                  FAQ
+                </div>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                <h2 style={{
+                  fontSize: "clamp(1.875rem, 4vw, 3rem)",
+                  fontWeight: "400",
+                  color: theme.text,
+                  lineHeight: "1.15",
+                  fontFamily: "Georgia, 'Times New Roman', serif",
+                  maxWidth: "480px",
+                  transition: "color 0.6s ease"
+                }}>
+                  Got questions?
+                  <br />
+                  Here&apos;s the answers.
+                </h2>
+                <p style={{
                   fontSize: "1.0625rem",
-                  fontWeight: "500",
-                  textAlign: "left",
-                  cursor: "pointer",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center"
-                }}
-              >
-                <span>{faq.q}</span>
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
+                  color: theme.textSecondary,
+                  lineHeight: "1.7",
+                  fontWeight: "300",
+                  maxWidth: "440px",
+                  transition: "color 0.6s ease"
+                }}>
+                  Find answers to common questions about Schedule Builder. Can&apos;t find what you&apos;re looking for? Reach out to our team.
+                </p>
+              </div>
+              <div>
+                <a
+                  href="mailto:support@schedule-builder.xyz"
                   style={{
-                    transform: (expandedFaq === index || hoveredFaq === index) ? "rotate(180deg)" : "rotate(0deg)",
-                    transition: "transform 0.2s"
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    padding: "0.625rem 1.25rem",
+                    border: `1px solid ${theme.border}`,
+                    borderRadius: "8px",
+                    color: theme.text,
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    textDecoration: "none",
+                    background: theme.background,
+                    cursor: "pointer",
+                    transition: "border-color 0.2s ease, box-shadow 0.2s ease"
                   }}
                 >
-                  <path d="M5 7.5L10 12.5L15 7.5" stroke="rgba(255, 255, 255, 0.5)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
-              {(expandedFaq === index || hoveredFaq === index) && (
-                <div style={{
-                  padding: "0 1.5rem 1.5rem 1.5rem",
-                  color: theme.textSecondary,
-                    fontSize: "0.9375rem",
-                  lineHeight: "1.7",
-                  fontWeight: "300"
-                }}>
-                  {faq.a}
-                </div>
-              )}
+                  Any questions? Reach out
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                  </svg>
+                </a>
+              </div>
             </div>
-          ))}
+          </FadeInSection>
+
+          {/* Right Column — Accordion */}
+          <FadeInSection delay={100}>
+            <div style={{ width: "100%" }}>
+              {[
+                { q: "How do admins register and login?", a: "Admins register with their organization name and email. After registration, they receive a verification code via email. Simply enter the code to access your admin portal. You can login anytime using your email - we'll send you a new code each time." },
+                { q: "How do students register and login?", a: "Students don't register themselves - admins add them to the system. When an admin adds a student, they automatically receive an email invitation with a login link. Students click the link, enter the verification code from their email, and access their dashboard." },
+                { q: "What if a student forgets their password or can't access their account?", a: "Students can request a password reset from the login page. The request is sent to all admins for approval. Once an admin approves it, the student receives a secure link to set a new password. This ensures account security while giving students an easy recovery option." },
+                { q: "How does the invite admin feature work?", a: "Primary admins can invite secondary admins to help manage scheduling. Just add their name and email in the Invite Admin section. They'll receive an invitation email and can login immediately. Secondary admins have the same access as primary admins." },
+                { q: "How do I add students to my organization?", a: "In your admin portal, use the Add Student section. Enter the student's name, primary email, and optionally a secondary email (like a school email). Click Request Availability, and they'll instantly receive an invitation email to submit their hours." },
+                { q: "Can students use multiple email addresses?", a: "Yes! When adding a student, you can provide both a primary and secondary email. Students receive invitations at both addresses and can login using either email - both access the same account and availability." },
+                { q: "What happens after students submit availability?", a: "Once students submit their available hours, you'll see their status change to \"Submitted\" in your admin portal. You'll also receive a notification when all students have submitted. You can then generate a schedule using the scheduling tool, which creates a balanced, conflict-free schedule automatically based on all submitted availability." }
+              ].map((faq, index) => (
+                <div
+                  key={index}
+                  style={{
+                    borderBottom: `1px solid ${theme.border}`,
+                  }}
+                >
+                  <button
+                    onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
+                    style={{
+                      width: "100%",
+                      padding: "1.25rem 0",
+                      background: "none",
+                      border: "none",
+                      color: theme.text,
+                      fontSize: "1rem",
+                      fontWeight: "500",
+                      textAlign: "left",
+                      cursor: "pointer",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      gap: "1rem"
+                    }}
+                  >
+                    <span>{faq.q}</span>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      aria-hidden="true"
+                      style={{
+                        flexShrink: 0,
+                        transform: expandedFaq === index ? "rotate(180deg)" : "rotate(0deg)",
+                        transition: "transform 0.2s ease"
+                      }}
+                    >
+                      <path d="M4 6l4 4 4-4" stroke={theme.textMuted} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                  <div
+                    style={{
+                      overflow: "hidden",
+                      maxHeight: expandedFaq === index ? "300px" : "0px",
+                      transition: "max-height 0.3s ease"
+                    }}
+                  >
+                    <div style={{
+                      paddingBottom: "1.25rem",
+                      color: theme.textSecondary,
+                      fontSize: "0.9375rem",
+                      lineHeight: "1.7",
+                      fontWeight: "300"
+                    }}>
+                      {faq.a}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </FadeInSection>
         </div>
       </section>
 

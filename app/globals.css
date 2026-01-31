@@ -205,6 +205,11 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
     grid-template-columns: 1fr !important;
   }
 
+  .faq-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+  }
+
   /* Navigation padding */
   .nav-padding {
     padding: 1rem 1.5rem !important;
