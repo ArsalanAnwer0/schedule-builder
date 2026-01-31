@@ -147,6 +147,27 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
   grid-template-columns: repeat(3, 1fr);
 }
 
+.features-split-layout {
+  display: flex;
+  gap: 4rem;
+  align-items: center;
+}
+
+.features-left-col {
+  flex: 0 0 38%;
+  max-width: 38%;
+}
+
+.features-right-col {
+  flex: 1;
+}
+
+.features-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
 .grid-2-cols {
   grid-template-columns: 1fr 1fr;
 }
@@ -256,6 +277,22 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
   .flex-wrap-mobile {
     flex-wrap: wrap !important;
   }
+
+  /* Features split layout */
+  .features-split-layout {
+    flex-direction: column !important;
+    gap: 3rem !important;
+  }
+
+  .features-left-col {
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+    text-align: center;
+  }
+
+  .features-card-grid {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 /* Tablet: 769px - 1024px */
@@ -270,6 +307,20 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
 
   .section-title {
     font-size: 2.5rem !important;
+  }
+
+  .features-split-layout {
+    gap: 2.5rem !important;
+  }
+
+  .features-left-col {
+    flex: 0 0 35% !important;
+    max-width: 35% !important;
+  }
+
+  .features-card-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem !important;
   }
 }
 
@@ -316,6 +367,10 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
   /* Smaller step numbers on very small screens */
   .step-number {
     font-size: 2rem !important;
+  }
+
+  .features-card-grid {
+    gap: 0.75rem !important;
   }
 
 }

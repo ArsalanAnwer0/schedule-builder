@@ -640,277 +640,318 @@ export default function LandingPage() {
 
       {/* Features Section */}
       <section id="features" className="section-padding" style={{
-        backgroundColor: "rgba(20, 184, 166, 0.02)"
+        backgroundColor: theme.background
       }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <FadeInSection>
-            <div style={{ textAlign: "center", marginBottom: "5rem" }}>
-              <h2 className="section-title" style={{
-                fontWeight: "400",
-                color: theme.text,
-                marginBottom: "1rem",
-                fontFamily: "Georgia, 'Times New Roman', serif"
-              }}>
-                Everything you need
-              </h2>
-              <p style={{
-                fontSize: "1.125rem",
-                color: theme.textMuted,
-                fontWeight: "300"
-              }}>
-                Comprehensive tools designed for modern scheduling
-              </p>
+            <div className="features-split-layout">
+              {/* LEFT COLUMN - Header content */}
+              <div className="features-left-col">
+                <p style={{
+                  fontSize: "0.75rem",
+                  fontWeight: "600",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  color: theme.textMuted,
+                  marginBottom: "1rem"
+                }}>
+                  Our Features
+                </p>
+                <h2 style={{
+                  fontSize: "2.75rem",
+                  fontWeight: "700",
+                  color: theme.text,
+                  marginBottom: "1.25rem",
+                  fontFamily: "Georgia, 'Times New Roman', serif",
+                  lineHeight: "1.15"
+                }}>
+                  Everything You Need
+                </h2>
+                <p style={{
+                  fontSize: "1.0625rem",
+                  color: theme.textSecondary,
+                  lineHeight: "1.7",
+                  fontWeight: "300",
+                  marginBottom: "2rem"
+                }}>
+                  Comprehensive tools designed for modern scheduling. From authentication to automated generation, we handle the complexity so you can focus on what matters.
+                </p>
+                <a
+                  href="#faq"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    padding: "0.75rem 1.5rem",
+                    backgroundColor: "#000000",
+                    color: "#ffffff",
+                    borderRadius: "9999px",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    textDecoration: "none",
+                    transition: "opacity 0.2s"
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.opacity = "0.85"}
+                  onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
+                >
+                  Learn More
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </a>
+              </div>
+
+              {/* RIGHT COLUMN - Feature cards grid */}
+              <div className="features-right-col">
+                <div className="features-card-grid">
+                  {/* Card 1: Flexible Authentication */}
+                  <div style={{
+                    padding: "1.5rem",
+                    backgroundColor: "#ffffff",
+                    borderRadius: "12px",
+                    border: "1px solid rgba(0, 0, 0, 0.08)"
+                  }}>
+                    <div style={{
+                      width: "44px",
+                      height: "44px",
+                      backgroundColor: "#f3f4f6",
+                      borderRadius: "10px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: "1rem"
+                    }}>
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                      </svg>
+                    </div>
+                    <h3 style={{
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      color: theme.text,
+                      marginBottom: "0.35rem"
+                    }}>
+                      Flexible Authentication
+                    </h3>
+                    <p style={{
+                      fontSize: "0.8125rem",
+                      color: theme.textSecondary,
+                      lineHeight: "1.5",
+                      fontWeight: "400"
+                    }}>
+                      Passwordless or password-based sign-in
+                    </p>
+                  </div>
+
+                  {/* Card 2: Multi-Admin Support */}
+                  <div style={{
+                    padding: "1.5rem",
+                    backgroundColor: "#ffffff",
+                    borderRadius: "12px",
+                    border: "1px solid rgba(0, 0, 0, 0.08)"
+                  }}>
+                    <div style={{
+                      width: "44px",
+                      height: "44px",
+                      backgroundColor: "#f3f4f6",
+                      borderRadius: "10px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: "1rem"
+                    }}>
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                      </svg>
+                    </div>
+                    <h3 style={{
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      color: theme.text,
+                      marginBottom: "0.35rem"
+                    }}>
+                      Multi-Admin Support
+                    </h3>
+                    <p style={{
+                      fontSize: "0.8125rem",
+                      color: theme.textSecondary,
+                      lineHeight: "1.5",
+                      fontWeight: "400"
+                    }}>
+                      Invite co-admins to manage together
+                    </p>
+                  </div>
+
+                  {/* Card 3: Automated Invitations */}
+                  <div style={{
+                    padding: "1.5rem",
+                    backgroundColor: "#ffffff",
+                    borderRadius: "12px",
+                    border: "1px solid rgba(0, 0, 0, 0.08)"
+                  }}>
+                    <div style={{
+                      width: "44px",
+                      height: "44px",
+                      backgroundColor: "#f3f4f6",
+                      borderRadius: "10px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: "1rem"
+                    }}>
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <path d="M22 6l-10 7L2 6" />
+                      </svg>
+                    </div>
+                    <h3 style={{
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      color: theme.text,
+                      marginBottom: "0.35rem"
+                    }}>
+                      Automated Invitations
+                    </h3>
+                    <p style={{
+                      fontSize: "0.8125rem",
+                      color: theme.textSecondary,
+                      lineHeight: "1.5",
+                      fontWeight: "400"
+                    }}>
+                      Students notified by email instantly
+                    </p>
+                  </div>
+
+                  {/* Card 4: Simple Availability */}
+                  <div style={{
+                    padding: "1.5rem",
+                    backgroundColor: "#ffffff",
+                    borderRadius: "12px",
+                    border: "1px solid rgba(0, 0, 0, 0.08)"
+                  }}>
+                    <div style={{
+                      width: "44px",
+                      height: "44px",
+                      backgroundColor: "#f3f4f6",
+                      borderRadius: "10px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: "1rem"
+                    }}>
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" />
+                        <line x1="16" y1="2" x2="16" y2="6" />
+                        <line x1="8" y1="2" x2="8" y2="6" />
+                        <line x1="3" y1="10" x2="21" y2="10" />
+                      </svg>
+                    </div>
+                    <h3 style={{
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      color: theme.text,
+                      marginBottom: "0.35rem"
+                    }}>
+                      Simple Availability
+                    </h3>
+                    <p style={{
+                      fontSize: "0.8125rem",
+                      color: theme.textSecondary,
+                      lineHeight: "1.5",
+                      fontWeight: "400"
+                    }}>
+                      Intuitive weekly calendar form
+                    </p>
+                  </div>
+
+                  {/* Card 5: Instant Generation */}
+                  <div style={{
+                    padding: "1.5rem",
+                    backgroundColor: "#ffffff",
+                    borderRadius: "12px",
+                    border: "1px solid rgba(0, 0, 0, 0.08)"
+                  }}>
+                    <div style={{
+                      width: "44px",
+                      height: "44px",
+                      backgroundColor: "#f3f4f6",
+                      borderRadius: "10px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: "1rem"
+                    }}>
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                      </svg>
+                    </div>
+                    <h3 style={{
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      color: theme.text,
+                      marginBottom: "0.35rem"
+                    }}>
+                      Instant Generation
+                    </h3>
+                    <p style={{
+                      fontSize: "0.8125rem",
+                      color: theme.textSecondary,
+                      lineHeight: "1.5",
+                      fontWeight: "400"
+                    }}>
+                      Conflict-free schedules in seconds
+                    </p>
+                  </div>
+
+                  {/* Card 6: Reset Anytime */}
+                  <div style={{
+                    padding: "1.5rem",
+                    backgroundColor: "#ffffff",
+                    borderRadius: "12px",
+                    border: "1px solid rgba(0, 0, 0, 0.08)"
+                  }}>
+                    <div style={{
+                      width: "44px",
+                      height: "44px",
+                      backgroundColor: "#f3f4f6",
+                      borderRadius: "10px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: "1rem"
+                    }}>
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M23 4v6h-6" />
+                        <path d="M1 20v-6h6" />
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10" />
+                        <path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14" />
+                      </svg>
+                    </div>
+                    <h3 style={{
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      color: theme.text,
+                      marginBottom: "0.35rem"
+                    }}>
+                      Reset Anytime
+                    </h3>
+                    <p style={{
+                      fontSize: "0.8125rem",
+                      color: theme.textSecondary,
+                      lineHeight: "1.5",
+                      fontWeight: "400"
+                    }}>
+                      Regenerate schedules when plans change
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </FadeInSection>
-
-          <div className="grid-3-cols" style={{
-            display: "grid",
-            gap: "2rem"
-          }}>
-            {/* Feature 1 */}
-            <div style={{
-              padding: "2rem",
-              background: "rgba(0, 0, 0, 0.03)",
-              borderRadius: "12px",
-              border: "1px solid rgba(255, 255, 255, 0.1)"
-            }}>
-              <div style={{
-                width: "48px",
-                height: "48px",
-                background: "rgba(20, 184, 166, 0.15)",
-                borderRadius: "8px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: "1.5rem"
-              }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
-                  <rect x="3" y="4" width="18" height="18" rx="2" />
-                  <line x1="16" y1="2" x2="16" y2="6" />
-                  <line x1="8" y1="2" x2="8" y2="6" />
-                  <line x1="3" y1="10" x2="21" y2="10" />
-                </svg>
-              </div>
-              <h3 style={{
-                fontSize: "1.25rem",
-                fontWeight: "600",
-                color: theme.text,
-                marginBottom: "0.75rem"
-              }}>
-                Flexible authentication
-              </h3>
-              <p style={{
-                fontSize: "0.9375rem",
-                color: theme.textSecondary,
-                  lineHeight: "1.7",
-                fontWeight: "300"
-              }}>
-                Choose passwordless email verification or secure password-based login. Add two-factor authentication for extra security. Includes forgot password recovery and email verification.
-              </p>
-            </div>
-
-            {/* Feature 2 */}
-            <div style={{
-              padding: "2rem",
-              background: "rgba(0, 0, 0, 0.03)",
-              borderRadius: "12px",
-              border: "1px solid rgba(255, 255, 255, 0.1)"
-            }}>
-              <div style={{
-                width: "48px",
-                height: "48px",
-                background: "rgba(20, 184, 166, 0.15)",
-                borderRadius: "8px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: "1.5rem"
-              }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-              </div>
-              <h3 style={{
-                fontSize: "1.25rem",
-                fontWeight: "600",
-                color: theme.text,
-                marginBottom: "0.75rem"
-              }}>
-                Multi-admin support
-              </h3>
-              <p style={{
-                fontSize: "0.9375rem",
-                color: theme.textSecondary,
-                  lineHeight: "1.7",
-                fontWeight: "300"
-              }}>
-                Primary admins can invite secondary admins to help manage scheduling. Perfect for teams with multiple managers.
-              </p>
-            </div>
-
-            {/* Feature 3 */}
-            <div style={{
-              padding: "2rem",
-              background: "rgba(0, 0, 0, 0.03)",
-              borderRadius: "12px",
-              border: "1px solid rgba(255, 255, 255, 0.1)"
-            }}>
-              <div style={{
-                width: "48px",
-                height: "48px",
-                background: "rgba(20, 184, 166, 0.15)",
-                borderRadius: "8px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: "1.5rem"
-              }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                  <path d="M22 6l-10 7L2 6" />
-                </svg>
-              </div>
-              <h3 style={{
-                fontSize: "1.25rem",
-                fontWeight: "600",
-                color: theme.text,
-                marginBottom: "0.75rem"
-              }}>
-                Automated email invitations
-              </h3>
-              <p style={{
-                fontSize: "0.9375rem",
-                color: theme.textSecondary,
-                  lineHeight: "1.7",
-                fontWeight: "300"
-              }}>
-                Students automatically receive email invitations when added. Support for both primary and secondary email addresses.
-              </p>
-            </div>
-
-            {/* Feature 4 */}
-            <div style={{
-              padding: "2rem",
-              background: "rgba(0, 0, 0, 0.03)",
-              borderRadius: "12px",
-              border: "1px solid rgba(255, 255, 255, 0.1)"
-            }}>
-              <div style={{
-                width: "48px",
-                height: "48px",
-                background: "rgba(20, 184, 166, 0.15)",
-                borderRadius: "8px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: "1.5rem"
-              }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
-                  <rect x="3" y="4" width="18" height="18" rx="2" />
-                  <line x1="16" y1="2" x2="16" y2="6" />
-                  <line x1="8" y1="2" x2="8" y2="6" />
-                  <line x1="3" y1="10" x2="21" y2="10" />
-                </svg>
-              </div>
-              <h3 style={{
-                fontSize: "1.25rem",
-                fontWeight: "600",
-                color: theme.text,
-                marginBottom: "0.75rem"
-              }}>
-                Simple availability form
-              </h3>
-              <p style={{
-                fontSize: "0.9375rem",
-                color: theme.textSecondary,
-                  lineHeight: "1.7",
-                fontWeight: "300"
-              }}>
-                Students select their available hours on an intuitive weekly calendar. Takes less than 2 minutes to complete.
-              </p>
-            </div>
-
-            {/* Feature 5 */}
-            <div style={{
-              padding: "2rem",
-              background: "rgba(0, 0, 0, 0.03)",
-              borderRadius: "12px",
-              border: "1px solid rgba(255, 255, 255, 0.1)"
-            }}>
-              <div style={{
-                width: "48px",
-                height: "48px",
-                background: "rgba(20, 184, 166, 0.15)",
-                borderRadius: "8px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: "1.5rem"
-              }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
-                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-                </svg>
-              </div>
-              <h3 style={{
-                fontSize: "1.25rem",
-                fontWeight: "600",
-                color: theme.text,
-                marginBottom: "0.75rem"
-              }}>
-                Instant schedule generation
-              </h3>
-              <p style={{
-                fontSize: "0.9375rem",
-                color: theme.textSecondary,
-                  lineHeight: "1.7",
-                fontWeight: "300"
-              }}>
-                Our algorithm creates balanced, conflict-free schedules in seconds based on student availability. No manual work required.
-              </p>
-            </div>
-
-            {/* Feature 6 */}
-            <div style={{
-              padding: "2rem",
-              background: "rgba(0, 0, 0, 0.03)",
-              borderRadius: "12px",
-              border: "1px solid rgba(255, 255, 255, 0.1)"
-            }}>
-              <div style={{
-                width: "48px",
-                height: "48px",
-                background: "rgba(20, 184, 166, 0.15)",
-                borderRadius: "8px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: "1.5rem"
-              }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" strokeWidth="2">
-                  <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
-                </svg>
-              </div>
-              <h3 style={{
-                fontSize: "1.25rem",
-                fontWeight: "600",
-                color: theme.text,
-                marginBottom: "0.75rem"
-              }}>
-                Reset and regenerate anytime
-              </h3>
-              <p style={{
-                fontSize: "0.9375rem",
-                color: theme.textSecondary,
-                  lineHeight: "1.7",
-                fontWeight: "300"
-              }}>
-                Need to make changes? Reset student availability and request new submissions. Generate fresh schedules whenever needed.
-              </p>
-            </div>
-          </div>
         </div>
       </section>
 
