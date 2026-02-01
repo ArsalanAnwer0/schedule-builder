@@ -955,153 +955,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Community Section */}
-      <section id="waitlist" className="section-padding" style={{
-        maxWidth: "700px",
-        margin: "0 auto",
-        padding: "8rem 2rem"
-      }}>
-        <FadeInSection>
-          <div style={{ textAlign: "center" }}>
-            {/* Small tagline at top */}
-            <div style={{
-              fontSize: "0.6875rem",
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              color: "rgba(0, 0, 0, 0.5)",
-              marginBottom: "2.5rem",
-              fontWeight: "400"
-            }}>
-              Simplify team scheduling. Join our community.
-            </div>
-
-            {/* Large headline in serif */}
-            <h2 style={{
-              fontSize: "4rem",
-              fontWeight: "400",
-              color: "#000000",
-              marginBottom: "3.5rem",
-              fontFamily: "Georgia, 'Times New Roman', serif",
-              letterSpacing: "-0.01em",
-              lineHeight: "1.1"
-            }}>
-              JOIN THE SCHEDULE
-              <br />
-              BUILDER COMMUNITY
-            </h2>
-
-            {/* Horizontal dividing line */}
-            <div style={{
-              width: "100%",
-              height: "1px",
-              backgroundColor: "rgba(0, 0, 0, 0.15)",
-              margin: "0 auto 2.5rem auto"
-            }} />
-
-            {/* Subheadline */}
-            <p style={{
-              fontSize: "0.9375rem",
-              color: "rgba(0, 0, 0, 0.7)",
-              marginBottom: "2.5rem",
-              lineHeight: "1.6",
-              maxWidth: "450px",
-              margin: "0 auto 2.5rem auto"
-            }}>
-              Join our community for exclusive events, content, and more.
-            </p>
-
-          <form onSubmit={handleWaitlistSubmit} style={{
-            maxWidth: "450px",
-            margin: "0 auto"
-          }}>
-            {/* Email input with arrow button */}
-            <div style={{
-              display: "flex",
-              gap: "0",
-              alignItems: "stretch",
-              backgroundColor: "#ffffff",
-              border: "1px solid rgba(0, 0, 0, 0.15)"
-            }}>
-              <input
-                type="email"
-                placeholder="ENTER YOUR EMAIL"
-                value={waitlistEmail}
-                onChange={(e) => setWaitlistEmail(e.target.value)}
-                disabled={waitlistSubmitting}
-                required
-                style={{
-                  flex: 1,
-                  padding: "1rem 1.25rem",
-                  backgroundColor: "transparent",
-                  border: "none",
-                  color: "#000000",
-                  fontSize: "0.8125rem",
-                  letterSpacing: "0.05em",
-                  outline: "none",
-                  fontFamily: "inherit"
-                }}
-              />
-              <button
-                type="submit"
-                disabled={waitlistSubmitting}
-                style={{
-                  padding: "1rem 1.5rem",
-                  backgroundColor: "#000000",
-                  color: "#ffffff",
-                  border: "none",
-                  cursor: waitlistSubmitting ? "not-allowed" : "pointer",
-                  fontSize: "1.25rem",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  opacity: waitlistSubmitting ? 0.7 : 1,
-                  transition: "opacity 0.2s"
-                }}
-                onMouseOver={(e) => {
-                  if (!waitlistSubmitting) {
-                    e.target.style.opacity = "0.8";
-                  }
-                }}
-                onMouseOut={(e) => {
-                  if (!waitlistSubmitting) {
-                    e.target.style.opacity = "1";
-                  }
-                }}
-              >
-                {waitlistSubmitting ? '...' : '→'}
-              </button>
-            </div>
-
-            {waitlistSuccess && (
-              <div style={{
-                marginTop: "1.5rem",
-                padding: "0.875rem",
-                color: "#10b981",
-                fontSize: "0.8125rem",
-                textAlign: "center",
-                letterSpacing: "0.02em"
-              }}>
-                {waitlistSuccess}
-              </div>
-            )}
-
-            {waitlistError && (
-              <div style={{
-                marginTop: "1.5rem",
-                padding: "0.875rem",
-                color: "#ef4444",
-                fontSize: "0.8125rem",
-                textAlign: "center",
-                letterSpacing: "0.02em"
-              }}>
-                {waitlistError}
-              </div>
-            )}
-          </form>
-          </div>
-        </FadeInSection>
-      </section>
-
       {/* FAQ Section */}
       <section id="faq" className="section-padding" style={{
         maxWidth: "1200px",
@@ -1256,6 +1109,153 @@ export default function LandingPage() {
             </div>
           </FadeInSection>
         </div>
+      </section>
+
+      {/* Community Section */}
+      <section id="waitlist" className="section-padding" style={{
+        maxWidth: "700px",
+        margin: "0 auto",
+        padding: "8rem 2rem"
+      }}>
+        <FadeInSection>
+          <div style={{ textAlign: "center" }}>
+            {/* Small tagline at top */}
+            <div style={{
+              fontSize: "0.6875rem",
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              color: "rgba(0, 0, 0, 0.5)",
+              marginBottom: "2.5rem",
+              fontWeight: "400"
+            }}>
+              Simplify team scheduling. Join our community.
+            </div>
+
+            {/* Large headline in serif */}
+            <h2 style={{
+              fontSize: "4rem",
+              fontWeight: "400",
+              color: "#000000",
+              marginBottom: "3.5rem",
+              fontFamily: "Georgia, 'Times New Roman', serif",
+              letterSpacing: "-0.01em",
+              lineHeight: "1.1"
+            }}>
+              JOIN THE SCHEDULE
+              <br />
+              BUILDER COMMUNITY
+            </h2>
+
+            {/* Horizontal dividing line */}
+            <div style={{
+              width: "100%",
+              height: "1px",
+              backgroundColor: "rgba(0, 0, 0, 0.15)",
+              margin: "0 auto 2.5rem auto"
+            }} />
+
+            {/* Subheadline */}
+            <p style={{
+              fontSize: "0.9375rem",
+              color: "rgba(0, 0, 0, 0.7)",
+              marginBottom: "2.5rem",
+              lineHeight: "1.6",
+              maxWidth: "450px",
+              margin: "0 auto 2.5rem auto"
+            }}>
+              Join our community for exclusive events, content, and more.
+            </p>
+
+          <form onSubmit={handleWaitlistSubmit} style={{
+            maxWidth: "450px",
+            margin: "0 auto"
+          }}>
+            {/* Email input with arrow button */}
+            <div style={{
+              display: "flex",
+              gap: "0",
+              alignItems: "stretch",
+              backgroundColor: "#ffffff",
+              border: "1px solid rgba(0, 0, 0, 0.15)"
+            }}>
+              <input
+                type="email"
+                placeholder="ENTER YOUR EMAIL"
+                value={waitlistEmail}
+                onChange={(e) => setWaitlistEmail(e.target.value)}
+                disabled={waitlistSubmitting}
+                required
+                style={{
+                  flex: 1,
+                  padding: "1rem 1.25rem",
+                  backgroundColor: "transparent",
+                  border: "none",
+                  color: "#000000",
+                  fontSize: "0.8125rem",
+                  letterSpacing: "0.05em",
+                  outline: "none",
+                  fontFamily: "inherit"
+                }}
+              />
+              <button
+                type="submit"
+                disabled={waitlistSubmitting}
+                style={{
+                  padding: "1rem 1.5rem",
+                  backgroundColor: "#000000",
+                  color: "#ffffff",
+                  border: "none",
+                  cursor: waitlistSubmitting ? "not-allowed" : "pointer",
+                  fontSize: "1.25rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  opacity: waitlistSubmitting ? 0.7 : 1,
+                  transition: "opacity 0.2s"
+                }}
+                onMouseOver={(e) => {
+                  if (!waitlistSubmitting) {
+                    e.target.style.opacity = "0.8";
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (!waitlistSubmitting) {
+                    e.target.style.opacity = "1";
+                  }
+                }}
+              >
+                {waitlistSubmitting ? '...' : '→'}
+              </button>
+            </div>
+
+            {waitlistSuccess && (
+              <div style={{
+                marginTop: "1.5rem",
+                padding: "0.875rem",
+                color: "#10b981",
+                fontSize: "0.8125rem",
+                textAlign: "center",
+                letterSpacing: "0.02em"
+              }}>
+                {waitlistSuccess}
+              </div>
+            )}
+
+            {waitlistError && (
+              <div style={{
+                marginTop: "1.5rem",
+                padding: "0.875rem",
+                color: "#ef4444",
+                fontSize: "0.8125rem",
+                textAlign: "center",
+                letterSpacing: "0.02em"
+              }}>
+                {waitlistError}
+              </div>
+            )}
+          </form>
+          </div>
+        </FadeInSection>
       </section>
 
       {/* Footer */}
