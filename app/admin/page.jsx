@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { generateSchedule } from "../../lib/scheduler";
 import TimePicker from "../components/TimePicker";
 import NotificationBell from "../components/NotificationBell";
+import ScheduleHistoryModal from "./components/ScheduleHistoryModal";
 import { exportToCSV, downloadCSV } from "../../lib/utils/export";
 import AvailabilityGrid from "../components/AvailabilityGrid";
 import "./admin.css";
@@ -94,6 +95,9 @@ export default function Home() {
 
   // Profile dropdown state
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+
+  // Schedule history modal state
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
 
   // Check authentication
   useEffect(() => {
@@ -728,6 +732,16 @@ export default function Home() {
         document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
       }, 100);
     }, 500);
+  };
+
+  const handleScheduleReverted = () => {
+    // Refresh the page to show the reverted schedule
+    setStudentSuccess('Schedule reverted successfully!');
+    // Clear schedule results to show fresh state
+    setScheduleResult(null);
+    setSavedScheduleIds([]);
+    // Reload students to show updated data
+    loadStudentsWithAvailability();
   };
 
   const handlePublishSchedule = async (scheduleIndex) => {
@@ -2153,12 +2167,41 @@ export default function Home() {
         {scheduleResult && scheduleResult.success && scheduleResult.schedules && (
           <div id="results">
             <div style={{ marginBottom: "2rem" }}>
-              <h2 style={{ fontSize: "1.5rem", fontWeight: "400", color: "rgba(0, 0, 0, 0.87)", marginBottom: "0.5rem" }}>
-                Generated Schedules
-              </h2>
-              <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", lineHeight: "1.6" }}>
-                Three different scheduling strategies have been generated. Review all options below to choose the best fit.
-              </p>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+                <div>
+                  <h2 style={{ fontSize: "1.5rem", fontWeight: "400", color: "rgba(0, 0, 0, 0.87)", marginBottom: "0.5rem" }}>
+                    Generated Schedules
+                  </h2>
+                  <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", lineHeight: "1.6", margin: 0 }}>
+                    Three different scheduling strategies have been generated. Review all options below to choose the best fit.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowHistoryModal(true)}
+                  style={{
+                    padding: "0.625rem 1.25rem",
+                    backgroundColor: "transparent",
+                    color: "#14b8a6",
+                    border: "1px solid rgba(20, 184, 166, 0.4)",
+                    borderRadius: "6px",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    transition: "all 0.15s ease",
+                    whiteSpace: "nowrap"
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = "rgba(20, 184, 166, 0.08)";
+                    e.currentTarget.style.borderColor = "#14b8a6";
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.borderColor = "rgba(20, 184, 166, 0.4)";
+                  }}
+                >
+                  📜 View Schedule History
+                </button>
+              </div>
             </div>
 
             {/* Display all 3 schedules */}
@@ -3015,6 +3058,13 @@ export default function Home() {
             </div>
           </div>
         )}
+
+        {/* Schedule History Modal */}
+        <ScheduleHistoryModal
+          isOpen={showHistoryModal}
+          onClose={() => setShowHistoryModal(false)}
+          onRevert={handleScheduleReverted}
+        />
       </div>
     </div>
   );
