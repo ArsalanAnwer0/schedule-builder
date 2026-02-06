@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { requireAdmin } from '../../../../../lib/auth/session';
 import dbConnect from '../../../../../lib/db/connect';
 import Schedule from '../../../../../lib/db/models/Schedule';
-import ScheduleHistory from '../../../../../lib/db/models/ScheduleHistory';
 import User from '../../../../../lib/db/models/User';
 import { sendSchedulePublishedNotification } from '../../../../../lib/email/send';
 import { createBulkNotifications } from '../../../../../lib/utils/notifications';
