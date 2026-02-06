@@ -1655,6 +1655,20 @@ export default function Home() {
                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
+                      <th style={{ padding: "0.875rem 1rem", width: "50px" }}>
+                        <input
+                          type="checkbox"
+                          checked={selectedStudents.length === students.length && students.length > 0}
+                          onChange={() => {
+                            if (selectedStudents.length === students.length) {
+                              deselectAllStudents();
+                            } else {
+                              selectAllStudents();
+                            }
+                          }}
+                          style={{ cursor: "pointer" }}
+                        />
+                      </th>
                       <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Name</th>
                       <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Email</th>
                       <th style={{ padding: "0.875rem 1rem", textAlign: "right", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Actions</th>
@@ -1663,6 +1677,14 @@ export default function Home() {
                   <tbody>
                     {students.map((student) => (
                       <tr key={student.id} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
+                        <td style={{ padding: "1rem", width: "50px" }}>
+                          <input
+                            type="checkbox"
+                            checked={selectedStudents.includes(student.id)}
+                            onChange={() => toggleStudentSelection(student.id)}
+                            style={{ cursor: "pointer" }}
+                          />
+                        </td>
                         <td style={{ padding: "1rem", color: "rgba(0, 0, 0, 0.87)", fontSize: "0.875rem" }}>{student.name}</td>
                         <td style={{ padding: "1rem", color: "rgba(0, 0, 0, 0.6)", fontSize: "0.875rem" }}>{student.email}</td>
                         <td style={{ padding: "1rem", textAlign: "right" }}>
