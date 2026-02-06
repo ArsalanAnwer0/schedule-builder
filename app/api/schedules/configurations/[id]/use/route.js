@@ -1,23 +1,18 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../../../../auth/[...nextauth]/route';
-import connectDB from '../../../../../../lib/db/mongodb';
+import { requireAdmin } from '../../../../../../lib/auth/session';
+import dbConnect from '../../../../../../lib/db/connect';
 import ScheduleConfiguration from '../../../../../../lib/db/models/ScheduleConfiguration';
 
 // PUT /api/schedules/configurations/:id/use - Track configuration usage
 export async function PUT(request, { params }) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const adminCheck = await requireAdmin();
+    if (adminCheck.error) {
+      return NextResponse.json({ error: adminCheck.error }, { status: adminCheck.status });
     }
 
-    const admin = session.user;
-    if (admin.role !== 'admin') {
-      return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 });
-    }
-
-    await connectDB();
+    await dbConnect();
+    const admin = adminCheck.user;
 
     // Find and update configuration
     const configuration = await ScheduleConfiguration.findOneAndUpdate(

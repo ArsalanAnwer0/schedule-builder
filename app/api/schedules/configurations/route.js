@@ -1,23 +1,18 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]/route';
-import connectDB from '../../../../lib/db/mongodb';
+import { requireAdmin } from '../../../../lib/auth/session';
+import dbConnect from '../../../../lib/db/connect';
 import ScheduleConfiguration from '../../../../lib/db/models/ScheduleConfiguration';
 
 // GET /api/schedules/configurations - List all configurations for organization
 export async function GET(request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const adminCheck = await requireAdmin();
+    if (adminCheck.error) {
+      return NextResponse.json({ error: adminCheck.error }, { status: adminCheck.status });
     }
 
-    const admin = session.user;
-    if (admin.role !== 'admin') {
-      return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 });
-    }
-
-    await connectDB();
+    await dbConnect();
+    const admin = adminCheck.user;
 
     const configurations = await ScheduleConfiguration.find({
       organizationName: admin.organizationName
@@ -35,15 +30,12 @@ export async function GET(request) {
 // POST /api/schedules/configurations - Create new configuration
 export async function POST(request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const adminCheck = await requireAdmin();
+    if (adminCheck.error) {
+      return NextResponse.json({ error: adminCheck.error }, { status: adminCheck.status });
     }
 
-    const admin = session.user;
-    if (admin.role !== 'admin') {
-      return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 });
-    }
+    const admin = adminCheck.user;
 
     const body = await request.json();
     const {
@@ -61,7 +53,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Configuration name is required' }, { status: 400 });
     }
 
-    await connectDB();
+    await dbConnect();
 
     // Check if configuration with same name exists
     const existingConfig = await ScheduleConfiguration.findOne({

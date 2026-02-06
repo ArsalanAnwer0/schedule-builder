@@ -1,24 +1,19 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../../../auth/[...nextauth]/route';
-import connectDB from '../../../../../lib/db/mongodb';
+import { requireAdmin } from '../../../../../lib/auth/session';
+import dbConnect from '../../../../../lib/db/connect';
 import ScheduleConfiguration from '../../../../../lib/db/models/ScheduleConfiguration';
 import Schedule from '../../../../../lib/db/models/Schedule';
 
 // GET /api/schedules/configurations/:id - Get single configuration
 export async function GET(request, { params }) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const adminCheck = await requireAdmin();
+    if (adminCheck.error) {
+      return NextResponse.json({ error: adminCheck.error }, { status: adminCheck.status });
     }
 
-    const admin = session.user;
-    if (admin.role !== 'admin') {
-      return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 });
-    }
-
-    await connectDB();
+    await dbConnect();
+    const admin = adminCheck.user;
 
     const configuration = await ScheduleConfiguration.findOne({
       _id: params.id,
@@ -39,15 +34,12 @@ export async function GET(request, { params }) {
 // PUT /api/schedules/configurations/:id - Update configuration
 export async function PUT(request, { params }) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const adminCheck = await requireAdmin();
+    if (adminCheck.error) {
+      return NextResponse.json({ error: adminCheck.error }, { status: adminCheck.status });
     }
 
-    const admin = session.user;
-    if (admin.role !== 'admin') {
-      return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 });
-    }
+    const admin = adminCheck.user;
 
     const body = await request.json();
     const {
@@ -61,7 +53,7 @@ export async function PUT(request, { params }) {
       isDefault
     } = body;
 
-    await connectDB();
+    await dbConnect();
 
     // Find existing configuration
     const configuration = await ScheduleConfiguration.findOne({
@@ -114,17 +106,13 @@ export async function PUT(request, { params }) {
 // DELETE /api/schedules/configurations/:id - Delete configuration
 export async function DELETE(request, { params }) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const adminCheck = await requireAdmin();
+    if (adminCheck.error) {
+      return NextResponse.json({ error: adminCheck.error }, { status: adminCheck.status });
     }
 
-    const admin = session.user;
-    if (admin.role !== 'admin') {
-      return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 });
-    }
-
-    await connectDB();
+    await dbConnect();
+    const admin = adminCheck.user;
 
     // Find configuration
     const configuration = await ScheduleConfiguration.findOne({
