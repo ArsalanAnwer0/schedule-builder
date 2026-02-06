@@ -12,7 +12,7 @@ export async function POST(request) {
       return NextResponse.json({ error: adminCheck.error }, { status: adminCheck.status });
     }
 
-    const { schedules, scheduleConfig } = await request.json();
+    const { schedules, scheduleConfig, configurationId } = await request.json();
 
     if (!schedules || !Array.isArray(schedules) || schedules.length === 0) {
       return NextResponse.json({ error: 'Schedules are required' }, { status: 400 });
@@ -69,14 +69,16 @@ export async function POST(request) {
           periodId: null, // We'll add period management later
           organizationName: admin.organizationName, // SECURITY FIX: Scope to organization
           status: 'draft',
-          strategyName,
+          strategyName: strategyName || null, // Optional for backward compatibility
+          configurationId: configurationId || null, // Store reference to configuration
           shifts,
           totalHoursByStudent: Object.fromEntries(totalHoursByStudent),
           scheduleConfig: {
             startDate: scheduleConfig.scheduleStartDate,
             endDate: scheduleConfig.scheduleEndDate,
             officeStartTime: scheduleConfig.officeStartTime,
-            officeEndTime: scheduleConfig.officeEndTime
+            officeEndTime: scheduleConfig.officeEndTime,
+            configSnapshot: scheduleConfig.configSnapshot || null // Store full config snapshot
           }
         });
 
