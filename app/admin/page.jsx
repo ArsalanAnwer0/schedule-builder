@@ -54,6 +54,8 @@ export default function Home() {
   const [studentError, setStudentError] = useState('');
   const [studentSuccess, setStudentSuccess] = useState('');
   const [submittingStudent, setSubmittingStudent] = useState(false);
+  const [selectedStudents, setSelectedStudents] = useState([]); // Array of student IDs for bulk operations
+  const [processingBulkAction, setProcessingBulkAction] = useState(false);
 
   // Admin management state
   const [admins, setAdmins] = useState([]);
@@ -463,6 +465,107 @@ export default function Home() {
           }
         } catch (err) {
           setStudentError('Something went wrong. Please try again.');
+        }
+      },
+      onCancel: () => {
+        setConfirmModal(prev => ({ ...prev, show: false }));
+      }
+    });
+  };
+
+  // Bulk selection helper functions
+  const toggleStudentSelection = (studentId) => {
+    setSelectedStudents(prev =>
+      prev.includes(studentId)
+        ? prev.filter(id => id !== studentId)
+        : [...prev, studentId]
+    );
+  };
+
+  const selectAllStudents = () => {
+    setSelectedStudents(students.map(s => s.id));
+  };
+
+  const deselectAllStudents = () => {
+    setSelectedStudents([]);
+  };
+
+  // Bulk operations
+  const handleBulkRequestAvailability = async () => {
+    if (selectedStudents.length === 0) {
+      setStudentError('No students selected');
+      return;
+    }
+
+    setStudentError('');
+    setStudentSuccess('');
+    setProcessingBulkAction(true);
+
+    try {
+      const res = await fetch('/api/availability/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentIds: selectedStudents }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setStudentError(data.error || 'Failed to send availability requests');
+        return;
+      }
+
+      setStudentSuccess(`Successfully sent availability requests to ${selectedStudents.length} student(s)`);
+      setTimeout(() => setStudentSuccess(''), 5000);
+      deselectAllStudents();
+    } catch (err) {
+      setStudentError('Something went wrong. Please try again.');
+    } finally {
+      setProcessingBulkAction(false);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedStudents.length === 0) {
+      setStudentError('No students selected');
+      return;
+    }
+
+    setConfirmModal({
+      show: true,
+      title: 'Delete Students',
+      message: `Are you sure you want to delete ${selectedStudents.length} student(s)? This action cannot be undone.`,
+      isDangerous: true,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      onConfirm: async () => {
+        setConfirmModal(prev => ({ ...prev, show: false }));
+        setProcessingBulkAction(true);
+        setStudentError('');
+        setStudentSuccess('');
+
+        try {
+          const res = await fetch('/api/students/bulk-delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ studentIds: selectedStudents })
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            setStudentError(data.error || 'Failed to delete students');
+            return;
+          }
+
+          setStudentSuccess(`Successfully deleted ${data.deletedCount} student(s)`);
+          setTimeout(() => setStudentSuccess(''), 3000);
+          deselectAllStudents();
+          loadStudents();
+        } catch (err) {
+          setStudentError('Something went wrong. Please try again.');
+        } finally {
+          setProcessingBulkAction(false);
         }
       },
       onCancel: () => {
