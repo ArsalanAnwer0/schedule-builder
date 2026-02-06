@@ -8,6 +8,7 @@ import NotificationBell from "../components/NotificationBell";
 import ScheduleHistoryModal from "./components/ScheduleHistoryModal";
 import { exportToCSV, downloadCSV } from "../../lib/utils/export";
 import AvailabilityGrid from "../components/AvailabilityGrid";
+import RecurringSchedules from "./components/RecurringSchedules";
 import SaveTemplateModal from "./components/SaveTemplateModal";
 import TemplateLibraryModal from "./components/TemplateLibraryModal";
 import ConflictWarningModal from "./components/ConflictWarningModal";
@@ -40,6 +41,9 @@ export default function Home() {
   // Auth state
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
+
+  // View state
+  const [currentView, setCurrentView] = useState('schedule'); // 'schedule' or 'recurring'
 
   // Student management state
   const [students, setStudents] = useState([]);
@@ -1034,6 +1038,23 @@ export default function Home() {
 
           {/* Notification Bell and Profile Dropdown */}
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            {/* View Switcher */}
+            <button
+              onClick={() => setCurrentView(currentView === 'schedule' ? 'recurring' : 'schedule')}
+              style={{
+                padding: "0.625rem 1rem",
+                backgroundColor: "rgba(0, 0, 0, 0.02)",
+                color: "rgba(0, 0, 0, 0.87)",
+                border: "1px solid rgba(0, 0, 0, 0.1)",
+                borderRadius: "8px",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+                cursor: "pointer"
+              }}
+            >
+              {currentView === 'schedule' ? '📅 Recurring Schedules' : '📋 Manual Schedule'}
+            </button>
+
             <NotificationBell />
 
             <div style={{ position: "relative" }}>
@@ -1226,6 +1247,14 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Main Content - Conditional View */}
+        {currentView === 'recurring' ? (
+          <RecurringSchedules
+            user={user}
+            configurations={configurations}
+          />
+        ) : (
+          <>
         {/* Student Success/Error Messages */}
         {studentSuccess && (
           <div style={{
@@ -3463,6 +3492,8 @@ export default function Home() {
           onDeleteConfig={handleDeleteConfig}
           onClose={() => setShowConfigLibrary(false)}
         />
+        </>
+        )}
       </div>
     </div>
   );
