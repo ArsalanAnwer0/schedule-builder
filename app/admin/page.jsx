@@ -7,6 +7,7 @@ import TimePicker from "../components/TimePicker";
 import NotificationBell from "../components/NotificationBell";
 import { exportToCSV, downloadCSV } from "../../lib/utils/export";
 import AvailabilityGrid from "../components/AvailabilityGrid";
+import ConflictWarningModal from "./components/ConflictWarningModal";
 import "./admin.css";
 
 // Predefined semester dates for US universities
@@ -94,6 +95,11 @@ export default function Home() {
 
   // Profile dropdown state
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+
+  // Conflict modal state
+  const [showConflictModal, setShowConflictModal] = useState(false);
+  const [conflictData, setConflictData] = useState(null);
+  const [pendingPublishScheduleId, setPendingPublishScheduleId] = useState(null);
 
   // Check authentication
   useEffect(() => {
@@ -718,7 +724,7 @@ export default function Home() {
     }, 500);
   };
 
-  const handlePublishSchedule = async (scheduleIndex) => {
+  const handlePublishSchedule = async (scheduleIndex, force = false) => {
     const scheduleId = savedScheduleIds[scheduleIndex];
 
     if (!scheduleId) {
@@ -732,15 +738,27 @@ export default function Home() {
       const response = await fetch(`/api/schedules/${scheduleId}/publish`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ force })  // NEW: Send force flag
       });
 
       const data = await response.json();
 
+      // NEW: Handle 409 conflict response
+      if (response.status === 409 && data.requiresConfirmation) {
+        setPendingPublishScheduleId(scheduleId);
+        setConflictData(data);
+        setShowConflictModal(true);
+        setPublishingScheduleId(null);
+        return;
+      }
+
+      // Existing error handling
       if (!response.ok) {
         setStudentError(data.error || 'Failed to publish schedule');
         return;
       }
 
+      // Existing success handling
       setStudentSuccess(data.message);
       setTimeout(() => setStudentSuccess(''), 5000);
 
@@ -751,6 +769,23 @@ export default function Home() {
     } finally {
       setPublishingScheduleId(null);
     }
+  };
+
+  const handleConflictCancel = () => {
+    setShowConflictModal(false);
+    setConflictData(null);
+    setPendingPublishScheduleId(null);
+  };
+
+  const handleConflictConfirm = async () => {
+    setShowConflictModal(false);
+    // Get index of pending schedule
+    const scheduleIndex = savedScheduleIds.indexOf(pendingPublishScheduleId);
+    // Retry publish with force=true
+    await handlePublishSchedule(scheduleIndex, true);
+    // Clean up
+    setConflictData(null);
+    setPendingPublishScheduleId(null);
   };
 
   const handleProcessEditRequest = async (requestId, action) => {
@@ -3003,6 +3038,16 @@ export default function Home() {
             </div>
           </div>
         )}
+
+        {/* Conflict Warning Modal */}
+        <ConflictWarningModal
+          isOpen={showConflictModal}
+          onClose={handleConflictCancel}
+          onConfirm={handleConflictConfirm}
+          conflicts={conflictData?.conflicts || []}
+          conflictCount={conflictData?.conflictCount || 0}
+          scheduleId={pendingPublishScheduleId}
+        />
       </div>
     </div>
   );
