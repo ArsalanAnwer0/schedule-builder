@@ -29,13 +29,32 @@ export default function ConflictWarningModal({
             since this schedule was generated.
           </p>
 
-          <div className="conflict-student-list">
-            <h3>Affected Students:</h3>
-            <ul>
-              {uniqueStudents.map((name, index) => (
-                <li key={index}>{name}</li>
-              ))}
-            </ul>
+          <div className="conflict-details-list">
+            <h3>Conflict Details:</h3>
+            {conflicts.map((conflict, index) => (
+              <div key={index} className="conflict-item">
+                <div className="conflict-header">
+                  <strong>{conflict.studentName}</strong>
+                  <span className="conflict-badge">{conflict.conflictType.replace('_', ' ')}</span>
+                </div>
+                <div className="conflict-info">
+                  <div className="conflict-day">📅 {conflict.details?.day || 'N/A'}</div>
+                  {conflict.details?.scheduledShift && (
+                    <div className="scheduled-shift">
+                      <span className="label">Scheduled:</span>
+                      <span className="time-slot conflicting">
+                        {conflict.details.scheduledShift.start} - {conflict.details.scheduledShift.end}
+                      </span>
+                    </div>
+                  )}
+                  {conflict.details?.reason && (
+                    <div className="conflict-reason">
+                      <span className="label">Reason:</span> {conflict.details.reason}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
 
           <div className="warning-text">
