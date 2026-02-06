@@ -11,6 +11,8 @@ import AvailabilityGrid from "../components/AvailabilityGrid";
 import SaveTemplateModal from "./components/SaveTemplateModal";
 import TemplateLibraryModal from "./components/TemplateLibraryModal";
 import ConflictWarningModal from "./components/ConflictWarningModal";
+import ConfigurationWizard from "./components/ConfigurationWizard";
+import ConfigurationLibrary from "./components/ConfigurationLibrary";
 import "./admin.css";
 
 // Predefined semester dates for US universities
@@ -69,6 +71,7 @@ export default function Home() {
     minShiftLength: "",
     maxShiftLength: "",
     workers: [],
+    configurationId: null,
   };
 
   const [formData, setFormData] = useState(defaultFormData);
@@ -112,6 +115,14 @@ export default function Home() {
   const [conflictData, setConflictData] = useState(null);
   const [pendingPublishScheduleId, setPendingPublishScheduleId] = useState(null);
 
+  // Configuration modal states
+  const [showConfigWizard, setShowConfigWizard] = useState(false);
+  const [showConfigLibrary, setShowConfigLibrary] = useState(false);
+  const [configurations, setConfigurations] = useState([]);
+  const [selectedConfigId, setSelectedConfigId] = useState('');
+  const [editingConfig, setEditingConfig] = useState(null);
+  const [configSuccess, setConfigSuccess] = useState('');
+
   // Check authentication
   useEffect(() => {
     fetch('/api/auth/me')
@@ -123,6 +134,7 @@ export default function Home() {
           loadEditRequests();
           loadPasswordResetRequests();
           loadAdmins();
+          loadConfigurations();
         } else {
           router.push('/login');
         }
@@ -194,6 +206,73 @@ export default function Home() {
     } finally {
       setLoadingAdmins(false);
     }
+  };
+
+  // Load configurations
+  const loadConfigurations = async () => {
+    try {
+      const res = await fetch('/api/schedules/configurations');
+      const data = await res.json();
+      if (res.ok) {
+        setConfigurations(data.configurations || []);
+        // Auto-select default configuration if exists
+        const defaultConfig = data.configurations?.find(c => c.isDefault);
+        if (defaultConfig) {
+          setSelectedConfigId(defaultConfig._id);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load configurations:', err);
+    }
+  };
+
+  // Configuration handlers
+  const handleSaveConfiguration = async (config) => {
+    try {
+      const method = editingConfig ? 'PUT' : 'POST';
+      const url = editingConfig
+        ? `/api/schedules/configurations/${editingConfig._id}`
+        : '/api/schedules/configurations';
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(config),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to save configuration');
+      }
+
+      setConfigSuccess(editingConfig ? 'Configuration updated successfully!' : 'Configuration created successfully!');
+      setShowConfigWizard(false);
+      setEditingConfig(null);
+      await loadConfigurations();
+
+      // Auto-clear success message after 3 seconds
+      setTimeout(() => setConfigSuccess(''), 3000);
+    } catch (error) {
+      throw error; // Re-throw so the wizard can handle it
+    }
+  };
+
+  const handleSelectConfig = (config) => {
+    setSelectedConfigId(config._id);
+  };
+
+  const handleEditConfig = (config) => {
+    setEditingConfig(config);
+    setShowConfigWizard(true);
+  };
+
+  const handleDeleteConfig = async (configId) => {
+    await loadConfigurations();
+  };
+
+  const handleCreateNewConfig = () => {
+    setEditingConfig(null);
+    setShowConfigWizard(true);
   };
 
   // Admin management handlers
@@ -689,10 +768,16 @@ export default function Home() {
       };
     });
 
-    // Update formData with workers from students
+    // Get selected configuration if any
+    const selectedConfig = selectedConfigId
+      ? configurations.find(c => c._id === selectedConfigId)
+      : null;
+
+    // Update formData with workers from students and configuration
     const scheduleData = {
       ...formData,
-      workers: workers
+      workers: workers,
+      configuration: selectedConfig // Pass full configuration object to scheduler
     };
 
     setIsGenerating(true);
@@ -712,8 +797,10 @@ export default function Home() {
                 scheduleStartDate: formData.scheduleStartDate,
                 scheduleEndDate: formData.scheduleEndDate,
                 officeStartTime: formData.officeStartTime,
-                officeEndTime: formData.officeEndTime
-              }
+                officeEndTime: formData.officeEndTime,
+                configSnapshot: selectedConfig || null // Store full config snapshot
+              },
+              configurationId: selectedConfigId || null
             }),
           });
 
@@ -1531,6 +1618,116 @@ export default function Home() {
           </div>
 
           <div style={{ padding: "2rem" }}>
+            {/* Configuration Selector */}
+            <div style={{ marginBottom: "2.5rem", paddingBottom: "2.5rem", borderBottom: "1px solid rgba(0, 0, 0, 0.06)" }}>
+              <div style={{ marginBottom: "1.25rem" }}>
+                <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.375rem" }}>
+                  Schedule Configuration
+                </h3>
+                <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", margin: 0, lineHeight: "1.5" }}>
+                  Select a pre-configured schedule template or use manual settings below
+                </p>
+              </div>
+
+              {configSuccess && (
+                <div style={{
+                  background: 'rgba(20, 184, 166, 0.1)',
+                  border: '1px solid #14b8a6',
+                  color: '#0d9488',
+                  padding: '12px',
+                  borderRadius: '6px',
+                  marginBottom: '1rem',
+                  fontSize: '0.875rem'
+                }}>
+                  {configSuccess}
+                </div>
+              )}
+
+              <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "flex-end" }}>
+                <div style={{ flex: "1", minWidth: "250px" }}>
+                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.6)", marginBottom: "0.625rem" }}>
+                    Configuration
+                  </label>
+                  <select
+                    value={selectedConfigId}
+                    onChange={(e) => setSelectedConfigId(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: "0.625rem 0.875rem",
+                      backgroundColor: "rgba(0, 0, 0, 0.02)",
+                      border: "1px solid rgba(0, 0, 0, 0.1)",
+                      borderRadius: "6px",
+                      fontSize: "0.875rem",
+                      color: "rgba(0, 0, 0, 0.87)",
+                      outline: "none",
+                      cursor: "pointer"
+                    }}
+                  >
+                    <option value="">Manual Configuration (Use form below)</option>
+                    {configurations.map(config => (
+                      <option key={config._id} value={config._id}>
+                        {config.name} {config.isDefault && '(Default)'}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <button
+                  onClick={handleCreateNewConfig}
+                  style={{
+                    padding: "0.625rem 1.25rem",
+                    backgroundColor: "#14b8a6",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "6px",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    transition: "all 0.2s",
+                    whiteSpace: "nowrap"
+                  }}
+                  onMouseOver={(e) => e.target.style.backgroundColor = "#0d9488"}
+                  onMouseOut={(e) => e.target.style.backgroundColor = "#14b8a6"}
+                >
+                  ⚙️ Create Configuration
+                </button>
+
+                <button
+                  onClick={() => setShowConfigLibrary(true)}
+                  style={{
+                    padding: "0.625rem 1.25rem",
+                    backgroundColor: "#f3f4f6",
+                    color: "#374151",
+                    border: "none",
+                    borderRadius: "6px",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    transition: "all 0.2s",
+                    whiteSpace: "nowrap"
+                  }}
+                  onMouseOver={(e) => e.target.style.backgroundColor = "#e5e7eb"}
+                  onMouseOut={(e) => e.target.style.backgroundColor = "#f3f4f6"}
+                >
+                  📚 Manage Configurations
+                </button>
+              </div>
+
+              {selectedConfigId && (
+                <div style={{
+                  marginTop: "1rem",
+                  padding: "12px",
+                  background: "rgba(20, 184, 166, 0.05)",
+                  borderLeft: "3px solid #14b8a6",
+                  borderRadius: "4px",
+                  fontSize: "0.875rem",
+                  color: "rgba(0, 0, 0, 0.6)"
+                }}>
+                  ✓ Using custom configuration. Manual settings below will be ignored.
+                </div>
+              )}
+            </div>
+
             {/* Office Hours */}
             <div style={{ marginBottom: "2.5rem" }}>
               <div style={{ marginBottom: "1.25rem" }}>
@@ -3215,6 +3412,26 @@ export default function Home() {
           conflicts={conflictData?.conflicts || []}
           conflictCount={conflictData?.conflictCount || 0}
           scheduleId={pendingPublishScheduleId}
+        />
+
+        {/* Configuration Modals */}
+        <ConfigurationWizard
+          isOpen={showConfigWizard}
+          initialConfig={editingConfig}
+          mode={editingConfig ? 'edit' : 'create'}
+          onSave={handleSaveConfiguration}
+          onCancel={() => {
+            setShowConfigWizard(false);
+            setEditingConfig(null);
+          }}
+        />
+
+        <ConfigurationLibrary
+          isOpen={showConfigLibrary}
+          onSelectConfig={handleSelectConfig}
+          onEditConfig={handleEditConfig}
+          onDeleteConfig={handleDeleteConfig}
+          onClose={() => setShowConfigLibrary(false)}
         />
       </div>
     </div>
