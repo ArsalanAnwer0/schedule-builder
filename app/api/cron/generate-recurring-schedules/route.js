@@ -10,8 +10,10 @@ import {
   calculateNextRunTime,
   calculateSchedulePeriod,
   calculateAvailabilityHash,
+  detectAvailabilityChange,
   checkSemesterBoundary
 } from '../../../../lib/utils/recurringSchedules';
+import { detectScheduleConflicts } from '../../../../lib/utils/conflictDetection';
 
 /**
  * Cron endpoint for generating recurring schedules
@@ -116,6 +118,10 @@ export async function GET(request) {
         // Calculate availability hash
         const currentHash = calculateAvailabilityHash(studentsWithAvailability);
 
+        // Detect availability changes
+        const availabilityChange = detectAvailabilityChange(rule, currentHash);
+        console.log(`Availability change: ${availabilityChange.percentageChanged}%`);
+
         // Get configuration
         const configuration = rule.configurationId;
         if (!configuration) {
@@ -162,6 +168,55 @@ export async function GET(request) {
           }
         });
 
+        let finalStatus = 'draft';
+        let logStatus = 'success';
+        let shouldPublish = rule.autoPublish;
+
+        // Decision logic: Check if we should force draft mode
+        if (availabilityChange.changed) {
+          console.log(`Availability changed significantly, forcing draft mode`);
+          shouldPublish = false;
+          logStatus = 'availability_changed';
+        }
+
+        // If auto-publish is enabled and no availability issues, check for conflicts
+        if (shouldPublish) {
+          const conflictResult = await detectScheduleConflicts(newSchedule._id, rule.organizationName);
+
+          if (conflictResult.hasConflicts) {
+            console.log(`Conflicts detected (${conflictResult.conflicts.length}), forcing draft mode`);
+            shouldPublish = false;
+            logStatus = 'conflict_detected';
+
+            // Create log with conflict info
+            await RecurringScheduleLog.create({
+              ruleId: rule._id,
+              organizationName: rule.organizationName,
+              runAt: now,
+              status: logStatus,
+              scheduleId: newSchedule._id,
+              schedulePeriod: {
+                startDate: new Date(period.startDate),
+                endDate: new Date(period.endDate)
+              },
+              metadata: {
+                conflictCount: conflictResult.conflicts.length,
+                availabilityChangePercent: availabilityChange.percentageChanged,
+                studentsAffected: students.length,
+                autoPublished: false
+              }
+            });
+          } else {
+            // No conflicts, safe to publish
+            await Schedule.findByIdAndUpdate(newSchedule._id, {
+              status: 'published',
+              publishedAt: now
+            });
+            finalStatus = 'published';
+            console.log(`Schedule auto-published for rule ${rule._id}`);
+          }
+        }
+
         // Update rule
         await RecurringScheduleRule.findByIdAndUpdate(rule._id, {
           lastRunAt: now,
@@ -170,27 +225,29 @@ export async function GET(request) {
           lastAvailabilityHash: currentHash
         });
 
-        // Create success log
-        await RecurringScheduleLog.create({
-          ruleId: rule._id,
-          organizationName: rule.organizationName,
-          runAt: now,
-          status: 'success',
-          scheduleId: newSchedule._id,
-          schedulePeriod: {
-            startDate: new Date(period.startDate),
-            endDate: new Date(period.endDate)
-          },
-          metadata: {
-            conflictCount: 0,
-            availabilityChangePercent: 0,
-            studentsAffected: students.length,
-            autoPublished: false
-          }
-        });
+        // Create log if not already created above
+        if (logStatus !== 'conflict_detected') {
+          await RecurringScheduleLog.create({
+            ruleId: rule._id,
+            organizationName: rule.organizationName,
+            runAt: now,
+            status: logStatus,
+            scheduleId: newSchedule._id,
+            schedulePeriod: {
+              startDate: new Date(period.startDate),
+              endDate: new Date(period.endDate)
+            },
+            metadata: {
+              conflictCount: 0,
+              availabilityChangePercent: availabilityChange.percentageChanged,
+              studentsAffected: students.length,
+              autoPublished: finalStatus === 'published'
+            }
+          });
+        }
 
         succeeded++;
-        console.log(`Successfully generated schedule for rule ${rule._id}`);
+        console.log(`Successfully generated schedule for rule ${rule._id} (${finalStatus})`);
       } catch (error) {
         console.error(`Error processing rule ${rule._id}:`, error);
 
