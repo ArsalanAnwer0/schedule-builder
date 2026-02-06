@@ -7,6 +7,8 @@ import TimePicker from "../components/TimePicker";
 import NotificationBell from "../components/NotificationBell";
 import { exportToCSV, downloadCSV } from "../../lib/utils/export";
 import AvailabilityGrid from "../components/AvailabilityGrid";
+import SaveTemplateModal from "./components/SaveTemplateModal";
+import TemplateLibraryModal from "./components/TemplateLibraryModal";
 import "./admin.css";
 
 // Predefined semester dates for US universities
@@ -94,6 +96,11 @@ export default function Home() {
 
   // Profile dropdown state
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+
+  // Template modal states
+  const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
+  const [showTemplateLibrary, setShowTemplateLibrary] = useState(false);
+  const [templateSuccess, setTemplateSuccess] = useState('');
 
   // Check authentication
   useEffect(() => {
@@ -765,6 +772,27 @@ export default function Home() {
     }
   };
 
+  const handleSaveTemplate = (template) => {
+    setShowSaveTemplateModal(false);
+    setTemplateSuccess(`Template "${template.name}" saved successfully!`);
+    setTimeout(() => setTemplateSuccess(''), 5000);
+  };
+
+  const handleSelectTemplate = (config) => {
+    setFormData(prev => ({
+      ...prev,
+      officeStartTime: config.officeStartTime,
+      officeEndTime: config.officeEndTime,
+      totalHoursPerWeek: config.totalHoursPerWeek,
+      hoursPerWorkerPerWeek: config.hoursPerWorkerPerWeek,
+      minShiftLength: config.minShiftLength || '',
+      maxShiftLength: config.maxShiftLength || ''
+    }));
+    setShowTemplateLibrary(false);
+    setTemplateSuccess('Template loaded! Adjust dates and generate schedule.');
+    setTimeout(() => setTemplateSuccess(''), 5000);
+  };
+
   const handleProcessEditRequest = async (requestId, action) => {
     setProcessingRequestId(requestId);
     setStudentError('');
@@ -1068,6 +1096,19 @@ export default function Home() {
             marginBottom: "1.5rem"
           }}>
             <p style={{ color: "#dc2626", margin: 0, fontSize: "0.875rem" }}>{studentError}</p>
+          </div>
+        )}
+
+        {templateSuccess && (
+          <div style={{
+            padding: "1rem 1.5rem",
+            backgroundColor: "rgba(139, 92, 246, 0.1)",
+            border: "1px solid rgba(139, 92, 246, 0.3)",
+            borderLeft: "4px solid #8b5cf6",
+            borderRadius: "6px",
+            marginBottom: "1.5rem"
+          }}>
+            <p style={{ color: "#6b21a8", margin: 0, fontSize: "0.875rem" }}>✓ {templateSuccess}</p>
           </div>
         )}
 
@@ -2100,7 +2141,34 @@ export default function Home() {
           </div>
         )}
 
-        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: validationError ? "1rem" : "1.5rem", marginBottom: "2rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: validationError ? "1rem" : "1.5rem", marginBottom: "2rem" }}>
+          <button
+            onClick={() => setShowTemplateLibrary(true)}
+            type="button"
+            style={{
+              padding: "0.625rem 1.25rem",
+              backgroundColor: "transparent",
+              color: "#6b7280",
+              border: "1px solid rgba(107, 114, 128, 0.3)",
+              borderRadius: "6px",
+              fontSize: "0.875rem",
+              fontWeight: "500",
+              cursor: "pointer",
+              transition: "all 0.15s ease",
+              letterSpacing: "0.01em",
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = "rgba(107, 114, 128, 0.05)";
+              e.currentTarget.style.borderColor = "#6b7280";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = "transparent";
+              e.currentTarget.style.borderColor = "rgba(107, 114, 128, 0.3)";
+            }}
+          >
+            📚 Load from Template
+          </button>
+
           <button
             onClick={handleGenerateSchedule}
             disabled={isGenerating || students.filter(s => s.hasSubmitted).length === 0}
@@ -2152,13 +2220,43 @@ export default function Home() {
         {/* Results */}
         {scheduleResult && scheduleResult.success && scheduleResult.schedules && (
           <div id="results">
-            <div style={{ marginBottom: "2rem" }}>
-              <h2 style={{ fontSize: "1.5rem", fontWeight: "400", color: "rgba(0, 0, 0, 0.87)", marginBottom: "0.5rem" }}>
-                Generated Schedules
-              </h2>
-              <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", lineHeight: "1.6" }}>
-                Three different scheduling strategies have been generated. Review all options below to choose the best fit.
-              </p>
+            <div style={{ marginBottom: "2rem", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <div>
+                <h2 style={{ fontSize: "1.5rem", fontWeight: "400", color: "rgba(0, 0, 0, 0.87)", marginBottom: "0.5rem" }}>
+                  Generated Schedules
+                </h2>
+                <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", lineHeight: "1.6" }}>
+                  Three different scheduling strategies have been generated. Review all options below to choose the best fit.
+                </p>
+              </div>
+
+              <button
+                onClick={() => setShowSaveTemplateModal(true)}
+                type="button"
+                style={{
+                  padding: "0.625rem 1.25rem",
+                  backgroundColor: "transparent",
+                  color: "#8b5cf6",
+                  border: "1px solid rgba(139, 92, 246, 0.4)",
+                  borderRadius: "6px",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  transition: "all 0.15s ease",
+                  letterSpacing: "0.01em",
+                  whiteSpace: "nowrap",
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(139, 92, 246, 0.08)";
+                  e.currentTarget.style.borderColor = "#8b5cf6";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.borderColor = "rgba(139, 92, 246, 0.4)";
+                }}
+              >
+                💾 Save as Template
+              </button>
             </div>
 
             {/* Display all 3 schedules */}
@@ -3015,6 +3113,27 @@ export default function Home() {
             </div>
           </div>
         )}
+
+        {/* Template Modals */}
+        <SaveTemplateModal
+          isOpen={showSaveTemplateModal}
+          currentConfig={{
+            officeStartTime: formData.officeStartTime,
+            officeEndTime: formData.officeEndTime,
+            totalHoursPerWeek: formData.totalHoursPerWeek,
+            hoursPerWorkerPerWeek: formData.hoursPerWorkerPerWeek,
+            minShiftLength: formData.minShiftLength,
+            maxShiftLength: formData.maxShiftLength
+          }}
+          onSave={handleSaveTemplate}
+          onCancel={() => setShowSaveTemplateModal(false)}
+        />
+
+        <TemplateLibraryModal
+          isOpen={showTemplateLibrary}
+          onSelectTemplate={handleSelectTemplate}
+          onCancel={() => setShowTemplateLibrary(false)}
+        />
       </div>
     </div>
   );
