@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { requireAdmin } from '../../../../../lib/auth/session';
 import dbConnect from '../../../../../lib/db/connect';
 import Schedule from '../../../../../lib/db/models/Schedule';
+import ScheduleHistory from '../../../../../lib/db/models/ScheduleHistory';
 import User from '../../../../../lib/db/models/User';
 import { sendSchedulePublishedNotification } from '../../../../../lib/email/send';
 import { createBulkNotifications } from '../../../../../lib/utils/notifications';
@@ -33,6 +34,9 @@ export async function POST(request, { params }) {
 
     await dbConnect();
 
+    // Get admin's organization
+    const admin = await User.findById(adminCheck.user._id);
+
     // Find the schedule to publish
     const schedule = await Schedule.findById(id);
 
@@ -40,19 +44,49 @@ export async function POST(request, { params }) {
       return NextResponse.json({ error: 'Schedule not found' }, { status: 404 });
     }
 
+    // Get current published schedule to determine next version
+    const currentPublished = await Schedule.findOne({
+      organizationName: admin.organizationName,
+      status: 'published',
+    }).sort({ version: -1 });
+
+    const nextVersion = currentPublished ? currentPublished.version + 1 : 1;
+
     // Unpublish any currently published schedules
     await Schedule.updateMany(
-      { status: 'published' },
-      { $set: { status: 'draft' } }
+      { organizationName: admin.organizationName, status: 'published' },
+      { $set: { status: 'draft', isCurrentVersion: false } }
     );
 
-    // Publish this schedule
+    // Publish this schedule with version tracking
     schedule.status = 'published';
     schedule.publishedAt = new Date();
+    schedule.publishedBy = admin._id;
+    schedule.version = nextVersion;
+    schedule.isCurrentVersion = true;
+    schedule.previousVersionId = currentPublished?._id || null;
+    schedule.changeDescription = schedule.changeDescription || 'Schedule published';
     await schedule.save();
 
-    // Get admin's organization to ensure we only notify students in the same org
-    const admin = await User.findById(adminCheck.user._id);
+    // Create history entry
+    await ScheduleHistory.create({
+      scheduleId: schedule._id,
+      organizationName: admin.organizationName,
+      version: nextVersion,
+      publishedBy: admin._id,
+      scheduleSnapshot: schedule.toObject(),
+      changeDescription: schedule.changeDescription,
+    });
+
+    // Clean up old history (keep last 20)
+    const allHistory = await ScheduleHistory.find({
+      organizationName: admin.organizationName,
+    }).sort({ version: -1 });
+
+    if (allHistory.length > 20) {
+      const toDelete = allHistory.slice(20).map((h) => h._id);
+      await ScheduleHistory.deleteMany({ _id: { $in: toDelete } });
+    }
 
     // Get students ONLY from the admin's organization (SECURITY FIX)
     const students = await User.find({
