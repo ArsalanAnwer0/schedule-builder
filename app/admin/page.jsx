@@ -14,6 +14,7 @@ import TemplateLibraryModal from "./components/TemplateLibraryModal";
 import ConflictWarningModal from "./components/ConflictWarningModal";
 import ConfigurationWizard from "./components/ConfigurationWizard";
 import ConfigurationLibrary from "./components/ConfigurationLibrary";
+import AuditLogViewer from "./components/AuditLogViewer";
 import "./admin.css";
 
 // Predefined semester dates for US universities
@@ -43,7 +44,7 @@ export default function Home() {
   const [authLoading, setAuthLoading] = useState(true);
 
   // View state
-  const [currentView, setCurrentView] = useState('schedule'); // 'schedule' or 'recurring'
+  const [currentView, setCurrentView] = useState('schedule'); // 'schedule', 'recurring', or 'audit'
 
   // Student management state
   const [students, setStudents] = useState([]);
@@ -1142,21 +1143,56 @@ export default function Home() {
           {/* Notification Bell and Profile Dropdown */}
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
             {/* View Switcher */}
-            <button
-              onClick={() => setCurrentView(currentView === 'schedule' ? 'recurring' : 'schedule')}
-              style={{
-                padding: "0.625rem 1rem",
-                backgroundColor: "rgba(0, 0, 0, 0.02)",
-                color: "rgba(0, 0, 0, 0.87)",
-                border: "1px solid rgba(0, 0, 0, 0.1)",
-                borderRadius: "8px",
-                fontSize: "0.875rem",
-                fontWeight: "500",
-                cursor: "pointer"
-              }}
-            >
-              {currentView === 'schedule' ? '📅 Recurring Schedules' : '📋 Manual Schedule'}
-            </button>
+            <div style={{ display: "flex", gap: "0.5rem", background: "rgba(0, 0, 0, 0.02)", padding: "4px", borderRadius: "8px", border: "1px solid rgba(0, 0, 0, 0.1)" }}>
+              <button
+                onClick={() => setCurrentView('schedule')}
+                style={{
+                  padding: "0.5rem 1rem",
+                  backgroundColor: currentView === 'schedule' ? '#14b8a6' : 'transparent',
+                  color: currentView === 'schedule' ? 'white' : "rgba(0, 0, 0, 0.87)",
+                  border: "none",
+                  borderRadius: "6px",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  transition: "all 0.2s"
+                }}
+              >
+                📋 Manual
+              </button>
+              <button
+                onClick={() => setCurrentView('recurring')}
+                style={{
+                  padding: "0.5rem 1rem",
+                  backgroundColor: currentView === 'recurring' ? '#14b8a6' : 'transparent',
+                  color: currentView === 'recurring' ? 'white' : "rgba(0, 0, 0, 0.87)",
+                  border: "none",
+                  borderRadius: "6px",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  transition: "all 0.2s"
+                }}
+              >
+                📅 Recurring
+              </button>
+              <button
+                onClick={() => setCurrentView('audit')}
+                style={{
+                  padding: "0.5rem 1rem",
+                  backgroundColor: currentView === 'audit' ? '#14b8a6' : 'transparent',
+                  color: currentView === 'audit' ? 'white' : "rgba(0, 0, 0, 0.87)",
+                  border: "none",
+                  borderRadius: "6px",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  transition: "all 0.2s"
+                }}
+              >
+                📝 Audit Logs
+              </button>
+            </div>
 
             <NotificationBell />
 
@@ -1351,7 +1387,9 @@ export default function Home() {
         </div>
 
         {/* Main Content - Conditional View */}
-        {currentView === 'recurring' ? (
+        {currentView === 'audit' ? (
+          <AuditLogViewer />
+        ) : currentView === 'recurring' ? (
           <RecurringSchedules
             user={user}
             configurations={configurations}
