@@ -17,20 +17,19 @@ const generateTimeOptions = () => {
   return times;
 };
 
-// Convert 24-hour time to 12-hour format
-const convertTo12Hour = (time24) => {
+// Import centralized time conversion utilities
+import { convertTo12Hour, timeToMinutes } from '../../lib/utils/timeConversion';
+
+// Wrapper for convertTo12Hour with empty string handling
+const convertTo12HourSafe = (time24) => {
   if (!time24) return '';
-  const [hours, minutes] = time24.split(':').map(Number);
-  const hour12 = hours === 0 ? 12 : hours > 12 ? hours - 12 : hours;
-  const ampm = hours < 12 ? 'AM' : 'PM';
-  return `${hour12}:${String(minutes).padStart(2, '0')} ${ampm}`;
+  return convertTo12Hour(time24);
 };
 
-// Helper function to convert time string to minutes since midnight
-const timeToMinutes = (timeString) => {
+// Wrapper for timeToMinutes with default value
+const timeToMinutesSafe = (timeString) => {
   if (!timeString) return 0;
-  const [hours, minutes] = timeString.split(':').map(Number);
-  return hours * 60 + minutes;
+  return timeToMinutes(timeString);
 };
 
 // Custom Time Picker Component
@@ -42,7 +41,7 @@ export default function TimePicker({ value, onChange, placeholder, positionAbove
 
   // Filter time options based on minTime
   const timeOptions = minTime
-    ? allTimeOptions.filter(time => timeToMinutes(time.value) > timeToMinutes(minTime))
+    ? allTimeOptions.filter(time => timeToMinutesSafe(time.value) > timeToMinutesSafe(minTime))
     : allTimeOptions;
 
   useEffect(() => {
@@ -91,7 +90,7 @@ export default function TimePicker({ value, onChange, placeholder, positionAbove
           gap: "0.75rem"
         }}
       >
-        <span>{value ? convertTo12Hour(value) : placeholder}</span>
+        <span>{value ? convertTo12HourSafe(value) : placeholder}</span>
         <span style={{ fontSize: "0.75rem", color: "#6b7280", lineHeight: "1" }}>▼</span>
       </div>
 

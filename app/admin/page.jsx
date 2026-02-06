@@ -577,20 +577,8 @@ export default function Home() {
 
   // Removed manual worker management functions - workers are now students with submitted availability
 
-  // Helper function to convert 12-hour time to 24-hour for sorting
-  const convertTo24Hour = (time12h) => {
-    const [time, period] = time12h.split(' ');
-    let [hours, minutes] = time.split(':');
-    hours = parseInt(hours);
-
-    if (period === 'PM' && hours !== 12) {
-      hours += 12;
-    } else if (period === 'AM' && hours === 12) {
-      hours = 0;
-    }
-
-    return `${String(hours).padStart(2, '0')}:${minutes}`;
-  };
+  // Import centralized time conversion utility
+  const { convertTo24Hour } = require('../../lib/utils/timeConversion');
 
   // Helper function to add 30 minutes to a time slot
   const addThirtyMinutes = (time12h) => {
