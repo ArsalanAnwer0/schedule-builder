@@ -1651,7 +1651,72 @@ export default function Home() {
             ) : students.length === 0 ? (
               <p style={{ color: "rgba(0, 0, 0, 0.45)" }}>No students yet. Add your first student to get started.</p>
             ) : (
-              <div className="table-container" style={{ overflowX: "auto" }}>
+              <>
+                {selectedStudents.length > 0 && (
+                  <div style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: "1rem",
+                    backgroundColor: "rgba(20, 184, 166, 0.1)",
+                    border: "1px solid rgba(20, 184, 166, 0.3)",
+                    borderRadius: "6px",
+                    marginBottom: "1rem"
+                  }}>
+                    <span style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.87)", fontWeight: "500" }}>
+                      {selectedStudents.length} student{selectedStudents.length !== 1 ? 's' : ''} selected
+                    </span>
+                    <div style={{ display: "flex", gap: "0.5rem" }}>
+                      <button
+                        onClick={handleBulkRequestAvailability}
+                        disabled={processingBulkAction}
+                        style={{
+                          padding: "0.5rem 1rem",
+                          backgroundColor: "#10b981",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "4px",
+                          fontSize: "0.875rem",
+                          cursor: processingBulkAction ? "not-allowed" : "pointer",
+                          opacity: processingBulkAction ? 0.6 : 1
+                        }}
+                      >
+                        Request Availability
+                      </button>
+                      <button
+                        onClick={handleBulkDelete}
+                        disabled={processingBulkAction}
+                        style={{
+                          padding: "0.5rem 1rem",
+                          backgroundColor: "#dc2626",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "4px",
+                          fontSize: "0.875rem",
+                          cursor: processingBulkAction ? "not-allowed" : "pointer",
+                          opacity: processingBulkAction ? 0.6 : 1
+                        }}
+                      >
+                        Delete Selected
+                      </button>
+                      <button
+                        onClick={deselectAllStudents}
+                        style={{
+                          padding: "0.5rem 1rem",
+                          backgroundColor: "transparent",
+                          color: "rgba(0, 0, 0, 0.6)",
+                          border: "1px solid rgba(0, 0, 0, 0.2)",
+                          borderRadius: "4px",
+                          fontSize: "0.875rem",
+                          cursor: "pointer"
+                        }}
+                      >
+                        Clear Selection
+                      </button>
+                    </div>
+                  </div>
+                )}
+                <div className="table-container" style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
@@ -1786,6 +1851,7 @@ export default function Home() {
                   </tbody>
                 </table>
               </div>
+              </>
             )}
           </div>
         </div>
