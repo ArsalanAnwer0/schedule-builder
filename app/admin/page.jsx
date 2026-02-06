@@ -1161,6 +1161,36 @@ export default function Home() {
                     <button
                       onClick={() => {
                         setShowProfileDropdown(false);
+                        router.push('/admin/organization-settings');
+                      }}
+                      style={{
+                        width: "100%",
+                        padding: "0.625rem 0.75rem",
+                        backgroundColor: "transparent",
+                        color: "rgba(0, 0, 0, 0.6)",
+                        border: "none",
+                        borderRadius: "6px",
+                        fontSize: "0.875rem",
+                        fontWeight: "400",
+                        cursor: "pointer",
+                        transition: "all 0.15s ease",
+                        textAlign: "left",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.75rem"
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)"}
+                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 10C9.10457 10 10 9.10457 10 8C10 6.89543 9.10457 6 8 6C6.89543 6 6 6.89543 6 8C6 9.10457 6.89543 10 8 10Z" stroke="currentColor" strokeWidth="1.5"/>
+                        <path d="M13.5 8C13.5 8 13.5 8 13.5 8L12.5 9.5L13 11L11.5 11.5L10.5 13L8 13L6.5 13L5.5 11.5L4 11L4.5 9.5L3.5 8L4.5 6.5L4 5L5.5 4.5L6.5 3L8 3L9.5 3L10.5 4.5L12 5L11.5 6.5L12.5 8L13.5 8Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      Organization Settings
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowProfileDropdown(false);
                         handleLogout();
                       }}
                       style={{
