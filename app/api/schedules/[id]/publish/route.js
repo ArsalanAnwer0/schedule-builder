@@ -7,6 +7,7 @@ import User from '../../../../../lib/db/models/User';
 import { sendSchedulePublishedNotification } from '../../../../../lib/email/send';
 import { createBulkNotifications } from '../../../../../lib/utils/notifications';
 import { rateLimit } from '../../../../../lib/utils/rateLimiter';
+import { detectScheduleConflicts } from '../../../../../lib/utils/conflictDetection';
 
 // POST - Publish a schedule
 export async function POST(request, { params }) {
@@ -31,11 +32,27 @@ export async function POST(request, { params }) {
     }
 
     const { id } = await params;
+    const body = await request.json().catch(() => ({}));
+    const { force = false } = body;
 
     await dbConnect();
 
     // Get admin's organization
     const admin = await User.findById(adminCheck.user._id);
+
+    // Check for conflicts unless force=true
+    if (!force) {
+      const conflictResult = await detectScheduleConflicts(id, admin.organizationName);
+
+      if (conflictResult.hasConflicts) {
+        return NextResponse.json({
+          error: 'Schedule has availability conflicts',
+          requiresConfirmation: true,
+          conflictCount: conflictResult.conflicts.length,
+          conflicts: conflictResult.conflicts
+        }, { status: 409 }); // 409 Conflict
+      }
+    }
 
     // Find the schedule to publish
     const schedule = await Schedule.findById(id);

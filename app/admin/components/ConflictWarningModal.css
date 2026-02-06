@@ -1,0 +1,145 @@
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+/* Modal container */
+.conflict-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 1001;
+}
+
+/* Header */
+.conflict-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.conflict-modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #d97706; /* Amber color for warning */
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close-btn:hover {
+  color: #374151;
+}
+
+/* Body */
+.conflict-modal-body {
+  padding: 24px;
+}
+
+.conflict-message {
+  margin-bottom: 20px;
+  font-size: 1rem;
+  color: #374151;
+}
+
+.conflict-student-list {
+  margin-bottom: 20px;
+}
+
+.conflict-student-list h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #6b7280;
+  text-transform: uppercase;
+}
+
+.conflict-student-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.conflict-student-list li {
+  padding: 8px 12px;
+  background: #fef3c7; /* Light amber background */
+  border-left: 3px solid #f59e0b; /* Amber border */
+  margin-bottom: 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  color: #92400e;
+}
+
+.warning-text {
+  padding: 12px;
+  background: #fef3c7;
+  border-radius: 6px;
+  color: #92400e;
+  font-size: 0.875rem;
+  border: 1px solid #fcd34d;
+}
+
+/* Actions */
+.modal-actions {
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.modal-actions button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary {
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  color: #374151;
+}
+
+.btn-secondary:hover {
+  background: #e5e7eb;
+}
+
+.btn-warning {
+  background: #f59e0b;
+  border: 1px solid #d97706;
+  color: white;
+}
+
+.btn-warning:hover {
+  background: #d97706;
+}

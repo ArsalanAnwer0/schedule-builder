@@ -10,6 +10,7 @@ import { exportToCSV, downloadCSV } from "../../lib/utils/export";
 import AvailabilityGrid from "../components/AvailabilityGrid";
 import SaveTemplateModal from "./components/SaveTemplateModal";
 import TemplateLibraryModal from "./components/TemplateLibraryModal";
+import ConflictWarningModal from "./components/ConflictWarningModal";
 import "./admin.css";
 
 // Predefined semester dates for US universities
@@ -105,6 +106,11 @@ export default function Home() {
 
   // Schedule history modal state
   const [showHistoryModal, setShowHistoryModal] = useState(false);
+
+  // Conflict modal state
+  const [showConflictModal, setShowConflictModal] = useState(false);
+  const [conflictData, setConflictData] = useState(null);
+  const [pendingPublishScheduleId, setPendingPublishScheduleId] = useState(null);
 
   // Check authentication
   useEffect(() => {
@@ -588,20 +594,8 @@ export default function Home() {
 
   // Removed manual worker management functions - workers are now students with submitted availability
 
-  // Helper function to convert 12-hour time to 24-hour for sorting
-  const convertTo24Hour = (time12h) => {
-    const [time, period] = time12h.split(' ');
-    let [hours, minutes] = time.split(':');
-    hours = parseInt(hours);
-
-    if (period === 'PM' && hours !== 12) {
-      hours += 12;
-    } else if (period === 'AM' && hours === 12) {
-      hours = 0;
-    }
-
-    return `${String(hours).padStart(2, '0')}:${minutes}`;
-  };
+  // Import centralized time conversion utility
+  const { convertTo24Hour } = require('../../lib/utils/timeConversion');
 
   // Helper function to add 30 minutes to a time slot
   const addThirtyMinutes = (time12h) => {
@@ -751,7 +745,7 @@ export default function Home() {
     loadStudentsWithAvailability();
   };
 
-  const handlePublishSchedule = async (scheduleIndex) => {
+  const handlePublishSchedule = async (scheduleIndex, force = false) => {
     const scheduleId = savedScheduleIds[scheduleIndex];
 
     if (!scheduleId) {
@@ -765,15 +759,27 @@ export default function Home() {
       const response = await fetch(`/api/schedules/${scheduleId}/publish`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ force })  // NEW: Send force flag
       });
 
       const data = await response.json();
 
+      // NEW: Handle 409 conflict response
+      if (response.status === 409 && data.requiresConfirmation) {
+        setPendingPublishScheduleId(scheduleId);
+        setConflictData(data);
+        setShowConflictModal(true);
+        setPublishingScheduleId(null);
+        return;
+      }
+
+      // Existing error handling
       if (!response.ok) {
         setStudentError(data.error || 'Failed to publish schedule');
         return;
       }
 
+      // Existing success handling
       setStudentSuccess(data.message);
       setTimeout(() => setStudentSuccess(''), 5000);
 
@@ -805,6 +811,23 @@ export default function Home() {
     setShowTemplateLibrary(false);
     setTemplateSuccess('Template loaded! Adjust dates and generate schedule.');
     setTimeout(() => setTemplateSuccess(''), 5000);
+  };
+
+  const handleConflictCancel = () => {
+    setShowConflictModal(false);
+    setConflictData(null);
+    setPendingPublishScheduleId(null);
+  };
+
+  const handleConflictConfirm = async () => {
+    setShowConflictModal(false);
+    // Get index of pending schedule
+    const scheduleIndex = savedScheduleIds.indexOf(pendingPublishScheduleId);
+    // Retry publish with force=true
+    await handlePublishSchedule(scheduleIndex, true);
+    // Clean up
+    setConflictData(null);
+    setPendingPublishScheduleId(null);
   };
 
   const handleProcessEditRequest = async (requestId, action) => {
@@ -3182,6 +3205,16 @@ export default function Home() {
           isOpen={showHistoryModal}
           onClose={() => setShowHistoryModal(false)}
           onRevert={handleScheduleReverted}
+        />
+
+        {/* Conflict Warning Modal */}
+        <ConflictWarningModal
+          isOpen={showConflictModal}
+          onClose={handleConflictCancel}
+          onConfirm={handleConflictConfirm}
+          conflicts={conflictData?.conflicts || []}
+          conflictCount={conflictData?.conflictCount || 0}
+          scheduleId={pendingPublishScheduleId}
         />
       </div>
     </div>
