@@ -111,7 +111,7 @@ export default function TemplateLibraryModal({
             <div className="empty-state">
               <div className="empty-icon">📋</div>
               <h3>No templates saved yet</h3>
-              <p>Generate a schedule and click "Save as Template" to create one.</p>
+              <p>Generate a schedule and click &quot;Save as Template&quot; to create one.</p>
             </div>
           ) : (
             <div className="template-grid">
