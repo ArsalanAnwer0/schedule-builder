@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import RecurringScheduleModal from './RecurringScheduleModal';
 import './RecurringSchedules.css';
 
 export default function RecurringSchedules({ user, configurations }) {
@@ -8,6 +9,8 @@ export default function RecurringSchedules({ user, configurations }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [selectedRule, setSelectedRule] = useState(null);
 
   useEffect(() => {
     loadRules();
@@ -133,6 +136,34 @@ export default function RecurringSchedules({ user, configurations }) {
     );
   };
 
+  const handleSaveRule = async (formData) => {
+    try {
+      const method = selectedRule ? 'PATCH' : 'POST';
+      const url = selectedRule
+        ? `/api/recurring-schedules/${selectedRule._id}`
+        : '/api/recurring-schedules';
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to save rule');
+      }
+
+      setSuccess(`Rule ${selectedRule ? 'updated' : 'created'} successfully!`);
+      setTimeout(() => setSuccess(''), 3000);
+      loadRules();
+      setShowModal(false);
+      setSelectedRule(null);
+    } catch (err) {
+      throw err;
+    }
+  };
+
   const formatNextRun = (date) => {
     if (!date) return 'Not scheduled';
 
@@ -170,7 +201,7 @@ export default function RecurringSchedules({ user, configurations }) {
           <h2>Recurring Schedules</h2>
           <p>Auto-generate schedules on weekly, biweekly, or monthly intervals</p>
         </div>
-        <button className="btn-create" onClick={() => alert('Create modal coming in next commit!')}>
+        <button className="btn-create" onClick={() => { setSelectedRule(null); setShowModal(true); }}>
           + Create Recurring Rule
         </button>
       </header>
@@ -197,7 +228,7 @@ export default function RecurringSchedules({ user, configurations }) {
           </svg>
           <h3>No Recurring Schedules</h3>
           <p>Create your first recurring schedule to automate schedule generation</p>
-          <button className="btn-primary" onClick={() => alert('Create modal coming soon!')}>
+          <button className="btn-primary" onClick={() => { setSelectedRule(null); setShowModal(true); }}>
             Create Recurring Rule
           </button>
         </div>
@@ -263,6 +294,15 @@ export default function RecurringSchedules({ user, configurations }) {
             </tbody>
           </table>
         </div>
+      )}
+
+      {showModal && (
+        <RecurringScheduleModal
+          rule={selectedRule}
+          configurations={configurations}
+          onSave={handleSaveRule}
+          onClose={() => { setShowModal(false); setSelectedRule(null); }}
+        />
       )}
     </div>
   );
