@@ -42,10 +42,13 @@ export async function POST(request) {
           actionUrl: '/student/dashboard'
         });
 
-        return NextResponse.json({
-          success: true,
-          message: 'Availability reset successfully. You must request availability again for this student.'
-        });
+        return NextResponse.json(
+          {
+            success: true,
+            message: 'Availability reset successfully. You must request availability again for this student.'
+          },
+          { status: 200 }
+        );
       }
     }
 
@@ -86,10 +89,13 @@ export async function POST(request) {
       actionUrl: '/student/dashboard'
     });
 
-    return NextResponse.json({
-      success: true,
-      message: 'Availability reset successfully. You must request availability again for this student.'
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        message: 'Availability reset successfully. You must request availability again for this student.'
+      },
+      { status: 200 }
+    );
 
   } catch (error) {
     console.error('Reset availability error:', error);

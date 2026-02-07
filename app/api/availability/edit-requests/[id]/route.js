@@ -79,16 +79,19 @@ export async function POST(request, { params }) {
           console.error('Failed to create notification:', notificationError);
         }
 
-        return NextResponse.json({
-          success: true,
-          message: action === 'approve'
-            ? 'Edit request approved and availability updated'
-            : 'Edit request rejected',
-          request: {
-            id: editRequest._id.toString(),
-            status: editRequest.status
-          }
-        });
+        return NextResponse.json(
+          {
+            success: true,
+            message: action === 'approve'
+              ? 'Edit request approved and availability updated'
+              : 'Edit request rejected',
+            request: {
+              id: editRequest._id.toString(),
+              status: editRequest.status
+            }
+          },
+          { status: 200 }
+        );
       }
     }
 
@@ -166,16 +169,19 @@ export async function POST(request, { params }) {
       // Don't fail the request if email fails
     }
 
-    return NextResponse.json({
-      success: true,
-      message: action === 'approve'
-        ? 'Edit request approved and availability updated'
-        : 'Edit request rejected',
-      request: {
-        id: editRequest._id.toString(),
-        status: editRequest.status
-      }
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        message: action === 'approve'
+          ? 'Edit request approved and availability updated'
+          : 'Edit request rejected',
+        request: {
+          id: editRequest._id.toString(),
+          status: editRequest.status
+        }
+      },
+      { status: 200 }
+    );
 
   } catch (error) {
     console.error('Process edit request error:', error);

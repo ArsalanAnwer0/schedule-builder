@@ -73,11 +73,14 @@ export async function POST(request) {
           );
         }
 
-        return NextResponse.json({
-          success: true,
-          message: `Availability requested from ${students.length} student(s). Notifications sent successfully.`,
-          sentCount: students.length,
-        });
+        return NextResponse.json(
+          {
+            success: true,
+            message: `Availability requested from ${students.length} student(s). Notifications sent successfully.`,
+            sentCount: students.length,
+          },
+          { status: 200 }
+        );
       }
     }
 
@@ -184,11 +187,14 @@ export async function POST(request) {
       console.error('Some email notifications failed (non-critical):', err);
     });
 
-    return NextResponse.json({
-      success: true,
-      message: `Availability requested from ${students.length} student(s). Notifications sent successfully.`,
-      sentCount: students.length,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        message: `Availability requested from ${students.length} student(s). Notifications sent successfully.`,
+        sentCount: students.length,
+      },
+      { status: 200 }
+    );
 
   } catch (error) {
     console.error('Request availability error:', error);
