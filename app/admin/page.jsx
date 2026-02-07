@@ -1533,19 +1533,6 @@ export default function Home() {
           </div>
         )}
 
-        {templateSuccess && (
-          <div style={{
-            padding: "1rem 1.5rem",
-            backgroundColor: "rgba(139, 92, 246, 0.1)",
-            border: "1px solid rgba(139, 92, 246, 0.3)",
-            borderLeft: "4px solid #8b5cf6",
-            borderRadius: "6px",
-            marginBottom: "1.5rem"
-          }}>
-            <p style={{ color: "#6b21a8", margin: 0, fontSize: "0.875rem" }}>✓ {templateSuccess}</p>
-          </div>
-        )}
-
         {/* Admin Success/Error Messages */}
         {adminSuccess && (
           <div style={{
