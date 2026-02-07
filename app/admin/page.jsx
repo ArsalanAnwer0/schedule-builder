@@ -9,8 +9,6 @@ import ScheduleHistoryModal from "./components/ScheduleHistoryModal";
 import { exportToCSV, downloadCSV } from "../../lib/utils/export";
 import AvailabilityGrid from "../components/AvailabilityGrid";
 import RecurringSchedules from "./components/RecurringSchedules";
-import SaveTemplateModal from "./components/SaveTemplateModal";
-import TemplateLibraryModal from "./components/TemplateLibraryModal";
 import ConflictWarningModal from "./components/ConflictWarningModal";
 import ConfigurationWizard from "./components/ConfigurationWizard";
 import ConfigurationLibrary from "./components/ConfigurationLibrary";
@@ -69,16 +67,9 @@ export default function Home() {
 
   // Default form data
   const defaultFormData = {
-    officeStartTime: "08:00",
-    officeEndTime: "16:30",
     scheduleStartDate: "",
     scheduleEndDate: "",
-    totalHoursPerWeek: "40",
-    hoursPerWorkerPerWeek: "6",
-    minShiftLength: "",
-    maxShiftLength: "",
     workers: [],
-    configurationId: null,
   };
 
   const [formData, setFormData] = useState(defaultFormData);
@@ -108,11 +99,6 @@ export default function Home() {
 
   // Profile dropdown state
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-
-  // Template modal states
-  const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
-  const [showTemplateLibrary, setShowTemplateLibrary] = useState(false);
-  const [templateSuccess, setTemplateSuccess] = useState('');
 
   // Schedule history modal state
   const [showHistoryModal, setShowHistoryModal] = useState(false);
@@ -743,13 +729,6 @@ export default function Home() {
         const savedData = JSON.parse(saved);
         // Merge saved data with defaults to ensure new fields are present
         const mergedData = { ...defaultFormData, ...savedData };
-        // Ensure numeric fields are valid (allow empty strings for optional fields)
-        if (mergedData.minShiftLength !== "" && isNaN(mergedData.minShiftLength)) {
-          mergedData.minShiftLength = defaultFormData.minShiftLength;
-        }
-        if (mergedData.maxShiftLength !== "" && isNaN(mergedData.maxShiftLength)) {
-          mergedData.maxShiftLength = defaultFormData.maxShiftLength;
-        }
         setFormData(mergedData);
       } catch (e) {
         // Failed to load saved data from localStorage - not critical
@@ -904,8 +883,6 @@ export default function Home() {
               scheduleConfig: {
                 scheduleStartDate: formData.scheduleStartDate,
                 scheduleEndDate: formData.scheduleEndDate,
-                officeStartTime: formData.officeStartTime,
-                officeEndTime: formData.officeEndTime,
                 configSnapshot: selectedConfig || null // Store full config snapshot
               },
               configurationId: selectedConfigId || null
@@ -985,27 +962,6 @@ export default function Home() {
     } finally {
       setPublishingScheduleId(null);
     }
-  };
-
-  const handleSaveTemplate = (template) => {
-    setShowSaveTemplateModal(false);
-    setTemplateSuccess(`Template "${template.name}" saved successfully!`);
-    setTimeout(() => setTemplateSuccess(''), 5000);
-  };
-
-  const handleSelectTemplate = (config) => {
-    setFormData(prev => ({
-      ...prev,
-      officeStartTime: config.officeStartTime,
-      officeEndTime: config.officeEndTime,
-      totalHoursPerWeek: config.totalHoursPerWeek,
-      hoursPerWorkerPerWeek: config.hoursPerWorkerPerWeek,
-      minShiftLength: config.minShiftLength || '',
-      maxShiftLength: config.maxShiftLength || ''
-    }));
-    setShowTemplateLibrary(false);
-    setTemplateSuccess('Template loaded! Adjust dates and generate schedule.');
-    setTimeout(() => setTemplateSuccess(''), 5000);
   };
 
   const handleConflictCancel = () => {
@@ -1140,9 +1096,9 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Notification Bell and Profile Dropdown */}
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            {/* View Switcher */}
+          {/* Top Navigation Bar */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            {/* Left: View Switcher */}
             <div style={{ display: "flex", gap: "0.5rem", background: "rgba(0, 0, 0, 0.02)", padding: "4px", borderRadius: "8px", border: "1px solid rgba(0, 0, 0, 0.1)" }}>
               <button
                 onClick={() => setCurrentView('schedule')}
@@ -1158,7 +1114,7 @@ export default function Home() {
                   transition: "all 0.2s"
                 }}
               >
-                📋 Manual
+                Manual
               </button>
               <button
                 onClick={() => setCurrentView('recurring')}
@@ -1174,7 +1130,7 @@ export default function Home() {
                   transition: "all 0.2s"
                 }}
               >
-                📅 Recurring
+                Recurring
               </button>
               <button
                 onClick={() => setCurrentView('audit')}
@@ -1190,11 +1146,66 @@ export default function Home() {
                   transition: "all 0.2s"
                 }}
               >
-                📝 Audit Logs
+                Audit Logs
               </button>
             </div>
 
-            <NotificationBell />
+            {/* Center: Configuration Actions */}
+            {currentView === 'schedule' && (
+              <div style={{ display: "flex", gap: "0.75rem" }}>
+                <button
+                  onClick={() => setShowConfigLibrary(true)}
+                  style={{
+                    padding: "0.625rem 1rem",
+                    backgroundColor: "#14b8a6",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "6px",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    transition: "all 0.2s",
+                    whiteSpace: "nowrap"
+                  }}
+                  onMouseOver={(e) => e.target.style.backgroundColor = "#0d9488"}
+                  onMouseOut={(e) => e.target.style.backgroundColor = "#14b8a6"}
+                >
+                  Select Configuration
+                </button>
+                <button
+                  onClick={() => {
+                    setEditingConfig(null);
+                    setShowConfigWizard(true);
+                  }}
+                  style={{
+                    padding: "0.625rem 1rem",
+                    backgroundColor: "transparent",
+                    color: "#14b8a6",
+                    border: "1px solid #14b8a6",
+                    borderRadius: "6px",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    transition: "all 0.2s",
+                    whiteSpace: "nowrap"
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.backgroundColor = "#14b8a6";
+                    e.target.style.color = "white";
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.backgroundColor = "transparent";
+                    e.target.style.color = "#14b8a6";
+                  }}
+                >
+                  + Create New
+                </button>
+              </div>
+            )}
+
+            {/* Right: Notification Bell and Profile */}
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              <NotificationBell />
 
             <div style={{ position: "relative" }}>
               <button
@@ -1382,9 +1393,67 @@ export default function Home() {
                 </div>
               </>
             )}
+              </div>
             </div>
           </div>
         </div>
+
+        {/* Active Configuration Banner */}
+        {currentView === 'schedule' && (
+          <>
+            {selectedConfigId ? (
+              <div style={{
+                padding: "0.75rem 1.5rem",
+                backgroundColor: "rgba(20, 184, 166, 0.1)",
+                borderBottom: "1px solid rgba(20, 184, 166, 0.3)",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center"
+              }}>
+                <div>
+                  <strong style={{ color: "#14b8a6", fontSize: "0.875rem" }}>Active Configuration:</strong>
+                  <span style={{ marginLeft: "0.5rem", fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.87)" }}>
+                    {configurations.find(c => c._id === selectedConfigId)?.name || 'Unknown'}
+                  </span>
+                </div>
+                <button
+                  onClick={() => setSelectedConfigId('')}
+                  style={{
+                    padding: "0.25rem 0.75rem",
+                    backgroundColor: "transparent",
+                    color: "#dc2626",
+                    border: "1px solid #dc2626",
+                    borderRadius: "4px",
+                    fontSize: "0.75rem",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    transition: "all 0.2s"
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.backgroundColor = "#dc2626";
+                    e.target.style.color = "white";
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.backgroundColor = "transparent";
+                    e.target.style.color = "#dc2626";
+                  }}
+                >
+                  Clear
+                </button>
+              </div>
+            ) : (
+              <div style={{
+                padding: "0.75rem 1.5rem",
+                backgroundColor: "rgba(239, 68, 68, 0.1)",
+                borderBottom: "1px solid rgba(239, 68, 68, 0.3)",
+                color: "#dc2626",
+                fontSize: "0.875rem"
+              }}>
+                No configuration selected. Please select or create a configuration to generate schedules.
+              </div>
+            )}
+          </>
+        )}
 
         {/* Main Content - Conditional View */}
         {currentView === 'audit' ? (
@@ -1894,186 +1963,31 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Schedule Configuration Section */}
+        {/* Schedule Period Section */}
         <div style={{ backgroundColor: "#ffffff", border: "1px solid rgba(0, 0, 0, 0.1)", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
           <div style={{ padding: "1.5rem", borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
             <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.5rem" }}>
-              Schedule configuration
+              Schedule details
             </h2>
             <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", margin: 0, lineHeight: "1.5" }}>
-              Configure your office hours, schedule period, and shift constraints
+              Select students and specify the date range for this schedule
             </p>
           </div>
 
           <div style={{ padding: "2rem" }}>
-            {/* Configuration Selector */}
-            <div style={{ marginBottom: "2.5rem", paddingBottom: "2.5rem", borderBottom: "1px solid rgba(0, 0, 0, 0.06)" }}>
-              <div style={{ marginBottom: "1.25rem" }}>
-                <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.375rem" }}>
-                  Schedule Configuration
-                </h3>
-                <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", margin: 0, lineHeight: "1.5" }}>
-                  Select a pre-configured schedule template or use manual settings below
-                </p>
+            {configSuccess && (
+              <div style={{
+                background: 'rgba(20, 184, 166, 0.1)',
+                border: '1px solid #14b8a6',
+                color: '#0d9488',
+                padding: '12px',
+                borderRadius: '6px',
+                marginBottom: '1.5rem',
+                fontSize: '0.875rem'
+              }}>
+                {configSuccess}
               </div>
-
-              {configSuccess && (
-                <div style={{
-                  background: 'rgba(20, 184, 166, 0.1)',
-                  border: '1px solid #14b8a6',
-                  color: '#0d9488',
-                  padding: '12px',
-                  borderRadius: '6px',
-                  marginBottom: '1rem',
-                  fontSize: '0.875rem'
-                }}>
-                  {configSuccess}
-                </div>
-              )}
-
-              <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "flex-end" }}>
-                <div style={{ flex: "1", minWidth: "250px" }}>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.6)", marginBottom: "0.625rem" }}>
-                    Configuration
-                  </label>
-                  <select
-                    value={selectedConfigId}
-                    onChange={(e) => setSelectedConfigId(e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "0.625rem 0.875rem",
-                      backgroundColor: "rgba(0, 0, 0, 0.02)",
-                      border: "1px solid rgba(0, 0, 0, 0.1)",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      color: "rgba(0, 0, 0, 0.87)",
-                      outline: "none",
-                      cursor: "pointer"
-                    }}
-                  >
-                    <option value="">Manual Configuration (Use form below)</option>
-                    {configurations.map(config => (
-                      <option key={config._id} value={config._id}>
-                        {config.name} {config.isDefault && '(Default)'}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <button
-                  onClick={handleCreateNewConfig}
-                  style={{
-                    padding: "0.625rem 1.25rem",
-                    backgroundColor: "#14b8a6",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "6px",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    cursor: "pointer",
-                    transition: "all 0.2s",
-                    whiteSpace: "nowrap"
-                  }}
-                  onMouseOver={(e) => e.target.style.backgroundColor = "#0d9488"}
-                  onMouseOut={(e) => e.target.style.backgroundColor = "#14b8a6"}
-                >
-                  ⚙️ Create Configuration
-                </button>
-
-                <button
-                  onClick={() => setShowConfigLibrary(true)}
-                  style={{
-                    padding: "0.625rem 1.25rem",
-                    backgroundColor: "#f3f4f6",
-                    color: "#374151",
-                    border: "none",
-                    borderRadius: "6px",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    cursor: "pointer",
-                    transition: "all 0.2s",
-                    whiteSpace: "nowrap"
-                  }}
-                  onMouseOver={(e) => e.target.style.backgroundColor = "#e5e7eb"}
-                  onMouseOut={(e) => e.target.style.backgroundColor = "#f3f4f6"}
-                >
-                  📚 Manage Configurations
-                </button>
-              </div>
-
-              {selectedConfigId && (
-                <div style={{
-                  marginTop: "1rem",
-                  padding: "12px",
-                  background: "rgba(20, 184, 166, 0.05)",
-                  borderLeft: "3px solid #14b8a6",
-                  borderRadius: "4px",
-                  fontSize: "0.875rem",
-                  color: "rgba(0, 0, 0, 0.6)"
-                }}>
-                  ✓ Using custom configuration. Manual settings below will be ignored.
-                </div>
-              )}
-            </div>
-
-            {/* Office Hours */}
-            <div style={{ marginBottom: "2.5rem" }}>
-              <div style={{ marginBottom: "1.25rem" }}>
-                <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.375rem" }}>
-                  Office hours
-                </h3>
-                <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", margin: 0, lineHeight: "1.5" }}>
-                  Define the operating hours for your office (Monday - Friday)
-                </p>
-              </div>
-              <div className="grid-2-cols" style={{ display: "grid", gap: "1.25rem", maxWidth: "540px" }}>
-                <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.6)", marginBottom: "0.625rem" }}>
-                    Start time
-                  </label>
-                  <input
-                    type="time"
-                    value={formData.officeStartTime}
-                    onChange={(e) => handleInputChange("officeStartTime", e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "0.625rem 0.875rem",
-                      backgroundColor: "rgba(0, 0, 0, 0.02)",
-                      border: "1px solid rgba(0, 0, 0, 0.1)",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      color: "rgba(0, 0, 0, 0.87)",
-                      outline: "none",
-                      colorScheme: "dark"
-                    }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.6)", marginBottom: "0.625rem" }}>
-                    End time
-                  </label>
-                  <input
-                    type="time"
-                    value={formData.officeEndTime}
-                    onChange={(e) => handleInputChange("officeEndTime", e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "0.625rem 0.875rem",
-                      backgroundColor: "rgba(0, 0, 0, 0.02)",
-                      border: "1px solid rgba(0, 0, 0, 0.1)",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      color: "rgba(0, 0, 0, 0.87)",
-                      outline: "none",
-                      colorScheme: "dark"
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div style={{ borderTop: "1px solid rgba(255, 255, 255, 0.08)", margin: "2.5rem 0" }}></div>
+            )}
 
             {/* Schedule Period */}
             <div style={{ marginBottom: "2.5rem" }}>
@@ -2164,106 +2078,6 @@ export default function Home() {
                       colorScheme: "dark"
                     }}
                   />
-                </div>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div style={{ borderTop: "1px solid rgba(255, 255, 255, 0.08)", margin: "2.5rem 0" }}></div>
-
-            {/* Hours and Shift Constraints */}
-            <div>
-              <div style={{ marginBottom: "1.25rem" }}>
-                <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.375rem" }}>
-                  Hours and shift constraints
-                </h3>
-                <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", margin: 0, lineHeight: "1.5" }}>
-                  Set weekly hour targets and optional shift length limits. Leave shift constraints empty to use automatic scheduling strategies.
-                </p>
-              </div>
-
-              <div style={{ marginBottom: "1.5rem", maxWidth: "340px" }}>
-                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.6)", marginBottom: "0.625rem" }}>
-                  Hours per worker per week
-                </label>
-                <input
-                  type="number"
-                  value={formData.hoursPerWorkerPerWeek}
-                  onChange={(e) => handleInputChange("hoursPerWorkerPerWeek", e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "0.625rem 0.875rem",
-                    backgroundColor: "rgba(0, 0, 0, 0.02)",
-                    border: "1px solid rgba(0, 0, 0, 0.1)",
-                    borderRadius: "6px",
-                    fontSize: "0.875rem",
-                    color: "rgba(0, 0, 0, 0.87)",
-                    outline: "none"
-                  }}
-                  min="2"
-                  max="20"
-                  step="0.5"
-                />
-                <p style={{ fontSize: "0.8125rem", color: "rgba(0, 0, 0, 0.5)", marginTop: "0.5rem", marginBottom: 0, lineHeight: "1.4" }}>
-                  Target hours each worker should get
-                </p>
-              </div>
-
-              <div className="grid-2-cols" style={{ display: "grid", gap: "1.5rem", marginTop: "1.5rem" }}>
-                <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.6)", marginBottom: "0.625rem" }}>
-                    Minimum shift (hours)
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.minShiftLength}
-                    onChange={(e) => handleInputChange("minShiftLength", e.target.value === "" ? "" : parseFloat(e.target.value))}
-                    placeholder="Auto"
-                    style={{
-                      width: "100%",
-                      padding: "0.625rem 0.875rem",
-                      backgroundColor: "rgba(0, 0, 0, 0.02)",
-                      border: "1px solid rgba(0, 0, 0, 0.1)",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      color: "rgba(0, 0, 0, 0.87)",
-                      outline: "none"
-                    }}
-                    min="1"
-                    max="8"
-                    step="0.5"
-                  />
-                  <p style={{ fontSize: "0.8125rem", color: "rgba(0, 0, 0, 0.5)", marginTop: "0.5rem", marginBottom: 0, lineHeight: "1.4" }}>
-                    Optional: Shortest shift duration (leave empty for auto)
-                  </p>
-                </div>
-
-                <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.6)", marginBottom: "0.625rem" }}>
-                    Maximum shift (hours)
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.maxShiftLength}
-                    onChange={(e) => handleInputChange("maxShiftLength", e.target.value === "" ? "" : parseFloat(e.target.value))}
-                    placeholder="Auto"
-                    style={{
-                      width: "100%",
-                      padding: "0.625rem 0.875rem",
-                      backgroundColor: "rgba(0, 0, 0, 0.02)",
-                      border: "1px solid rgba(0, 0, 0, 0.1)",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      color: "rgba(0, 0, 0, 0.87)",
-                      outline: "none"
-                    }}
-                    min="1"
-                    max="8"
-                    step="0.5"
-                  />
-                  <p style={{ fontSize: "0.8125rem", color: "rgba(0, 0, 0, 0.5)", marginTop: "0.5rem", marginBottom: 0, lineHeight: "1.4" }}>
-                    Optional: Longest shift duration (leave empty for auto)
-                  </p>
                 </div>
               </div>
             </div>
@@ -3663,27 +3477,6 @@ export default function Home() {
             </div>
           </div>
         )}
-
-        {/* Template Modals */}
-        <SaveTemplateModal
-          isOpen={showSaveTemplateModal}
-          currentConfig={{
-            officeStartTime: formData.officeStartTime,
-            officeEndTime: formData.officeEndTime,
-            totalHoursPerWeek: formData.totalHoursPerWeek,
-            hoursPerWorkerPerWeek: formData.hoursPerWorkerPerWeek,
-            minShiftLength: formData.minShiftLength,
-            maxShiftLength: formData.maxShiftLength
-          }}
-          onSave={handleSaveTemplate}
-          onCancel={() => setShowSaveTemplateModal(false)}
-        />
-
-        <TemplateLibraryModal
-          isOpen={showTemplateLibrary}
-          onSelectTemplate={handleSelectTemplate}
-          onCancel={() => setShowTemplateLibrary(false)}
-        />
 
         {/* Schedule History Modal */}
         <ScheduleHistoryModal
