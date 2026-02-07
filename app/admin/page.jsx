@@ -49,7 +49,6 @@ export default function Home() {
   const [studentError, setStudentError] = useState('');
   const [studentSuccess, setStudentSuccess] = useState('');
   const [submittingStudent, setSubmittingStudent] = useState(false);
-  const [selectedStudents, setSelectedStudents] = useState([]); // Array of student IDs for bulk operations
   const [processingBulkAction, setProcessingBulkAction] = useState(false);
 
   // Admin management state
@@ -500,107 +499,6 @@ export default function Home() {
           }
         } catch (err) {
           setStudentError('Something went wrong. Please try again.');
-        }
-      },
-      onCancel: () => {
-        setConfirmModal(prev => ({ ...prev, show: false }));
-      }
-    });
-  };
-
-  // Bulk selection helper functions
-  const toggleStudentSelection = (studentId) => {
-    setSelectedStudents(prev =>
-      prev.includes(studentId)
-        ? prev.filter(id => id !== studentId)
-        : [...prev, studentId]
-    );
-  };
-
-  const selectAllStudents = () => {
-    setSelectedStudents(students.map(s => s.id));
-  };
-
-  const deselectAllStudents = () => {
-    setSelectedStudents([]);
-  };
-
-  // Bulk operations
-  const handleBulkRequestAvailability = async () => {
-    if (selectedStudents.length === 0) {
-      setStudentError('No students selected');
-      return;
-    }
-
-    setStudentError('');
-    setStudentSuccess('');
-    setProcessingBulkAction(true);
-
-    try {
-      const res = await fetch('/api/availability/request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ studentIds: selectedStudents }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setStudentError(data.error || 'Failed to send availability requests');
-        return;
-      }
-
-      setStudentSuccess(`Successfully sent availability requests to ${selectedStudents.length} student(s)`);
-      setTimeout(() => setStudentSuccess(''), 5000);
-      deselectAllStudents();
-    } catch (err) {
-      setStudentError('Something went wrong. Please try again.');
-    } finally {
-      setProcessingBulkAction(false);
-    }
-  };
-
-  const handleBulkDelete = async () => {
-    if (selectedStudents.length === 0) {
-      setStudentError('No students selected');
-      return;
-    }
-
-    setConfirmModal({
-      show: true,
-      title: 'Delete Students',
-      message: `Are you sure you want to delete ${selectedStudents.length} student(s)? This action cannot be undone.`,
-      isDangerous: true,
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
-      onConfirm: async () => {
-        setConfirmModal(prev => ({ ...prev, show: false }));
-        setProcessingBulkAction(true);
-        setStudentError('');
-        setStudentSuccess('');
-
-        try {
-          const res = await fetch('/api/students/bulk-delete', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ studentIds: selectedStudents })
-          });
-
-          const data = await res.json();
-
-          if (!res.ok) {
-            setStudentError(data.error || 'Failed to delete students');
-            return;
-          }
-
-          setStudentSuccess(`Successfully deleted ${data.deletedCount} student(s)`);
-          setTimeout(() => setStudentSuccess(''), 3000);
-          deselectAllStudents();
-          loadStudents();
-        } catch (err) {
-          setStudentError('Something went wrong. Please try again.');
-        } finally {
-          setProcessingBulkAction(false);
         }
       },
       onCancel: () => {
@@ -1672,88 +1570,10 @@ export default function Home() {
               <p style={{ color: "rgba(0, 0, 0, 0.45)" }}>No students yet. Add your first student to get started.</p>
             ) : (
               <>
-                {selectedStudents.length > 0 && (
-                  <div style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    padding: "1rem",
-                    backgroundColor: "rgba(20, 184, 166, 0.1)",
-                    border: "1px solid rgba(20, 184, 166, 0.3)",
-                    borderRadius: "6px",
-                    marginBottom: "1rem"
-                  }}>
-                    <span style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.87)", fontWeight: "500" }}>
-                      {selectedStudents.length} student{selectedStudents.length !== 1 ? 's' : ''} selected
-                    </span>
-                    <div style={{ display: "flex", gap: "0.5rem" }}>
-                      <button
-                        onClick={handleBulkRequestAvailability}
-                        disabled={processingBulkAction}
-                        style={{
-                          padding: "0.5rem 1rem",
-                          backgroundColor: "#10b981",
-                          color: "white",
-                          border: "none",
-                          borderRadius: "4px",
-                          fontSize: "0.875rem",
-                          cursor: processingBulkAction ? "not-allowed" : "pointer",
-                          opacity: processingBulkAction ? 0.6 : 1
-                        }}
-                      >
-                        Request Availability
-                      </button>
-                      <button
-                        onClick={handleBulkDelete}
-                        disabled={processingBulkAction}
-                        style={{
-                          padding: "0.5rem 1rem",
-                          backgroundColor: "#dc2626",
-                          color: "white",
-                          border: "none",
-                          borderRadius: "4px",
-                          fontSize: "0.875rem",
-                          cursor: processingBulkAction ? "not-allowed" : "pointer",
-                          opacity: processingBulkAction ? 0.6 : 1
-                        }}
-                      >
-                        Delete Selected
-                      </button>
-                      <button
-                        onClick={deselectAllStudents}
-                        style={{
-                          padding: "0.5rem 1rem",
-                          backgroundColor: "transparent",
-                          color: "rgba(0, 0, 0, 0.6)",
-                          border: "1px solid rgba(0, 0, 0, 0.2)",
-                          borderRadius: "4px",
-                          fontSize: "0.875rem",
-                          cursor: "pointer"
-                        }}
-                      >
-                        Clear Selection
-                      </button>
-                    </div>
-                  </div>
-                )}
                 <div className="table-container" style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
-                      <th style={{ padding: "0.875rem 1rem", width: "50px" }}>
-                        <input
-                          type="checkbox"
-                          checked={selectedStudents.length === students.length && students.length > 0}
-                          onChange={() => {
-                            if (selectedStudents.length === students.length) {
-                              deselectAllStudents();
-                            } else {
-                              selectAllStudents();
-                            }
-                          }}
-                          style={{ cursor: "pointer" }}
-                        />
-                      </th>
                       <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Name</th>
                       <th style={{ padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Email</th>
                       <th style={{ padding: "0.875rem 1rem", textAlign: "right", fontSize: "0.75rem", fontWeight: "500", color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.05em" }}>Actions</th>
@@ -1762,14 +1582,6 @@ export default function Home() {
                   <tbody>
                     {students.map((student) => (
                       <tr key={student.id} style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
-                        <td style={{ padding: "1rem", width: "50px" }}>
-                          <input
-                            type="checkbox"
-                            checked={selectedStudents.includes(student.id)}
-                            onChange={() => toggleStudentSelection(student.id)}
-                            style={{ cursor: "pointer" }}
-                          />
-                        </td>
                         <td style={{ padding: "1rem", color: "rgba(0, 0, 0, 0.87)", fontSize: "0.875rem" }}>{student.name}</td>
                         <td style={{ padding: "1rem", color: "rgba(0, 0, 0, 0.6)", fontSize: "0.875rem" }}>{student.email}</td>
                         <td style={{ padding: "1rem", textAlign: "right" }}>

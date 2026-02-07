@@ -138,7 +138,7 @@ export default function AvailabilityGrid({ student }) {
                   fontWeight: "500",
                   position: "sticky",
                   left: 0,
-                  backgroundColor: "#0f1b2a",
+                  backgroundColor: "rgba(255, 255, 255, 0.05)",
                   zIndex: 5
                 }}>
                   {label}

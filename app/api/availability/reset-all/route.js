@@ -63,11 +63,14 @@ export async function POST(request) {
         }));
         await Notification.insertMany(notifications);
 
-        return NextResponse.json({
-          success: true,
-          message: `Availability reset for ${studentIds.length} student(s). You must request availability again for them to submit.`,
-          resetCount: deleteResult.deletedCount,
-        });
+        return NextResponse.json(
+          {
+            success: true,
+            message: `Availability reset for ${studentIds.length} student(s). You must request availability again for them to submit.`,
+            resetCount: deleteResult.deletedCount,
+          },
+          { status: 200 }
+        );
       }
     }
 
@@ -128,11 +131,14 @@ export async function POST(request) {
     }));
     await Notification.insertMany(notifications);
 
-    return NextResponse.json({
-      success: true,
-      message: `Availability reset for ${studentIds.length} student(s). You must request availability again for them to submit.`,
-      resetCount: deleteResult.deletedCount,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        message: `Availability reset for ${studentIds.length} student(s). You must request availability again for them to submit.`,
+        resetCount: deleteResult.deletedCount,
+      },
+      { status: 200 }
+    );
 
   } catch (error) {
     console.error('Reset all availability error:', error);
