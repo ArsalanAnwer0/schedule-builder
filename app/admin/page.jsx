@@ -798,6 +798,14 @@ export default function Home() {
     // Clear any previous validation errors
     setValidationError(null);
 
+    // REQUIRED: Check if a configuration is selected
+    if (!selectedConfigId) {
+      setValidationError(
+        'Please create or select a configuration first. Use the buttons in the header to get started.'
+      );
+      return;
+    }
+
     // Check if we have students with submitted availability
     const studentsWithAvailability = students.filter(s => s.hasSubmitted);
 
