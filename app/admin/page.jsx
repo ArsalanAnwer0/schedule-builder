@@ -2518,34 +2518,7 @@ export default function Home() {
           </div>
         )}
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: validationError ? "1rem" : "1.5rem", marginBottom: "2rem" }}>
-          <button
-            onClick={() => setShowTemplateLibrary(true)}
-            type="button"
-            style={{
-              padding: "0.625rem 1.25rem",
-              backgroundColor: "transparent",
-              color: "#6b7280",
-              border: "1px solid rgba(107, 114, 128, 0.3)",
-              borderRadius: "6px",
-              fontSize: "0.875rem",
-              fontWeight: "500",
-              cursor: "pointer",
-              transition: "all 0.15s ease",
-              letterSpacing: "0.01em",
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(107, 114, 128, 0.05)";
-              e.currentTarget.style.borderColor = "#6b7280";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = "transparent";
-              e.currentTarget.style.borderColor = "rgba(107, 114, 128, 0.3)";
-            }}
-          >
-            📚 Load from Template
-          </button>
-
+        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", marginTop: validationError ? "1rem" : "1.5rem", marginBottom: "2rem" }}>
           <button
             onClick={handleGenerateSchedule}
             disabled={isGenerating || students.filter(s => s.hasSubmitted).length === 0}
