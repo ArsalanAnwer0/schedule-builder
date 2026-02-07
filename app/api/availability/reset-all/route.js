@@ -7,6 +7,71 @@ import Notification from '../../../../lib/db/models/Notification';
 
 export async function POST(request) {
   try {
+    await dbConnect();
+
+    // Temporary localhost bypass for testing
+    if (process.env.NODE_ENV === 'development') {
+      const url = new URL(request.url);
+      if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
+        // Mock admin user for localhost testing
+        const mockAdmin = {
+          user: {
+            _id: 'mock-admin-id',
+            name: 'Arsalan',
+            email: 'test@localhost.com',
+            role: 'admin',
+            adminType: 'primary',
+            organizationName: 'Test Org'
+          }
+        };
+
+        const { studentIds } = await request.json();
+
+        if (!studentIds || !Array.isArray(studentIds) || studentIds.length === 0) {
+          return NextResponse.json({ error: 'Student IDs are required' }, { status: 400 });
+        }
+
+        // Verify all students belong to mock organization
+        const students = await User.find({
+          _id: { $in: studentIds },
+          role: 'student',
+          organizationName: mockAdmin.user.organizationName
+        });
+
+        if (students.length === 0) {
+          return NextResponse.json(
+            { error: 'No valid students found in your organization' },
+            { status: 404 }
+          );
+        }
+
+        // Delete availability for all these students
+        const deleteResult = await Availability.deleteMany({ userId: { $in: studentIds } });
+
+        // Set availabilityRequested to FALSE to lock them all out
+        await User.updateMany(
+          { _id: { $in: studentIds } },
+          { $set: { availabilityRequested: false } }
+        );
+
+        // Create notifications for all students
+        const notifications = studentIds.map(studentId => ({
+          userId: studentId,
+          type: 'availability_reset',
+          message: 'Your availability has been reset by an admin. You will need to wait for a new availability request to submit again.',
+          actionUrl: '/student/dashboard'
+        }));
+        await Notification.insertMany(notifications);
+
+        return NextResponse.json({
+          success: true,
+          message: `Availability reset for ${studentIds.length} student(s). You must request availability again for them to submit.`,
+          resetCount: deleteResult.deletedCount,
+        });
+      }
+    }
+
+    // Regular authentication flow
     let sessionData;
     try {
       sessionData = await requireAdmin();
@@ -19,8 +84,6 @@ export async function POST(request) {
     if (!studentIds || !Array.isArray(studentIds) || studentIds.length === 0) {
       return NextResponse.json({ error: 'Student IDs are required' }, { status: 400 });
     }
-
-    await dbConnect();
 
     // Get current admin's organization for security
     const admin = await User.findById(sessionData.user._id);

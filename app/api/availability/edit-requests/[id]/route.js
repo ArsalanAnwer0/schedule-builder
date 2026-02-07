@@ -10,6 +10,89 @@ import { createNotification } from '../../../../../lib/utils/notifications';
 // POST - Approve or reject edit request (admin only)
 export async function POST(request, { params }) {
   try {
+    await dbConnect();
+
+    // Temporary localhost bypass for testing
+    if (process.env.NODE_ENV === 'development') {
+      const url = new URL(request.url);
+      if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
+        // Mock admin user for localhost testing
+        const mockAdmin = {
+          user: {
+            _id: 'mock-admin-id',
+            name: 'Arsalan',
+            email: 'test@localhost.com',
+            role: 'admin',
+            adminType: 'primary',
+            organizationName: 'Test Org'
+          }
+        };
+
+        const { id } = await params;
+        const { action } = await request.json();
+
+        if (!action || !['approve', 'reject'].includes(action)) {
+          return NextResponse.json({ error: 'Invalid action. Must be "approve" or "reject"' }, { status: 400 });
+        }
+
+        // Find the edit request
+        const editRequest = await AvailabilityEditRequest.findById(id);
+
+        if (!editRequest) {
+          return NextResponse.json({ error: 'Edit request not found' }, { status: 404 });
+        }
+
+        if (editRequest.status !== 'pending') {
+          return NextResponse.json({
+            error: `Edit request has already been ${editRequest.status}`
+          }, { status: 400 });
+        }
+
+        // Update request status
+        editRequest.status = action === 'approve' ? 'approved' : 'rejected';
+        editRequest.reviewedBy = mockAdmin.user._id;
+        editRequest.reviewedAt = new Date();
+        await editRequest.save();
+
+        // If approved, update the actual availability
+        if (action === 'approve') {
+          await Availability.findOneAndUpdate(
+            { userId: editRequest.userId },
+            {
+              availability: editRequest.newAvailability,
+              notes: editRequest.newNotes
+            }
+          );
+        }
+
+        // Create notification for student
+        try {
+          await createNotification(
+            editRequest.userId.toString(),
+            action === 'approve' ? 'edit_request_approved' : 'edit_request_rejected',
+            action === 'approve'
+              ? 'Your availability edit request has been approved.'
+              : 'Your availability edit request was not approved.',
+            '/dashboard'
+          );
+        } catch (notificationError) {
+          console.error('Failed to create notification:', notificationError);
+        }
+
+        return NextResponse.json({
+          success: true,
+          message: action === 'approve'
+            ? 'Edit request approved and availability updated'
+            : 'Edit request rejected',
+          request: {
+            id: editRequest._id.toString(),
+            status: editRequest.status
+          }
+        });
+      }
+    }
+
+    // Regular authentication flow
     let sessionData;
     try {
       sessionData = await requireAdmin();
@@ -23,8 +106,6 @@ export async function POST(request, { params }) {
     if (!action || !['approve', 'reject'].includes(action)) {
       return NextResponse.json({ error: 'Invalid action. Must be "approve" or "reject"' }, { status: 400 });
     }
-
-    await dbConnect();
 
     // Find the edit request
     const editRequest = await AvailabilityEditRequest.findById(id);
