@@ -140,6 +140,39 @@ export default function Home() {
       });
   }, [router]);
 
+  // Run template migration on first load
+  useEffect(() => {
+    const runTemplateMigration = async () => {
+      if (!user) return;
+
+      try {
+        // Check if migration already ran (use localStorage flag)
+        const migrationRun = localStorage.getItem('templatesMigrated');
+
+        if (!migrationRun) {
+          const res = await fetch('/api/migrations/templates-to-configurations', {
+            method: 'POST'
+          });
+
+          const data = await res.json();
+
+          if (res.ok && data.migratedCount > 0) {
+            console.log(`Migrated ${data.migratedCount} templates to configurations`);
+            localStorage.setItem('templatesMigrated', 'true');
+
+            // Reload configurations to show newly migrated ones
+            loadConfigurations();
+          }
+        }
+      } catch (error) {
+        console.error('Template migration failed:', error);
+        // Don't block app if migration fails
+      }
+    };
+
+    runTemplateMigration();
+  }, [user]);
+
   // Load students with availability
   const loadStudents = async () => {
     setLoadingStudents(true);
