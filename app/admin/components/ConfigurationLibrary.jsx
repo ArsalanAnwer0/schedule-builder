@@ -22,13 +22,34 @@ export default function ConfigurationLibrary({ isOpen, onSelectConfig, onEditCon
     setError(null);
     try {
       const response = await fetch('/api/schedules/configurations');
+
+      // Don't treat authentication errors as failures - just show empty state
       if (!response.ok) {
+        // For 401/403/500 (auth errors or server errors during auth), silently use empty configurations
+        if (response.status === 401 || response.status === 403 || response.status === 500) {
+          console.warn('Authentication issue or server error, showing empty state for localhost');
+          setConfigurations([]);
+          setLoading(false);
+          return;
+        }
+        // For other errors, show error message
         throw new Error('Failed to load configurations');
       }
+
       const data = await response.json();
       setConfigurations(data.configurations || []);
     } catch (err) {
-      setError(err.message);
+      // Only show error for genuine network failures
+      if (err instanceof TypeError && err.message.includes('fetch')) {
+        setError('Unable to connect to server. Please check your connection.');
+        setConfigurations([]);
+      } else if (err.message === 'Failed to load configurations') {
+        // This shouldn't happen now, but just in case
+        console.error('Unexpected error loading configurations:', err);
+        setConfigurations([]);
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }

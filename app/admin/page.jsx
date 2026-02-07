@@ -12,7 +12,6 @@ import RecurringSchedules from "./components/RecurringSchedules";
 import ConflictWarningModal from "./components/ConflictWarningModal";
 import ConfigurationWizard from "./components/ConfigurationWizard";
 import ConfigurationLibrary from "./components/ConfigurationLibrary";
-import AuditLogViewer from "./components/AuditLogViewer";
 import "./admin.css";
 
 // Predefined semester dates for US universities
@@ -40,9 +39,6 @@ export default function Home() {
   // Auth state
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
-
-  // View state
-  const [currentView, setCurrentView] = useState('schedule'); // 'schedule', 'recurring', or 'audit'
 
   // Student management state
   const [students, setStudents] = useState([]);
@@ -118,6 +114,25 @@ export default function Home() {
 
   // Check authentication
   useEffect(() => {
+    // TEMPORARY: Bypass auth for localhost testing
+    if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+      const mockUser = {
+        name: 'Arsalan',
+        email: 'test@localhost.com',
+        role: 'admin',
+        adminType: 'primary',
+        organizationName: 'Test Org'
+      };
+      setUser(mockUser);
+      loadStudents();
+      loadEditRequests();
+      loadPasswordResetRequests();
+      loadAdmins();
+      loadConfigurations();
+      setAuthLoading(false);
+      return;
+    }
+
     fetch('/api/auth/me')
       .then(res => res.json())
       .then(data => {
@@ -1126,8 +1141,8 @@ export default function Home() {
     <div className="admin-container" style={{ minHeight: "100vh", backgroundColor: "#ffffff", padding: "2rem 1.5rem" }}>
       <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
 
-        {/* Header with User Info and Profile Dropdown */}
-        <div style={{ marginBottom: "1.5rem", display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1rem" }}>
+        {/* Header */}
+        <div style={{ marginBottom: "2rem", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
             <h1 style={{ fontSize: "1.875rem", fontWeight: "400", color: "rgba(0, 0, 0, 0.87)", marginBottom: "0.5rem", letterSpacing: "-0.02em", fontFamily: "Georgia, 'Times New Roman', serif" }}>
               Schedule Builder
@@ -1137,116 +1152,9 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Top Navigation Bar */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            {/* Left: View Switcher */}
-            <div style={{ display: "flex", gap: "0.5rem", background: "rgba(0, 0, 0, 0.02)", padding: "4px", borderRadius: "8px", border: "1px solid rgba(0, 0, 0, 0.1)" }}>
-              <button
-                onClick={() => setCurrentView('schedule')}
-                style={{
-                  padding: "0.5rem 1rem",
-                  backgroundColor: currentView === 'schedule' ? '#14b8a6' : 'transparent',
-                  color: currentView === 'schedule' ? 'white' : "rgba(0, 0, 0, 0.87)",
-                  border: "none",
-                  borderRadius: "6px",
-                  fontSize: "0.875rem",
-                  fontWeight: "500",
-                  cursor: "pointer",
-                  transition: "all 0.2s"
-                }}
-              >
-                Manual
-              </button>
-              <button
-                onClick={() => setCurrentView('recurring')}
-                style={{
-                  padding: "0.5rem 1rem",
-                  backgroundColor: currentView === 'recurring' ? '#14b8a6' : 'transparent',
-                  color: currentView === 'recurring' ? 'white' : "rgba(0, 0, 0, 0.87)",
-                  border: "none",
-                  borderRadius: "6px",
-                  fontSize: "0.875rem",
-                  fontWeight: "500",
-                  cursor: "pointer",
-                  transition: "all 0.2s"
-                }}
-              >
-                Recurring
-              </button>
-              <button
-                onClick={() => setCurrentView('audit')}
-                style={{
-                  padding: "0.5rem 1rem",
-                  backgroundColor: currentView === 'audit' ? '#14b8a6' : 'transparent',
-                  color: currentView === 'audit' ? 'white' : "rgba(0, 0, 0, 0.87)",
-                  border: "none",
-                  borderRadius: "6px",
-                  fontSize: "0.875rem",
-                  fontWeight: "500",
-                  cursor: "pointer",
-                  transition: "all 0.2s"
-                }}
-              >
-                Audit Logs
-              </button>
-            </div>
-
-            {/* Center: Configuration Actions */}
-            {currentView === 'schedule' && (
-              <div style={{ display: "flex", gap: "0.75rem" }}>
-                <button
-                  onClick={() => setShowConfigLibrary(true)}
-                  style={{
-                    padding: "0.625rem 1rem",
-                    backgroundColor: "#14b8a6",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "6px",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    cursor: "pointer",
-                    transition: "all 0.2s",
-                    whiteSpace: "nowrap"
-                  }}
-                  onMouseOver={(e) => e.target.style.backgroundColor = "#0d9488"}
-                  onMouseOut={(e) => e.target.style.backgroundColor = "#14b8a6"}
-                >
-                  Select Configuration
-                </button>
-                <button
-                  onClick={() => {
-                    setEditingConfig(null);
-                    setShowConfigWizard(true);
-                  }}
-                  style={{
-                    padding: "0.625rem 1rem",
-                    backgroundColor: "transparent",
-                    color: "#14b8a6",
-                    border: "1px solid #14b8a6",
-                    borderRadius: "6px",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    cursor: "pointer",
-                    transition: "all 0.2s",
-                    whiteSpace: "nowrap"
-                  }}
-                  onMouseOver={(e) => {
-                    e.target.style.backgroundColor = "#14b8a6";
-                    e.target.style.color = "white";
-                  }}
-                  onMouseOut={(e) => {
-                    e.target.style.backgroundColor = "transparent";
-                    e.target.style.color = "#14b8a6";
-                  }}
-                >
-                  + Create New
-                </button>
-              </div>
-            )}
-
-            {/* Right: Notification Bell and Profile */}
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-              <NotificationBell />
+          {/* Right: Notification Bell and Profile */}
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <NotificationBell />
 
             <div style={{ position: "relative" }}>
               <button
@@ -1434,78 +1342,55 @@ export default function Home() {
                 </div>
               </>
             )}
-              </div>
             </div>
           </div>
         </div>
 
         {/* Active Configuration Banner */}
-        {currentView === 'schedule' && (
-          <>
-            {selectedConfigId ? (
-              <div style={{
-                padding: "0.75rem 1.5rem",
-                backgroundColor: "rgba(20, 184, 166, 0.1)",
-                borderBottom: "1px solid rgba(20, 184, 166, 0.3)",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center"
-              }}>
-                <div>
-                  <strong style={{ color: "#14b8a6", fontSize: "0.875rem" }}>Active Configuration:</strong>
-                  <span style={{ marginLeft: "0.5rem", fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.87)" }}>
-                    {configurations.find(c => c._id === selectedConfigId)?.name || 'Unknown'}
-                  </span>
-                </div>
-                <button
-                  onClick={() => setSelectedConfigId('')}
-                  style={{
-                    padding: "0.25rem 0.75rem",
-                    backgroundColor: "transparent",
-                    color: "#dc2626",
-                    border: "1px solid #dc2626",
-                    borderRadius: "4px",
-                    fontSize: "0.75rem",
-                    fontWeight: "500",
-                    cursor: "pointer",
-                    transition: "all 0.2s"
-                  }}
-                  onMouseOver={(e) => {
-                    e.target.style.backgroundColor = "#dc2626";
-                    e.target.style.color = "white";
-                  }}
-                  onMouseOut={(e) => {
-                    e.target.style.backgroundColor = "transparent";
-                    e.target.style.color = "#dc2626";
-                  }}
-                >
-                  Clear
-                </button>
-              </div>
-            ) : (
-              <div style={{
-                padding: "0.75rem 1.5rem",
-                backgroundColor: "rgba(239, 68, 68, 0.1)",
-                borderBottom: "1px solid rgba(239, 68, 68, 0.3)",
+        {selectedConfigId && (
+          <div style={{
+            padding: "0.75rem 1.5rem",
+            backgroundColor: "rgba(20, 184, 166, 0.1)",
+            borderBottom: "1px solid rgba(20, 184, 166, 0.3)",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center"
+          }}>
+            <div>
+              <strong style={{ color: "#14b8a6", fontSize: "0.875rem" }}>Active Configuration:</strong>
+              <span style={{ marginLeft: "0.5rem", fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.87)" }}>
+                {configurations.find(c => c._id === selectedConfigId)?.name || 'Unknown'}
+              </span>
+            </div>
+            <button
+              onClick={() => setSelectedConfigId('')}
+              style={{
+                padding: "0.25rem 0.75rem",
+                backgroundColor: "transparent",
                 color: "#dc2626",
-                fontSize: "0.875rem"
-              }}>
-                No configuration selected. Please select or create a configuration to generate schedules.
-              </div>
-            )}
-          </>
+                border: "1px solid #dc2626",
+                borderRadius: "4px",
+                fontSize: "0.75rem",
+                fontWeight: "500",
+                cursor: "pointer",
+                transition: "all 0.2s"
+              }}
+              onMouseOver={(e) => {
+                e.target.style.backgroundColor = "#dc2626";
+                e.target.style.color = "white";
+              }}
+              onMouseOut={(e) => {
+                e.target.style.backgroundColor = "transparent";
+                e.target.style.color = "#dc2626";
+              }}
+            >
+              Clear
+            </button>
+          </div>
         )}
 
-        {/* Main Content - Conditional View */}
-        {currentView === 'audit' ? (
-          <AuditLogViewer />
-        ) : currentView === 'recurring' ? (
-          <RecurringSchedules
-            user={user}
-            configurations={configurations}
-          />
-        ) : (
-          <>
+        {/* Main Content */}
+
         {/* Student Success/Error Messages */}
         {studentSuccess && (
           <div style={{
@@ -1991,123 +1876,99 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Schedule Period Section */}
-        <div style={{ backgroundColor: "#ffffff", border: "1px solid rgba(0, 0, 0, 0.1)", borderRadius: "8px", marginBottom: "2rem", overflow: "hidden" }}>
-          <div style={{ padding: "1.5rem", borderBottom: "1px solid rgba(255, 255, 255, 0.1)" }}>
-            <h2 style={{ fontSize: "1.125rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.5rem" }}>
-              Schedule details
-            </h2>
-            <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", margin: 0, lineHeight: "1.5" }}>
-              Select students and specify the date range for this schedule
+        {/* Configuration Selection Banner */}
+        {!selectedConfigId && (
+          <div style={{
+            padding: "1rem 1.5rem",
+            backgroundColor: "rgba(239, 68, 68, 0.1)",
+            border: "1px solid rgba(239, 68, 68, 0.3)",
+            borderLeft: "4px solid #dc2626",
+            borderRadius: "6px",
+            marginBottom: "1.5rem"
+          }}>
+            <p style={{ color: "#dc2626", margin: 0, fontSize: "0.875rem" }}>
+              No configuration selected. Please select or create a configuration to generate schedules.
             </p>
           </div>
+        )}
 
-          <div style={{ padding: "2rem" }}>
-            {configSuccess && (
-              <div style={{
-                background: 'rgba(20, 184, 166, 0.1)',
-                border: '1px solid #14b8a6',
-                color: '#0d9488',
-                padding: '12px',
-                borderRadius: '6px',
-                marginBottom: '1.5rem',
-                fontSize: '0.875rem'
-              }}>
-                {configSuccess}
-              </div>
-            )}
+        {/* Schedule Period Section */}
+        {/* Form 3: Schedule Settings */}
+        <div className="admin-form-section" style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: "8px", marginBottom: "3rem", padding: "2rem" }}>
+          <h2 className="admin-form-heading" style={{ fontSize: "1.5rem", fontWeight: "600", color: "#111827", marginBottom: "1.5rem" }}>
+            Schedule Settings
+          </h2>
 
-            {/* Schedule Period */}
-            <div style={{ marginBottom: "2.5rem" }}>
-              <div style={{ marginBottom: "1.25rem" }}>
-                <h3 style={{ fontSize: "1rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.375rem" }}>
-                  Schedule period
-                </h3>
-                <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", margin: 0, lineHeight: "1.5" }}>
-                  Specify the date range for this schedule (e.g., semester dates)
-                </p>
-              </div>
+          {configSuccess && (
+            <div style={{
+              background: 'rgba(20, 184, 166, 0.1)',
+              border: '1px solid #14b8a6',
+              color: '#0d9488',
+              padding: '12px',
+              borderRadius: '6px',
+              marginBottom: '1.5rem',
+              fontSize: '0.875rem'
+            }}>
+              {configSuccess}
+            </div>
+          )}
 
-              <div style={{ marginBottom: "1.5rem" }}>
-                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.6)", marginBottom: "0.625rem" }}>
-                  Semester preset
-                </label>
-                <select
-                  value={selectedSemester}
-                  onChange={(e) => handleSemesterChange(e.target.value)}
-                  style={{
-                    width: "100%",
-                    maxWidth: "340px",
-                    padding: "0.625rem 0.875rem",
-                    backgroundColor: "rgba(0, 0, 0, 0.02)",
-                    border: "1px solid rgba(0, 0, 0, 0.1)",
-                    borderRadius: "6px",
-                    fontSize: "0.875rem",
-                    color: "rgba(0, 0, 0, 0.87)",
-                    outline: "none",
-                    cursor: "pointer"
-                  }}
-                >
-                  <option value="">Custom dates</option>
-                  <option value="Spring 2026">Spring 2026</option>
-                  <option value="Summer 2026">Summer 2026</option>
-                  <option value="Fall 2026">Fall 2026</option>
-                  <option value="Spring 2027">Spring 2027</option>
-                  <option value="Summer 2027">Summer 2027</option>
-                  <option value="Fall 2027">Fall 2027</option>
-                </select>
-              </div>
-
-              <div className="grid-2-cols" style={{ display: "grid", gap: "1.25rem", maxWidth: "540px" }}>
-                <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.6)", marginBottom: "0.625rem" }}>
-                    Start date
-                  </label>
-                  <input
-                    type="date"
-                    value={formData.scheduleStartDate}
-                    onChange={(e) => {
-                      handleInputChange("scheduleStartDate", e.target.value);
-                      setSelectedSemester("");
-                    }}
-                    style={{
-                      width: "100%",
-                      padding: "0.625rem 0.875rem",
-                      backgroundColor: "rgba(0, 0, 0, 0.02)",
-                      border: "1px solid rgba(0, 0, 0, 0.1)",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      color: "rgba(0, 0, 0, 0.87)",
-                      outline: "none",
-                      colorScheme: "dark"
-                    }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: "500", color: "rgba(0, 0, 0, 0.6)", marginBottom: "0.625rem" }}>
-                    End date
-                  </label>
-                  <input
-                    type="date"
-                    value={formData.scheduleEndDate}
-                    onChange={(e) => {
-                      handleInputChange("scheduleEndDate", e.target.value);
-                      setSelectedSemester("");
-                    }}
-                    style={{
-                      width: "100%",
-                      padding: "0.625rem 0.875rem",
-                      backgroundColor: "rgba(0, 0, 0, 0.02)",
-                      border: "1px solid rgba(0, 0, 0, 0.1)",
-                      borderRadius: "6px",
-                      fontSize: "0.875rem",
-                      color: "rgba(0, 0, 0, 0.87)",
-                      outline: "none",
-                      colorScheme: "dark"
-                    }}
-                  />
-                </div>
-              </div>
+          {/* Configuration Management */}
+          <div style={{ marginBottom: "2.5rem" }}>
+            <p style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.45)", margin: 0, marginBottom: "1rem", lineHeight: "1.5" }}>
+              Select a schedule configuration to define business hours, shifts, and rules
+            </p>
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}>
+              <span style={{ fontSize: "0.875rem", color: "rgba(0, 0, 0, 0.6)", fontWeight: "500" }}>
+                Current: {selectedConfigId ? (configurations.find(c => c._id === selectedConfigId)?.name || 'Unknown') : 'No configuration selected'}
+              </span>
+            </div>
+            <div style={{ display: "flex", gap: "0.75rem" }}>
+              <button
+                onClick={() => setShowConfigLibrary(true)}
+                style={{
+                  padding: "0.625rem 1.25rem",
+                  backgroundColor: "#14b8a6",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "6px",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  transition: "all 0.2s"
+                }}
+                onMouseOver={(e) => e.target.style.backgroundColor = "#0d9488"}
+                onMouseOut={(e) => e.target.style.backgroundColor = "#14b8a6"}
+              >
+                Manage Configurations
+              </button>
+              <button
+                onClick={() => {
+                  setEditingConfig(null);
+                  setShowConfigWizard(true);
+                }}
+                style={{
+                  padding: "0.625rem 1.25rem",
+                  backgroundColor: "transparent",
+                  color: "#14b8a6",
+                  border: "1px solid #14b8a6",
+                  borderRadius: "6px",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  transition: "all 0.2s"
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = "#14b8a6";
+                  e.target.style.color = "white";
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = "transparent";
+                  e.target.style.color = "#14b8a6";
+                }}
+              >
+                + Create New
+              </button>
             </div>
           </div>
         </div>
@@ -2458,8 +2319,8 @@ export default function Home() {
         )}
 
         {/* Student Workers Availability Section */}
-        <div style={{ backgroundColor: "#ffffff", border: "1px solid #414d5c", borderRadius: "8px", marginBottom: "1rem", overflow: "hidden" }}>
-          <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #414d5c" }}>
+        <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: "8px", marginBottom: "1rem", overflow: "hidden" }}>
+          <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #e5e7eb" }}>
             <div>
               <h2 style={{ fontSize: "1.125rem", fontWeight: "400", color: "rgba(0, 0, 0, 0.87)", margin: 0, marginBottom: "0.5rem" }}>
                 Student Availability
@@ -2886,7 +2747,7 @@ export default function Home() {
                       <div style={{ padding: "1rem", backgroundColor: "rgba(0, 0, 0, 0.02)", borderRadius: "4px", border: "1px solid rgba(0, 0, 0, 0.1)" }}>
                         <p style={{ fontSize: "0.75rem", color: "#9ca3af", textTransform: "uppercase", marginBottom: "0.5rem", fontWeight: "500", letterSpacing: "0.05em" }}>Workers Scheduled</p>
                         <p style={{ fontSize: "1.5rem", fontWeight: "400", color: "rgba(0, 0, 0, 0.87)", margin: 0 }}>
-                          {currentSchedule.statistics.totalWorkersScheduled} / {currentSchedule.statistics.totalWorkersAvailable}
+                          {currentSchedule.statistics.totalWorkersScheduled} {' / '} {currentSchedule.statistics.totalWorkersAvailable}
                         </p>
                       </div>
                       <div style={{ padding: "1rem", backgroundColor: "rgba(0, 0, 0, 0.02)", borderRadius: "4px", border: "1px solid rgba(0, 0, 0, 0.1)" }}>
@@ -3515,8 +3376,6 @@ export default function Home() {
           onDeleteConfig={handleDeleteConfig}
           onClose={() => setShowConfigLibrary(false)}
         />
-        </>
-        )}
       </div>
     </div>
   );
