@@ -7,7 +7,8 @@ const TABS = [
   { id: 'basic', name: 'Basic Info' },
   { id: 'hours', name: 'Business Hours' },
   { id: 'shifts', name: 'Shifts & Hours' },
-  { id: 'advanced', name: 'Advanced Options' }
+  { id: 'advanced', name: 'Advanced Options' },
+  { id: 'review', name: 'Review Configuration' }
 ];
 
 const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
@@ -273,6 +274,8 @@ export default function ConfigurationWizard({ isOpen, initialConfig, mode = 'cre
           addPrioritySlot={addPrioritySlot}
           removePrioritySlot={removePrioritySlot}
         />;
+      case 4:
+        return renderPreview();
       default:
         return null;
     }
@@ -342,30 +345,14 @@ export default function ConfigurationWizard({ isOpen, initialConfig, mode = 'cre
   return (
     <div className="config-wizard-overlay" onClick={onCancel}>
       <div className="config-wizard-modal-large" onClick={(e) => e.stopPropagation()}>
-        <div className="wizard-layout">
-          {/* Left side: Form */}
-          <div className="wizard-main">
-            {/* Header */}
-            <div className="config-wizard-header">
-              <h2>{mode === 'edit' ? 'Edit Configuration' : 'Create Custom Configuration'}</h2>
-              <button className="config-wizard-close" onClick={onCancel}>&times;</button>
-            </div>
+        {/* Header */}
+        <div className="config-wizard-header">
+          <h2>{mode === 'edit' ? 'Edit Configuration' : 'Create Custom Configuration'}</h2>
+          <button className="config-wizard-close" onClick={onCancel}>&times;</button>
+        </div>
 
-            {/* Progress Indicator */}
-            <div className="wizard-progress">
-              {TABS.map((tab, index) => (
-                <div
-                  key={tab.id}
-                  className={`progress-step ${index <= currentTab ? 'active' : ''} ${completedTabs.has(index) ? 'completed' : ''}`}
-                >
-                  <div className="step-number">{index + 1}</div>
-                  <div className="step-name">{tab.name}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Tab Navigation */}
-            <div className="config-wizard-tabs">
+        {/* Tab Navigation */}
+        <div className="config-wizard-tabs">
               {TABS.map((tab, index) => (
                 <button
                   key={tab.id}
@@ -415,20 +402,13 @@ export default function ConfigurationWizard({ isOpen, initialConfig, mode = 'cre
             </div>
 
             {/* Validation Errors */}
-            {Object.keys(validationErrors).length > 0 && (
-              <div className="config-wizard-errors">
-                {Object.values(validationErrors).map((error, index) => (
-                  <div key={index} className="error-message">{error}</div>
-                ))}
-              </div>
-            )}
+        {Object.keys(validationErrors).length > 0 && (
+          <div className="config-wizard-errors">
+            {Object.values(validationErrors).map((error, index) => (
+              <div key={index} className="error-message">{error}</div>
+            ))}
           </div>
-
-          {/* Right side: Live Preview */}
-          <div className="wizard-sidebar">
-            {renderPreview()}
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
