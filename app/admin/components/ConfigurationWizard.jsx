@@ -4,13 +4,10 @@ import { useState, useEffect } from 'react';
 import './ConfigurationWizard.css';
 
 const TABS = [
-  { id: 'basic', name: 'Basic Info', icon: '📋' },
-  { id: 'hours', name: 'Business Hours', icon: '🕐' },
-  { id: 'shifts', name: 'Shift Preferences', icon: '👥' },
-  { id: 'breaks', name: 'Break Times', icon: '☕' },
-  { id: 'overtime', name: 'Overtime Rules', icon: '⏰' },
-  { id: 'priority', name: 'Priority Slots', icon: '⭐' },
-  { id: 'review', name: 'Review & Save', icon: '✅' }
+  { id: 'basic', name: 'Basic Info' },
+  { id: 'hours', name: 'Business Hours' },
+  { id: 'shifts', name: 'Shifts & Hours' },
+  { id: 'advanced', name: 'Advanced Options' }
 ];
 
 const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
@@ -61,12 +58,18 @@ export default function ConfigurationWizard({ isOpen, initialConfig, mode = 'cre
   const [validationErrors, setValidationErrors] = useState({});
   const [completedTabs, setCompletedTabs] = useState(new Set());
   const [saving, setSaving] = useState(false);
+  const [showBreaks, setShowBreaks] = useState(false);
+  const [showPriority, setShowPriority] = useState(false);
 
   useEffect(() => {
     if (initialConfig) {
       setConfig({ ...DEFAULT_CONFIG, ...initialConfig });
+      setShowBreaks(initialConfig.breakTimes?.length > 0);
+      setShowPriority(initialConfig.prioritySlots?.length > 0);
     } else {
       setConfig(DEFAULT_CONFIG);
+      setShowBreaks(false);
+      setShowPriority(false);
     }
     setCurrentTab(0);
     setValidationErrors({});
@@ -113,7 +116,7 @@ export default function ConfigurationWizard({ isOpen, initialConfig, mode = 'cre
         });
         break;
 
-      case 2: // Shift Preferences
+      case 2: // Shifts & Hours (combined)
         if (config.shiftPreferences.minWorkersPerShift > config.shiftPreferences.maxWorkersPerShift) {
           errors.workers = 'Minimum workers cannot be greater than maximum workers';
         }
@@ -124,10 +127,15 @@ export default function ConfigurationWizard({ isOpen, initialConfig, mode = 'cre
             config.shiftPreferences.idealShiftLength > config.shiftPreferences.maxShiftLength) {
           errors.idealShift = 'Ideal shift length must be between min and max';
         }
+        if (config.overtimeRules.maxHoursPerDay <= 0) {
+          errors.maxDay = 'Max hours per day must be positive';
+        }
+        if (config.overtimeRules.maxHoursPerWeek <= 0) {
+          errors.maxWeek = 'Max hours per week must be positive';
+        }
         break;
 
-      case 3: // Break Times
-        // Validate break times are within business hours
+      case 3: // Advanced (breaks + priority)
         config.breakTimes.forEach((breakTime, index) => {
           const days = breakTime.day === 'all' ? DAYS : [breakTime.day];
           days.forEach(day => {
@@ -139,18 +147,6 @@ export default function ConfigurationWizard({ isOpen, initialConfig, mode = 'cre
             }
           });
         });
-        break;
-
-      case 4: // Overtime Rules
-        if (config.overtimeRules.maxHoursPerDay <= 0) {
-          errors.maxDay = 'Max hours per day must be positive';
-        }
-        if (config.overtimeRules.maxHoursPerWeek <= 0) {
-          errors.maxWeek = 'Max hours per week must be positive';
-        }
-        break;
-
-      case 5: // Priority Slots
         config.prioritySlots.forEach((slot, index) => {
           if (slot.minWorkers < 1) {
             errors[`slot_${index}`] = 'Minimum workers must be at least 1';
@@ -179,12 +175,20 @@ export default function ConfigurationWizard({ isOpen, initialConfig, mode = 'cre
   };
 
   const handleTabClick = (index) => {
-    // Allow jumping to any tab
     setCurrentTab(index);
   };
 
   const handleSave = async () => {
-    if (!validateTab(6)) return;
+    // Validate all tabs
+    let allValid = true;
+    for (let i = 0; i < TABS.length; i++) {
+      if (!validateTab(i)) {
+        allValid = false;
+        break;
+      }
+    }
+
+    if (!allValid) return;
 
     setSaving(true);
     try {
@@ -254,88 +258,177 @@ export default function ConfigurationWizard({ isOpen, initialConfig, mode = 'cre
       case 1:
         return <BusinessHoursTab config={config} updateConfig={updateConfig} errors={validationErrors} copyMondayToAllDays={copyMondayToAllDays} />;
       case 2:
-        return <ShiftPreferencesTab config={config} updateConfig={updateConfig} errors={validationErrors} />;
+        return <ShiftsAndHoursTab config={config} updateConfig={updateConfig} errors={validationErrors} />;
       case 3:
-        return <BreakTimesTab config={config} updateConfig={updateConfig} errors={validationErrors} addBreakTime={addBreakTime} removeBreakTime={removeBreakTime} />;
-      case 4:
-        return <OvertimeRulesTab config={config} updateConfig={updateConfig} errors={validationErrors} />;
-      case 5:
-        return <PrioritySlotsTab config={config} updateConfig={updateConfig} errors={validationErrors} addPrioritySlot={addPrioritySlot} removePrioritySlot={removePrioritySlot} />;
-      case 6:
-        return <ReviewTab config={config} setCurrentTab={setCurrentTab} />;
+        return <AdvancedOptionsTab
+          config={config}
+          updateConfig={updateConfig}
+          errors={validationErrors}
+          showBreaks={showBreaks}
+          setShowBreaks={setShowBreaks}
+          showPriority={showPriority}
+          setShowPriority={setShowPriority}
+          addBreakTime={addBreakTime}
+          removeBreakTime={removeBreakTime}
+          addPrioritySlot={addPrioritySlot}
+          removePrioritySlot={removePrioritySlot}
+        />;
       default:
         return null;
     }
   };
 
-  return (
-    <div className="config-wizard-overlay" onClick={onCancel}>
-      <div className="config-wizard-modal" onClick={(e) => e.stopPropagation()}>
-        {/* Header */}
-        <div className="config-wizard-header">
-          <h2>{mode === 'edit' ? 'Edit Configuration' : 'Create Custom Configuration'}</h2>
-          <button className="config-wizard-close" onClick={onCancel}>×</button>
-        </div>
+  const renderPreview = () => {
+    const openDays = DAYS.filter(day => config.businessHours[day].isOpen);
 
-        {/* Tab Navigation */}
-        <div className="config-wizard-tabs">
-          {TABS.map((tab, index) => (
-            <button
-              key={tab.id}
-              className={`config-wizard-tab ${currentTab === index ? 'active' : ''} ${completedTabs.has(index) ? 'completed' : ''}`}
-              onClick={() => handleTabClick(index)}
-            >
-              <span className="tab-icon">{tab.icon}</span>
-              <span className="tab-name">{tab.name}</span>
-              {completedTabs.has(index) && <span className="tab-check">✓</span>}
-            </button>
-          ))}
-        </div>
+    return (
+      <div className="wizard-preview">
+        <h4>Configuration Summary</h4>
 
-        {/* Tab Content */}
-        <div className="config-wizard-content">
-          {renderTabContent()}
-        </div>
-
-        {/* Footer */}
-        <div className="config-wizard-footer">
-          <div className="footer-left">
-            {currentTab > 0 && (
-              <button className="btn-secondary" onClick={handlePrevious}>
-                ← Previous
-              </button>
-            )}
+        {config.name && (
+          <div className="preview-section">
+            <strong>Name</strong>
+            <p>{config.name}</p>
           </div>
-          <div className="footer-right">
-            {currentTab < TABS.length - 1 ? (
-              <button className="btn-primary" onClick={handleNext}>
-                Next →
-              </button>
-            ) : (
-              <>
-                <button className="btn-secondary" onClick={onCancel}>
-                  Cancel
-                </button>
-                <button
-                  className="btn-primary"
-                  onClick={handleSave}
-                  disabled={saving || Object.keys(validationErrors).length > 0}
-                >
-                  {saving ? 'Saving...' : 'Save Configuration'}
-                </button>
-              </>
-            )}
-          </div>
-        </div>
+        )}
 
-        {/* Validation Errors */}
-        {Object.keys(validationErrors).length > 0 && (
-          <div className="config-wizard-errors">
-            {Object.values(validationErrors).map((error, index) => (
-              <div key={index} className="error-message">{error}</div>
+        {openDays.length > 0 && (
+          <div className="preview-section">
+            <strong>Business Hours</strong>
+            {openDays.map(day => (
+              <div key={day} className="preview-item">
+                <span className="day">{DAY_LABELS[day]}:</span>
+                <span className="time">
+                  {config.businessHours[day].startTime} - {config.businessHours[day].endTime}
+                </span>
+              </div>
             ))}
           </div>
         )}
+
+        <div className="preview-section">
+          <strong>Workers per Shift</strong>
+          <p>{config.shiftPreferences.minWorkersPerShift} - {config.shiftPreferences.maxWorkersPerShift}</p>
+        </div>
+
+        <div className="preview-section">
+          <strong>Shift Length</strong>
+          <p>{config.shiftPreferences.minShiftLength} - {config.shiftPreferences.maxShiftLength} hours</p>
+          <small>Ideal: {config.shiftPreferences.idealShiftLength}h</small>
+        </div>
+
+        <div className="preview-section">
+          <strong>Overtime Limits</strong>
+          <p>{config.overtimeRules.maxHoursPerDay}h/day, {config.overtimeRules.maxHoursPerWeek}h/week</p>
+        </div>
+
+        {config.breakTimes.length > 0 && (
+          <div className="preview-section">
+            <strong>Break Times</strong>
+            <p>{config.breakTimes.length} configured</p>
+          </div>
+        )}
+
+        {config.prioritySlots.length > 0 && (
+          <div className="preview-section">
+            <strong>Priority Slots</strong>
+            <p>{config.prioritySlots.length} configured</p>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="config-wizard-overlay" onClick={onCancel}>
+      <div className="config-wizard-modal-large" onClick={(e) => e.stopPropagation()}>
+        <div className="wizard-layout">
+          {/* Left side: Form */}
+          <div className="wizard-main">
+            {/* Header */}
+            <div className="config-wizard-header">
+              <h2>{mode === 'edit' ? 'Edit Configuration' : 'Create Custom Configuration'}</h2>
+              <button className="config-wizard-close" onClick={onCancel}>&times;</button>
+            </div>
+
+            {/* Progress Indicator */}
+            <div className="wizard-progress">
+              {TABS.map((tab, index) => (
+                <div
+                  key={tab.id}
+                  className={`progress-step ${index <= currentTab ? 'active' : ''} ${completedTabs.has(index) ? 'completed' : ''}`}
+                >
+                  <div className="step-number">{index + 1}</div>
+                  <div className="step-name">{tab.name}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Tab Navigation */}
+            <div className="config-wizard-tabs">
+              {TABS.map((tab, index) => (
+                <button
+                  key={tab.id}
+                  className={`config-wizard-tab ${currentTab === index ? 'active' : ''} ${completedTabs.has(index) ? 'completed' : ''}`}
+                  onClick={() => handleTabClick(index)}
+                >
+                  <span className="tab-name">{tab.name}</span>
+                  {completedTabs.has(index) && <span className="tab-check">✓</span>}
+                </button>
+              ))}
+            </div>
+
+            {/* Tab Content */}
+            <div className="config-wizard-content">
+              {renderTabContent()}
+            </div>
+
+            {/* Footer */}
+            <div className="config-wizard-footer">
+              <div className="footer-left">
+                {currentTab > 0 && (
+                  <button className="btn-secondary" onClick={handlePrevious}>
+                    Previous
+                  </button>
+                )}
+              </div>
+              <div className="footer-right">
+                {currentTab < TABS.length - 1 ? (
+                  <button className="btn-primary" onClick={handleNext}>
+                    Next
+                  </button>
+                ) : (
+                  <>
+                    <button className="btn-secondary" onClick={onCancel}>
+                      Cancel
+                    </button>
+                    <button
+                      className="btn-primary"
+                      onClick={handleSave}
+                      disabled={saving || Object.keys(validationErrors).length > 0}
+                    >
+                      {saving ? 'Saving...' : 'Save Configuration'}
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Validation Errors */}
+            {Object.keys(validationErrors).length > 0 && (
+              <div className="config-wizard-errors">
+                {Object.values(validationErrors).map((error, index) => (
+                  <div key={index} className="error-message">{error}</div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Right side: Live Preview */}
+          <div className="wizard-sidebar">
+            {renderPreview()}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -445,504 +538,394 @@ function BusinessHoursTab({ config, updateConfig, errors, copyMondayToAllDays })
   );
 }
 
-// Tab 3: Shift Preferences
-function ShiftPreferencesTab({ config, updateConfig, errors }) {
+// Tab 3: Shifts & Hours (COMBINED)
+function ShiftsAndHoursTab({ config, updateConfig, errors }) {
   const prefs = config.shiftPreferences;
-
-  return (
-    <div className="tab-content">
-      <h3>Shift Preferences</h3>
-      <p className="tab-description">Configure shift length and worker requirements.</p>
-
-      <div className="form-grid">
-        <div className="form-group">
-          <label>Minimum Workers Per Shift</label>
-          <input
-            type="number"
-            min="1"
-            max="10"
-            value={prefs.minWorkersPerShift}
-            onChange={(e) => updateConfig('shiftPreferences.minWorkersPerShift', parseInt(e.target.value))}
-          />
-          <p className="help-text">At least this many workers will be scheduled per shift.</p>
-        </div>
-
-        <div className="form-group">
-          <label>Maximum Workers Per Shift</label>
-          <input
-            type="number"
-            min="1"
-            max="10"
-            value={prefs.maxWorkersPerShift}
-            onChange={(e) => updateConfig('shiftPreferences.maxWorkersPerShift', parseInt(e.target.value))}
-          />
-          <p className="help-text">No more than this many workers per shift.</p>
-        </div>
-      </div>
-      {errors.workers && <span className="field-error">{errors.workers}</span>}
-
-      <div className="form-group">
-        <label>Ideal Shift Length: {prefs.idealShiftLength} hours</label>
-        <input
-          type="range"
-          min="1"
-          max="8"
-          step="0.5"
-          value={prefs.idealShiftLength}
-          onChange={(e) => updateConfig('shiftPreferences.idealShiftLength', parseFloat(e.target.value))}
-          className="slider"
-        />
-        <p className="help-text">The algorithm will try to create shifts close to this length.</p>
-      </div>
-
-      <div className="form-grid">
-        <div className="form-group">
-          <label>Minimum Shift Length (hours)</label>
-          <input
-            type="number"
-            min="1"
-            max="8"
-            step="0.5"
-            value={prefs.minShiftLength}
-            onChange={(e) => updateConfig('shiftPreferences.minShiftLength', parseFloat(e.target.value))}
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Maximum Shift Length (hours)</label>
-          <input
-            type="number"
-            min="1"
-            max="8"
-            step="0.5"
-            value={prefs.maxShiftLength}
-            onChange={(e) => updateConfig('shiftPreferences.maxShiftLength', parseFloat(e.target.value))}
-          />
-        </div>
-      </div>
-      {errors.shiftLength && <span className="field-error">{errors.shiftLength}</span>}
-      {errors.idealShift && <span className="field-error">{errors.idealShift}</span>}
-
-      <div className="form-group">
-        <label className="checkbox-label">
-          <input
-            type="checkbox"
-            checked={prefs.allowSplitShifts}
-            onChange={(e) => updateConfig('shiftPreferences.allowSplitShifts', e.target.checked)}
-          />
-          <span>Allow split shifts</span>
-        </label>
-        <p className="help-text">Workers can be assigned multiple non-consecutive shifts per day.</p>
-      </div>
-    </div>
-  );
-}
-
-// Tab 4: Break Times
-function BreakTimesTab({ config, updateConfig, errors, addBreakTime, removeBreakTime }) {
-  return (
-    <div className="tab-content">
-      <h3>Break Times</h3>
-      <p className="tab-description">Define periods when no workers should be scheduled (lunch breaks, meetings, etc.).</p>
-
-      <button className="btn-primary" onClick={addBreakTime}>
-        + Add Break Time
-      </button>
-
-      {config.breakTimes.length === 0 ? (
-        <div className="empty-state">
-          <p>No break times configured. Add breaks to exclude them from scheduling.</p>
-        </div>
-      ) : (
-        <div className="break-times-list">
-          {config.breakTimes.map((breakTime, index) => (
-            <div key={index} className="break-time-card">
-              <div className="card-header">
-                <span>Break #{index + 1}</span>
-                <button className="btn-icon btn-danger" onClick={() => removeBreakTime(index)}>
-                  🗑️
-                </button>
-              </div>
-              <div className="card-body">
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label>Day</label>
-                    <select
-                      value={breakTime.day}
-                      onChange={(e) => {
-                        const newBreaks = [...config.breakTimes];
-                        newBreaks[index].day = e.target.value;
-                        updateConfig('breakTimes', newBreaks);
-                      }}
-                    >
-                      <option value="all">All Days</option>
-                      {DAYS.map(day => (
-                        <option key={day} value={day}>{DAY_LABELS[day]}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label>Start Time</label>
-                    <input
-                      type="time"
-                      value={breakTime.startTime}
-                      onChange={(e) => {
-                        const newBreaks = [...config.breakTimes];
-                        newBreaks[index].startTime = e.target.value;
-                        updateConfig('breakTimes', newBreaks);
-                      }}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>End Time</label>
-                    <input
-                      type="time"
-                      value={breakTime.endTime}
-                      onChange={(e) => {
-                        const newBreaks = [...config.breakTimes];
-                        newBreaks[index].endTime = e.target.value;
-                        updateConfig('breakTimes', newBreaks);
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label>Reason</label>
-                  <input
-                    type="text"
-                    value={breakTime.reason}
-                    onChange={(e) => {
-                      const newBreaks = [...config.breakTimes];
-                      newBreaks[index].reason = e.target.value;
-                      updateConfig('breakTimes', newBreaks);
-                    }}
-                    placeholder="Lunch Break, Staff Meeting, etc."
-                  />
-                </div>
-                {errors[`break_${index}`] && <span className="field-error">{errors[`break_${index}`]}</span>}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// Tab 5: Overtime Rules
-function OvertimeRulesTab({ config, updateConfig, errors }) {
   const rules = config.overtimeRules;
 
   return (
     <div className="tab-content">
-      <h3>Overtime Rules</h3>
-      <p className="tab-description">Set limits to prevent worker burnout and ensure compliance.</p>
+      <h3>Shifts & Hours Configuration</h3>
+      <p className="tab-description">Configure shift requirements and overtime limits.</p>
 
-      <div className="form-grid">
-        <div className="form-group">
-          <label>Max Hours Per Day</label>
-          <input
-            type="number"
-            min="1"
-            max="24"
-            value={rules.maxHoursPerDay}
-            onChange={(e) => updateConfig('overtimeRules.maxHoursPerDay', parseInt(e.target.value))}
-          />
-          {errors.maxDay && <span className="field-error">{errors.maxDay}</span>}
+      <div className="two-column-layout">
+        {/* Left Column: Shift Preferences */}
+        <div className="column">
+          <h4 className="section-title">Shift Preferences</h4>
+
+          <div className="form-grid">
+            <div className="form-group">
+              <label>Minimum Workers Per Shift</label>
+              <input
+                type="number"
+                min="1"
+                max="10"
+                value={prefs.minWorkersPerShift}
+                onChange={(e) => updateConfig('shiftPreferences.minWorkersPerShift', parseInt(e.target.value))}
+              />
+              <p className="help-text">At least this many workers per shift.</p>
+            </div>
+
+            <div className="form-group">
+              <label>Maximum Workers Per Shift</label>
+              <input
+                type="number"
+                min="1"
+                max="10"
+                value={prefs.maxWorkersPerShift}
+                onChange={(e) => updateConfig('shiftPreferences.maxWorkersPerShift', parseInt(e.target.value))}
+              />
+              <p className="help-text">No more than this many per shift.</p>
+            </div>
+          </div>
+          {errors.workers && <span className="field-error">{errors.workers}</span>}
+
+          <div className="form-group">
+            <label>Ideal Shift Length: {prefs.idealShiftLength} hours</label>
+            <input
+              type="range"
+              min="1"
+              max="8"
+              step="0.5"
+              value={prefs.idealShiftLength}
+              onChange={(e) => updateConfig('shiftPreferences.idealShiftLength', parseFloat(e.target.value))}
+              className="slider"
+            />
+            <p className="help-text">Algorithm will target this length.</p>
+          </div>
+
+          <div className="form-grid">
+            <div className="form-group">
+              <label>Min Shift Length (hours)</label>
+              <input
+                type="number"
+                min="1"
+                max="8"
+                step="0.5"
+                value={prefs.minShiftLength}
+                onChange={(e) => updateConfig('shiftPreferences.minShiftLength', parseFloat(e.target.value))}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Max Shift Length (hours)</label>
+              <input
+                type="number"
+                min="1"
+                max="8"
+                step="0.5"
+                value={prefs.maxShiftLength}
+                onChange={(e) => updateConfig('shiftPreferences.maxShiftLength', parseFloat(e.target.value))}
+              />
+            </div>
+          </div>
+          {errors.shiftLength && <span className="field-error">{errors.shiftLength}</span>}
+          {errors.idealShift && <span className="field-error">{errors.idealShift}</span>}
+
+          <div className="form-group">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={prefs.allowSplitShifts}
+                onChange={(e) => updateConfig('shiftPreferences.allowSplitShifts', e.target.checked)}
+              />
+              <span>Allow split shifts</span>
+            </label>
+            <p className="help-text">Workers can have multiple shifts per day.</p>
+          </div>
         </div>
 
-        <div className="form-group">
-          <label>Max Hours Per Week</label>
-          <input
-            type="number"
-            min="1"
-            max="168"
-            value={rules.maxHoursPerWeek}
-            onChange={(e) => updateConfig('overtimeRules.maxHoursPerWeek', parseInt(e.target.value))}
-          />
-          {errors.maxWeek && <span className="field-error">{errors.maxWeek}</span>}
+        {/* Right Column: Overtime Rules */}
+        <div className="column">
+          <h4 className="section-title">Overtime Rules</h4>
+
+          <div className="form-grid">
+            <div className="form-group">
+              <label>Max Hours Per Day</label>
+              <input
+                type="number"
+                min="1"
+                max="24"
+                value={rules.maxHoursPerDay}
+                onChange={(e) => updateConfig('overtimeRules.maxHoursPerDay', parseInt(e.target.value))}
+              />
+              {errors.maxDay && <span className="field-error">{errors.maxDay}</span>}
+            </div>
+
+            <div className="form-group">
+              <label>Max Hours Per Week</label>
+              <input
+                type="number"
+                min="1"
+                max="168"
+                value={rules.maxHoursPerWeek}
+                onChange={(e) => updateConfig('overtimeRules.maxHoursPerWeek', parseInt(e.target.value))}
+              />
+              {errors.maxWeek && <span className="field-error">{errors.maxWeek}</span>}
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={rules.warnOnOvertime}
+                onChange={(e) => updateConfig('overtimeRules.warnOnOvertime', e.target.checked)}
+              />
+              <span>Warn when approaching limits</span>
+            </label>
+          </div>
+
+          <div className="form-group">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={rules.allowOvertime}
+                onChange={(e) => updateConfig('overtimeRules.allowOvertime', e.target.checked)}
+              />
+              <span>Allow overtime scheduling</span>
+            </label>
+            {!rules.allowOvertime && (
+              <p className="help-text warning">
+                Workers exceeding limits will not be scheduled for additional shifts.
+              </p>
+            )}
+          </div>
+
+          <p className="help-text">These limits help prevent worker burnout and ensure compliance.</p>
         </div>
       </div>
+    </div>
+  );
+}
 
-      <div className="form-group">
-        <label className="checkbox-label">
-          <input
-            type="checkbox"
-            checked={rules.warnOnOvertime}
-            onChange={(e) => updateConfig('overtimeRules.warnOnOvertime', e.target.checked)}
-          />
-          <span>Warn when approaching overtime limits</span>
-        </label>
-      </div>
+// Tab 4: Advanced Options (COLLAPSIBLE)
+function AdvancedOptionsTab({
+  config,
+  updateConfig,
+  errors,
+  showBreaks,
+  setShowBreaks,
+  showPriority,
+  setShowPriority,
+  addBreakTime,
+  removeBreakTime,
+  addPrioritySlot,
+  removePrioritySlot
+}) {
+  return (
+    <div className="tab-content">
+      <h3>Advanced Options</h3>
+      <p className="tab-description">Optional settings for break times and priority coverage periods.</p>
 
-      <div className="form-group">
-        <label className="checkbox-label">
-          <input
-            type="checkbox"
-            checked={rules.allowOvertime}
-            onChange={(e) => updateConfig('overtimeRules.allowOvertime', e.target.checked)}
-          />
-          <span>Allow overtime scheduling</span>
-        </label>
-        {!rules.allowOvertime && (
-          <p className="help-text warning">
-            ⚠️ Workers exceeding limits will not be scheduled for additional shifts.
-          </p>
+      {/* Break Times Accordion */}
+      <div className="accordion-section">
+        <button
+          className="accordion-header"
+          onClick={() => setShowBreaks(!showBreaks)}
+        >
+          <span>Break Times ({config.breakTimes.length})</span>
+          <span className="accordion-icon">{showBreaks ? '−' : '+'}</span>
+        </button>
+
+        {showBreaks && (
+          <div className="accordion-content">
+            <p className="section-description">Define periods when no workers should be scheduled.</p>
+
+            <button className="btn-primary btn-sm" onClick={addBreakTime}>
+              + Add Break Time
+            </button>
+
+            {config.breakTimes.length === 0 ? (
+              <div className="empty-state">
+                <p>No break times configured.</p>
+              </div>
+            ) : (
+              <div className="break-times-list">
+                {config.breakTimes.map((breakTime, index) => (
+                  <div key={index} className="break-time-card">
+                    <div className="card-header">
+                      <span>Break #{index + 1}</span>
+                      <button className="btn-icon btn-danger" onClick={() => removeBreakTime(index)}>
+                        Delete
+                      </button>
+                    </div>
+                    <div className="card-body">
+                      <div className="form-grid">
+                        <div className="form-group">
+                          <label>Day</label>
+                          <select
+                            value={breakTime.day}
+                            onChange={(e) => {
+                              const newBreaks = [...config.breakTimes];
+                              newBreaks[index].day = e.target.value;
+                              updateConfig('breakTimes', newBreaks);
+                            }}
+                          >
+                            <option value="all">All Days</option>
+                            {DAYS.map(day => (
+                              <option key={day} value={day}>{DAY_LABELS[day]}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="form-group">
+                          <label>Start Time</label>
+                          <input
+                            type="time"
+                            value={breakTime.startTime}
+                            onChange={(e) => {
+                              const newBreaks = [...config.breakTimes];
+                              newBreaks[index].startTime = e.target.value;
+                              updateConfig('breakTimes', newBreaks);
+                            }}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>End Time</label>
+                          <input
+                            type="time"
+                            value={breakTime.endTime}
+                            onChange={(e) => {
+                              const newBreaks = [...config.breakTimes];
+                              newBreaks[index].endTime = e.target.value;
+                              updateConfig('breakTimes', newBreaks);
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label>Reason</label>
+                        <input
+                          type="text"
+                          value={breakTime.reason}
+                          onChange={(e) => {
+                            const newBreaks = [...config.breakTimes];
+                            newBreaks[index].reason = e.target.value;
+                            updateConfig('breakTimes', newBreaks);
+                          }}
+                          placeholder="Lunch Break, Staff Meeting, etc."
+                        />
+                      </div>
+                      {errors[`break_${index}`] && <span className="field-error">{errors[`break_${index}`]}</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         )}
       </div>
 
-      <p className="help-text">These limits help prevent worker burnout and ensure compliance with labor regulations.</p>
-    </div>
-  );
-}
+      {/* Priority Slots Accordion */}
+      <div className="accordion-section">
+        <button
+          className="accordion-header"
+          onClick={() => setShowPriority(!showPriority)}
+        >
+          <span>Priority Slots ({config.prioritySlots.length})</span>
+          <span className="accordion-icon">{showPriority ? '−' : '+'}</span>
+        </button>
 
-// Tab 6: Priority Slots
-function PrioritySlotsTab({ config, updateConfig, errors, addPrioritySlot, removePrioritySlot }) {
-  return (
-    <div className="tab-content">
-      <h3>Priority Slots</h3>
-      <p className="tab-description">Define peak hours that require additional worker coverage.</p>
+        {showPriority && (
+          <div className="accordion-content">
+            <p className="section-description">Define peak hours requiring additional worker coverage.</p>
 
-      <button className="btn-primary" onClick={addPrioritySlot}>
-        + Add Priority Slot
-      </button>
+            <button className="btn-primary btn-sm" onClick={addPrioritySlot}>
+              + Add Priority Slot
+            </button>
 
-      {config.prioritySlots.length === 0 ? (
-        <div className="empty-state">
-          <p>No priority slots configured. Add slots to enforce minimum worker coverage during busy periods.</p>
-        </div>
-      ) : (
-        <div className="priority-slots-list">
-          {config.prioritySlots.map((slot, index) => (
-            <div key={index} className="priority-slot-card">
-              <div className="card-header">
-                <span>⭐ Priority Slot #{index + 1}</span>
-                <button className="btn-icon btn-danger" onClick={() => removePrioritySlot(index)}>
-                  🗑️
-                </button>
+            {config.prioritySlots.length === 0 ? (
+              <div className="empty-state">
+                <p>No priority slots configured.</p>
               </div>
-              <div className="card-body">
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label>Day</label>
-                    <select
-                      value={slot.day}
-                      onChange={(e) => {
-                        const newSlots = [...config.prioritySlots];
-                        newSlots[index].day = e.target.value;
-                        updateConfig('prioritySlots', newSlots);
-                      }}
-                    >
-                      <option value="all">All Days</option>
-                      {DAYS.map(day => (
-                        <option key={day} value={day}>{DAY_LABELS[day]}</option>
-                      ))}
-                    </select>
+            ) : (
+              <div className="priority-slots-list">
+                {config.prioritySlots.map((slot, index) => (
+                  <div key={index} className="priority-slot-card">
+                    <div className="card-header">
+                      <span>Priority Slot #{index + 1}</span>
+                      <button className="btn-icon btn-danger" onClick={() => removePrioritySlot(index)}>
+                        Delete
+                      </button>
+                    </div>
+                    <div className="card-body">
+                      <div className="form-grid">
+                        <div className="form-group">
+                          <label>Day</label>
+                          <select
+                            value={slot.day}
+                            onChange={(e) => {
+                              const newSlots = [...config.prioritySlots];
+                              newSlots[index].day = e.target.value;
+                              updateConfig('prioritySlots', newSlots);
+                            }}
+                          >
+                            <option value="all">All Days</option>
+                            {DAYS.map(day => (
+                              <option key={day} value={day}>{DAY_LABELS[day]}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="form-group">
+                          <label>Start Time</label>
+                          <input
+                            type="time"
+                            value={slot.startTime}
+                            onChange={(e) => {
+                              const newSlots = [...config.prioritySlots];
+                              newSlots[index].startTime = e.target.value;
+                              updateConfig('prioritySlots', newSlots);
+                            }}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>End Time</label>
+                          <input
+                            type="time"
+                            value={slot.endTime}
+                            onChange={(e) => {
+                              const newSlots = [...config.prioritySlots];
+                              newSlots[index].endTime = e.target.value;
+                              updateConfig('prioritySlots', newSlots);
+                            }}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Min Workers</label>
+                          <input
+                            type="number"
+                            min="1"
+                            max="10"
+                            value={slot.minWorkers}
+                            onChange={(e) => {
+                              const newSlots = [...config.prioritySlots];
+                              newSlots[index].minWorkers = parseInt(e.target.value);
+                              updateConfig('prioritySlots', newSlots);
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label>Reason</label>
+                        <input
+                          type="text"
+                          value={slot.reason}
+                          onChange={(e) => {
+                            const newSlots = [...config.prioritySlots];
+                            newSlots[index].reason = e.target.value;
+                            updateConfig('prioritySlots', newSlots);
+                          }}
+                          placeholder="Rush Hour, Peak Traffic, etc."
+                        />
+                      </div>
+                      {errors[`slot_${index}`] && <span className="field-error">{errors[`slot_${index}`]}</span>}
+                    </div>
                   </div>
-                  <div className="form-group">
-                    <label>Start Time</label>
-                    <input
-                      type="time"
-                      value={slot.startTime}
-                      onChange={(e) => {
-                        const newSlots = [...config.prioritySlots];
-                        newSlots[index].startTime = e.target.value;
-                        updateConfig('prioritySlots', newSlots);
-                      }}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>End Time</label>
-                    <input
-                      type="time"
-                      value={slot.endTime}
-                      onChange={(e) => {
-                        const newSlots = [...config.prioritySlots];
-                        newSlots[index].endTime = e.target.value;
-                        updateConfig('prioritySlots', newSlots);
-                      }}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Min Workers</label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="10"
-                      value={slot.minWorkers}
-                      onChange={(e) => {
-                        const newSlots = [...config.prioritySlots];
-                        newSlots[index].minWorkers = parseInt(e.target.value);
-                        updateConfig('prioritySlots', newSlots);
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label>Reason</label>
-                  <input
-                    type="text"
-                    value={slot.reason}
-                    onChange={(e) => {
-                      const newSlots = [...config.prioritySlots];
-                      newSlots[index].reason = e.target.value;
-                      updateConfig('prioritySlots', newSlots);
-                    }}
-                    placeholder="Rush Hour, Peak Traffic, etc."
-                  />
-                </div>
-                {errors[`slot_${index}`] && <span className="field-error">{errors[`slot_${index}`]}</span>}
+                ))}
               </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// Tab 7: Review & Save
-function ReviewTab({ config, setCurrentTab }) {
-  const openDays = DAYS.filter(day => config.businessHours[day].isOpen);
-
-  return (
-    <div className="tab-content review-tab">
-      <h3>Review Configuration</h3>
-      <p className="tab-description">Review your configuration before saving.</p>
-
-      <div className="review-section">
-        <div className="section-header">
-          <h4>📋 Basic Info</h4>
-          <button className="btn-link" onClick={() => setCurrentTab(0)}>Edit</button>
-        </div>
-        <div className="section-content">
-          <div className="review-item">
-            <span className="label">Name:</span>
-            <span className="value">{config.name || '(Not set)'}</span>
+            )}
           </div>
-          <div className="review-item">
-            <span className="label">Description:</span>
-            <span className="value">{config.description || '(No description)'}</span>
-          </div>
-          <div className="review-item">
-            <span className="label">Default:</span>
-            <span className="value">{config.isDefault ? 'Yes' : 'No'}</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="review-section">
-        <div className="section-header">
-          <h4>🕐 Business Hours</h4>
-          <button className="btn-link" onClick={() => setCurrentTab(1)}>Edit</button>
-        </div>
-        <div className="section-content">
-          {openDays.length === 0 ? (
-            <p className="warning">⚠️ No days are open</p>
-          ) : (
-            openDays.map(day => (
-              <div key={day} className="review-item">
-                <span className="label">{DAY_LABELS[day]}:</span>
-                <span className="value">
-                  {config.businessHours[day].startTime} - {config.businessHours[day].endTime}
-                </span>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-
-      <div className="review-section">
-        <div className="section-header">
-          <h4>👥 Shift Preferences</h4>
-          <button className="btn-link" onClick={() => setCurrentTab(2)}>Edit</button>
-        </div>
-        <div className="section-content">
-          <div className="review-item">
-            <span className="label">Workers per shift:</span>
-            <span className="value">{config.shiftPreferences.minWorkersPerShift} - {config.shiftPreferences.maxWorkersPerShift}</span>
-          </div>
-          <div className="review-item">
-            <span className="label">Shift length:</span>
-            <span className="value">
-              {config.shiftPreferences.minShiftLength} - {config.shiftPreferences.maxShiftLength} hours
-              (ideal: {config.shiftPreferences.idealShiftLength}h)
-            </span>
-          </div>
-          <div className="review-item">
-            <span className="label">Split shifts:</span>
-            <span className="value">{config.shiftPreferences.allowSplitShifts ? 'Allowed' : 'Not allowed'}</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="review-section">
-        <div className="section-header">
-          <h4>☕ Break Times ({config.breakTimes.length})</h4>
-          <button className="btn-link" onClick={() => setCurrentTab(3)}>Edit</button>
-        </div>
-        <div className="section-content">
-          {config.breakTimes.length === 0 ? (
-            <p>No break times configured</p>
-          ) : (
-            config.breakTimes.map((breakTime, index) => (
-              <div key={index} className="review-item">
-                <span className="label">{breakTime.day === 'all' ? 'All days' : DAY_LABELS[breakTime.day]}:</span>
-                <span className="value">
-                  {breakTime.startTime} - {breakTime.endTime}
-                  {breakTime.reason && ` (${breakTime.reason})`}
-                </span>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-
-      <div className="review-section">
-        <div className="section-header">
-          <h4>⏰ Overtime Rules</h4>
-          <button className="btn-link" onClick={() => setCurrentTab(4)}>Edit</button>
-        </div>
-        <div className="section-content">
-          <div className="review-item">
-            <span className="label">Max per day:</span>
-            <span className="value">{config.overtimeRules.maxHoursPerDay} hours</span>
-          </div>
-          <div className="review-item">
-            <span className="label">Max per week:</span>
-            <span className="value">{config.overtimeRules.maxHoursPerWeek} hours</span>
-          </div>
-          <div className="review-item">
-            <span className="label">Warnings:</span>
-            <span className="value">{config.overtimeRules.warnOnOvertime ? 'Enabled' : 'Disabled'}</span>
-          </div>
-          <div className="review-item">
-            <span className="label">Allow overtime:</span>
-            <span className="value">{config.overtimeRules.allowOvertime ? 'Yes' : 'No'}</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="review-section">
-        <div className="section-header">
-          <h4>⭐ Priority Slots ({config.prioritySlots.length})</h4>
-          <button className="btn-link" onClick={() => setCurrentTab(5)}>Edit</button>
-        </div>
-        <div className="section-content">
-          {config.prioritySlots.length === 0 ? (
-            <p>No priority slots configured</p>
-          ) : (
-            config.prioritySlots.map((slot, index) => (
-              <div key={index} className="review-item">
-                <span className="label">{slot.day === 'all' ? 'All days' : DAY_LABELS[slot.day]}:</span>
-                <span className="value">
-                  {slot.startTime} - {slot.endTime} (min {slot.minWorkers} workers)
-                  {slot.reason && ` - ${slot.reason}`}
-                </span>
-              </div>
-            ))
-          )}
-        </div>
+        )}
       </div>
     </div>
   );
