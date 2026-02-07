@@ -70,6 +70,118 @@
   flex: 1;
 }
 
+/* Quick Stats */
+.quick-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1.25rem;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.stat-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.stat-card.stat-highlight {
+  background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+  border-color: #14b8a6;
+  color: white;
+}
+
+.stat-card.stat-info {
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
+
+.stat-number {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.stat-card.stat-highlight .stat-number {
+  color: white;
+}
+
+.stat-card.stat-info .stat-number {
+  color: #1e40af;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-card.stat-highlight .stat-label {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.stat-card.stat-info .stat-label {
+  color: #1e40af;
+}
+
+/* Search Bar */
+.search-bar {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px;
+  padding-right: 40px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: #111827;
+  background: white;
+  transition: all 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #14b8a6;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+}
+
+.search-input::placeholder {
+  color: #9ca3af;
+}
+
+.search-clear {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.search-clear:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
 /* Error Banner */
 .error-banner {
   background: #fee2e2;
@@ -133,12 +245,6 @@
   text-align: center;
 }
 
-.empty-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-  opacity: 0.5;
-}
-
 .empty-state h3 {
   margin: 0 0 0.5rem 0;
   font-size: 1.25rem;
@@ -147,9 +253,13 @@
 }
 
 .empty-state p {
-  margin: 0;
+  margin: 0 0 1rem 0;
   color: #6b7280;
   font-size: 0.875rem;
+}
+
+.empty-state button {
+  margin-top: 1rem;
 }
 
 /* Configurations Grid */
@@ -176,18 +286,35 @@
   border-color: #14b8a6;
 }
 
-.default-badge {
+.config-badges {
   position: absolute;
   top: 12px;
   right: 12px;
-  background: #14b8a6;
-  color: white;
+  display: flex;
+  gap: 0.5rem;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.default-badge,
+.migrated-badge {
   padding: 4px 12px;
   border-radius: 12px;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.default-badge {
+  background: #14b8a6;
+  color: white;
+}
+
+.migrated-badge {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
 }
 
 .config-card-header {

@@ -9,6 +9,7 @@ export default function ConfigurationLibrary({ isOpen, onSelectConfig, onEditCon
   const [error, setError] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [settingDefault, setSettingDefault] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     if (isOpen) {
@@ -100,9 +101,26 @@ export default function ConfigurationLibrary({ isOpen, onSelectConfig, onEditCon
   };
 
   const getOpenDaysCount = (config) => {
-    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-    return days.filter(day => config.businessHours?.[day]?.isOpen).length;
+    if (!config.businessHours || !Array.isArray(config.businessHours)) {
+      return 0;
+    }
+    return config.businessHours.filter(day => day.isOpen).length;
   };
+
+  const filteredConfigurations = configurations.filter(config => {
+    if (!searchQuery.trim()) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      config.name.toLowerCase().includes(query) ||
+      (config.description && config.description.toLowerCase().includes(query))
+    );
+  });
+
+  const defaultConfig = configurations.find(c => c.isDefault);
+  const mostUsedConfig = configurations.reduce((prev, current) =>
+    (current.timesUsed || 0) > (prev.timesUsed || 0) ? current : prev
+  , configurations[0]);
+  const migratedCount = configurations.filter(c => c.migratedAt).length;
 
   return (
     <div className="config-library-overlay" onClick={onClose}>
@@ -115,8 +133,58 @@ export default function ConfigurationLibrary({ isOpen, onSelectConfig, onEditCon
         <div className="config-library-content">
           {error && (
             <div className="error-banner">
-              <span>⚠️ {error}</span>
+              <span>{error}</span>
               <button onClick={() => setError(null)}>×</button>
+            </div>
+          )}
+
+          {/* Quick Stats */}
+          {!loading && configurations.length > 0 && (
+            <div className="quick-stats">
+              <div className="stat-card">
+                <div className="stat-number">{configurations.length}</div>
+                <div className="stat-label">Total Configurations</div>
+              </div>
+              {defaultConfig && (
+                <div className="stat-card stat-highlight">
+                  <div className="stat-number">Default</div>
+                  <div className="stat-label">{defaultConfig.name}</div>
+                </div>
+              )}
+              {mostUsedConfig && (
+                <div className="stat-card">
+                  <div className="stat-number">{mostUsedConfig.timesUsed || 0}x</div>
+                  <div className="stat-label">Most Used: {mostUsedConfig.name}</div>
+                </div>
+              )}
+              {migratedCount > 0 && (
+                <div className="stat-card stat-info">
+                  <div className="stat-number">{migratedCount}</div>
+                  <div className="stat-label">Migrated from Templates</div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Search Bar */}
+          {!loading && configurations.length > 0 && (
+            <div className="search-bar">
+              <input
+                type="text"
+                placeholder="Search configurations by name or description..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+              />
+              {searchQuery && (
+                <button
+                  className="search-clear"
+                  onClick={() => setSearchQuery('')}
+                  title="Clear search"
+                >
+                  ×
+                </button>
+              )}
             </div>
           )}
 
@@ -127,17 +195,29 @@ export default function ConfigurationLibrary({ isOpen, onSelectConfig, onEditCon
             </div>
           ) : configurations.length === 0 ? (
             <div className="empty-state">
-              <div className="empty-icon">⚙️</div>
               <h3>No Configurations Yet</h3>
               <p>Create your first custom configuration to get started.</p>
             </div>
+          ) : filteredConfigurations.length === 0 ? (
+            <div className="empty-state">
+              <h3>No Results Found</h3>
+              <p>No configurations match your search: "{searchQuery}"</p>
+              <button className="btn-secondary" onClick={() => setSearchQuery('')}>
+                Clear Search
+              </button>
+            </div>
           ) : (
             <div className="configs-grid">
-              {configurations.map(config => (
+              {filteredConfigurations.map(config => (
                 <div key={config._id} className="config-card">
-                  {config.isDefault && (
-                    <div className="default-badge">Default</div>
-                  )}
+                  <div className="config-badges">
+                    {config.isDefault && (
+                      <div className="default-badge">Default</div>
+                    )}
+                    {config.migratedAt && (
+                      <div className="migrated-badge">Migrated</div>
+                    )}
+                  </div>
 
                   <div className="config-card-header">
                     <h3>{config.name}</h3>
@@ -149,25 +229,21 @@ export default function ConfigurationLibrary({ isOpen, onSelectConfig, onEditCon
                   <div className="config-card-body">
                     <div className="config-stats">
                       <div className="stat-item">
-                        <span className="stat-icon">📅</span>
                         <span className="stat-label">{getOpenDaysCount(config)} days open</span>
                       </div>
                       <div className="stat-item">
-                        <span className="stat-icon">👥</span>
                         <span className="stat-label">
-                          {config.shiftPreferences?.minWorkersPerShift || 1}-
-                          {config.shiftPreferences?.maxWorkersPerShift || 5} workers
+                          {config.shiftPreferences?.minWorkers || 1}-
+                          {config.shiftPreferences?.maxWorkers || 5} workers
                         </span>
                       </div>
                       {config.breakTimes && config.breakTimes.length > 0 && (
                         <div className="stat-item">
-                          <span className="stat-icon">☕</span>
                           <span className="stat-label">{config.breakTimes.length} break(s)</span>
                         </div>
                       )}
                       {config.prioritySlots && config.prioritySlots.length > 0 && (
                         <div className="stat-item">
-                          <span className="stat-icon">⭐</span>
                           <span className="stat-label">{config.prioritySlots.length} priority slot(s)</span>
                         </div>
                       )}
