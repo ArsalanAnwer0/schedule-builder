@@ -597,7 +597,7 @@ export default function Home() {
           setTimeout(() => setStudentSuccess(''), 5000);
 
           // Refresh the students list to update the UI
-          await fetchStudents();
+          await loadStudents();
         } catch (err) {
           console.error('Reset availability exception:', err);
           setStudentError('Failed to reset availability. Please try again.');
@@ -649,7 +649,7 @@ export default function Home() {
           setTimeout(() => setStudentSuccess(''), 5000);
 
           // Refresh the students list to update the UI
-          await fetchStudents();
+          await loadStudents();
         } catch (err) {
           console.error('Reset all availability exception:', err);
           setStudentError('Something went wrong. Please try again.');

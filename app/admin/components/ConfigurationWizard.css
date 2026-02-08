@@ -80,7 +80,6 @@
 /* Tabs */
 .config-wizard-tabs {
   display: flex;
-  border-bottom: 1px solid #e5e7eb;
   padding: 0 2rem;
   overflow-x: auto;
   background: #f9fafb;
@@ -278,6 +277,17 @@
 
 .checkbox-label input[type="checkbox"] {
   margin-top: 0.125rem;
+  cursor: pointer;
+}
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  cursor: pointer;
+}
+
+.checkbox-wrapper input[type="checkbox"] {
   cursor: pointer;
 }
 
