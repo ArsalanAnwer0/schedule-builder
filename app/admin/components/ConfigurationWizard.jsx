@@ -487,13 +487,11 @@ function BusinessHoursTab({ config, updateConfig, errors, copyMondayToAllDays })
                 {DAY_LABELS[day]}
               </div>
               <div className="col-open">
-                <label className="checkbox-wrapper">
-                  <input
-                    type="checkbox"
-                    checked={hours.isOpen}
-                    onChange={(e) => updateConfig(`businessHours.${day}.isOpen`, e.target.checked)}
-                  />
-                </label>
+                <input
+                  type="checkbox"
+                  checked={hours.isOpen}
+                  onChange={(e) => updateConfig(`businessHours.${day}.isOpen`, e.target.checked)}
+                />
               </div>
               <div className="col-time">
                 <input

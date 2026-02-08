@@ -279,17 +279,6 @@
   cursor: pointer;
 }
 
-.checkbox-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  cursor: pointer;
-}
-
-.checkbox-wrapper input[type="checkbox"] {
-  cursor: pointer;
-}
-
 .help-text {
   margin: 0.5rem 0 0 0;
   font-size: 0.75rem;
