@@ -285,13 +285,16 @@ export default function Home() {
         throw new Error(data.error || 'Failed to save configuration');
       }
 
+      await loadConfigurations();
+
       setConfigSuccess(editingConfig ? 'Configuration updated successfully!' : 'Configuration created successfully!');
       setShowConfigWizard(false);
       setEditingConfig(null);
-      await loadConfigurations();
 
       // Auto-clear success message after 3 seconds
-      setTimeout(() => setConfigSuccess(''), 3000);
+      setTimeout(() => {
+        setConfigSuccess('');
+      }, 3000);
     } catch (error) {
       throw error; // Re-throw so the wizard can handle it
     }
