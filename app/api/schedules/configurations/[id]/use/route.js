@@ -6,18 +6,15 @@ import ScheduleConfiguration from '../../../../../../lib/db/models/ScheduleConfi
 // PUT /api/schedules/configurations/:id/use - Track configuration usage
 export async function PUT(request, { params }) {
   try {
-    const adminCheck = await requireAdmin();
-    if (adminCheck.error) {
-      return NextResponse.json({ error: adminCheck.error }, { status: adminCheck.status });
-    }
-
     await dbConnect();
+    const { id } = await params;
+    const adminCheck = await requireAdmin();
     const admin = adminCheck.user;
 
     // Find and update configuration
     const configuration = await ScheduleConfiguration.findOneAndUpdate(
       {
-        _id: params.id,
+        _id: id,
         organizationName: admin.organizationName
       },
       {
@@ -33,6 +30,12 @@ export async function PUT(request, { params }) {
 
     return NextResponse.json({ configuration }, { status: 200 });
   } catch (error) {
+    if (error.message === 'Unauthorized') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (error.message === 'Forbidden: Admin access required') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
     console.error('Error tracking configuration usage:', error);
     return NextResponse.json({ error: 'Failed to track configuration usage' }, { status: 500 });
   }

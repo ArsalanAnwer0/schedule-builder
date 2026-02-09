@@ -7,16 +7,13 @@ import Schedule from '../../../../../lib/db/models/Schedule';
 // GET /api/schedules/configurations/:id - Get single configuration
 export async function GET(request, { params }) {
   try {
-    const adminCheck = await requireAdmin();
-    if (adminCheck.error) {
-      return NextResponse.json({ error: adminCheck.error }, { status: adminCheck.status });
-    }
-
     await dbConnect();
+    const { id } = await params;
+    const adminCheck = await requireAdmin();
     const admin = adminCheck.user;
 
     const configuration = await ScheduleConfiguration.findOne({
-      _id: params.id,
+      _id: id,
       organizationName: admin.organizationName
     }).lean();
 
@@ -26,6 +23,12 @@ export async function GET(request, { params }) {
 
     return NextResponse.json({ configuration }, { status: 200 });
   } catch (error) {
+    if (error.message === 'Unauthorized') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (error.message === 'Forbidden: Admin access required') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
     console.error('Error fetching configuration:', error);
     return NextResponse.json({ error: 'Failed to fetch configuration' }, { status: 500 });
   }
@@ -34,11 +37,9 @@ export async function GET(request, { params }) {
 // PUT /api/schedules/configurations/:id - Update configuration
 export async function PUT(request, { params }) {
   try {
+    await dbConnect();
+    const { id } = await params;
     const adminCheck = await requireAdmin();
-    if (adminCheck.error) {
-      return NextResponse.json({ error: adminCheck.error }, { status: adminCheck.status });
-    }
-
     const admin = adminCheck.user;
 
     const body = await request.json();
@@ -53,11 +54,9 @@ export async function PUT(request, { params }) {
       isDefault
     } = body;
 
-    await dbConnect();
-
     // Find existing configuration
     const configuration = await ScheduleConfiguration.findOne({
-      _id: params.id,
+      _id: id,
       organizationName: admin.organizationName
     });
 
@@ -70,7 +69,7 @@ export async function PUT(request, { params }) {
       const existingConfig = await ScheduleConfiguration.findOne({
         organizationName: admin.organizationName,
         name,
-        _id: { $ne: params.id }
+        _id: { $ne: id }
       });
 
       if (existingConfig) {
@@ -95,6 +94,12 @@ export async function PUT(request, { params }) {
 
     return NextResponse.json({ configuration }, { status: 200 });
   } catch (error) {
+    if (error.message === 'Unauthorized') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (error.message === 'Forbidden: Admin access required') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
     console.error('Error updating configuration:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to update configuration' },
@@ -106,17 +111,14 @@ export async function PUT(request, { params }) {
 // DELETE /api/schedules/configurations/:id - Delete configuration
 export async function DELETE(request, { params }) {
   try {
-    const adminCheck = await requireAdmin();
-    if (adminCheck.error) {
-      return NextResponse.json({ error: adminCheck.error }, { status: adminCheck.status });
-    }
-
     await dbConnect();
+    const { id } = await params;
+    const adminCheck = await requireAdmin();
     const admin = adminCheck.user;
 
     // Find configuration
     const configuration = await ScheduleConfiguration.findOne({
-      _id: params.id,
+      _id: id,
       organizationName: admin.organizationName
     });
 
@@ -135,7 +137,7 @@ export async function DELETE(request, { params }) {
     // Check if configuration is in use by any schedules
     const schedulesUsingConfig = await Schedule.countDocuments({
       organizationName: admin.organizationName,
-      configurationId: params.id
+      configurationId: id
     });
 
     if (schedulesUsingConfig > 0) {
@@ -146,10 +148,16 @@ export async function DELETE(request, { params }) {
     }
 
     // Delete configuration
-    await ScheduleConfiguration.deleteOne({ _id: params.id });
+    await ScheduleConfiguration.deleteOne({ _id: id });
 
     return NextResponse.json({ success: true, message: 'Configuration deleted successfully' }, { status: 200 });
   } catch (error) {
+    if (error.message === 'Unauthorized') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (error.message === 'Forbidden: Admin access required') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
     console.error('Error deleting configuration:', error);
     return NextResponse.json({ error: 'Failed to delete configuration' }, { status: 500 });
   }

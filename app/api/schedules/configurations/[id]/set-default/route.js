@@ -6,17 +6,14 @@ import ScheduleConfiguration from '../../../../../../lib/db/models/ScheduleConfi
 // POST /api/schedules/configurations/:id/set-default - Set as default configuration
 export async function POST(request, { params }) {
   try {
-    const adminCheck = await requireAdmin();
-    if (adminCheck.error) {
-      return NextResponse.json({ error: adminCheck.error }, { status: adminCheck.status });
-    }
-
     await dbConnect();
+    const { id } = await params;
+    const adminCheck = await requireAdmin();
     const admin = adminCheck.user;
 
     // Find configuration
     const configuration = await ScheduleConfiguration.findOne({
-      _id: params.id,
+      _id: id,
       organizationName: admin.organizationName
     });
 
@@ -30,6 +27,12 @@ export async function POST(request, { params }) {
 
     return NextResponse.json({ configuration }, { status: 200 });
   } catch (error) {
+    if (error.message === 'Unauthorized') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (error.message === 'Forbidden: Admin access required') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
     console.error('Error setting default configuration:', error);
     return NextResponse.json({ error: 'Failed to set default configuration' }, { status: 500 });
   }

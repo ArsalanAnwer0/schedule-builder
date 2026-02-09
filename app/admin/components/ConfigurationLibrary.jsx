@@ -122,10 +122,10 @@ export default function ConfigurationLibrary({ isOpen, onSelectConfig, onEditCon
   };
 
   const getOpenDaysCount = (config) => {
-    if (!config.businessHours || !Array.isArray(config.businessHours)) {
+    if (!config.businessHours || typeof config.businessHours !== 'object') {
       return 0;
     }
-    return config.businessHours.filter(day => day.isOpen).length;
+    return Object.values(config.businessHours).filter(day => day && day.isOpen).length;
   };
 
   const filteredConfigurations = configurations.filter(config => {
@@ -254,8 +254,8 @@ export default function ConfigurationLibrary({ isOpen, onSelectConfig, onEditCon
                       </div>
                       <div className="stat-item">
                         <span className="stat-label">
-                          {config.shiftPreferences?.minWorkers || 1}-
-                          {config.shiftPreferences?.maxWorkers || 5} workers
+                          {config.shiftPreferences?.minWorkersPerShift || 1}-
+                          {config.shiftPreferences?.maxWorkersPerShift || 5} workers
                         </span>
                       </div>
                       {config.breakTimes && config.breakTimes.length > 0 && (
