@@ -123,6 +123,7 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
 /* Desktop defaults (these apply on all screen sizes unless overridden) */
 .hero-section {
   padding: 8rem 2rem 4rem 2rem;
+  background: radial-gradient(ellipse at 50% 0%, rgba(20, 184, 166, 0.15) 0%, rgba(20, 184, 166, 0.08) 35%, rgba(20, 184, 166, 0.02) 60%, transparent 80%);
 }
 
 .hero-title {
