@@ -416,18 +416,17 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
   align-items: center;
   justify-content: center;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 500;
   color: #ffffff;
   z-index: 0;
-  overflow: hidden;
 
-  --gradient-angle: 180deg;
+  --gradient-angle: 135deg;
   --gradient-color-1: #0f766e;
   --gradient-color-2: #14b8a6;
-  --gradient-color-3: #5eead4;
-  --gradient-color-4: #14b8a6;
+  --gradient-color-3: #14b8a6;
+  --gradient-color-4: #0d9488;
 
   background: linear-gradient(
     var(--gradient-angle),
@@ -446,22 +445,19 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
     box-shadow 0.4s ease,
     transform 0.2s ease;
 
-  box-shadow:
-    0 0 12px rgba(20, 184, 166, 0.3),
-    0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .gradient-button:hover {
   --gradient-angle: 45deg;
   --gradient-color-1: #0d9488;
-  --gradient-color-2: #2dd4bf;
-  --gradient-color-3: #99f6e4;
+  --gradient-color-2: #14b8a6;
+  --gradient-color-3: #2dd4bf;
   --gradient-color-4: #14b8a6;
 
   box-shadow:
-    0 0 20px rgba(20, 184, 166, 0.5),
-    0 0 40px rgba(20, 184, 166, 0.2),
-    0 4px 12px rgba(0, 0, 0, 0.15);
+    0 0 12px rgba(20, 184, 166, 0.25),
+    0 2px 6px rgba(0, 0, 0, 0.1);
 
   transform: translateY(-1px);
 }
