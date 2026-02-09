@@ -325,20 +325,12 @@ export default function LandingPage() {
               Login
             </button>
             <button
+              className="gradient-button"
               onClick={() => router.push('/register')}
               style={{
                 padding: "0.5rem 1.25rem",
-                background: theme.accent,
-                color: theme.text,
-                border: "none",
-                borderRadius: "6px",
                 fontSize: "0.9375rem",
-                fontWeight: "500",
-                cursor: "pointer",
-                transition: "all 0.2s ease"
               }}
-              onMouseOver={(e) => e.currentTarget.style.background = "#0d9488"}
-              onMouseOut={(e) => e.currentTarget.style.background = theme.accent}
             >
               Get Started
             </button>
@@ -493,20 +485,16 @@ export default function LandingPage() {
             Login
           </button>
           <button
+            className="gradient-button"
             onClick={() => {
               router.push('/register');
               setMobileMenuOpen(false);
             }}
             style={{
               padding: "0.875rem 1.5rem",
-              background: theme.accent,
-              color: theme.text,
-              border: "none",
-              borderRadius: "6px",
               fontSize: "1rem",
-              fontWeight: "600",
-              cursor: "pointer",
-              marginTop: "1rem"
+              marginTop: "1rem",
+              width: "100%",
             }}
           >
             Get Started
