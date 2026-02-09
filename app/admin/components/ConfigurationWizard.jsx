@@ -53,6 +53,45 @@ const DEFAULT_CONFIG = {
   prioritySlots: []
 };
 
+const deepMerge = (target, source) => {
+  const result = { ...target };
+  for (const key of Object.keys(source)) {
+    if (
+      source[key] &&
+      typeof source[key] === 'object' &&
+      !Array.isArray(source[key]) &&
+      target[key] &&
+      typeof target[key] === 'object' &&
+      !Array.isArray(target[key])
+    ) {
+      result[key] = deepMerge(target[key], source[key]);
+    } else {
+      result[key] = source[key];
+    }
+  }
+  return result;
+};
+
+function ToggleSwitch({ checked, onChange, label, description }) {
+  return (
+    <div className="toggle-row">
+      <div className="toggle-text">
+        <span className="toggle-label">{label}</span>
+        {description && <span className="toggle-description">{description}</span>}
+      </div>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        className={`toggle-switch ${checked ? 'active' : ''}`}
+        onClick={() => onChange(!checked)}
+      >
+        <span className="toggle-knob" />
+      </button>
+    </div>
+  );
+}
+
 export default function ConfigurationWizard({ isOpen, initialConfig, mode = 'create', onSave, onCancel }) {
   const [currentTab, setCurrentTab] = useState(0);
   const [config, setConfig] = useState(DEFAULT_CONFIG);
@@ -61,40 +100,45 @@ export default function ConfigurationWizard({ isOpen, initialConfig, mode = 'cre
   const [saving, setSaving] = useState(false);
   const [showBreaks, setShowBreaks] = useState(false);
   const [showPriority, setShowPriority] = useState(false);
+  const [tabErrorFlags, setTabErrorFlags] = useState({});
 
   useEffect(() => {
     if (initialConfig) {
-      setConfig({ ...DEFAULT_CONFIG, ...initialConfig });
+      const { _id, __v, createdAt, updatedAt, organizationName, createdBy, lastUsedAt, timesUsed, ...configData } = initialConfig;
+      setConfig(deepMerge(DEFAULT_CONFIG, configData));
       setShowBreaks(initialConfig.breakTimes?.length > 0);
       setShowPriority(initialConfig.prioritySlots?.length > 0);
     } else {
-      setConfig(DEFAULT_CONFIG);
+      setConfig({ ...DEFAULT_CONFIG });
       setShowBreaks(false);
       setShowPriority(false);
     }
     setCurrentTab(0);
     setValidationErrors({});
     setCompletedTabs(new Set());
+    setTabErrorFlags({});
   }, [isOpen, initialConfig]);
 
   if (!isOpen) return null;
 
   const updateConfig = (path, value) => {
     setConfig(prev => {
-      const newConfig = { ...prev };
       const keys = path.split('.');
-      let current = newConfig;
-
+      const result = { ...prev };
+      let current = result;
       for (let i = 0; i < keys.length - 1; i++) {
-        current = current[keys[i]];
+        const key = keys[i];
+        current[key] = Array.isArray(current[key])
+          ? [...current[key]]
+          : { ...current[key] };
+        current = current[key];
       }
-
       current[keys[keys.length - 1]] = value;
-      return newConfig;
+      return result;
     });
   };
 
-  const validateTab = (tabIndex) => {
+  const getTabErrors = (tabIndex) => {
     const errors = {};
 
     switch (tabIndex) {
@@ -104,7 +148,7 @@ export default function ConfigurationWizard({ isOpen, initialConfig, mode = 'cre
         }
         break;
 
-      case 1: // Business Hours
+      case 1: { // Business Hours
         const hasOpenDay = DAYS.some(day => config.businessHours[day].isOpen);
         if (!hasOpenDay) {
           errors.businessHours = 'At least one day must be open';
@@ -116,6 +160,7 @@ export default function ConfigurationWizard({ isOpen, initialConfig, mode = 'cre
           }
         });
         break;
+      }
 
       case 2: // Shifts & Hours (combined)
         if (config.shiftPreferences.minWorkersPerShift > config.shiftPreferences.maxWorkersPerShift) {
@@ -156,6 +201,11 @@ export default function ConfigurationWizard({ isOpen, initialConfig, mode = 'cre
         break;
     }
 
+    return errors;
+  };
+
+  const validateTab = (tabIndex) => {
+    const errors = getTabErrors(tabIndex);
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -176,20 +226,34 @@ export default function ConfigurationWizard({ isOpen, initialConfig, mode = 'cre
   };
 
   const handleTabClick = (index) => {
+    setValidationErrors({});
+    setTabErrorFlags({});
     setCurrentTab(index);
   };
 
   const handleSave = async () => {
-    // Validate all tabs
-    let allValid = true;
-    for (let i = 0; i < TABS.length; i++) {
-      if (!validateTab(i)) {
-        allValid = false;
-        break;
+    // Validate all tabs and collect all errors
+    const allErrors = {};
+    const errorFlags = {};
+    let firstFailingTab = -1;
+
+    for (let i = 0; i <= 3; i++) {
+      const tabErrors = getTabErrors(i);
+      const hasErrors = Object.keys(tabErrors).length > 0;
+      errorFlags[i] = hasErrors;
+      if (hasErrors) {
+        Object.assign(allErrors, tabErrors);
+        if (firstFailingTab === -1) firstFailingTab = i;
       }
     }
 
-    if (!allValid) return;
+    setTabErrorFlags(errorFlags);
+    setValidationErrors(allErrors);
+
+    if (firstFailingTab !== -1) {
+      setCurrentTab(firstFailingTab);
+      return;
+    }
 
     setSaving(true);
     try {
@@ -208,7 +272,11 @@ export default function ConfigurationWizard({ isOpen, initialConfig, mode = 'cre
       ...prev,
       businessHours: DAYS.reduce((acc, day) => ({
         ...acc,
-        [day]: { ...mondayHours }
+        [day]: {
+          ...prev.businessHours[day],
+          startTime: mondayHours.startTime,
+          endTime: mondayHours.endTime
+        }
       }), {})
     }));
   };
@@ -283,59 +351,146 @@ export default function ConfigurationWizard({ isOpen, initialConfig, mode = 'cre
 
   const renderPreview = () => {
     const openDays = DAYS.filter(day => config.businessHours[day].isOpen);
+    const closedDays = DAYS.filter(day => !config.businessHours[day].isOpen);
 
     return (
-      <div className="wizard-preview">
-        <h4>Configuration Summary</h4>
+      <div className="wizard-review">
+        <h3>Review Configuration</h3>
+        <p className="tab-description">Review all settings before saving.</p>
 
-        {config.name && (
-          <div className="preview-section">
-            <strong>Name</strong>
-            <p>{config.name}</p>
+        {/* Basic Info */}
+        <div className="review-section">
+          <div className="section-header">
+            <h4>Basic Information</h4>
+            <button className="btn-link" onClick={() => setCurrentTab(0)}>Edit</button>
           </div>
-        )}
+          <div className="section-content">
+            <div className="review-item">
+              <span className="label">Name</span>
+              <span className="value">{config.name || '(not set)'}</span>
+            </div>
+            <div className="review-item">
+              <span className="label">Description</span>
+              <span className="value">{config.description || '(none)'}</span>
+            </div>
+            <div className="review-item">
+              <span className="label">Default Configuration</span>
+              <span className="value">{config.isDefault ? 'Yes' : 'No'}</span>
+            </div>
+          </div>
+        </div>
 
-        {openDays.length > 0 && (
-          <div className="preview-section">
-            <strong>Business Hours</strong>
+        {/* Business Hours */}
+        <div className="review-section">
+          <div className="section-header">
+            <h4>Business Hours</h4>
+            <button className="btn-link" onClick={() => setCurrentTab(1)}>Edit</button>
+          </div>
+          <div className="section-content">
             {openDays.map(day => (
-              <div key={day} className="preview-item">
-                <span className="day">{DAY_LABELS[day]}:</span>
-                <span className="time">
+              <div key={day} className="review-item">
+                <span className="label">{DAY_LABELS[day]}</span>
+                <span className="value">
                   {config.businessHours[day].startTime} - {config.businessHours[day].endTime}
                 </span>
               </div>
             ))}
+            {closedDays.length > 0 && (
+              <div className="review-item">
+                <span className="label">Closed</span>
+                <span className="value">{closedDays.map(d => DAY_LABELS[d]).join(', ')}</span>
+              </div>
+            )}
           </div>
-        )}
-
-        <div className="preview-section">
-          <strong>Workers per Shift</strong>
-          <p>{config.shiftPreferences.minWorkersPerShift} - {config.shiftPreferences.maxWorkersPerShift}</p>
         </div>
 
-        <div className="preview-section">
-          <strong>Shift Length</strong>
-          <p>{config.shiftPreferences.minShiftLength} - {config.shiftPreferences.maxShiftLength} hours</p>
-          <small>Ideal: {config.shiftPreferences.idealShiftLength}h</small>
+        {/* Shift Preferences */}
+        <div className="review-section">
+          <div className="section-header">
+            <h4>Shift Preferences</h4>
+            <button className="btn-link" onClick={() => setCurrentTab(2)}>Edit</button>
+          </div>
+          <div className="section-content">
+            <div className="review-item">
+              <span className="label">Workers per Shift</span>
+              <span className="value">{config.shiftPreferences.minWorkersPerShift} - {config.shiftPreferences.maxWorkersPerShift}</span>
+            </div>
+            <div className="review-item">
+              <span className="label">Shift Length</span>
+              <span className="value">{config.shiftPreferences.minShiftLength} - {config.shiftPreferences.maxShiftLength}h (ideal: {config.shiftPreferences.idealShiftLength}h)</span>
+            </div>
+            <div className="review-item">
+              <span className="label">Split Shifts</span>
+              <span className="value">{config.shiftPreferences.allowSplitShifts ? 'Allowed' : 'Not allowed'}</span>
+            </div>
+          </div>
         </div>
 
-        <div className="preview-section">
-          <strong>Overtime Limits</strong>
-          <p>{config.overtimeRules.maxHoursPerDay}h/day, {config.overtimeRules.maxHoursPerWeek}h/week</p>
+        {/* Overtime Rules */}
+        <div className="review-section">
+          <div className="section-header">
+            <h4>Overtime Rules</h4>
+            <button className="btn-link" onClick={() => setCurrentTab(2)}>Edit</button>
+          </div>
+          <div className="section-content">
+            <div className="review-item">
+              <span className="label">Daily Limit</span>
+              <span className="value">{config.overtimeRules.maxHoursPerDay} hours</span>
+            </div>
+            <div className="review-item">
+              <span className="label">Weekly Limit</span>
+              <span className="value">{config.overtimeRules.maxHoursPerWeek} hours</span>
+            </div>
+            <div className="review-item">
+              <span className="label">Warn on Overtime</span>
+              <span className="value">{config.overtimeRules.warnOnOvertime ? 'Yes' : 'No'}</span>
+            </div>
+            <div className="review-item">
+              <span className="label">Allow Overtime</span>
+              <span className="value">{config.overtimeRules.allowOvertime ? 'Yes' : 'No'}</span>
+            </div>
+          </div>
         </div>
 
+        {/* Break Times */}
         {config.breakTimes.length > 0 && (
-          <div className="preview-section">
-            <strong>Break Times</strong>
-            <p>{config.breakTimes.length} configured</p>
+          <div className="review-section">
+            <div className="section-header">
+              <h4>Break Times ({config.breakTimes.length})</h4>
+              <button className="btn-link" onClick={() => setCurrentTab(3)}>Edit</button>
+            </div>
+            <div className="section-content">
+              {config.breakTimes.map((bt, i) => (
+                <div key={i} className="review-item">
+                  <span className="label">
+                    {bt.day === 'all' ? 'All Days' : DAY_LABELS[bt.day]}
+                    {bt.reason ? ` — ${bt.reason}` : ''}
+                  </span>
+                  <span className="value">{bt.startTime} - {bt.endTime}</span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
+        {/* Priority Slots */}
         {config.prioritySlots.length > 0 && (
-          <div className="preview-section">
-            <strong>Priority Slots</strong>
-            <p>{config.prioritySlots.length} configured</p>
+          <div className="review-section">
+            <div className="section-header">
+              <h4>Priority Slots ({config.prioritySlots.length})</h4>
+              <button className="btn-link" onClick={() => setCurrentTab(3)}>Edit</button>
+            </div>
+            <div className="section-content">
+              {config.prioritySlots.map((ps, i) => (
+                <div key={i} className="review-item">
+                  <span className="label">
+                    {ps.day === 'all' ? 'All Days' : DAY_LABELS[ps.day]}
+                    {ps.reason ? ` — ${ps.reason}` : ''} (min {ps.minWorkers} workers)
+                  </span>
+                  <span className="value">{ps.startTime} - {ps.endTime}</span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -347,7 +502,12 @@ export default function ConfigurationWizard({ isOpen, initialConfig, mode = 'cre
       <div className="config-wizard-modal-large" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="config-wizard-header">
-          <h2>{mode === 'edit' ? 'Edit Configuration' : 'Create Custom Configuration'}</h2>
+          <div>
+            <h2>{mode === 'edit' ? 'Edit Configuration' : 'Create New Configuration'}</h2>
+            <p className="config-wizard-subtitle">
+              {mode === 'edit' ? 'Update your schedule configuration settings.' : 'Set up scheduling rules for your organization.'}
+            </p>
+          </div>
           <button className="config-wizard-close" onClick={onCancel}>&times;</button>
         </div>
 
@@ -356,11 +516,13 @@ export default function ConfigurationWizard({ isOpen, initialConfig, mode = 'cre
               {TABS.map((tab, index) => (
                 <button
                   key={tab.id}
-                  className={`config-wizard-tab ${currentTab === index ? 'active' : ''} ${completedTabs.has(index) ? 'completed' : ''}`}
+                  className={`config-wizard-tab ${currentTab === index ? 'active' : ''} ${completedTabs.has(index) ? 'completed' : ''} ${tabErrorFlags[index] ? 'has-errors' : ''}`}
                   onClick={() => handleTabClick(index)}
                 >
+                  <span className="tab-step-number">
+                    {tabErrorFlags[index] ? '!' : completedTabs.has(index) ? '✓' : index + 1}
+                  </span>
                   <span className="tab-name">{tab.name}</span>
-                  {completedTabs.has(index) && <span className="tab-check">✓</span>}
                 </button>
               ))}
             </div>
@@ -370,45 +532,45 @@ export default function ConfigurationWizard({ isOpen, initialConfig, mode = 'cre
               {renderTabContent()}
             </div>
 
+            {/* Validation Errors */}
+            {Object.keys(validationErrors).length > 0 && (
+              <div className="config-wizard-errors-inline">
+                {Object.values(validationErrors).map((error, index) => (
+                  <div key={index} className="error-message-inline">{error}</div>
+                ))}
+              </div>
+            )}
+
             {/* Footer */}
             <div className="config-wizard-footer">
               <div className="footer-left">
-                {currentTab > 0 && (
+                {currentTab > 0 ? (
                   <button className="btn-secondary" onClick={handlePrevious}>
                     Previous
                   </button>
+                ) : (
+                  <button className="btn-secondary" onClick={onCancel}>
+                    Cancel
+                  </button>
                 )}
               </div>
+              <span className="footer-step-label">Step {currentTab + 1} of {TABS.length}</span>
               <div className="footer-right">
                 {currentTab < TABS.length - 1 ? (
                   <button className="btn-primary" onClick={handleNext}>
-                    Next
+                    Continue
                   </button>
                 ) : (
-                  <>
-                    <button className="btn-secondary" onClick={onCancel}>
-                      Cancel
-                    </button>
-                    <button
-                      className="btn-primary"
-                      onClick={handleSave}
-                      disabled={saving || Object.keys(validationErrors).length > 0}
-                    >
-                      {saving ? 'Saving...' : 'Save Configuration'}
-                    </button>
-                  </>
+                  <button
+                    className="btn-primary btn-save"
+                    onClick={handleSave}
+                    disabled={saving}
+                  >
+                    {saving ? 'Saving...' : 'Save Configuration'}
+                  </button>
                 )}
               </div>
             </div>
-
-            {/* Validation Errors */}
-        {Object.keys(validationErrors).length > 0 && (
-          <div className="config-wizard-errors">
-            {Object.values(validationErrors).map((error, index) => (
-              <div key={index} className="error-message">{error}</div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );
@@ -443,17 +605,12 @@ function BasicInfoTab({ config, updateConfig, errors }) {
         />
       </div>
 
-      <div className="form-group">
-        <label className="checkbox-label">
-          <input
-            type="checkbox"
-            checked={config.isDefault}
-            onChange={(e) => updateConfig('isDefault', e.target.checked)}
-          />
-          <span>Set as default configuration for my organization</span>
-        </label>
-        <p className="help-text">The default configuration will be pre-selected when generating new schedules.</p>
-      </div>
+      <ToggleSwitch
+        checked={config.isDefault}
+        onChange={(val) => updateConfig('isDefault', val)}
+        label="Set as default configuration"
+        description="This configuration will be pre-selected when generating new schedules."
+      />
     </div>
   );
 }
@@ -467,14 +624,14 @@ function BusinessHoursTab({ config, updateConfig, errors, copyMondayToAllDays })
 
       <div className="business-hours-actions">
         <button className="btn-secondary" onClick={copyMondayToAllDays}>
-          Copy Monday to All Days
+          Copy Monday Hours to All Days
         </button>
       </div>
 
       <div className="business-hours-table">
         <div className="table-header">
           <div className="col-day">Day</div>
-          <div className="col-open">Open</div>
+          <div className="col-status">Status</div>
           <div className="col-time">Start Time</div>
           <div className="col-time">End Time</div>
         </div>
@@ -486,12 +643,19 @@ function BusinessHoursTab({ config, updateConfig, errors, copyMondayToAllDays })
                 <span className={`day-indicator ${hours.isOpen ? 'open' : 'closed'}`}></span>
                 {DAY_LABELS[day]}
               </div>
-              <div className="col-open">
-                <input
-                  type="checkbox"
-                  checked={hours.isOpen}
-                  onChange={(e) => updateConfig(`businessHours.${day}.isOpen`, e.target.checked)}
-                />
+              <div className="col-status">
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={hours.isOpen}
+                  className={`toggle-switch toggle-sm ${hours.isOpen ? 'active' : ''}`}
+                  onClick={() => updateConfig(`businessHours.${day}.isOpen`, !hours.isOpen)}
+                >
+                  <span className="toggle-knob" />
+                </button>
+                <span className={`status-label ${hours.isOpen ? 'open' : 'closed'}`}>
+                  {hours.isOpen ? 'Open' : 'Closed'}
+                </span>
               </div>
               <div className="col-time">
                 <input
@@ -561,17 +725,27 @@ function ShiftsAndHoursTab({ config, updateConfig, errors }) {
           {errors.workers && <span className="field-error">{errors.workers}</span>}
 
           <div className="form-group">
-            <label>Ideal Shift Length: {prefs.idealShiftLength} hours</label>
-            <input
-              type="range"
-              min="1"
-              max="8"
-              step="0.5"
-              value={prefs.idealShiftLength}
-              onChange={(e) => updateConfig('shiftPreferences.idealShiftLength', parseFloat(e.target.value))}
-              className="slider"
-            />
-            <p className="help-text">Algorithm will target this length.</p>
+            <label>Ideal Shift Length</label>
+            <div className="stepper-control">
+              <button
+                type="button"
+                className="stepper-btn"
+                onClick={() => updateConfig('shiftPreferences.idealShiftLength', Math.max(1, prefs.idealShiftLength - 0.5))}
+                disabled={prefs.idealShiftLength <= 1}
+              >
+                −
+              </button>
+              <span className="stepper-value">{prefs.idealShiftLength} hrs</span>
+              <button
+                type="button"
+                className="stepper-btn"
+                onClick={() => updateConfig('shiftPreferences.idealShiftLength', Math.min(8, prefs.idealShiftLength + 0.5))}
+                disabled={prefs.idealShiftLength >= 8}
+              >
+                +
+              </button>
+            </div>
+            <p className="help-text">Algorithm will target this length (1–8 hours, 0.5 hr steps).</p>
           </div>
 
           <div className="form-grid">
@@ -602,17 +776,12 @@ function ShiftsAndHoursTab({ config, updateConfig, errors }) {
           {errors.shiftLength && <span className="field-error">{errors.shiftLength}</span>}
           {errors.idealShift && <span className="field-error">{errors.idealShift}</span>}
 
-          <div className="form-group">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={prefs.allowSplitShifts}
-                onChange={(e) => updateConfig('shiftPreferences.allowSplitShifts', e.target.checked)}
-              />
-              <span>Allow split shifts</span>
-            </label>
-            <p className="help-text">Workers can have multiple shifts per day.</p>
-          </div>
+          <ToggleSwitch
+            checked={prefs.allowSplitShifts}
+            onChange={(val) => updateConfig('shiftPreferences.allowSplitShifts', val)}
+            label="Allow split shifts"
+            description="Workers can have multiple shifts per day."
+          />
         </div>
 
         {/* Right Column: Overtime Rules */}
@@ -645,34 +814,19 @@ function ShiftsAndHoursTab({ config, updateConfig, errors }) {
             </div>
           </div>
 
-          <div className="form-group">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={rules.warnOnOvertime}
-                onChange={(e) => updateConfig('overtimeRules.warnOnOvertime', e.target.checked)}
-              />
-              <span>Warn when approaching limits</span>
-            </label>
-          </div>
+          <ToggleSwitch
+            checked={rules.warnOnOvertime}
+            onChange={(val) => updateConfig('overtimeRules.warnOnOvertime', val)}
+            label="Warn when approaching limits"
+            description="Get notified before workers exceed their hour caps."
+          />
 
-          <div className="form-group">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={rules.allowOvertime}
-                onChange={(e) => updateConfig('overtimeRules.allowOvertime', e.target.checked)}
-              />
-              <span>Allow overtime scheduling</span>
-            </label>
-            {!rules.allowOvertime && (
-              <p className="help-text warning">
-                Workers exceeding limits will not be scheduled for additional shifts.
-              </p>
-            )}
-          </div>
-
-          <p className="help-text">These limits help prevent worker burnout and ensure compliance.</p>
+          <ToggleSwitch
+            checked={rules.allowOvertime}
+            onChange={(val) => updateConfig('overtimeRules.allowOvertime', val)}
+            label="Allow overtime scheduling"
+            description={rules.allowOvertime ? 'Workers may be scheduled beyond limits.' : 'Workers exceeding limits will not be scheduled for additional shifts.'}
+          />
         </div>
       </div>
     </div>
@@ -737,8 +891,9 @@ function AdvancedOptionsTab({
                           <select
                             value={breakTime.day}
                             onChange={(e) => {
-                              const newBreaks = [...config.breakTimes];
-                              newBreaks[index].day = e.target.value;
+                              const newBreaks = config.breakTimes.map((b, i) =>
+                                i === index ? { ...b, day: e.target.value } : b
+                              );
                               updateConfig('breakTimes', newBreaks);
                             }}
                           >
@@ -754,8 +909,9 @@ function AdvancedOptionsTab({
                             type="time"
                             value={breakTime.startTime}
                             onChange={(e) => {
-                              const newBreaks = [...config.breakTimes];
-                              newBreaks[index].startTime = e.target.value;
+                              const newBreaks = config.breakTimes.map((b, i) =>
+                                i === index ? { ...b, startTime: e.target.value } : b
+                              );
                               updateConfig('breakTimes', newBreaks);
                             }}
                           />
@@ -766,8 +922,9 @@ function AdvancedOptionsTab({
                             type="time"
                             value={breakTime.endTime}
                             onChange={(e) => {
-                              const newBreaks = [...config.breakTimes];
-                              newBreaks[index].endTime = e.target.value;
+                              const newBreaks = config.breakTimes.map((b, i) =>
+                                i === index ? { ...b, endTime: e.target.value } : b
+                              );
                               updateConfig('breakTimes', newBreaks);
                             }}
                           />
@@ -779,8 +936,9 @@ function AdvancedOptionsTab({
                           type="text"
                           value={breakTime.reason}
                           onChange={(e) => {
-                            const newBreaks = [...config.breakTimes];
-                            newBreaks[index].reason = e.target.value;
+                            const newBreaks = config.breakTimes.map((b, i) =>
+                              i === index ? { ...b, reason: e.target.value } : b
+                            );
                             updateConfig('breakTimes', newBreaks);
                           }}
                           placeholder="Lunch Break, Staff Meeting, etc."
@@ -835,8 +993,9 @@ function AdvancedOptionsTab({
                           <select
                             value={slot.day}
                             onChange={(e) => {
-                              const newSlots = [...config.prioritySlots];
-                              newSlots[index].day = e.target.value;
+                              const newSlots = config.prioritySlots.map((s, i) =>
+                                i === index ? { ...s, day: e.target.value } : s
+                              );
                               updateConfig('prioritySlots', newSlots);
                             }}
                           >
@@ -852,8 +1011,9 @@ function AdvancedOptionsTab({
                             type="time"
                             value={slot.startTime}
                             onChange={(e) => {
-                              const newSlots = [...config.prioritySlots];
-                              newSlots[index].startTime = e.target.value;
+                              const newSlots = config.prioritySlots.map((s, i) =>
+                                i === index ? { ...s, startTime: e.target.value } : s
+                              );
                               updateConfig('prioritySlots', newSlots);
                             }}
                           />
@@ -864,8 +1024,9 @@ function AdvancedOptionsTab({
                             type="time"
                             value={slot.endTime}
                             onChange={(e) => {
-                              const newSlots = [...config.prioritySlots];
-                              newSlots[index].endTime = e.target.value;
+                              const newSlots = config.prioritySlots.map((s, i) =>
+                                i === index ? { ...s, endTime: e.target.value } : s
+                              );
                               updateConfig('prioritySlots', newSlots);
                             }}
                           />
@@ -878,8 +1039,9 @@ function AdvancedOptionsTab({
                             max="10"
                             value={slot.minWorkers}
                             onChange={(e) => {
-                              const newSlots = [...config.prioritySlots];
-                              newSlots[index].minWorkers = parseInt(e.target.value);
+                              const newSlots = config.prioritySlots.map((s, i) =>
+                                i === index ? { ...s, minWorkers: parseInt(e.target.value) } : s
+                              );
                               updateConfig('prioritySlots', newSlots);
                             }}
                           />
@@ -891,8 +1053,9 @@ function AdvancedOptionsTab({
                           type="text"
                           value={slot.reason}
                           onChange={(e) => {
-                            const newSlots = [...config.prioritySlots];
-                            newSlots[index].reason = e.target.value;
+                            const newSlots = config.prioritySlots.map((s, i) =>
+                              i === index ? { ...s, reason: e.target.value } : s
+                            );
                             updateConfig('prioritySlots', newSlots);
                           }}
                           placeholder="Rush Hour, Peak Traffic, etc."

@@ -1782,7 +1782,7 @@ export default function Home() {
                   e.target.style.color = "#14b8a6";
                 }}
               >
-                + Create New
+                + Create New Configuration
               </button>
             </div>
           </div>
