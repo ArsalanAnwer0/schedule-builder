@@ -6,12 +6,8 @@ import ScheduleConfiguration from '../../../../lib/db/models/ScheduleConfigurati
 // GET /api/schedules/configurations - List all configurations for organization
 export async function GET(request) {
   try {
-    const adminCheck = await requireAdmin();
-    if (adminCheck.error) {
-      return NextResponse.json({ error: adminCheck.error }, { status: adminCheck.status });
-    }
-
     await dbConnect();
+    const adminCheck = await requireAdmin();
     const admin = adminCheck.user;
 
     const configurations = await ScheduleConfiguration.find({
@@ -22,6 +18,12 @@ export async function GET(request) {
 
     return NextResponse.json({ configurations }, { status: 200 });
   } catch (error) {
+    if (error.message === 'Unauthorized') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (error.message === 'Forbidden: Admin access required') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
     console.error('Error fetching configurations:', error);
     return NextResponse.json({ error: 'Failed to fetch configurations' }, { status: 500 });
   }
@@ -30,11 +32,8 @@ export async function GET(request) {
 // POST /api/schedules/configurations - Create new configuration
 export async function POST(request) {
   try {
+    await dbConnect();
     const adminCheck = await requireAdmin();
-    if (adminCheck.error) {
-      return NextResponse.json({ error: adminCheck.error }, { status: adminCheck.status });
-    }
-
     const admin = adminCheck.user;
 
     const body = await request.json();
@@ -52,8 +51,6 @@ export async function POST(request) {
     if (!name) {
       return NextResponse.json({ error: 'Configuration name is required' }, { status: 400 });
     }
-
-    await dbConnect();
 
     // Check if configuration with same name exists
     const existingConfig = await ScheduleConfiguration.findOne({
@@ -84,6 +81,12 @@ export async function POST(request) {
 
     return NextResponse.json({ configuration }, { status: 201 });
   } catch (error) {
+    if (error.message === 'Unauthorized') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (error.message === 'Forbidden: Admin access required') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
     console.error('Error creating configuration:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to create configuration' },
